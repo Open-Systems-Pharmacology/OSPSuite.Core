@@ -1,4 +1,6 @@
+using System.Linq;
 using FakeItEasy;
+using OSPSuite.Assets;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain.Builder;
@@ -46,7 +48,8 @@ namespace OSPSuite.Core.Domain
          _rootContainer.Add(_invalidContainer);
          _objectTypeResolver = A.Fake<IObjectTypeResolver>();
          _model = new Model();
-         _modelConfiguration = new ModelConfiguration(_model, _simulationConfiguration, new SimulationBuilder(_simulationConfiguration));
+         var simulationBuilder = A.Fake<SimulationBuilder>();
+         _modelConfiguration = new ModelConfiguration(_model, _simulationConfiguration, simulationBuilder);
       }
    }
 
@@ -309,6 +312,102 @@ namespace OSPSuite.Core.Domain
       public void should_return_an_invalid_state()
       {
          _results.ValidationState.ShouldBeEqualTo(ValidationState.Invalid);
+      }
+   }
+
+   internal class When_validating_an_event_whose_formula_is_null : concern_for_ModelValidator
+   {
+      private ValidationResult _results;
+      private Event _eventWithNullFormula;
+
+      protected override void Context()
+      {
+         base.Context();
+         _eventWithNullFormula = new Event().WithName("EventWithNullFormula");
+         _eventWithNullFormula.Formula = null;
+         _validContainer.Add(_eventWithNullFormula);
+
+         sut = new ValidatorForObserversAndEvents(_objectTypeResolver, _objectPathFactory);
+      }
+
+      protected override void Because()
+      {
+         _model.Root = _validContainer;
+         _results = sut.Validate(_modelConfiguration);
+      }
+
+      [Observation]
+      public void should_return_an_invalid_state_instead_of_throwing_a_null_reference_exception()
+      {
+         _results.ValidationState.ShouldBeEqualTo(ValidationState.Invalid);
+      }
+
+      [Observation]
+      public void should_report_a_validation_message_indicating_that_the_formula_cannot_be_empty()
+      {
+         _results.Messages.Any(x => x.Object == _eventWithNullFormula && x.Text == Validation.FormulaCannotBeEmpty).ShouldBeTrue();
+      }
+   }
+
+   internal class When_validating_a_quantity_whose_formula_is_null : concern_for_ModelValidator
+   {
+      private ValidationResult _results;
+      private Parameter _parameterWithNullFormula;
+
+      protected override void Context()
+      {
+         base.Context();
+         _parameterWithNullFormula = new Parameter().WithName("ParameterWithNullFormula");
+         _parameterWithNullFormula.Formula = null;
+         _validContainer.Add(_parameterWithNullFormula);
+
+         sut = new ValidatorForQuantities(_objectTypeResolver, _objectPathFactory);
+      }
+
+      protected override void Because()
+      {
+         _model.Root = _validContainer;
+         _results = sut.Validate(_modelConfiguration);
+      }
+
+      [Observation]
+      public void should_return_an_invalid_state_instead_of_throwing_a_null_reference_exception()
+      {
+         _results.ValidationState.ShouldBeEqualTo(ValidationState.Invalid);
+      }
+
+      [Observation]
+      public void should_report_a_validation_message_indicating_that_the_formula_cannot_be_empty()
+      {
+         _results.Messages.Any(x => x.Object == _parameterWithNullFormula && x.Text == Validation.FormulaCannotBeEmpty).ShouldBeTrue();
+      }
+   }
+
+   internal class When_checking_a_formula_validity_through_the_validator_for_formula_and_the_formula_is_null : concern_for_ModelValidator
+   {
+      private bool _isValid;
+      private Parameter _parameterWithNullFormula;
+      private ValidatorForForFormula _validatorForFormula;
+
+      protected override void Context()
+      {
+         base.Context();
+         _parameterWithNullFormula = new Parameter().WithName("ParameterWithNullFormula");
+         _parameterWithNullFormula.Formula = null;
+         _validContainer.Add(_parameterWithNullFormula);
+         _validatorForFormula = new ValidatorForForFormula(_objectTypeResolver, _objectPathFactory);
+         sut = _validatorForFormula;
+      }
+
+      protected override void Because()
+      {
+         _isValid = _validatorForFormula.IsFormulaValid(_parameterWithNullFormula);
+      }
+
+      [Observation]
+      public void should_report_the_formula_as_invalid_instead_of_throwing_a_null_reference_exception()
+      {
+         _isValid.ShouldBeFalse();
       }
    }
 }

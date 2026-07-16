@@ -20,6 +20,7 @@ namespace OSPSuite.Core.Serialization.Xml
          MapEnumerable(x => x.ModuleConfigurations, x => x.AddModuleConfiguration);
          MapEnumerable(x => x.ExpressionProfiles, x => x.AddExpressionProfile);
          MapEnumerable(x => x.AllCalculationMethods, x => x.AddCalculationMethod);
+         MapEnumerable(x => x.AllCalculationMethodOverrides, x => x.AddCalculationMethodOverride);
       }
    }
 

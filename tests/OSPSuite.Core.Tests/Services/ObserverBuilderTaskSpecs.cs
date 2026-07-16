@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Linq;
 using FakeItEasy;
 using OSPSuite.BDDHelper;
@@ -35,7 +34,7 @@ namespace OSPSuite.Core.Services
       protected override void Context()
       {
          _observerMapper = A.Fake<IObserverBuilderToObserverMapper>();
-         _entityTracker= A.Fake<IEntityTracker>();
+         _entityTracker = A.Fake<IEntityTracker>();
          _observerBuildingBlock = new ObserverBuildingBlock();
          _molecule1 = new MoleculeBuilder().WithName(_molecule1Name);
          _molecule2 = new MoleculeBuilder().WithName(_molecule2Name);
@@ -71,12 +70,12 @@ namespace OSPSuite.Core.Services
          _model.Neighborhoods = _rootNeighborhood;
          _keywordReplacerTask = A.Fake<IKeywordReplacerTask>();
          _containerTask = A.Fake<IContainerTask>();
-         sut = new ObserverBuilderTask(_observerMapper, _containerTask, _keywordReplacerTask,_entityTracker);
+         _simulationBuilder = new SimulationBuilder(A.Fake<ICloneManagerForModel>(), new ContainerMergeTask());
+         sut = new ObserverBuilderTask(_observerMapper, _containerTask, _keywordReplacerTask, _entityTracker);
       }
 
       protected override void Because()
       {
-         _simulationBuilder = new SimulationBuilder(_simulationConfiguration);
          sut.CreateObservers(new ModelConfiguration(_model, _simulationConfiguration, _simulationBuilder));
       }
    }
@@ -109,24 +108,26 @@ namespace OSPSuite.Core.Services
          _organism.Add(_molecule1Amount);
          _observerBuildingBlock.Add(_obs1);
          _observerBuildingBlock.Add(_obs2);
-         A.CallTo(() => _observerMapper.MapFrom(_obs1, A<SimulationBuilder>._)).Returns(new Observer().WithName(_obs1.Name));
-         A.CallTo(() => _observerMapper.MapFrom(_obs2, A<SimulationBuilder>._)).Returns(new Observer().WithName(_obs2.Name));
+         A.CallTo(() => _observerMapper.MapFrom(_obs1, _simulationBuilder)).Returns(new Observer().WithName(_obs1.Name));
+         A.CallTo(() => _observerMapper.MapFrom(_obs2, _simulationBuilder)).Returns(new Observer().WithName(_obs2.Name));
          A.CallTo(() => _containerTask.CreateOrRetrieveSubContainerByName(_organism, _molecule1Name)).Returns(_molecule1Amount);
          A.CallTo(() => _containerTask.CreateOrRetrieveSubContainerByName(_organism, _molecule2Name)).Returns(_molecule2Amount);
+
+         _simulationBuilder.PerformMerge(_simulationConfiguration);
       }
 
       [Observation]
       public void should_create_one_observer_for_each_molecule_present_in_the_model_if_the_observer_is_for_all_molecules()
       {
          //one for each observer
-         _molecule2Amount.Children.Count().ShouldBeEqualTo(2);
+         _molecule2Amount.Children.Count.ShouldBeEqualTo(2);
       }
 
       [Observation]
       public void should_create_one_observer_only_for_the_molecule_for_which_the_observer_was_defined_if_the_observer_is_not_for_all()
       {
          //only for first observer "_obs1"
-         _molecule1Amount.Children.Count().ShouldBeEqualTo(1);
+         _molecule1Amount.Children.Count.ShouldBeEqualTo(1);
       }
    }
 
@@ -149,8 +150,8 @@ namespace OSPSuite.Core.Services
          _obs2.AddMoleculeName(_molecule2Name);
          _observerBuildingBlock.Add(_obs1);
          _observerBuildingBlock.Add(_obs2);
-         A.CallTo(() => _observerMapper.MapFrom(_obs1, A<SimulationBuilder>._)).ReturnsLazily(x => new Observer().WithName(_obs1.Name));
-         A.CallTo(() => _observerMapper.MapFrom(_obs2, A<SimulationBuilder>._)).ReturnsLazily(x => new Observer().WithName(_obs2.Name));
+         A.CallTo(() => _observerMapper.MapFrom(_obs1, _simulationBuilder)).ReturnsLazily(x => new Observer().WithName(_obs1.Name));
+         A.CallTo(() => _observerMapper.MapFrom(_obs2, _simulationBuilder)).ReturnsLazily(x => new Observer().WithName(_obs2.Name));
          _molecule1Container1 = new MoleculeAmount().WithName(_molecule1Name).WithQuantityType(QuantityType.Drug);
          _molecule2Container1 = new MoleculeAmount().WithName(_molecule2Name).WithQuantityType(QuantityType.Enzyme);
          _molecule1Container2 = new MoleculeAmount().WithName(_molecule1Name).WithQuantityType(QuantityType.Drug);
@@ -168,15 +169,17 @@ namespace OSPSuite.Core.Services
          _rootContainer.Add(container2);
          _obs1.ContainerCriteria = Create.Criteria(x => x.With("OBS"));
          _obs2.ContainerCriteria = Create.Criteria(x => x.With("OBS1"));
+
+         _simulationBuilder.PerformMerge(_simulationConfiguration);
       }
 
       [Observation]
       public void should_create_one_observer_under_each_local_molecule_container_if_the_physical_container_satisfies_the_observer_criteria_and_if_the_observer_is_for_all()
       {
          //only obs 1
-         _molecule1Container1.Children.Count().ShouldBeEqualTo(1);
-         _molecule1Container2.Children.Count().ShouldBeEqualTo(1);
-         _molecule2Container2.Children.Count().ShouldBeEqualTo(1);
+         _molecule1Container1.Children.Count.ShouldBeEqualTo(1);
+         _molecule1Container2.Children.Count.ShouldBeEqualTo(1);
+         _molecule2Container2.Children.Count.ShouldBeEqualTo(1);
 
          _molecule1Container1.Children.First().DowncastTo<Observer>().QuantityType.Is(QuantityType.Drug).ShouldBeTrue();
          _molecule1Container2.Children.First().DowncastTo<Observer>().QuantityType.Is(QuantityType.Drug).ShouldBeTrue();
@@ -187,7 +190,7 @@ namespace OSPSuite.Core.Services
       public void should_create_one_observer_only_for_the_molecule_for_which_the_observer_was_defined_if_the_physical_container_satisfies_the_observer_criteria_and_if_the_observer_is_not_for_all()
       {
          //one for observer 1 and and observer 2 since container 1 is the only one satisfying observer 2 conditions
-         _molecule2Container1.Children.Count().ShouldBeEqualTo(2);
+         _molecule2Container1.Children.Count.ShouldBeEqualTo(2);
       }
    }
 }

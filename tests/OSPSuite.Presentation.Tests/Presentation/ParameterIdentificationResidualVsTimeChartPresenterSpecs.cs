@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using FakeItEasy;
 using OSPSuite.BDDHelper;
@@ -37,11 +39,11 @@ namespace OSPSuite.Presentation.Presentation
       protected ResidualsResult _residualResults;
       protected ResidualsVsTimeChartService _residualsVsTimeChartService;
       private IChartEditorLayoutTask _chartEditorLayoutTask;
-      private IProjectRetriever _projectRetreiver;
+      protected IProjectRetriever _projectRetriever;
       private ChartPresenterContext _chartPresenterContext;
       private ICurveNamer _curveNamer;
 
-      protected IChartEditorPresenter ChartEditorPresenter => _chartEditorAndDisplayPresenter.EditorPresenter;
+      protected IChartEditorPresenter ChartEditorPresenter { get; private set; }
 
       protected override void Context()
       {
@@ -49,12 +51,14 @@ namespace OSPSuite.Presentation.Presentation
          _residualsVsTimeChartService = A.Fake<ResidualsVsTimeChartService>();
          _view = A.Fake<IParameterIdentificationSingleRunAnalysisView>();
          _chartEditorAndDisplayPresenter = A.Fake<IChartEditorAndDisplayPresenter>();
+         ChartEditorPresenter = A.Fake<IChartEditorPresenter>();
+         A.CallTo(() => _chartEditorAndDisplayPresenter.EditorPresenter).Returns(ChartEditorPresenter);
          _curveNamer = A.Fake<ICurveNamer>();
          _pathElementsMapper = A.Fake<IDataColumnToPathElementsMapper>();
          _chartTemplatingTask = A.Fake<IChartTemplatingTask>();
          _dimensionFactory = A.Fake<IDimensionFactory>();
          _chartEditorLayoutTask = A.Fake<IChartEditorLayoutTask>();
-         _projectRetreiver = A.Fake<IProjectRetriever>();
+         _projectRetriever = A.Fake<IProjectRetriever>();
 
          _chartPresenterContext = A.Fake<ChartPresenterContext>();
          A.CallTo(() => _chartPresenterContext.EditorAndDisplayPresenter).Returns(_chartEditorAndDisplayPresenter);
@@ -64,7 +68,7 @@ namespace OSPSuite.Presentation.Presentation
          A.CallTo(() => _chartPresenterContext.PresenterSettingsTask).Returns(_presentationSettingsTask);
          A.CallTo(() => _chartPresenterContext.DimensionFactory).Returns(_dimensionFactory);
          A.CallTo(() => _chartPresenterContext.EditorLayoutTask).Returns(_chartEditorLayoutTask);
-         A.CallTo(() => _chartPresenterContext.ProjectRetriever).Returns(_projectRetreiver);
+         A.CallTo(() => _chartPresenterContext.ProjectRetriever).Returns(_projectRetriever);
 
 
          sut = new ParameterIdentificationResidualVsTimeChartPresenter(_view, _chartPresenterContext, _residualsVsTimeChartService);
@@ -73,10 +77,10 @@ namespace OSPSuite.Presentation.Presentation
          _parameterIdentification = A.Fake<ParameterIdentification>();
 
          _parameterIdentificationRunResult = A.Fake<ParameterIdentificationRunResult>();
-         A.CallTo(() => _parameterIdentification.Results).Returns(new[] {_parameterIdentificationRunResult});
+         A.CallTo(() => _parameterIdentification.Results).Returns(new[] { _parameterIdentificationRunResult });
 
          _residualResults = new ResidualsResult();
-         _optimizationRunResult = new OptimizationRunResult {ResidualsResult = _residualResults};
+         _optimizationRunResult = new OptimizationRunResult { ResidualsResult = _residualResults };
          _parameterIdentificationRunResult.BestResult = _optimizationRunResult;
 
 
@@ -109,9 +113,9 @@ namespace OSPSuite.Presentation.Presentation
          A.CallTo(() => _outputMapping3.WeightedObservedData.ObservedData).Returns(observation3);
 
 
-         _outputResiduals1 = new OutputResiduals("OutputPath1", _outputMapping1.WeightedObservedData, new[] {new Residual(11f, 12f, 1), new Residual(21f, 22f, 1)});
-         _outputResiduals2 = new OutputResiduals("OutputPath2", _outputMapping2.WeightedObservedData, new[] {new Residual(31f, 32f, 1), new Residual(41f, 42f, 1)});
-         _outputResiduals3 = new OutputResiduals("OutputPath1", _outputMapping3.WeightedObservedData, new[] {new Residual(51f, 52f, 1), new Residual(61f, 62f, 1)});
+         _outputResiduals1 = new OutputResiduals("OutputPath1", _outputMapping1.WeightedObservedData, new[] { new Residual(11f, 12f, 1), new Residual(21f, 22f, 1) });
+         _outputResiduals2 = new OutputResiduals("OutputPath2", _outputMapping2.WeightedObservedData, new[] { new Residual(31f, 32f, 1), new Residual(41f, 42f, 1) });
+         _outputResiduals3 = new OutputResiduals("OutputPath1", _outputMapping3.WeightedObservedData, new[] { new Residual(51f, 52f, 1), new Residual(61f, 62f, 1) });
 
          _residualResults.AddOutputResiduals(_outputResiduals1);
          _residualResults.AddOutputResiduals(_outputResiduals2);
@@ -123,8 +127,8 @@ namespace OSPSuite.Presentation.Presentation
          A.CallTo(() => _outputMapping3.FullOutputPath).Returns("OutputPath1");
 
 
-         A.CallTo(() => _parameterIdentification.AllOutputMappings).Returns(new[] {_outputMapping1, _outputMapping2, _outputMapping3});
-         A.CallTo(() => _parameterIdentification.AllObservedData).Returns(new[] {observation3, observation1, observation2});
+         A.CallTo(() => _parameterIdentification.AllOutputMappings).Returns(new[] { _outputMapping1, _outputMapping2, _outputMapping3 });
+         A.CallTo(() => _parameterIdentification.AllObservedData).Returns(new[] { observation3, observation1, observation2 });
       }
 
       protected override void Because()
@@ -167,12 +171,67 @@ namespace OSPSuite.Presentation.Presentation
       }
    }
 
+   public class When_initializing_a_residual_vs_time_chart_for_a_PI_that_already_has_a_time_profile_chart : concern_for_ParameterIdentificationResidualVsTimeChartPresenter
+   {
+      private static readonly Color CANONICAL_COLOR = Color.Cyan;
+      private ParameterIdentificationTimeProfileChart _existingTimeProfile;
+      private OutputResiduals _outputResiduals1;
+      private OutputMapping _outputMapping1;
+      private DataRepository _observation1;
+
+      protected override void Context()
+      {
+         base.Context();
+         _outputMapping1 = A.Fake<OutputMapping>();
+         _observation1 = DomainHelperForSpecs.ObservedData("OBS1");
+         A.CallTo(() => _outputMapping1.WeightedObservedData.ObservedData).Returns(_observation1);
+
+         _outputResiduals1 = new OutputResiduals("OutputPath1", _outputMapping1.WeightedObservedData, new[] { new Residual(11f, 12f, 1) });
+         _residualResults.AddOutputResiduals(_outputResiduals1);
+
+         A.CallTo(() => _outputMapping1.FullOutputPath).Returns("OutputPath1");
+         A.CallTo(() => _parameterIdentification.AllOutputMappings).Returns(new[] { _outputMapping1 });
+         A.CallTo(() => _parameterIdentification.AllObservedData).Returns(new[] { _observation1 });
+
+         //existing TP chart carries a curve whose yData path matches the residual output path
+         var canonicalColumn = _observation1.ObservationColumns().First();
+         canonicalColumn.QuantityInfo = new QuantityInfo(new[] { "OutputPath1" }, QuantityType.Drug);
+
+         _existingTimeProfile = new ParameterIdentificationTimeProfileChart();
+         var canonicalCurve = new Curve { Name = "Canonical" };
+         var dimensionFactory = A.Fake<IDimensionFactory>();
+         canonicalCurve.SetxData(canonicalColumn.BaseGrid, dimensionFactory);
+         canonicalCurve.SetyData(canonicalColumn, dimensionFactory);
+         canonicalCurve.Color = CANONICAL_COLOR;
+         _existingTimeProfile.AddCurve(canonicalCurve, useAxisDefault: false);
+
+         A.CallTo(() => _parameterIdentification.Analyses).Returns(new ISimulationAnalysis[] { _existingTimeProfile, _residualVsTimeChart });
+         //in production AddAnalysis sets Analysable; mirror that here so PeerColorForPath
+         //(which now lives on the chart) has the analysable handle it needs
+         _existingTimeProfile.Analysable = _parameterIdentification;
+         _residualVsTimeChart.Analysable = _parameterIdentification;
+      }
+
+      protected override void Because()
+      {
+         sut.InitializeAnalysis(_residualVsTimeChart, _parameterIdentification);
+      }
+
+      [Observation]
+      public void residual_curves_should_inherit_the_color_from_the_existing_time_profile_chart()
+      {
+         var residualCurve = _residualVsTimeChart.Curves.FirstOrDefault(c => !string.Equals(c.Name, ResidualsVsTimeChart.ZERO));
+         residualCurve.ShouldNotBeNull();
+         residualCurve.Color.ShouldBeEqualTo(CANONICAL_COLOR);
+      }
+   }
+
    public class When_clearing_the_parameter_identification_residual_vs_time_chart_presenter : concern_for_ParameterIdentificationResidualVsTimeChartPresenter
    {
       protected override void Context()
       {
          base.Context();
-         A.CallTo(() => _parameterIdentification.AllObservedData).Returns(new[] {DomainHelperForSpecs.ObservedData()});
+         A.CallTo(() => _parameterIdentification.AllObservedData).Returns(new[] { DomainHelperForSpecs.ObservedData() });
          sut.InitializeAnalysis(_residualVsTimeChart, _parameterIdentification);
 
          //only zero marker
@@ -189,6 +248,29 @@ namespace OSPSuite.Presentation.Presentation
       {
          //zero marker removed
          _residualVsTimeChart.Curves.Count.ShouldBeEqualTo(0);
+      }
+   }
+
+   public class When_initializing_the_residuals_vs_time_analysis_for_a_parameter_identification : concern_for_ParameterIdentificationResidualVsTimeChartPresenter
+   {
+      private IProject _project;
+
+      protected override void Context()
+      {
+         base.Context();
+         _project = A.Fake<IProject>();
+         A.CallTo(() => _projectRetriever.CurrentProject).Returns(_project);
+      }
+
+      protected override void Because()
+      {
+         sut.InitializeAnalysis(_residualVsTimeChart, _parameterIdentification);
+      }
+
+      [Observation]
+      public void should_add_the_chart_template_menu_based_on_the_chart_templates_defined_in_the_project()
+      {
+         A.CallTo(() => ChartEditorPresenter.AddChartTemplateMenu(_project, A<Action<CurveChartTemplate>>._)).MustHaveHappened();
       }
    }
 }

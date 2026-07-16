@@ -1,7 +1,6 @@
 ﻿using OSPSuite.BDDHelper;
 using OSPSuite.Core.Chart;
 using OSPSuite.Core.Domain.UnitSystem;
-using OSPSuite.Core.Helpers;
 using OSPSuite.Helpers;
 using OSPSuite.Utility.Container;
 
@@ -14,7 +13,7 @@ namespace OSPSuite.Core.Serializers
       public void TestSerialization()
       {
          var dimensionFactory = IoC.Resolve<IDimensionFactory>();
-         var x1 = new Axis(AxisTypes.Y) {Dimension = DimensionMolarConcentration};
+         var x1 = new Axis(AxisTypes.Y) {Dimension = DimensionMolarConcentration, MajorInterval = 25, MinorTicks = 4};
          //Ensure that we use the actural merged dimension for this axis
          x1.Dimension = dimensionFactory.MergedDimensionFor(x1);
          x1.UnitName = DimensionMassConcentration.Unit("mg/l").Name;

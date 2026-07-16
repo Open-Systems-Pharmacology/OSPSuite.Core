@@ -37,12 +37,12 @@ namespace OSPSuite.Core.Domain
 
       private IContainer createEntityToClone()
       {
-         var individual = new Container().WithName("individual");
-         var organism = new Container().WithName("organism");
-         var organ = new Container().WithName("organ");
-         var parameterOrganism = new Parameter().WithName("parameterOrganism");
-         var parameterOrgan1 = new Parameter().WithName("parameterOrgan1");
-         var parameterOrgan2 = new Parameter().WithName("parameterOrgan2");
+         var individual = new Container().WithId("id_individual").WithName("individual");
+         var organism = new Container().WithId("id_organism").WithName("organism");
+         var organ = new Container().WithId("id_organ").WithName("organ");
+         var parameterOrganism = new Parameter().WithId("id_parameterOrganism").WithName("parameterOrganism");
+         var parameterOrgan1 = new Parameter().WithId("id_parameterOrgan1").WithName("parameterOrgan1");
+         var parameterOrgan2 = new Parameter().WithId("id_parameterOrgan2").WithName("parameterOrgan2");
          parameterOrganism.Formula = new ConstantFormula(1).WithId("1");
          parameterOrganism.RHSFormula = new ConstantFormula(1).WithId("4");
 
@@ -88,6 +88,50 @@ namespace OSPSuite.Core.Domain
       public void should_have_updated_the_properties_of_the_cloned_object_from_the_source_object()
       {
          _result.Name.ShouldBeEqualTo(_objectToClone.Name);
+      }
+
+      [Observation]
+      public void should_have_created_a_new_set_of_id()
+      {
+         _result.Id.ShouldNotBeEqualTo(_objectToClone.Id);
+      }
+
+      [Observation]
+      public void should_have_created_a_new_set_of_id_for_the_children()
+      {
+         _result.Container("organism").Id.ShouldNotBeEqualTo(_objectToClone.Container("organism").Id);
+      }
+   }
+
+   public class When_asked_to_clone_an_object_and_keep_the_id_of_the_clone : concern_for_CloneManagerForModel
+   {
+      protected override void Because()
+      {
+         _result = sut.CloneAndKeepId(_objectToClone);
+      }
+
+      [Observation]
+      public void should_return_an_entity_of_same_type_as_the_entity_to_clone()
+      {
+         _result.ShouldBeAnInstanceOf<IContainer>();
+      }
+
+      [Observation]
+      public void should_have_updated_the_properties_of_the_cloned_object_from_the_source_object()
+      {
+         _result.Name.ShouldBeEqualTo(_objectToClone.Name);
+      }
+
+      [Observation]
+      public void should_have_also_kept_the_id()
+      {
+         _result.Id.ShouldBeEqualTo(_objectToClone.Id);
+      }
+
+      [Observation]
+      public void should_have_also_kept_the_id_of_sub_object()
+      {
+         _result.Container("organism").Id.ShouldBeEqualTo(_objectToClone.Container("organism").Id);
       }
    }
 

@@ -1,7 +1,6 @@
 ﻿using System.Data;
-using OSPSuite.Utility.Extensions;
 using OSPSuite.Core.Domain;
-using OSPSuite.Core.Extensions;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Presentation.Mappers.ParameterIdentifications
 {

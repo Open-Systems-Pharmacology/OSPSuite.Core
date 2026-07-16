@@ -8,7 +8,6 @@ namespace OSPSuite.Presentation.Views
    public interface IMenuAndToolBarView
    {
       void CreateDynamicPageCategory(string pageCategoryName, Color categoryColor);
-      void CreateDynamicPageCategory(string pageCategoryName);
       void AddDynamicPageGroupToPageCategory(IButtonGroup buttonGroup, string pageName, string pageCategoryName);
       void SetPageCategoryVisibility(string pageCategoryName, bool visible);
       void AddPageGroupToPage(IButtonGroup buttonGroup, string pageName);

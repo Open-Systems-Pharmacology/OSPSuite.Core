@@ -21,11 +21,6 @@ namespace OSPSuite.UI.Diagram.Elements
          foreach (var observerLink in GetLinks<ObserverLink>()) observerLink.SetColorFrom(diagramColors);
       }
 
-      public void AddLink(ObserverLink link)
-      {
-         base.AddLinkFrom(link);
-      }
-
       public void ClearLinks()
       {
          Port.ClearLinks();

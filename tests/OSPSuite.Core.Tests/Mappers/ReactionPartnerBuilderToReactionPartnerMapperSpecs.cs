@@ -21,15 +21,13 @@ namespace OSPSuite.Core.Mappers
       private ReactionPartner _reactionPartner;
       private IContainer _container;
       private MoleculeAmount _moleculeAmount;
-      private SimulationConfiguration _simulationConfiguration;
       private SimulationBuilder _simulationBuilder;
 
       protected override void Context()
       {
          base.Context();
          _reactionPartnerBuilder = new ReactionPartnerBuilder();
-         _simulationConfiguration = new SimulationConfiguration();
-         _simulationBuilder = new SimulationBuilder(_simulationConfiguration);
+         _simulationBuilder = A.Fake<SimulationBuilder>();
          _container = new Container();
          _reactionPartnerBuilder.MoleculeName = "Drug";
          _moleculeAmount = new MoleculeAmount().WithName("Drug");
@@ -68,7 +66,7 @@ namespace OSPSuite.Core.Mappers
          _reactionPartnerBuilder = new ReactionPartnerBuilder();
          _container = new Container();
          _simulationConfiguration = new SimulationConfiguration();
-         _simulationBuilder = new SimulationBuilder(_simulationConfiguration);
+         _simulationBuilder = A.Fake<SimulationBuilder>();
          _reactionPartnerBuilder.MoleculeName = "Drug";
          _reactionPartnerBuilder.StoichiometricCoefficient = 1.1;
       }

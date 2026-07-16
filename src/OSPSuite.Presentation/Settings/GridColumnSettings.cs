@@ -1,4 +1,3 @@
-using OSPSuite.Core;
 using OSPSuite.Utility.Reflection;
 
 namespace OSPSuite.Presentation.Settings
@@ -51,12 +50,6 @@ namespace OSPSuite.Presentation.Settings
       public GridColumnSettings WithCaption(string caption)
       {
          Caption = caption;
-         return this;
-      }
-
-      public GridColumnSettings WithSortColumnName(string sortColumnName)
-      {
-         SortColumnName = sortColumnName;
          return this;
       }
 

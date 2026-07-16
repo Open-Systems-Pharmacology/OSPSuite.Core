@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using OSPSuite.Utility.Extensions;
+using System;
+using System.Collections.Generic;
 using System.Linq;
-using OSPSuite.Utility.Extensions;
+using System.Text;
 
 namespace OSPSuite.Assets.Extensions
 {
@@ -67,5 +69,9 @@ namespace OSPSuite.Assets.Extensions
       {
          return pluralize ? stringToPluralize.Pluralize() : stringToPluralize;
       }
+
+      public static string FromBase64String(this string encodedElement) => Encoding.UTF8.GetString(Convert.FromBase64String(encodedElement));
+
+      public static string ToBase64String(this string serializeAsString) => Convert.ToBase64String(Encoding.UTF8.GetBytes(serializeAsString));
    }
 }

@@ -1,10 +1,9 @@
 ﻿using System;
-using OSPSuite.Utility.Events;
-using OSPSuite.Core.Chart;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Events;
 using OSPSuite.Presentation.Presenters.Charts;
 using OSPSuite.Presentation.Views.ObservedData;
+using OSPSuite.Utility.Events;
 
 namespace OSPSuite.Presentation.Presenters.ObservedData
 {

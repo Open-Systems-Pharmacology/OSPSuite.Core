@@ -13,11 +13,6 @@ namespace OSPSuite.Core.Domain
       public SimModelExportMode SimModelExportMode { get; set; }
 
       /// <summary>
-      ///    Specifies whether negative values check is on or off. Default is <c>true</c>
-      /// </summary>
-      public bool CheckForNegativeValues { get; set; }
-
-      /// <summary>
       ///    Specifies whether the solver should automatically reduce tolerances when a simulation run fails. Default is <c>true</c>
       /// </summary>
       public bool AutoReduceTolerances { get; set; }
@@ -25,7 +20,6 @@ namespace OSPSuite.Core.Domain
       public SimulationRunOptions()
       {
          SimModelExportMode = SimModelExportMode.Full;
-         CheckForNegativeValues = true;
          AutoReduceTolerances = true;
       }
    }

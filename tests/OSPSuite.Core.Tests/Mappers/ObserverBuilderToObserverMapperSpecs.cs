@@ -30,14 +30,12 @@ namespace OSPSuite.Core.Mappers
       private ObserverBuilder _observerBuilder;
       private IFormula _mappedFormula;
       private Observer _observer;
-      private SimulationConfiguration _simulationConfiguration;
       private SimulationBuilder _simulationBuilder;
 
       protected override void Context()
       {
          base.Context();
-         _simulationConfiguration = new SimulationConfiguration();
-         _simulationBuilder = new SimulationBuilder(_simulationConfiguration);
+         _simulationBuilder = A.Fake<SimulationBuilder>();
          _observerBuilder = new ObserverBuilder().WithName("toto").WithDimension(A.Fake<IDimension>());
          _observerBuilder.Formula = A.Fake<IFormula>();
          _mappedFormula = A.Fake<IFormula>();

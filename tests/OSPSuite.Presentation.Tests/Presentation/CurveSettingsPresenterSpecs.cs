@@ -8,7 +8,6 @@ using OSPSuite.Core.Chart;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.UnitSystem;
-using OSPSuite.Core.Extensions;
 using OSPSuite.Helpers;
 using OSPSuite.Presentation.Core;
 using OSPSuite.Presentation.DTO.Charts;
@@ -26,7 +25,7 @@ namespace OSPSuite.Presentation.Presentation
       protected Curve _curve2;
       private DataColumn _datColumn1;
       private DataColumn _datColumn2;
-      private IApplicationController _applicationController;
+      protected IApplicationController _applicationController;
       protected List<CurveDTO> _allCurveDTOs;
       protected CurveDTO _curveDTO1;
 
@@ -34,7 +33,7 @@ namespace OSPSuite.Presentation.Presentation
       {
          _view = A.Fake<ICurveSettingsView>();
          _dimensionFactory = A.Fake<IDimensionFactory>();
-         _applicationController = A.Fake<IApplicationController>(); 
+         _applicationController = A.Fake<IApplicationController>();
          _chart = new CurveChart();
          A.CallTo(() => _dimensionFactory.MergedDimensionFor(A<IWithDimension>._)).ReturnsLazily(x => x.GetArgument<IWithDimension>(0).Dimension);
 
@@ -255,7 +254,7 @@ namespace OSPSuite.Presentation.Presentation
       }
    }
 
-   public class When_the_curve_settings_presenter_is_refreshing_and_is_in_latch: concern_for_CurveSettingsPresenter
+   public class When_the_curve_settings_presenter_is_refreshing_and_is_in_latch : concern_for_CurveSettingsPresenter
    {
       protected override void Context()
       {
@@ -274,7 +273,6 @@ namespace OSPSuite.Presentation.Presentation
          //once becasue of initial context
          A.CallTo(() => _view.BindTo(A<IEnumerable<CurveDTO>>._)).MustHaveHappenedOnceExactly();
       }
-
    }
 
    public class When_the_curve_settings_presenter_is_moving_a_curve_legend_position_after_another_curve : concern_for_CurveSettingsPresenter
@@ -316,7 +314,7 @@ namespace OSPSuite.Presentation.Presentation
       {
          base.Context();
          _curveDTO1.Color = Color.Red;
-         sut.CurvePropertyChanged += (o,e) => _curvePropertyChanged = true;
+         sut.CurvePropertyChanged += (o, e) => _curvePropertyChanged = true;
          ;
       }
 
@@ -335,6 +333,61 @@ namespace OSPSuite.Presentation.Presentation
       public void should_notify_a_curve_property_changed_event()
       {
          _curvePropertyChanged.ShouldBeTrue();
+      }
+   }
+
+   public abstract class concern_for_CurveSettingsPresenter_editing_properties : concern_for_CurveSettingsPresenter
+   {
+      protected ICurveMultiItemEditorPresenter _multiEditorPresenter;
+      protected SelectedCurveValues _selectedValues;
+
+      protected override void Context()
+      {
+         base.Context();
+         _multiEditorPresenter = A.Fake<ICurveMultiItemEditorPresenter>();
+         A.CallTo(() => _applicationController.Start<ICurveMultiItemEditorPresenter>()).Returns(_multiEditorPresenter);
+         A.CallTo(() => _multiEditorPresenter.GetSelectedValues()).Returns(_selectedValues);
+      }
+
+      protected override void Because()
+      {
+         sut.EditProperties(_allCurveDTOs);
+      }
+   }
+
+   public class When_the_curve_settings_presenter_is_editing_properties_with_a_line_thickness : concern_for_CurveSettingsPresenter_editing_properties
+   {
+      protected override void Context()
+      {
+         _selectedValues = new SelectedCurveValues { LineThickness = 3 };
+         base.Context();
+         _curve1.LineThickness = 1;
+         _curve2.LineThickness = 1;
+      }
+
+      [Observation]
+      public void should_update_the_line_thickness_of_all_selected_curves()
+      {
+         _curve1.LineThickness.ShouldBeEqualTo(3);
+         _curve2.LineThickness.ShouldBeEqualTo(3);
+      }
+   }
+
+   public class When_the_curve_settings_presenter_is_editing_properties_without_a_line_thickness : concern_for_CurveSettingsPresenter_editing_properties
+   {
+      protected override void Context()
+      {
+         _selectedValues = new SelectedCurveValues { LineThickness = null };
+         base.Context();
+         _curve1.LineThickness = 1;
+         _curve2.LineThickness = 2;
+      }
+
+      [Observation]
+      public void should_keep_the_existing_line_thickness_of_each_selected_curve()
+      {
+         _curve1.LineThickness.ShouldBeEqualTo(1);
+         _curve2.LineThickness.ShouldBeEqualTo(2);
       }
    }
 }

@@ -37,6 +37,33 @@ namespace OSPSuite.Core.Domain
 
    }
 
+   public class When_validating_axis_major_interval_and_minor_count : concern_for_Axis
+   {
+      [Observation]
+      public void invalid_for_a_major_interval_of_zero()
+      {
+         new Axis(AxisTypes.X) { MajorInterval = 0 }.IsValid().ShouldBeFalse();
+      }
+
+      [Observation]
+      public void invalid_for_a_minor_count_of_zero()
+      {
+         new Axis(AxisTypes.X) { MinorTicks = 0 }.IsValid().ShouldBeFalse();
+      }
+
+      [Observation]
+      public void invalid_for_a_minor_count_of_one_hundred()
+      {
+         new Axis(AxisTypes.X) { MinorTicks = 100 }.IsValid().ShouldBeFalse();
+      }
+
+      [Observation]
+      public void valid_for_a_positive_major_interval_and_minor_count()
+      {
+         new Axis(AxisTypes.X) { MajorInterval = 2.5F, MinorTicks = 3 }.IsValid().ShouldBeTrue();
+      }
+   }
+
    public class When_updating_an_axis_properties_from_another : concern_for_Axis
    {
       private Axis _sourceAxis;
@@ -54,6 +81,8 @@ namespace OSPSuite.Core.Domain
             GridLines = false,
             Min = -1,
             Max = 300,
+            MajorInterval = 50,
+            MinorTicks = 4,
             DefaultLineStyle = LineStyles.DashDot,
             DefaultColor = Color.Azure,
             Visible = false
@@ -78,6 +107,8 @@ namespace OSPSuite.Core.Domain
          _sourceAxis.GridLines.ShouldBeEqualTo(sut.GridLines);
          _sourceAxis.Min.ShouldBeEqualTo(sut.Min);
          _sourceAxis.Max.ShouldBeEqualTo(sut.Max);
+         _sourceAxis.MajorInterval.ShouldBeEqualTo(sut.MajorInterval);
+         _sourceAxis.MinorTicks.ShouldBeEqualTo(sut.MinorTicks);
          _sourceAxis.DefaultLineStyle.ShouldBeEqualTo(sut.DefaultLineStyle);
          _sourceAxis.DefaultColor.ShouldBeEqualTo(sut.DefaultColor);
          _sourceAxis.Visible.ShouldBeEqualTo(sut.Visible);

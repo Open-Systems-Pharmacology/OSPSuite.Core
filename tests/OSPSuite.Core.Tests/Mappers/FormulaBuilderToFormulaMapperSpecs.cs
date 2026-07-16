@@ -24,14 +24,12 @@ namespace OSPSuite.Core.Mappers
       protected IFormula _mappedFormula;
       protected IFormula _formula;
       private IFormula _clonedFormula;
-      private SimulationConfiguration _simulationConfiguration;
       private SimulationBuilder _simulationBuilder;
 
       protected override void Context()
       {
          base.Context();
-         _simulationConfiguration = new SimulationConfiguration();
-         _simulationBuilder = new SimulationBuilder(_simulationConfiguration);
+         _simulationBuilder = A.Fake<SimulationBuilder>();
          _formula = A.Fake<IFormula>();
          _clonedFormula = A.Fake<IFormula>();
          A.CallTo(() => _cloneManagerForModel.Clone(_formula)).Returns(_clonedFormula);

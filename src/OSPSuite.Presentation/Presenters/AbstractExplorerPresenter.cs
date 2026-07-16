@@ -104,12 +104,6 @@ namespace OSPSuite.Presentation.Presenters
       void RenameClassification(ITreeNode<IClassification> classificationNode);
 
       /// <summary>
-      ///    Removes all classifications defined in the project that have no <see cref="IClassifiable" /> children (direct or
-      ///    indirect).
-      /// </summary>
-      void RemoveEmptyClassifications();
-
-      /// <summary>
       ///    Removes node from the view. The node won't be destroyed
       /// </summary>
       void RemoveNode(ITreeNode nodeToRemove);
@@ -368,11 +362,6 @@ namespace OSPSuite.Presentation.Presenters
       {
          _classificationPresenter.RenameClassification(classificationNode);
          RefreshTreeAfterRename();
-      }
-
-      public virtual void RemoveEmptyClassifications()
-      {
-         _classificationPresenter.RemoveEmptyClassifications();
       }
 
       public virtual void DropNode(ITreeNode dragNode, ITreeNode targetNode, DragDropKeyFlags keyFlags = DragDropKeyFlags.None)

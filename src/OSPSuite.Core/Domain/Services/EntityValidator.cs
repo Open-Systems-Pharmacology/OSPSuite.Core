@@ -10,10 +10,6 @@ using OSPSuite.Utility.Visitor;
 
 namespace OSPSuite.Core.Domain.Services
 {
-   /// <summary>
-   ///    Is responsible to perform a validation of all rules defined in an entity. If the entity is a container, validate all
-   ///    its children as well
-   /// </summary>
    public interface IEntityValidator
    {
       /// <summary>
@@ -21,7 +17,12 @@ namespace OSPSuite.Core.Domain.Services
       /// </summary>
       ValidationResult Validate(IObjectBase objectBase);
    }
-
+   
+   /// <summary>
+   ///    Is responsible to perform a validation of all rules defined in an entity. If the entity is a container, validate all
+   ///    its children as well.
+   ///    This class is not thread-safe. See <seealso cref="IEntityValidatorFactory" /> to create thread instances
+   /// </summary>
    public class EntityValidator : IEntityValidator,
       IVisitor<IEntity>,
       IVisitor<IParameter>,
@@ -29,7 +30,7 @@ namespace OSPSuite.Core.Domain.Services
       IVisitor<ParameterIdentification>,
       IVisitor<SensitivityAnalysis>
    {
-      protected ValidationResult _validationResult;
+      private ValidationResult _validationResult;
       private readonly IParameterIdentificationValidator _parameterIdentificationValidator;
       private readonly ISensitivityAnalysisValidator _sensitivityAnalysisValidator;
 
@@ -44,8 +45,8 @@ namespace OSPSuite.Core.Domain.Services
       public ValidationResult Validate(IObjectBase objectBase)
       {
          var objectsToValidate = new List<IObjectBase>();
-         var simulation = objectBase as IModelCoreSimulation;
-         if (simulation != null)
+
+         if (objectBase is IModelCoreSimulation simulation)
          {
             objectsToValidate.Add(simulation.Model.Root);
             objectsToValidate.Add(simulation.Settings);
@@ -84,7 +85,7 @@ namespace OSPSuite.Core.Domain.Services
          if (!parameter.Visible)
             return;
 
-         Visit((IEntity) parameter);
+         Visit((IEntity)parameter);
       }
 
       public void Visit(OutputSchema outputSchema)

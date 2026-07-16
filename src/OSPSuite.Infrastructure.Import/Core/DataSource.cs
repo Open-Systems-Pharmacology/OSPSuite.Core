@@ -16,8 +16,6 @@ namespace OSPSuite.Infrastructure.Import.Core
 
       public bool Any() => _errors.Any();
 
-      public bool Contains(IDataSet key) => _errors.Contains(key);
-
       public IEnumerable<ParseErrorDescription> ErrorsFor(IDataSet key) => _errors[key];
 
       public void Add(IDataSet key, ParseErrorDescription x)
@@ -51,13 +49,11 @@ namespace OSPSuite.Infrastructure.Import.Core
       void SetNamingConvention(string namingConvention);
       ParseErrors AddSheets(DataSheetCollection dataSheets, ColumnInfoCache columnInfos, string filter);
       void SetMappings(string fileName, IReadOnlyList<MetaDataMappingConverter> mappings);
-      ImporterConfiguration GetImporterConfiguration();
       IEnumerable<MetaDataMappingConverter> GetMappings();
       Cache<string, IDataSet> DataSets { get; }
       IEnumerable<string> NamesFromConvention();
       NanSettings NanSettings { get; set; }
       ImportedDataSet ImportedDataSetAt(int index);
-      IDataSet DataSetAt(int index);
       ParseErrors ValidateDataSourceUnits(ColumnInfoCache columnInfos);
    }
 
@@ -122,11 +118,6 @@ namespace OSPSuite.Infrastructure.Import.Core
          _mappings = mappings;
       }
 
-      public ImporterConfiguration GetImporterConfiguration()
-      {
-         return _configuration;
-      }
-
       public IEnumerable<MetaDataMappingConverter> GetMappings()
       {
          return _mappings;
@@ -135,27 +126,6 @@ namespace OSPSuite.Infrastructure.Import.Core
       public IEnumerable<string> NamesFromConvention()
       {
          return _importer.NamesFromConvention(_configuration.NamingConventions, _configuration.FileName, DataSets, _mappings);
-      }
-
-      public IDataSet DataSetAt(int index)
-      {
-         var sheetIndex = 0;
-         var sheet = DataSets.GetEnumerator();
-         var accumulatedIndexes = 0;
-         while (sheet.MoveNext() && index >= 0)
-         {
-            var countOnSheet = sheet.Current.Data.Count();
-            if (countOnSheet > index)
-            {
-               return sheet.Current;
-            }
-
-            index -= countOnSheet;
-            sheetIndex++;
-            accumulatedIndexes += countOnSheet;
-         }
-
-         return null;
       }
 
       public ImportedDataSet ImportedDataSetAt(int index)

@@ -4,13 +4,17 @@ using OSPSuite.Serializer;
 
 namespace OSPSuite.Core.Serialization.Xml
 {
-   public class DescriptorCriteriaXmlSerializer : OSPSuiteXmlSerializer<DescriptorCriteria>
+   public abstract class DescriptorCriteriaXmlSerializerBase<T> : OSPSuiteXmlSerializer<T> where T : DescriptorCriteria
    {
       public override void PerformMapping()
       {
          Map(x => x.Operator);
          MapEnumerable(x => x, x => x.Add).WithMappingName(Constants.Serialization.DESCRIPTOR_CONDITIONS);
       }
+   }
+
+   public class DescriptorCriteriaXmlSerializer : DescriptorCriteriaXmlSerializerBase<DescriptorCriteria>
+   {
    }
 
    public abstract class TagConditionXmlSerializer<T> : OSPSuiteXmlSerializer<T> where T : ITagCondition
@@ -58,6 +62,10 @@ namespace OSPSuite.Core.Serialization.Xml
    }
 
    public class NotInContainerConditionXmlSerializer : TagConditionXmlSerializer<NotInContainerCondition>
+   {
+   }
+
+   public class ConditionGroupXmlSerializer : DescriptorCriteriaXmlSerializerBase<ConditionGroup>
    {
    }
 

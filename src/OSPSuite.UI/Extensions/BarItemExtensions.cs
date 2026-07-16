@@ -1,6 +1,7 @@
 ﻿using DevExpress.Utils.Svg;
 using DevExpress.XtraBars;
 using OSPSuite.Assets;
+using OSPSuite.Presentation.Extensions;
 
 namespace OSPSuite.UI.Extensions
 {
@@ -11,14 +12,14 @@ namespace OSPSuite.UI.Extensions
          if (icon == null)
             return barItem;
 
-         barItem.ImageOptions.SvgImage = transparentImage(icon, IconSizes.Size16x16);
+         barItem.ImageOptions.SvgImage = transparentImage(icon);
 
          return barItem;
       }
 
-      private static SvgImage transparentImage(ApplicationIcon icon, IconSize iconSize)
+      private static SvgImage transparentImage(ApplicationIcon icon)
       {
-         return icon;
+         return icon.ToSvgImage();
       }
    }
 }

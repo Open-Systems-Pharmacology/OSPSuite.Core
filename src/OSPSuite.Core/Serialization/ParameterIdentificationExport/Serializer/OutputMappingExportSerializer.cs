@@ -1,6 +1,5 @@
 ﻿using OSPSuite.Core.Domain;
 using OSPSuite.Serializer;
-using OSPSuite.Core.Domain.ParameterIdentifications;
 
 namespace OSPSuite.Core.Serialization.ParameterIdentificationExport.Serializer
 {

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using OSPSuite.Core.Chart;
@@ -37,15 +36,16 @@ namespace OSPSuite.Presentation.Extensions
          // Finds color from a column which dataColumn is related
          else if (otherColumnsContainColumnAsRelated(dataColumns))
             curve.Color = getColorFromColumnRelatedTo(chart, dataColumn, dataColumns);
-         
+
          // For a ResidualVsTimeChart, do not select a color for the Zero curve.
-         else if(!(chart is ResidualsVsTimeChart) || !string.Equals(curve.Name, ResidualsVsTimeChart.ZERO))
-            curve.Color = chart.SelectNewColor();
+         else if (!(chart is ResidualsVsTimeChart) || !string.Equals(curve.Name, ResidualsVsTimeChart.ZERO))
+         {
+            var peerColor = (chart as AnalysisChart)?.PeerColorForPath(dataColumn.PathAsString);
+            curve.Color = peerColor ?? chart.SelectNewColor();
+         }
 
          curve.UpdateStyleForObservedData();
       }
-
-
 
       private static bool otherColumnsContainColumnAsRelated(IReadOnlyCollection<DataColumn> dataColumns)
       {

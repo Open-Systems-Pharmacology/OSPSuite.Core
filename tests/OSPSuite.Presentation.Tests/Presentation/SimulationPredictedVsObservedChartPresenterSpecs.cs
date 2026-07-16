@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using FakeItEasy;
-using NPOI.SS.Formula.Functions;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Chart;
@@ -273,6 +273,29 @@ namespace OSPSuite.Presentation.Presentation
          sut.Chart.Curves.Count(curve => curve.Name.Equals("2-fold deviation")).ShouldBeEqualTo(1);
          sut.Chart.Curves.Count(curve => curve.Name.Equals("2-fold deviation Lower")).ShouldBeEqualTo(1);
 
+      }
+   }
+
+   public class When_initializing_the_predicted_vs_observed_analysis_for_a_simulation_with_chart_templates : concern_for_SimulationPredictedVsObservedChartPresenter
+   {
+      private ISimulation _simulationWithTemplates;
+
+      protected override void Context()
+      {
+         base.Context();
+         _simulationWithTemplates = A.Fake<ISimulation>(x => x.Implements<IWithChartTemplates>());
+         A.CallTo(() => _simulationWithTemplates.ResultsDataRepository).Returns(null);
+      }
+
+      protected override void Because()
+      {
+         sut.InitializeAnalysis(_predictedVsObservedChart, _simulationWithTemplates);
+      }
+
+      [Observation]
+      public void should_add_the_chart_template_menu_based_on_the_chart_templates_defined_in_the_simulation()
+      {
+         A.CallTo(() => _chartEditorPresenter.AddChartTemplateMenu((IWithChartTemplates) _simulationWithTemplates, A<Action<CurveChartTemplate>>._)).MustHaveHappened();
       }
    }
 }

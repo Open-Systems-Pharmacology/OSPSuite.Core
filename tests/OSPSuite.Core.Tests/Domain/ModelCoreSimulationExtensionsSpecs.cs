@@ -1,7 +1,6 @@
 ﻿using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain.Builder;
-using OSPSuite.Helpers;
 
 namespace OSPSuite.Core.Domain
 {

@@ -1,5 +1,4 @@
 ﻿using System.Xml.Linq;
-using OSPSuite.Utility.Container;
 using OSPSuite.Core.Domain.ParameterIdentifications;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Serialization.Xml.Extensions;

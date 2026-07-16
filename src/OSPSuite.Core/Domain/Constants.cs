@@ -53,6 +53,8 @@ namespace OSPSuite.Core.Domain
       public const double DEFAULT_SCALE_DIVISOR_MIN_VALUE = 1e-15;
       public const string DEFAULT_CHART_LAYOUT = "Standard View";
       public const string DEFAULT_SIMULATION_RESULTS_NAME = "Simulation Results";
+      public const int MIN_LINE_THICKNESS = 1;
+      public const int MAX_LINE_THICKNESS = 10;
 
       public const string VOLUME_ALIAS = "V";
       public const string START_VALUE_ALIAS = "StartValue";
@@ -124,7 +126,6 @@ namespace OSPSuite.Core.Domain
          public const string COMPANY_FOLDER_NAME = "Open Systems Pharmacology";
          public const string DIMENSIONS_FILE_NAME = "OSPSuite.Dimensions.xml";
          public const string CHART_LAYOUT_FOLDER_NAME = "ChartLayouts";
-         public const string TEX_TEMPLATE_FOLDER_NAME = "TeXTemplates";
       }
 
       public static class Organ
@@ -175,6 +176,12 @@ namespace OSPSuite.Core.Domain
             new List<string>(new[] {STOMACH}.Concat(LumenSegmentsDuodenumToRectum));
       }
 
+      public static class Processes
+      {
+         public static readonly string RenalClearances = "Renal Clearances";
+         public static readonly string GlomerularFiltration = "Glomerular Filtration";
+      }
+
       public static class Parameters
       {
          public const string REL_EXP = "Relative expression";
@@ -204,6 +211,7 @@ namespace OSPSuite.Core.Domain
          public const string INFUSION_TIME = "Infusion time";
          public const string WEIGHT = "Weight";
          public const string DRUG_MASS = "DrugMass";
+         public const string CHECK_FOR_NEGATIVE_VALUES = "CheckForNegativeValues";
 
          //todo delete when flag is categorial is defined in core for parameter
          public const string HAS_HALOGENS = "Has halogens";
@@ -237,6 +245,11 @@ namespace OSPSuite.Core.Domain
          public const string I = "I";
          public static readonly IReadOnlyCollection<string> Halogens = new List<string> {CL, BR, F, I};
 
+         public const string USE_EFFECTIVE_DIFFUSION = "Use Effective Diffusion";
+         public const string USE_HINTZ_JOHNSON = "Use Hintz-Johnson";
+         public const string USE_HYDRODYNAMIC_MODEL = "Use Hydrodynamic Model";
+         public const string USE_BIDIRECTIONAL_SURFACE_INTEGRATION_FACTOR = "Use bidirectional surface integration factor";
+
          public static readonly IReadOnlyCollection<string> AllBooleanParameters = new List<string>
          {
             USE_JACOBIAN,
@@ -247,7 +260,12 @@ namespace OSPSuite.Core.Domain
             IS_LIVER_ZONATED,
             USE_AS_SUSPENSION,
             ENABLE_SUPERSATURATION,
-            URINE_EMPTYING_ENABLE
+            URINE_EMPTYING_ENABLE,
+            CHECK_FOR_NEGATIVE_VALUES,
+            USE_EFFECTIVE_DIFFUSION,
+            USE_HINTZ_JOHNSON,
+            USE_HYDRODYNAMIC_MODEL,
+            USE_BIDIRECTIONAL_SURFACE_INTEGRATION_FACTOR
          };
 
          public static readonly IReadOnlyCollection<string> AllCategorialParameters = new List<string>(AllBooleanParameters)
@@ -325,7 +343,7 @@ namespace OSPSuite.Core.Domain
          public static readonly string HISTORY_FILE_FILTER = FileFilter("History Export", XLSX_EXTENSION);
          public static readonly string TEXT_FILE_FILTER = FileFilter("Text", TEXT_EXTENSION);
          public static readonly string UNIT_FILE_FILTER = XmlFilter("Unit");
-         public static readonly string MATLAB_FILTER = FileFilter("Matlab®", MATLAB_EXTENSION);
+         public static readonly string MATLAB_FILTER = FileFilter("MatlabÂ®", MATLAB_EXTENSION);
          public static readonly string CSV_FILE_FILTER = FileFilter("CSV", CSV_EXTENSION);
          public static readonly string JSON_FILE_FILTER = FileFilter("Json", JSON_EXTENSION);
          public static readonly string MARKDOWN_FILE_FILTER = FileFilter("Markdown", MARKDOWN_EXTENSION);
@@ -541,6 +559,8 @@ namespace OSPSuite.Core.Domain
 
       public static class ContainerName
       {
+
+         
          public static string ExpressionProfileName(string moleculeName, string species, string category)
             => compositeNameFor(char.Parse(ObjectPath.PATH_DELIMITER), moleculeName, species, category);
 
@@ -614,6 +634,7 @@ namespace OSPSuite.Core.Domain
 
          public static class Attribute
          {
+            public const string INITIAL_UNIT = "InitialUnit";
             public const string PATH = "path";
             public const string STRING = "s";
             public const string FACTOR = "factor";

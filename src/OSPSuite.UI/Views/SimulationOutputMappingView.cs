@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 using DevExpress.Utils;
@@ -12,6 +11,7 @@ using OSPSuite.Core.Domain.Data;
 using OSPSuite.DataBinding.DevExpress;
 using OSPSuite.DataBinding.DevExpress.XtraGrid;
 using OSPSuite.Presentation.DTO;
+using OSPSuite.Presentation.Extensions;
 using OSPSuite.Presentation.Presenters;
 using OSPSuite.Presentation.Presenters.ParameterIdentifications;
 using OSPSuite.Presentation.Views;
@@ -59,11 +59,6 @@ namespace OSPSuite.UI.Views
       public void BindTo(IEnumerable<SimulationOutputMappingDTO> outputMappingList)
       {
          _gridViewBinder.BindToSource(outputMappingList);
-      }
-
-      public void RefreshGrid()
-      {
-         gridView.RefreshData();
       }
 
       public override void InitializeBinding()
@@ -156,7 +151,7 @@ namespace OSPSuite.UI.Views
          )
          {
             Shortcut = Shortcut.Del,
-            SvgImage = ApplicationIcons.DeleteSelected
+            SvgImage = ApplicationIcons.DeleteSelected.ToSvgImage()
          };
 
          e.Menu.Items.Insert(e.Menu.Items.Count, deleteItem);

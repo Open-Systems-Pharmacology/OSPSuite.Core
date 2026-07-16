@@ -18,6 +18,8 @@ internal abstract class concern_for_SimulationQuantityWarningTask : ContextSpeci
    protected SimulationBuilder _simulationBuilder;
    protected IBuildingBlock _buildingBlock;
    private IObjectTypeResolver _objectTypeResolver;
+   private IContainerMergeTask _containerMergeTask;
+   private ICloneManagerForModel _cloneManager;
 
    protected const string NAN_AMOUNT_ID = "nanAmount";
    protected const string NAN_AMOUNT_NAME = "nan amount";
@@ -42,7 +44,9 @@ internal abstract class concern_for_SimulationQuantityWarningTask : ContextSpeci
       _objectTypeResolver = A.Fake<IObjectTypeResolver>();
       sut = new SimulationQuantityValueWarningTask(_userSettings, _objectTypeResolver);
       _model = new Model { Root = new ARootContainer() };
-      _simulationBuilder = new SimulationBuilder(new SimulationConfiguration());
+      _cloneManager = A.Fake<ICloneManagerForModel>();
+      _containerMergeTask = new ContainerMergeTask();
+      _simulationBuilder = new SimulationBuilder(_cloneManager, _containerMergeTask);
       _creationResult = new CreationResult(_model, _simulationBuilder);
 
       _buildingBlock = new ReactionBuildingBlock();

@@ -15,7 +15,6 @@ namespace OSPSuite.Presentation.Presenters.Charts
    {
       IChartDisplayPresenter DisplayPresenter { get; }
       IChartEditorPresenter EditorPresenter { get; }
-      void CopySettingsFrom(ChartEditorAndDisplaySettings settings);
 
       /// <summary>
       ///    Initialize layout from the current settings. If <paramref name="loadEditorLayout" /> is set to true, editor layout
@@ -59,11 +58,6 @@ namespace OSPSuite.Presentation.Presenters.Charts
          _chartEditorAndDisplayView.AddEditor(EditorPresenter.View);
 
          AddSubPresenters(EditorPresenter, chartDisplayPresenter);
-      }
-
-      public void CopySettingsFrom(ChartEditorAndDisplaySettings settings)
-      {
-         CopySettingsFrom(settings, true, true);
       }
 
       public void CopySettingsFrom(ChartEditorAndDisplaySettings settings, bool loadEditorLayout, bool loadColumnSettings)

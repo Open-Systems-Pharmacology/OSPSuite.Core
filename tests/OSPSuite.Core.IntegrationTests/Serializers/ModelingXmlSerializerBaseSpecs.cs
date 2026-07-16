@@ -60,7 +60,7 @@ namespace OSPSuite.Core.Serializers
          _objectPathFactory = IoC.Resolve<IObjectPathFactory>();
          _initialConditionsCreator = IoC.Resolve<IInitialConditionsCreator>();
          _simulationConfiguration = IoC.Resolve<ModelHelperForSpecs>().CreateSimulationConfiguration();
-         _simulationBuilder = new SimulationBuilder(_simulationConfiguration);
+         _simulationBuilder = new SimulationBuilderForSpecs(_simulationConfiguration);
          _module = _simulationConfiguration.ModuleConfigurations[0].Module;
          _modelConstructor = IoC.Resolve<IModelConstructor>();
          _result = _modelConstructor.CreateModelFrom(_simulationConfiguration, "MyModel");

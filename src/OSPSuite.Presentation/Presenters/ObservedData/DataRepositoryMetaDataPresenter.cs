@@ -8,7 +8,6 @@ using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Events;
-using OSPSuite.Core.Extensions;
 using OSPSuite.Presentation.DTO;
 using OSPSuite.Presentation.Views.ObservedData;
 using OSPSuite.Utility;
@@ -60,11 +59,6 @@ namespace OSPSuite.Presentation.Presenters.ObservedData
       ///    Updates the molecular weight
       /// </summary>
       void SetMolWeight(double oldMolWeightValueInDisplayUnit, double molWeightValueInDisplayUnit);
-
-      /// <summary>
-      ///    Returns the default molecular weight unit
-      /// </summary>
-      Unit GetDefaultMolWeightUnit();
 
       /// <summary>
       ///    Adds a metadata named "OutputPath". This is a specially named metadata.
@@ -142,9 +136,6 @@ namespace OSPSuite.Presentation.Presenters.ObservedData
       public void RemoveMetaData(MetaDataDTO metaDataDTO) => 
          AddCommand(_observedDataMetaDataTask.RemoveMetaData(_allDataRepositories, mapFrom(metaDataDTO)));
 
-      public IEnumerable<string> PredefinedValuesFor(MetaDataDTO metaDataDTO) => 
-         _observedDataConfiguration.PredefinedValuesFor(metaDataDTO.Name);
-
       private bool isPredefinedProperty(IExtendedProperty extendedProperty) => 
          _observedDataConfiguration.DefaultMetaDataCategories.Contains(extendedProperty.Name);
 
@@ -184,9 +175,6 @@ namespace OSPSuite.Presentation.Presenters.ObservedData
 
       public void SetMolWeight(double oldMolWeightValueInDisplayUnit, double molWeightValueInDisplayUnit) => 
          this.DoWithinLatch(() => { AddCommand(_observedDataMetaDataTask.UpdateMolWeight(_allDataRepositories, molWeightValueInCoreUnit(oldMolWeightValueInDisplayUnit), molWeightValueInCoreUnit(molWeightValueInDisplayUnit))); });
-
-      public Unit GetDefaultMolWeightUnit() => 
-         _dimensionFactory.TryGetDimension(Constants.Dimension.MOLECULAR_WEIGHT, out var dimension) ? dimension.DefaultUnit : null;
 
       public void AddOutputPathMetadata()
       {

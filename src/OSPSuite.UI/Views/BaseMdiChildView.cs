@@ -70,11 +70,6 @@ namespace OSPSuite.UI.Views
          //nothing to do
       }
 
-      public virtual void SetControlToolTip(ISubPresenterItem subPresenterItem, string toolTip)
-      {
-         //nothing to do
-      }
-
       public virtual void SetControlVisible(ISubPresenterItem subPresenterItem, bool visible)
       {
          //nothing to do

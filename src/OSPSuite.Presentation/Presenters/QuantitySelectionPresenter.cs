@@ -33,11 +33,6 @@ namespace OSPSuite.Presentation.Presenters
       void Edit(IContainer container);
 
       /// <summary>
-      ///    Start the selection for all quantities defined. No quantity is preselected
-      /// </summary>
-      void Edit(IEnumerable<IQuantity> quantities);
-
-      /// <summary>
       ///    Returns the quantities that were actually selected
       /// </summary>
       /// <returns></returns>
@@ -103,11 +98,6 @@ namespace OSPSuite.Presentation.Presenters
       public void Edit(IContainer container)
       {
          Edit(container, Enumerable.Empty<QuantitySelection>());
-      }
-
-      public void Edit(IEnumerable<IQuantity> quantities)
-      {
-         Edit(quantities, Enumerable.Empty<QuantitySelection>());
       }
 
       public void Edit(IEnumerable<IQuantity> quantities, IEnumerable<QuantitySelection> selectedQuantities)

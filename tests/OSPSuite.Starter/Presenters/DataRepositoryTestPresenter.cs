@@ -9,7 +9,6 @@ using OSPSuite.Core.Services;
 using OSPSuite.Presentation.Presenters;
 using OSPSuite.Presentation.Presenters.ObservedData;
 using OSPSuite.Starter.Tasks;
-using OSPSuite.Starter.Tasks.Starters;
 using OSPSuite.Starter.Views;
 
 namespace OSPSuite.Starter.Presenters

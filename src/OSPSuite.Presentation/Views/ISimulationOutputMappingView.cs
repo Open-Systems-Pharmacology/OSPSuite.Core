@@ -7,6 +7,5 @@ namespace OSPSuite.Presentation.Views
    public interface ISimulationOutputMappingView : IView<ISimulationOutputMappingPresenter>
    {
       void BindTo(IEnumerable<SimulationOutputMappingDTO> outputMappingList);
-      void RefreshGrid();
    }
 }

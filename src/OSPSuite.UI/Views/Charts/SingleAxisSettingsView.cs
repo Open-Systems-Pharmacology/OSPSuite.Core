@@ -59,6 +59,12 @@ namespace OSPSuite.UI.Views.Charts
          _screenBinder.Bind(x => x.Max)
             .To(maxTextBox);
 
+         _screenBinder.Bind(x => x.MajorInterval)
+            .To(majorIntervalTextBox);
+
+         _screenBinder.Bind(x => x.MinorTicks)
+            .To(minorTicksTextBox);
+
          _screenBinder.Bind(x => x.GridLines)
             .To(gridLinesCheckEdit);
 
@@ -81,6 +87,8 @@ namespace OSPSuite.UI.Views.Charts
          scalingLayoutControlItem.Text = Captions.Scaling.FormatForLabel();
          minLayoutControlItem.Text = Captions.AxisMinimum.FormatForLabel();
          maxLayoutControlItem.Text = Captions.AxisMaximum.FormatForLabel();
+         majorIntervalLayoutControlItem.Text = Captions.AxisMajorInterval.FormatForLabel();
+         minorTicksLayoutControlItem.Text = Captions.AxisMinorTicks.FormatForLabel();
          gridLinesLayoutControlItem.Text = Captions.GridLines.FormatForLabel();
          defaultColorLayoutControlItem.Text = Captions.DefaultColor.FormatForLabel();
          defaultLineStyleLayoutControlItem.Text = Captions.DefaultLineStyle.FormatForLabel();

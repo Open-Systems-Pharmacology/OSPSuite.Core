@@ -1,8 +1,6 @@
 using System.Windows.Forms;
 using DevExpress.XtraBars;
 using DevExpress.XtraEditors;
-using DevExpress.XtraLayout;
-using DevExpress.XtraLayout.Utils;
 using OSPSuite.Assets;
 using OSPSuite.Presentation.Views;
 using OSPSuite.UI.Extensions;
@@ -161,11 +159,6 @@ namespace OSPSuite.UI.Views
       {
          set => SetItemVisibility(btnExtra, value);
          get => tablePanel.ColumnFor(btnExtra).Visible;
-      }
-
-      protected void SetItemVisibility(LayoutControlItem itemForButton, bool visible)
-      {
-         itemForButton.Visibility = LayoutVisibilityConvertor.FromBoolean(visible);
       }
 
       protected void SetItemVisibility(SimpleButton button, bool visible)

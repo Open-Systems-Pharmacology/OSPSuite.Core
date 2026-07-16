@@ -48,8 +48,7 @@ namespace OSPSuite.UI.Views.Charts
             .WithValues(symbolComboBox.GetValidValues());
 
          _screenBinder.Bind(x => x.LineThickness)
-            .To(lineThicknessComboBox)
-            .WithValues(lineThicknessComboBox.GetValidValues());
+            .To(lineThicknessTextEdit);
 
          _screenBinder.Bind(x => x.Visible)
             .To(visibleCheckEdit);
@@ -57,6 +56,7 @@ namespace OSPSuite.UI.Views.Charts
          _screenBinder.Bind(x => x.VisibleInLegend)
             .To(visibleInLegendCheckEdit);
 
+         RegisterValidationFor(_screenBinder);
       }
 
       public override void InitializeResources()

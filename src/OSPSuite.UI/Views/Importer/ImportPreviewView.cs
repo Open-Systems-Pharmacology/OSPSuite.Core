@@ -6,7 +6,8 @@ using System.Windows.Forms;
 using DevExpress.XtraEditors;
 using DevExpress.XtraLayout.Utils;
 using OSPSuite.Assets;
-using OSPSuite.Core.Domain.Data;
+using OSPSuite.Core.Domain;
+using OSPSuite.Presentation.Extensions;
 using OSPSuite.Presentation.Presenters.Importer;
 using OSPSuite.Presentation.Views;
 using OSPSuite.Presentation.Views.Importer;
@@ -14,8 +15,6 @@ using OSPSuite.Presentation.Views.ObservedData;
 using OSPSuite.UI.Controls;
 using OSPSuite.UI.Extensions;
 using OSPSuite.Utility.Extensions;
-using OSPSuite.Core.Domain;
-using OSPSuite.Presentation.Extensions;
 
 namespace OSPSuite.UI.Views.Importer
 {
@@ -125,9 +124,6 @@ namespace OSPSuite.UI.Views.Importer
          _presenter.ImportData();
       }
 
-      public void SetDataValues()
-      { }
-
       private void onNamingConventionChanged(object sender, EventArgs e)
       {
          this.DoWithinExceptionHandler( () => _presenter.TriggerNamingConventionChanged(namingConventionComboBoxEdit.EditValue as string));
@@ -137,10 +133,6 @@ namespace OSPSuite.UI.Views.Importer
       {
          keysListBox.Items.Clear();
          keysListBox.Items.AddRange(keys.ToArray());
-      }
-
-      public void ShowSelectedDataSet(DataRepository dataRepository)
-      {
       }
 
       public void AddChartView(IView chartView)

@@ -2,7 +2,6 @@
 using OSPSuite.BDDHelper;
 using OSPSuite.Core.Domain.ParameterIdentifications;
 using OSPSuite.Core.Domain.Services.ParameterIdentifications;
-using OSPSuite.Helpers;
 using OSPSuite.Utility.Container;
 
 namespace OSPSuite.Core

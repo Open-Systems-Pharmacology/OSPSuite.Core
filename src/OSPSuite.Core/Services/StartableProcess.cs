@@ -36,9 +36,17 @@ namespace OSPSuite.Core.Services
       /// </summary>
       public int ReturnCode => _process.ExitCode;
 
-      public virtual void Start()
+      /// <summary>
+      /// Starts the process with the specified <paramref name="priority"/>, if provided. Otherwise, the current process priority is inherited
+      /// </summary>
+      public virtual void Start(ProcessPriorityClass? priority = null)
       {
          _process?.Start();
+         if (!priority.HasValue) 
+            return;
+         
+         if(_process != null) 
+            _process.PriorityClass = priority.Value;
       }
 
       public void Dispose()

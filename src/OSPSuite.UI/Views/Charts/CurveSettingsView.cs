@@ -13,6 +13,7 @@ using DevExpress.XtraGrid.Views.Base;
 using DevExpress.XtraGrid.Views.Grid;
 using DevExpress.XtraGrid.Views.Grid.ViewInfo;
 using OSPSuite.Assets;
+using OSPSuite.Presentation.Extensions;
 using OSPSuite.Core.Chart;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.DataBinding;
@@ -37,7 +38,6 @@ namespace OSPSuite.UI.Views.Charts
       private readonly RepositoryItemColorEdit _colorRepository;
       private readonly RepositoryItemComboBox _interpolationModeRepository;
       private readonly RepositoryItemComboBox _lineStyleRepository;
-      private readonly RepositoryItemComboBox _lineThicknessRepository;
       private readonly RepositoryItemComboBox _symbolRepository;
       private readonly RepositoryItemCheckEdit _visibleRepository;
       private readonly RepositoryItemButtonEdit _deleteButtonRepository;
@@ -60,7 +60,6 @@ namespace OSPSuite.UI.Views.Charts
 
          _interpolationModeRepository = new UxRepositoryItemComboBox(gridView);
          _lineStyleRepository = new UxRepositoryItemLineStyles(gridView);
-         _lineThicknessRepository = new UxRepositoryItemComboBox(gridView);
          _symbolRepository = new UxRepositoryItemSymbols(gridView);
          _axisTypeRepository = new UxRepositoryItemComboBox(gridView);
          _colorRepository = new UxRepositoryItemColorPickEditWithHistory(gridView);
@@ -87,7 +86,6 @@ namespace OSPSuite.UI.Views.Charts
       {
          _interpolationModeRepository.FillComboBoxRepositoryWith(EnumHelper.AllValuesFor<InterpolationModes>());
          _interpolationModeRepository.TextEditStyle = TextEditStyles.DisableTextEditor;
-         _lineThicknessRepository.FillComboBoxRepositoryWith(new[] {1, 2, 3});
          _axisTypeRepository.FillComboBoxRepositoryWith(EnumHelper.AllValuesFor<AxisTypes>());
          _axisTypeRepository.Items.Remove(AxisTypes.X);
 
@@ -111,7 +109,7 @@ namespace OSPSuite.UI.Views.Charts
 
          createFor(curve => curve.Symbol, CurveOptionsColumns.Symbol, _symbolRepository);
 
-         createFor(curve => curve.LineThickness, CurveOptionsColumns.LineThickness, _lineThicknessRepository);
+         createFor(curve => curve.LineThickness, CurveOptionsColumns.LineThickness);
 
          createFor(curve => curve.Visible, CurveOptionsColumns.Visible, _visibleRepository);
 
@@ -393,7 +391,7 @@ namespace OSPSuite.UI.Views.Charts
          if (gridView.GetSelectedRows().Length <= 1)
             return;
 
-         var copyAllMenu = new DXMenuItem(Captions.EditAllCurvesProperties, (o, args) => onEditProperties()) {SvgImage = ApplicationIcons.Edit};
+         var copyAllMenu = new DXMenuItem(Captions.EditAllCurvesProperties, (o, args) => onEditProperties()) {SvgImage = ApplicationIcons.Edit.ToSvgImage()};
          gridViewMenu.Items.Insert(0, copyAllMenu);
       }
 

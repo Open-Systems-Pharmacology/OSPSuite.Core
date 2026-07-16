@@ -44,6 +44,11 @@ namespace OSPSuite.Core.Domain
       /// </summary>
       public bool IsPKSimModule { get; set; }
 
+      /// <summary>
+      /// Holds a snapshot of everything required to recreate the module in PK-sim
+      /// </summary>
+      public string Snapshot { set; get; } = string.Empty;
+
       public string ModuleImportVersion { get; set; }
 
       public string PKSimVersion { get; set; }
@@ -62,6 +67,8 @@ namespace OSPSuite.Core.Domain
       public IReadOnlyList<ParameterValuesBuildingBlock> ParameterValuesCollection => buildingBlocksByType<ParameterValuesBuildingBlock>();
 
       public string Version => versionCalculation(BuildingBlocks);
+
+      public bool HasSnapshot => !string.IsNullOrEmpty(Snapshot);
 
       public string VersionWith(ParameterValuesBuildingBlock selectedParameterValues, InitialConditionsBuildingBlock selectedInitialConditions)
       {
@@ -114,6 +121,7 @@ namespace OSPSuite.Core.Domain
          ModuleImportVersion = sourceModule.ModuleImportVersion;
          MergeBehavior = sourceModule.MergeBehavior;
          IsPKSimModule = sourceModule.IsPKSimModule;
+         Snapshot = sourceModule.Snapshot;
       }
 
       public void Add(IBuildingBlock buildingBlock)

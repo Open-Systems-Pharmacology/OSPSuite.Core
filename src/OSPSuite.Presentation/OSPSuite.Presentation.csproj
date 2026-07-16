@@ -1,8 +1,17 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <!--
+      OSPSuite.Presentation is a WinForms/DevExpress MVP layer; it owns System.Drawing types
+      (Bitmap/Image/Icon/StringAlignment), DevExpress validation interfaces (IDXDataErrorInfo via
+      DxValidatableDTO), and View interfaces over DevExpress controls. The net10.0-windows TFM is
+      honest. OSPSuite.R already has no transitive dependency on this assembly; cross-platform R
+      support for PK-Sim and MoBi is solved by keeping PKSim.R / MoBi.R's transitive closures
+      Presentation-free as well (tracked in PK-Sim#3537 and MoBi#2388), not by forcing this
+      assembly back to net10.0.
+    -->
+    <TargetFramework>net10.0-windows</TargetFramework>
     <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
     <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
     <PackageProjectUrl>https://github.com/Open-Systems-Pharmacology/OSPSuite.Core</PackageProjectUrl>
@@ -15,6 +24,7 @@
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
     <NoWarn>1591</NoWarn>
+    <Version Condition="'$(Version)' == ''">13.0.0</Version>
     <DebugType>full</DebugType>
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
@@ -28,9 +38,20 @@
   </ItemGroup>
 
   <ItemGroup>
-     <PackageReference Include="DevExpress.Data" Version="21.2.15" />
-    <PackageReference Include="OSPSuite.Utility" Version="4.1.1.1" />
-    <PackageReference Include="System.Runtime" Version="4.3.1" />
+    <PackageReference Include="OSPSuite.Utility" Version="5.0.0.10" />
+    <!-- DevExpress.Data brings IDXDataErrorInfo / ErrorInfo used by DxValidatableDTO. -->
+    <PackageReference Include="DevExpress.Data" Version="25.2.7" />
+    <!-- DevExpress.Utils brings SvgImage / DefaultBoolean used by Extensions/ApplicationIconExtensions. -->
+    <PackageReference Include="DevExpress.Utils" Version="25.2.7" />
+    <!--
+      Pin System.Drawing.Common to the 10.x branch so the assembly OSPSuite.Presentation compiles
+      against matches what its consumers (OSPSuite.Presentation.Tests, OSPSuite.Core.IntegrationTests,
+      downstream PKSim.Presentation / MoBi.Presentation) see at compile time. Without this pin,
+      DevExpress.* packages bring System.Drawing.Common 8.0.15 transitively while the WindowsDesktop
+      framework reference pulls 10.0 implicitly into Presentation itself, producing CS1705 version
+      mismatches in consumers.
+    -->
+    <PackageReference Include="System.Drawing.Common" Version="10.0.7" />
   </ItemGroup>
 
   <ItemGroup>

@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.UnitSystem;
-using OSPSuite.Core.Extensions;
 
 namespace OSPSuite.Core.Chart.Mappers
 {

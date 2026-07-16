@@ -1,4 +1,6 @@
-﻿using System;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using OSPSuite.Assets;
@@ -10,7 +12,8 @@ using OSPSuite.Core.Serialization.SimModel.Services;
 using OSPSuite.Core.Services;
 using OSPSuite.R.Domain;
 using OSPSuite.Utility.Events;
-using OSPSuite.Utility.Exceptions;
+using OSPSuite.Utility.Extensions;
+using RSimulation = OSPSuite.R.Domain.Simulation;
 using SimulationRunOptions = OSPSuite.R.Domain.SimulationRunOptions;
 
 namespace OSPSuite.R.Services
@@ -36,6 +39,7 @@ namespace OSPSuite.R.Services
    {
       Task<SimulationResults> RunAsync(SimulationRunArgs simulationRunArgs);
       SimulationResults Run(SimulationRunArgs simulationRunArgs);
+      ConcurrencyManagerResult<SimulationResults>[] RunSimulations(SimulationRunOptions options, params RSimulation[] simulations);
    }
 
    public class SimulationRunner : ISimulationRunner
@@ -46,7 +50,8 @@ namespace OSPSuite.R.Services
       private readonly ISimulationPersistableUpdater _simulationPersistableUpdater;
       private readonly IPopulationTask _populationTask;
       private readonly IProgressManager _progressManager;
-      private IProgressUpdater _progressUpdater;
+      private readonly IConcurrencyManager _concurrencyManager;
+      private readonly Func<ISimulationRunner> _simulationRunnerFactory;
 
       public SimulationRunner(
          ISimModelManager simModelManager,
@@ -54,7 +59,9 @@ namespace OSPSuite.R.Services
          ISimulationResultsCreator simulationResultsCreator,
          ISimulationPersistableUpdater simulationPersistableUpdater,
          IPopulationTask populationTask,
-         IProgressManager progressManager)
+         IProgressManager progressManager,
+         IConcurrencyManager concurrencyManager,
+         Func<ISimulationRunner> simulationRunnerFactory)
       {
          _simModelManager = simModelManager;
          _populationRunner = populationRunner;
@@ -62,34 +69,26 @@ namespace OSPSuite.R.Services
          _simulationPersistableUpdater = simulationPersistableUpdater;
          _populationTask = populationTask;
          _progressManager = progressManager;
+         _concurrencyManager = concurrencyManager;
+         _simulationRunnerFactory = simulationRunnerFactory;
       }
 
-      private void simulationProgress(object sender, MultipleSimulationsProgressEventArgs e)
-      {
-         _progressUpdater.ReportProgress(e.NumberOfCalculatedSimulation, e.NumberOfSimulations,
-            Messages.CalculationPopulationSimulation(e.NumberOfCalculatedSimulation, e.NumberOfSimulations));
-      }
-
-      private void simulationTerminated()
-      {
-         terminated(this, EventArgs.Empty);
-      }
-
-      private void terminated(object sender, EventArgs e)
-      {
-         _progressUpdater?.Dispose();
-         _populationRunner.Terminated -= terminated;
-         _populationRunner.SimulationProgress -= simulationProgress;
-      }
-
-      private async Task<SimulationResults> runAsync(
-         IModelCoreSimulation simulation, 
-         IndividualValuesCache population, 
-         AgingData agingData = null,
-         SimulationRunOptions simulationRunOptions = null)
+      private async Task<SimulationResults> runPopulationAsync(
+         IModelCoreSimulation simulation,
+         IndividualValuesCache population,
+         AgingData agingData,
+         SimulationRunOptions simulationRunOptions)
       {
          var options = simulationRunOptions ?? new SimulationRunOptions();
-         initializeProgress(options);
+
+         //progress state is local so population runs do not share mutable state on this instance
+         var progressUpdater = options.ShowProgress ? _progressManager.Create() : new NoneProgressUpdater();
+
+         void onSimulationProgress(object sender, MultipleSimulationsProgressEventArgs e) =>
+            progressUpdater.ReportProgress(e.NumberOfCalculatedSimulation, e.NumberOfSimulations,
+               Messages.CalculationPopulationSimulation(e.NumberOfCalculatedSimulation, e.NumberOfSimulations));
+
+         _populationRunner.SimulationProgress += onSimulationProgress;
          _simulationPersistableUpdater.UpdateSimulationPersistable(simulation);
          try
          {
@@ -103,49 +102,88 @@ namespace OSPSuite.R.Services
          }
          finally
          {
-            simulationTerminated();
+            _populationRunner.SimulationProgress -= onSimulationProgress;
+            progressUpdater.Dispose();
          }
       }
 
-      private void initializeProgress(SimulationRunOptions options)
-      {
-         _populationRunner.Terminated += terminated;
-         _populationRunner.SimulationProgress += simulationProgress;
-         _progressUpdater = options.ShowProgress ? _progressManager.Create() : new NoneProgressUpdater();
-      }
-
-      private async Task<SimulationResults> runAsync(IModelCoreSimulation simulation, SimulationRunOptions simulationRunOptions)
+      private async Task<SimulationResults> runIndividualAsync(IModelCoreSimulation simulation)
       {
          _simulationPersistableUpdater.UpdateSimulationPersistable(simulation);
-         var simulationResults = await _simModelManager.RunSimulationAsync(simulation, CancellationToken.None, coreSimulationRunOptionsFrom(simulationRunOptions));
+         var simulationResults = await _simModelManager.RunSimulationAsync(
+            simulation,
+            CancellationToken.None,
+            new Core.Domain.SimulationRunOptions { SimModelExportMode = SimModelExportMode.Optimized });
          return _simulationResultsCreator.CreateResultsFrom(simulationResults.Results);
-      }
-
-      private Core.Domain.SimulationRunOptions coreSimulationRunOptionsFrom(SimulationRunOptions simulationRunOptions)
-      {
-         var options = simulationRunOptions ?? new SimulationRunOptions();
-         return new Core.Domain.SimulationRunOptions
-         {
-            CheckForNegativeValues = options.CheckForNegativeValues,
-            AutoReduceTolerances = options.AutoReduceTolerances,
-            SimModelExportMode = SimModelExportMode.Optimized
-         };
       }
 
       public Task<SimulationResults> RunAsync(SimulationRunArgs simulationRunArgs)
       {
          var (simulation, population, agingData, simulationRunOptions) = simulationRunArgs;
-         return population == null ? 
-            runAsync(simulation, simulationRunOptions) : 
-            runAsync(simulation, population, agingData, simulationRunOptions);
+         return population == null ?
+            runIndividualAsync(simulation) :
+            runPopulationAsync(simulation, population, agingData, simulationRunOptions);
       }
 
       public SimulationResults Run(SimulationRunArgs simulationRunArgs)
       {
-         var (simulation, population, agingData, simulationRunOptions) = simulationRunArgs;
-         if (population != null)
-            return runAsync(simulation, population, agingData, simulationRunOptions).Result; //Not really without a task
-         return runAsync(simulation, simulationRunOptions).Result;
+         //Not really async without a task
+         return RunAsync(simulationRunArgs).Result;
+      }
+
+      public ConcurrencyManagerResult<SimulationResults>[] RunSimulations(SimulationRunOptions options, params RSimulation[] simulations)
+      {
+         options ??= new SimulationRunOptions();
+
+         var individualSimulations = simulations.Where(x => !x.IsPopulation).ToList();
+         var populationSimulations = simulations.Where(x => x.IsPopulation).ToList();
+
+         return runIndividuals(individualSimulations, options)
+            .Concat(runPopulations(populationSimulations, options))
+            .ToArray();
+      }
+
+      private IEnumerable<ConcurrencyManagerResult<SimulationResults>> runIndividuals(IReadOnlyList<RSimulation> individualSimulations, SimulationRunOptions options)
+      {
+         if (!individualSimulations.Any())
+            return Enumerable.Empty<ConcurrencyManagerResult<SimulationResults>>();
+
+         var coreSimulations = individualSimulations.Select(x => x.CoreSimulation).ToList();
+
+         //a fresh runner per item gives each parallel individual its own (stateful) SimModelManager
+         var resultsByData = _concurrencyManager.RunAsync(
+            coreSimulations,
+            (simulation, ct) => _simulationRunnerFactory().Run(new SimulationRunArgs
+            {
+               Simulation = simulation,
+               SimulationRunOptions = options
+            }),
+            CancellationToken.None,
+            options.NumberOfCoresToUse
+         ).Result;
+
+         return resultsByData.Values;
+      }
+
+      private IEnumerable<ConcurrencyManagerResult<SimulationResults>> runPopulations(IReadOnlyList<RSimulation> populationSimulations, SimulationRunOptions options) =>
+         populationSimulations.Select(x => runPopulation(x, options));
+
+      private ConcurrencyManagerResult<SimulationResults> runPopulation(RSimulation simulation, SimulationRunOptions options)
+      {
+         try
+         {
+            var results = runPopulationAsync(
+               simulation.CoreSimulation,
+               simulation.IndividualValuesCache,
+               simulation.AgingData,
+               options).Result;
+
+            return new ConcurrencyManagerResult<SimulationResults>(simulation.Id, results);
+         }
+         catch (Exception e)
+         {
+            return new ConcurrencyManagerResult<SimulationResults>(simulation.Id, e.FullMessage());
+         }
       }
    }
 }

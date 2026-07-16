@@ -351,6 +351,8 @@ namespace OSPSuite.Helpers
          m1.InitialConditionsCollection.Each((x, i) => AreEqualBuildingBlock(x, m2.InitialConditionsCollection[i]));
          m1.ParameterValuesCollection.Each((x, i) => AreEqualBuildingBlock(x, m2.ParameterValuesCollection[i]));
 
+         m1.Snapshot.ShouldBeEqualTo(m2.Snapshot);
+
          AreEqualObjectBase(m1, m2);
       }
 
@@ -516,6 +518,8 @@ namespace OSPSuite.Helpers
          AssertAreEqual(x1.GridLines, x2.GridLines);
          AssertAreEqual(x1.Min, x2.Min);
          AssertAreEqual(x1.Max, x2.Max);
+         AssertAreEqual(x1.MajorInterval, x2.MajorInterval);
+         AssertAreEqual(x1.MinorTicks, x2.MinorTicks);
          AssertAreEqual(x1.NumberMode, x2.NumberMode);
          AssertAreEqual(x1.Scaling, x2.Scaling);
          AssertAreEqual(x1.Visible, x2.Visible);

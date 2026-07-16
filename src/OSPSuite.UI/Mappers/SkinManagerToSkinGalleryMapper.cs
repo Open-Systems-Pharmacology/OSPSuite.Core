@@ -1,4 +1,5 @@
 ﻿using System.Drawing;
+using System.Linq;
 using OSPSuite.Utility.Container;
 using OSPSuite.Utility.Extensions;
 using DevExpress.Utils;
@@ -30,13 +31,39 @@ namespace OSPSuite.UI.Mappers
       public RibbonGalleryBarItem MapFrom(RibbonBarManager barManager, ISkinManager skinManager)
       {
          var rgbiSkins = createSkinGallery(barManager);
-         foreach (var skin in skinManager.All())
+
+         //Populate skins on demand instead of during startup
+         void populateGallery()
          {
-            var command = _container.Resolve<ActivateSkinCommand>();
-            command.SkinName = skin;
-            addSkinToGallery(rgbiSkins, CreateMenuButton.WithCaption(skin).WithCommand(command));
+            if (rgbiSkins.Gallery.Groups[0].Items.Count > 0)
+               return;
+
+            foreach (var skin in skinManager.All())
+            {
+               var command = _container.Resolve<ActivateSkinCommand>();
+               command.SkinName = skin;
+               addSkinToGallery(rgbiSkins, CreateMenuButton.WithCaption(skin).WithCommand(command));
+            }
          }
+
+         rgbiSkins.Gallery.InitDropDownGallery += (o, e) =>
+         {
+            populateGallery();
+            rgbiSkins_Gallery_InitDropDownGallery(rgbiSkins, e);
+         };
+
+         barManager.Ribbon.SelectedPageChanged += (o, e) =>
+         {
+            if (pageContains(barManager.Ribbon.SelectedPage, rgbiSkins))
+               populateGallery();
+         };
+
          return rgbiSkins;
+      }
+
+      private static bool pageContains(RibbonPage page, BarItem barItem)
+      {
+         return page != null && page.Groups.Any(group => group.ItemLinks.Any(link => Equals(link.Item, barItem)));
       }
 
       private RibbonGalleryBarItem createSkinGallery(RibbonBarManager barManager)
@@ -53,7 +80,6 @@ namespace OSPSuite.UI.Mappers
          rgbiSkins.Gallery.ImageSize = new Size(32, 17);
          rgbiSkins.Gallery.ItemImageLocation = Locations.Top;
          rgbiSkins.Gallery.RowCount = 4;
-         rgbiSkins.Gallery.InitDropDownGallery += (o, e) => rgbiSkins_Gallery_InitDropDownGallery(rgbiSkins, e);
          rgbiSkins.Gallery.ItemClick += (o, e) => e.Item.Tag.DowncastTo<IMenuBarButton>().Click();
          return rgbiSkins;
       }

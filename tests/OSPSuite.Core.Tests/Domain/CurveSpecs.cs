@@ -5,8 +5,8 @@ using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Chart;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.UnitSystem;
-using OSPSuite.Core.Extensions;
 using OSPSuite.Helpers;
+using OSPSuite.Utility.Validation;
 
 namespace OSPSuite.Core.Domain
 {
@@ -208,4 +208,48 @@ namespace OSPSuite.Core.Domain
       }
    }
 
+   public class When_validating_a_curve_with_a_line_thickness_within_the_allowed_range : concern_for_Curve
+   {
+      protected override void Context()
+      {
+         base.Context();
+         sut.LineThickness = Constants.MAX_LINE_THICKNESS;
+      }
+
+      [Observation]
+      public void should_be_valid()
+      {
+         sut.IsValid().ShouldBeTrue();
+      }
+   }
+
+   public class When_validating_a_curve_with_a_line_thickness_below_the_allowed_range : concern_for_Curve
+   {
+      protected override void Context()
+      {
+         base.Context();
+         sut.LineThickness = Constants.MIN_LINE_THICKNESS - 1;
+      }
+
+      [Observation]
+      public void should_be_invalid()
+      {
+         sut.IsValid().ShouldBeFalse();
+      }
+   }
+
+   public class When_validating_a_curve_with_a_line_thickness_above_the_allowed_range : concern_for_Curve
+   {
+      protected override void Context()
+      {
+         base.Context();
+         sut.LineThickness = Constants.MAX_LINE_THICKNESS + 1;
+      }
+
+      [Observation]
+      public void should_be_invalid()
+      {
+         sut.IsValid().ShouldBeFalse();
+      }
+   }
 }

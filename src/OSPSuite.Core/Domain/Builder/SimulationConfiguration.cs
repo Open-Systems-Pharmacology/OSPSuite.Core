@@ -2,6 +2,7 @@
 using System.Linq;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Serialization.SimModel.Services;
+using OSPSuite.Utility.Collections;
 using OSPSuite.Utility.Extensions;
 using OSPSuite.Utility.Visitor;
 
@@ -12,6 +13,7 @@ namespace OSPSuite.Core.Domain.Builder
       private readonly List<ExpressionProfileBuildingBlock> _expressionProfiles = new List<ExpressionProfileBuildingBlock>();
       private readonly List<ModuleConfiguration> _moduleConfigurations = new List<ModuleConfiguration>();
       private readonly List<CoreCalculationMethod> _allCalculationMethods = new List<CoreCalculationMethod>();
+      private readonly Cache<string, MoleculeCalculationMethodOverride> _moleculeCalculationMethodOverrides = new(onMissingKey: x => new MoleculeCalculationMethodOverride(x));
 
       public SimModelExportMode SimModelExportMode { get; set; } = SimModelExportMode.Full;
       public bool ShouldValidate { get; set; } = true;
@@ -30,6 +32,31 @@ namespace OSPSuite.Core.Domain.Builder
 
       public virtual void AddModuleConfiguration(ModuleConfiguration moduleConfiguration) => _moduleConfigurations.Add(moduleConfiguration);
       public virtual void RemoveModuleConfiguration(ModuleConfiguration moduleConfiguration) => _moduleConfigurations.Remove(moduleConfiguration);
+
+      public virtual IReadOnlyCollection<MoleculeCalculationMethodOverride> AllCalculationMethodOverrides => _moleculeCalculationMethodOverrides;
+
+      public virtual void AddCalculationMethodOverride(MoleculeCalculationMethodOverride moleculeCalculationMethodOverride)
+      {
+         AddCalculationMethodsOverridesFor(moleculeCalculationMethodOverride.MoleculeName, moleculeCalculationMethodOverride.UsedCalculationMethods);
+      }
+
+      /// <summary>
+      ///    Adds an override associated with a <paramref name="moleculeName" />. If the molecule already has an override, the
+      ///    provided <paramref name="usedCalculationMethods" /> will be added to the existing override.
+      /// </summary>
+      public virtual void AddCalculationMethodsOverridesFor(string moleculeName, IReadOnlyCollection<UsedCalculationMethod> usedCalculationMethods)
+      {
+         if (!_moleculeCalculationMethodOverrides.Contains(moleculeName))
+            _moleculeCalculationMethodOverrides[moleculeName] = new MoleculeCalculationMethodOverride(moleculeName);
+
+         usedCalculationMethods.Each(x => _moleculeCalculationMethodOverrides[moleculeName].AddUsedCalculationMethod(x));
+      }
+
+      /// <summary>
+      ///    Returns calculation method overrides for a <paramref name="moleculeName" />. If no override exists for the given
+      ///    molecule, an empty override will be returned.
+      /// </summary>
+      public virtual MoleculeCalculationMethodOverride CalculationMethodOverridesFor(string moleculeName) => _moleculeCalculationMethodOverrides[moleculeName];
 
       public virtual void AddCalculationMethod(CoreCalculationMethod calculationMethodToAdd) => _allCalculationMethods.Add(calculationMethodToAdd);
 
@@ -65,6 +92,7 @@ namespace OSPSuite.Core.Domain.Builder
          SimulationSettings = cloneManager.Clone(sourceConfiguration.SimulationSettings);
          Individual = cloneManager.Clone(sourceConfiguration.Individual);
          CreateAllProcessRateParameters = sourceConfiguration.CreateAllProcessRateParameters;
+         sourceConfiguration.AllCalculationMethodOverrides.Each(x => AddCalculationMethodOverride(x.Clone()));
       }
 
       /// <summary>

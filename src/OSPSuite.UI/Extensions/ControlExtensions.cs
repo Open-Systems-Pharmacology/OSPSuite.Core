@@ -1,12 +1,9 @@
 ﻿using System;
-using System.Linq;
 using System.Windows.Forms;
-using OSPSuite.Utility.Extensions;
-using DevExpress.LookAndFeel;
 using DevExpress.XtraEditors;
 using DevExpress.XtraEditors.Controls;
-using DevExpress.XtraLayout;
 using OSPSuite.Presentation.Views;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.UI.Extensions
 {
@@ -78,20 +75,6 @@ namespace OSPSuite.UI.Extensions
       public static void Clear(this Control control)
       {
          control.Controls.Clear();
-      }
-
-
-      public static void DoWithinSuspendedLayout(this Control control, Action actionToBatch)
-      {
-         try
-         {
-            control.SuspendLayout();
-            actionToBatch();
-         }
-         finally
-         {
-            control.ResumeLayout();
-         }
       }
 
       public static void DoWithinWaitCursor(this Control control, Action actionToPerform)

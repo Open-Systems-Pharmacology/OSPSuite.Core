@@ -1,19 +1,21 @@
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Drawing;
+using System.Linq;
+using System.Windows.Forms;
 using DevExpress.Utils;
+using DevExpress.Utils.Drawing.Helpers;
 using DevExpress.XtraEditors;
 using DevExpress.XtraEditors.Controls;
-using Microsoft.WindowsAPICodePack.Dialogs;
+using OSPSuite.Assets;
 using OSPSuite.Core;
 using OSPSuite.Core.Services;
 using OSPSuite.Presentation.Services;
 using OSPSuite.UI.Controls;
 using OSPSuite.UI.Mappers;
 using OSPSuite.Utility;
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Windows.Forms;
-using OSPSuite.Assets;
+using WindowsAPICodePack.Dialogs;
 
 namespace OSPSuite.UI.Services
 {
@@ -60,7 +62,7 @@ namespace OSPSuite.UI.Services
          };
 
          if (containsHyperlink(message))
-            args.HyperlinkClick += (o, e) => { System.Diagnostics.Process.Start(e.Link); };
+            args.HyperlinkClick += (o, e) => { Process.Start(e.Link); };
 
          return args;
       }
@@ -72,8 +74,10 @@ namespace OSPSuite.UI.Services
 
       public ViewResult MessageBoxYesNoCancel(string message, string yes, string no, string cancel, ViewResult defaultButton = ViewResult.Yes)
       {
-         return showQuestionMessageBox(message, new[] {
-            DialogResult.Yes, DialogResult.No, DialogResult.Cancel}, yes, no, cancel, defaultButton);
+         return showQuestionMessageBox(message, new[]
+         {
+            DialogResult.Yes, DialogResult.No, DialogResult.Cancel
+         }, yes, no, cancel, defaultButton);
       }
 
       public ViewResult MessageBoxYesNo(string message, ViewResult defaultButton = ViewResult.Yes)
@@ -125,7 +129,7 @@ namespace OSPSuite.UI.Services
 
       private Icon getIcon(Icon icon)
       {
-         return DevExpress.Utils.Drawing.Helpers.StockIconHelper.GetWindows8AssociatedIcon(icon);
+         return StockIconHelper.GetWindows8AssociatedIcon(icon);
       }
 
       private int defaultButtonFrom(ViewResult defaultButton)

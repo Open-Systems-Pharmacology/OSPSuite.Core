@@ -3,6 +3,12 @@ using OSPSuite.Utility.Collections;
 
 namespace OSPSuite.Core.Domain.Builder
 {
+   public class CacheByName<T> : MergeCache<string, T> where T : class, IObjectBase
+   {
+      public CacheByName() : base(x => x.Name)
+      {
+      }
+   }
    public abstract class MergeCache<TKey, TValue> : Cache<TKey, TValue> where TValue : class
    {
       protected MergeCache(Func<TValue, TKey> getKey) : base(getKey, x => null)

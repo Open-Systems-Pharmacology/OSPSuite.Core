@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using System.Xml.Linq;
 using OSPSuite.Assets;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.UnitSystem;
@@ -12,7 +11,6 @@ using OSPSuite.Infrastructure.Import.Services;
 using OSPSuite.Presentation.Presenters;
 using OSPSuite.Starter.Tasks;
 using OSPSuite.Starter.Views;
-using OSPSuite.Utility.Collections;
 using OSPSuite.Utility.Extensions;
 using IContainer = OSPSuite.Utility.Container.IContainer;
 using ImporterConfiguration = OSPSuite.Core.Import.ImporterConfiguration;
@@ -195,12 +193,13 @@ namespace OSPSuite.Starter.Presenters
       {
          var dataImporterSettings = new DataImporterSettings
          {
-            Caption = "PK-Sim - LoadCurrentSheet Ontogeny"
+            Caption = "PK-Sim - Load ontogeny from file..."
          };
+         dataImporterSettings.AddNamingPatternMetaData(Constants.FILE);
 
          StartImporterExcelView(
-            new List<MetaDataCategory>(), 
-            _dataGenerator.GetOntogenyColumnInfo(), 
+            new List<MetaDataCategory>(),
+            _dataGenerator.GetOntogenyColumnInfo(),
             dataImporterSettings
          );
       }

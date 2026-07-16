@@ -65,6 +65,18 @@ namespace OSPSuite.Core.Domain.Descriptors
          return this;
       }
 
+      public DescriptorCriteriaBuilder ConditionGroup(Action<DescriptorCriteriaBuilder> innerAction)
+      {
+         var innerBuilder = new DescriptorCriteriaBuilder();
+         innerAction(innerBuilder);
+         var innerCriteria = innerBuilder.Build();
+         var group = new ConditionGroup { Operator = innerCriteria.Operator };
+         foreach (var condition in innerCriteria)
+            group.Add(condition);
+         _criteria.Add(group);
+         return this;
+      }
+
       public DescriptorCriteria Build()
       {
          return _criteria;

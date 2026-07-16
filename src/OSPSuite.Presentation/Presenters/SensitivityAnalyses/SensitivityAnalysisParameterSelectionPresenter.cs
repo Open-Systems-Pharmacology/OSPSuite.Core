@@ -2,7 +2,6 @@
 using System.Linq;
 using OSPSuite.Assets;
 using OSPSuite.Core.Domain;
-using OSPSuite.Core.Domain.Formulas;
 using OSPSuite.Core.Domain.Repositories;
 using OSPSuite.Core.Domain.SensitivityAnalyses;
 using OSPSuite.Core.Domain.Services;

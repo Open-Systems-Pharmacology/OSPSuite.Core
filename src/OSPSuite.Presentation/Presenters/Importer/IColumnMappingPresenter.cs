@@ -19,34 +19,17 @@ namespace OSPSuite.Presentation.Presenters.Importer
       public string RowName { get; set; }
    }
 
-   public delegate void MappingCompletedHandler(object sender);
-
    public class ColumnMappingOption
    {
       public string Label { get; set; }
       public int IconIndex { get; set; }
       public string Description { get; set; }
-
-      public enum DescriptionType
-      {
-         Ignored,
-         GroupBy,
-         MetaData,
-         Mapping,
-         AddGroupBy
-      }
    }
 
    public class ToolTipDescription
    {
       public string Title { get; set; }
       public string Description { get; set; }
-   }
-
-   public class ButtonsConfiguration
-   {
-      public bool ShowButtons { get; set; }
-      public bool UnitActive { get; set; }
    }
 
    public interface IColumnMappingPresenter : IPresenter<IColumnMappingView>
@@ -59,7 +42,6 @@ namespace OSPSuite.Presentation.Presenters.Importer
       IEnumerable<RowOptionDTO> GetAvailableRowsFor(ColumnMappingDTO model);
       ToolTipDescription ToolTipDescriptionFor(int index);
       void ClearRow(ColumnMappingDTO model);
-      void AddGroupBy(AddGroupByFormatParameter source);
       void ClearMapping();
       void ValidateMapping();
       void SetSubEditorSettingsForMapping(ColumnMappingDTO model);

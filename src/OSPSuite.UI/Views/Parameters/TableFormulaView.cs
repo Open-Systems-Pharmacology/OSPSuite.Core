@@ -110,8 +110,6 @@ namespace OSPSuite.UI.Views.Parameters
 
       public void ShowUseDerivedValues(bool show) => layoutItemUseDerivedValues.Visibility = LayoutVisibilityConvertor.FromBoolean(show);
 
-      public void Clear() => _gridViewBinder.DeleteBinding();
-
       public void BindTo(TableFormulaDTO tableFormulaDTO)
       {
          _gridViewBinder.BindToSource(tableFormulaDTO.AllPoints);

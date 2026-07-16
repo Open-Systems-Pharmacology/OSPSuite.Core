@@ -54,6 +54,14 @@ namespace OSPSuite.Core.Domain.Services
       /// </summary>
       /// <returns></returns>
       IReadOnlyList<ParameterValue> CreateExpressionFrom(IContainer physicalContainer, IReadOnlyList<MoleculeBuilder> molecules);
+
+      /// <summary>
+      ///    Create and return a list of parameter values based on the <paramref name="physicalContainer" /> and
+      ///    a single <paramref name="molecule" />.
+      ///    The <paramref name="referenceExpressionProfile" /> is used to determine which parameters are expression parameters
+      ///    and to supply values and formulas for the created parameter values.
+      /// </summary>
+      IReadOnlyList<ParameterValue> CreateExpressionFrom(IContainer physicalContainer, MoleculeBuilder molecule, ExpressionProfileBuildingBlock referenceExpressionProfile);
    }
 
    internal class ParameterValuesCreator : IParameterValuesCreator
@@ -91,23 +99,48 @@ namespace OSPSuite.Core.Domain.Services
       public IReadOnlyList<ParameterValue> CreateFrom(SpatialStructure spatialStructure, IReadOnlyList<MoleculeBuilder> molecules) =>
          spatialStructure.PhysicalContainers.SelectMany(container => createLocalFrom(container, molecules)).ToList();
 
-      public IReadOnlyList<ParameterValue> CreateExpressionFrom(IContainer physicalContainer, IReadOnlyList<MoleculeBuilder> molecules) => 
+      public IReadOnlyList<ParameterValue> CreateExpressionFrom(IContainer physicalContainer, IReadOnlyList<MoleculeBuilder> molecules) =>
          physicalContainer.GetAllContainersAndSelf<IContainer>(x => x.Mode.Is(ContainerMode.Physical)).SelectMany(container => createExpressionFrom(container, molecules)).ToList();
+
+      public IReadOnlyList<ParameterValue> CreateExpressionFrom(IContainer physicalContainer, MoleculeBuilder molecule, ExpressionProfileBuildingBlock referenceExpressionProfile)
+      {
+         var expressionParameters = expressionParametersFor(molecule, referenceExpressionProfile);
+         
+         return physicalContainer.GetAllContainersAndSelf<IContainer>(x => x.Mode.Is(ContainerMode.Physical))
+            .SelectMany(container => createExpressionFrom(container, molecule, expressionParameters)).ToList();
+      }
 
       private IEnumerable<ParameterValue> createExpressionFrom(IContainer container, IReadOnlyList<MoleculeBuilder> molecules) => molecules.SelectMany(x => createExpressionFrom(container, x));
 
+      private IEnumerable<ParameterValue> createExpressionFrom(IContainer container, MoleculeBuilder molecule) =>
+         createExpressionFrom(container, molecule, expressionParametersFor(molecule, _projectRetriever.CurrentProject.All<ExpressionProfileBuildingBlock>().ToArray()));
+
+      private static List<ExpressionParameter> expressionParametersFor(MoleculeBuilder molecule, params ExpressionProfileBuildingBlock[] expressionProfiles) =>
+         expressionProfiles.Where(x => string.Equals(x.MoleculeName, molecule.Name)).SelectMany(x => x.ExpressionParameters).ToList();
+
+      private IEnumerable<ParameterValue> createExpressionFrom(IContainer container, MoleculeBuilder molecule, IReadOnlyList<ExpressionParameter> expressionParameters)
+      {
+         var expressionParameterNames = expressionParameters.AllNames().Distinct().ToList();
+         var parameterValues = molecule.Parameters.Where(x => isLocalExpressionAndSatisfiesCriteria(x, container, expressionParameterNames))
+            .Select(x => CreateParameterValue(objectPathForParameterInContainer(container, x.Name, molecule.Name), x)).ToList();
+
+         // For newly created parameterValues that do not already have formulas, check for formulas in similar expression parameters
+         updateFromExpression(parameterValues, expressionParameters);
+
+         return parameterValues;
+      }
+
       private void updateFromExpression(IReadOnlyList<ParameterValue> parameterValues, IReadOnlyList<ExpressionParameter> expressionParameters)
       {
-         var formulaCache = new FormulaCache();
          parameterValues.Each(parameterValue =>
          {
             var expressionParameter = expressionSourceFor(expressionParameters.AllByName(parameterValue.Name).ToList(), parameterValue);
 
-            updateFromExpression(expressionParameter, parameterValue, formulaCache);
+            updateFromExpression(expressionParameter, parameterValue);
          });
       }
 
-      private void updateFromExpression(ExpressionParameter expressionParameter, ParameterValue parameterValue, FormulaCache formulaCache)
+      private void updateFromExpression(ExpressionParameter expressionParameter, ParameterValue parameterValue)
       {
          if (expressionParameter == null)
             return;
@@ -194,18 +227,7 @@ namespace OSPSuite.Core.Domain.Services
       private IEnumerable<ParameterValue> createLocalFrom(IContainer container, MoleculeBuilder molecule) => 
          molecule.Parameters.Where(x => isLocalAndSatisfiesCriteria(x, container)).Select(x => CreateParameterValue(objectPathForParameterInContainer(container, x.Name, molecule.Name), x));
 
-      private IEnumerable<ParameterValue> createExpressionFrom(IContainer container, MoleculeBuilder molecule)
-      {
-         var expressionParameters = _projectRetriever.CurrentProject.All<ExpressionProfileBuildingBlock>().Where(x => string.Equals(x.MoleculeName, molecule.Name)).SelectMany(x => x.ExpressionParameters).ToList();
-         var expressionParameterNames = expressionParameters.AllNames().Distinct().ToList();
-         var parameterValues = molecule.Parameters.Where(x => isLocalExpressionAndSatisfiesCriteria(x, container, expressionParameterNames))
-            .Select(x => CreateParameterValue(objectPathForParameterInContainer(container, x.Name, molecule.Name), x)).ToList();
 
-         // For newly created parameterValues that do not already have formulas, check for formulas in similar expression parameters
-         updateFromExpression(parameterValues, expressionParameters);
-
-         return parameterValues;
-      }
 
       private bool isLocalExpressionAndSatisfiesCriteria(IParameter parameter, IContainer container, List<string> expressionParameterNames) => 
          parameter.BuildMode == ParameterBuildMode.Local && satisfiesContainerCriteria(parameter, container) && expressionParameterNames.Contains(parameter.Name);

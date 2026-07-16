@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using OSPSuite.Core;
-using OSPSuite.Core.Serialization;
 using OSPSuite.Core.Serialization.Xml;
 using OSPSuite.Presentation.Settings;
 using OSPSuite.Utility;

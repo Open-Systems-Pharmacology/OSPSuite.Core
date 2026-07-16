@@ -1,5 +1,4 @@
 ﻿using System.Linq;
-using System.Xml.Linq;
 using OSPSuite.Core.Domain;
 using IContainer = OSPSuite.Utility.Container.IContainer;
 

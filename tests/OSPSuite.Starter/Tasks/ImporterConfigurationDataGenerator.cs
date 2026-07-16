@@ -2,14 +2,11 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
-using OSPSuite.Assets;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Infrastructure.Import.Core;
-using OSPSuite.Utility.Collections;
 using OSPSuite.Utility.Container;
 using OSPSuite.Utility.Extensions;
-
 
 namespace OSPSuite.Starter.Tasks
 {
@@ -352,38 +349,35 @@ namespace OSPSuite.Starter.Tasks
          var ageColumn = new ColumnInfo
          {
             DefaultDimension = _ageInYearsDimension,
-            Name = "Post Menstrual Age",
-            DisplayName = "Post Menstrual Age",
+            Name = "Post menstrual age",
+            DisplayName = "Post menstrual age",
             IsMandatory = true,
          };
-
-
-         ageColumn.SupportedDimensions.Add(_ageInYearsDimension);
+         ageColumn.SupportedDimensions.Add(ageColumn.DefaultDimension);
          columns.Add(ageColumn);
 
          var ontogenyFactor = new ColumnInfo
          {
             DefaultDimension = _dimensionFactory.NoDimension,
-            Name = "Ontogeny Factor",
-            DisplayName = "Post Menstrual Age",
+            Name = "Ontogeny factor",
+            DisplayName = "Ontogeny factor",
             IsMandatory = true,
             BaseGridName = ageColumn.Name,
          };
-         ontogenyFactor.SupportedDimensions.Add(_dimensionFactory.NoDimension);
+         ontogenyFactor.SupportedDimensions.Add(ontogenyFactor.DefaultDimension);
          columns.Add(ontogenyFactor);
 
-         var geoMean = new ColumnInfo
+         var geometricStandardDeviation = new ColumnInfo
          {
             DefaultDimension = _dimensionFactory.NoDimension,
-            Name = "Standard Deviation",
-            DisplayName = "Standard Deviation",
+            Name = "Geometric Standard Deviation",
+            DisplayName = "Geometric Standard Deviation",
             IsMandatory = false,
             BaseGridName = ageColumn.Name,
-            RelatedColumnOf = ontogenyFactor.Name
+            RelatedColumnOf = ontogenyFactor.Name,
          };
-
-         geoMean.SupportedDimensions.Add(_dimensionFactory.NoDimension);
-         columns.Add(geoMean);
+         geometricStandardDeviation.SupportedDimensions.Add(geometricStandardDeviation.DefaultDimension);
+         columns.Add(geometricStandardDeviation);
 
          return columns;
       }

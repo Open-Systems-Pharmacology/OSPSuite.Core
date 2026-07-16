@@ -15,13 +15,6 @@ namespace OSPSuite.Presentation.MenuAndBars
       }
    }
 
-   public class EmptyCommand : IUICommand
-   {
-      public void Execute()
-      {
-      }
-   }
-
    public class ExecuteActionUICommand : IUICommand
    {
       private readonly Action _actionToExecute;

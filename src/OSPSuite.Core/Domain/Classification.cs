@@ -1,4 +1,3 @@
-using System;
 using OSPSuite.Utility;
 using OSPSuite.Utility.Reflection;
 

@@ -34,15 +34,10 @@ namespace OSPSuite.Presentation.Binders
 
          var treeNodes = dataNodes.ToList();
 
-         //if we are dropping a selection of observed data sets, we should not get them grouped together
-         if (areAllObservedDataNodes(treeNodes))
-            return observedDataNodesFromNodes(treeNodes);
-         //if we are dropping a selection of folders, data sets should be grouped according to their parent folder
-         if (areAllObservedDataClassificationNodes(treeNodes) || areAllRootNodes(treeNodes))
-               return observedDataNodesGroupedByFolder(treeNodes).ToList();
+         if (!isDraggedTypeObservedDataRelated(treeNodes))
+            return new List<List<DataRepository>>();
 
-
-         return new List<List<DataRepository>>();
+         return observedDataNodesGroupedByFolder(treeNodes).ToList();
       }
 
       private DragEffect dragEffectForConditionalType(IDragEvent e)
@@ -106,26 +101,28 @@ namespace OSPSuite.Presentation.Binders
          var observedDataWithFolderAddressCache = new Cache<string, List<DataRepository>>();
          treeNodes.Each(treeNode =>
          {
-            var classificationNode = getClassificationNodeFrom(treeNode);
-            classificationNode.AllLeafNodes.OfType<ObservedDataNode>().Each(observedDataNode =>
-            {
-               if (observedDataWithFolderAddressCache.Contains(observedDataNode.ParentNode.Id))
-                  observedDataWithFolderAddressCache[observedDataNode.ParentNode.Id].Add(observedDataNode.Tag.Subject);
-               else
-                  observedDataWithFolderAddressCache.Add(observedDataNode.ParentNode.Id, new List<DataRepository> { observedDataNode.Tag.Subject });
-            });
+            if (treeNode is ObservedDataNode observedDataNode)
+               addObservedDataNodeToCache(observedDataWithFolderAddressCache, observedDataNode);
+            else
+               addClassificationNodeToCache(observedDataWithFolderAddressCache, treeNode);
          });
          return observedDataWithFolderAddressCache;
       }
 
-      //when dragging and dropping just a selection of observed data and not folders, each one should get a different color
-      private static List<List<DataRepository>> observedDataNodesFromNodes(IEnumerable<ITreeNode> treeNodes)
+      private void addClassificationNodeToCache(Cache<string, List<DataRepository>> cache, ITreeNode treeNode)
       {
-         var observedDataWithFolderAddressCache = new List<List<DataRepository>>();
-         treeNodes.OfType<ObservedDataNode>().Each(node =>
-            observedDataWithFolderAddressCache.Add(new List<DataRepository> {node.Tag.Subject})
-         );
-         return observedDataWithFolderAddressCache;
+         var classificationNode = getClassificationNodeFrom(treeNode);
+         classificationNode.AllLeafNodes.OfType<ObservedDataNode>().Each(node =>
+            addObservedDataNodeToCache(cache, node));
+      }
+
+      private static void addObservedDataNodeToCache(Cache<string, List<DataRepository>> cache, ObservedDataNode observedDataNode)
+      {
+         var parentNodeId = observedDataNode.ParentNode.Id;
+         if (cache.Contains(parentNodeId))
+            cache[parentNodeId].Add(observedDataNode.Tag.Subject);
+         else
+            cache.Add(parentNodeId, [observedDataNode.Tag.Subject]);
       }
 
       private static IReadOnlyList<ObservedDataNode> observedDataNodesFromObservedDataNodes(IEnumerable<ITreeNode> treeNodes)

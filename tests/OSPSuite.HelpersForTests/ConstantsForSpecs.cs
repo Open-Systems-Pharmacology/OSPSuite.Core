@@ -19,6 +19,8 @@ namespace OSPSuite.Helpers
       public const string Plasma = "Plasma";
       public const string Interstitial = "Interstitial";
       public const string ArterialBlood = "ArterialBlood";
+      public const string Kidney = "Kidney";
+      public const string Urine = "Urine";
       public const string SumProcessRate = "SumProcessRate";
 
       public const string BolusApplication = "Bolus Application";

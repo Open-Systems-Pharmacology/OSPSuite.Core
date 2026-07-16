@@ -687,18 +687,6 @@ namespace OSPSuite.Presentation.Presenters.Importer
          ValidateMapping();
       }
 
-      public void AddGroupBy(AddGroupByFormatParameter source)
-      {
-         var parameter = new GroupByDataFormatParameter(source.ColumnName);
-         _format.Parameters.Insert(_format.Parameters.Count - 2, parameter);
-         new GroupByDataFormatParameter(source.ColumnName);
-         setDataFormat(_mappings
-            .Where(f => !(f.Source is AddGroupByFormatParameter))
-            .Select(f => f.Source)
-            .Append(parameter)
-            .ToList());
-      }
-
       public void ClearMapping()
       {
          var format = new List<DataFormatParameter>();

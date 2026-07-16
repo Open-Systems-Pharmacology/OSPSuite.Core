@@ -1,11 +1,10 @@
-﻿using OSPSuite.Assets.Extensions;
-using OSPSuite.Utility.Extensions;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Text;
-using OSPSuite.Utility.Collections;
+using OSPSuite.Assets.Extensions;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Assets
 {
@@ -20,13 +19,11 @@ namespace OSPSuite.Assets
    public static class DefaultNames
    {
       public static readonly string MoleculeBuildingBlock = "Molecules";
-      public static readonly string Module = "Module";
       public static readonly string ReactionBuildingBlock = "Reactions";
       public static readonly string SpatialStructure = "Organism";
       public static readonly string PassiveTransportBuildingBlock = "Passive Transports";
       public static readonly string EventBuildingBlock = "Events";
       public static readonly string ObserverBuildingBlock = "Observers";
-      public static readonly string SimulationSettings = "Simulation Settings";
       public static readonly string ParameterValues = "Parameter Values";
       public static readonly string InitialConditions = "Initial Conditions";
    }
@@ -38,7 +35,6 @@ namespace OSPSuite.Assets
       public static readonly string MetabolizingEnzyme = "Metabolizing Enzyme";
       public static readonly string Species = "Species";
       public static readonly string Phenotype = "Phenotype";
-      public static readonly string ConfirmationDialog = "Confirmation";
       public static readonly string Excel = "Excel®";
       public static readonly string EmptyColumn = " ";
       public static readonly string EmptyName = "Empty";
@@ -53,8 +49,6 @@ namespace OSPSuite.Assets
       public static readonly string Compartment = "Compartment";
       public static readonly string Simulation = "Simulation";
       public static readonly string Molecule = "Molecule";
-      public static readonly string Formulation = "Molecule";
-      public static readonly string Application = "Application";
       public static readonly string Name = "Name";
       public static readonly string Value = "Value";
       public static readonly string DeselectAll = "Deselect All";
@@ -65,7 +59,6 @@ namespace OSPSuite.Assets
       public static readonly string LogScale = "Logarithmic Scale";
       public static readonly string ExportChartToExcel = "Export selected curves...";
       public static readonly string ExportChartToPng = "Export chart to Png...";
-      public static readonly string ExportComparisonToExcel = "Export comparison to Excel...";
       public static readonly string CloseButton = "&Close";
       public static readonly string Folder = "Folder";
       public static readonly string Rename = "Rename";
@@ -78,8 +71,6 @@ namespace OSPSuite.Assets
       public static string MoleculePath = "Molecule";
       public static string NamePath = "Name";
       public static readonly string Color = "Color";
-      public static readonly string XData = "X Data";
-      public static readonly string YData = "Y Data";
       public static readonly string YAxisType = "Y Axis Type";
       public static readonly string LineStyle = "Line Style";
       public static readonly string Symbol = "Symbol";
@@ -93,6 +84,8 @@ namespace OSPSuite.Assets
       public static readonly string Scaling = "Scaling";
       public static readonly string AxisMinimum = "Axis Minimum";
       public static readonly string AxisMaximum = "Axis Maximum";
+      public static readonly string AxisMajorInterval = "Major Interval";
+      public static readonly string AxisMinorTicks = "Minor Ticks";
       public static readonly string GridLines = "Grid Lines";
       public static readonly string DefaultColor = "Default Color";
       public static readonly string DefaultLineStyle = "Default Line Style";
@@ -103,7 +96,6 @@ namespace OSPSuite.Assets
       public static readonly string UseSelected = "Use selected";
       public static readonly string LinkDataToSimulations = "Link Data to Simulations";
       public static readonly string MetaData = "Meta Data";
-      public static readonly string AddDataPoint = "Add Data Point";
       public static readonly string AddMetaData = "Add Meta Data";
       public static readonly string EditMultipleObservedDataMetaData = "Edit Meta Data";
       public static readonly string DeleteEntry = "Delete entry";
@@ -119,11 +111,15 @@ namespace OSPSuite.Assets
       public static readonly string SaveUnits = "Save Units";
       public static readonly string LoadUnits = "Load Units";
       public static readonly string DisplayUnit = "Display Unit";
-      public static readonly string AutomaticallyAddChartDescription = "Automatically Add Chart Description";
       public static readonly string SideMarginsEnabled = "Side Margins Enabled";
-      public static readonly string ShowInLegend = "Show In Legend";
       public static readonly string Edit = "Edit";
       public static readonly string LegendPosition = "Legend Position";
+      public static readonly string Top = "Top";
+      public static readonly string Bottom = "Bottom";
+      public static readonly string Left = "Left";
+      public static readonly string Right = "Right";
+      public static readonly string Inside = "Inside";
+      public static readonly string Outside = "Outside";
       public static readonly string Title = "Title";
       public static readonly string CurveAndAxisSettings = "Curve and Axis Settings";
       public static readonly string ChartSettings = "Chart Options";
@@ -149,15 +145,12 @@ namespace OSPSuite.Assets
       public static readonly string None = "<None>";
       public static readonly string Favorites = "Favorites";
       public static readonly string Favorite = "Favorite";
-      public static readonly string OSPSuite = "Systems Pharmacology Suite";
-      public static readonly string InsertPKAnalysis = "Insert PK Analysis";
       public static readonly string CopyTable = "Copy Table";
       public static readonly string CopySelectedRows = "Copy Selected Rows";
       public static readonly string TaggedWith = "Tagged With";
       public static readonly string ChartExportSettings = "Chart Export Settings";
       public static readonly string Word = "Word®";
       public static readonly string ExportJournalToWord = $"Export journal to {Word}";
-      public static readonly string ExportSelection = "Export Selection";
       public static readonly string ResetToDefault = "Reset to Default";
       public static readonly string AmountInContainer = "Amount in container";
       public static readonly string ConfirmJournalDiagramRestoreLayout = "Really reset diagram layout? This is irreversible.";
@@ -177,8 +170,6 @@ namespace OSPSuite.Assets
       public static readonly string EnterAValue = "<enter a value>";
       public static readonly string NaN = "<NaN>";
       public static readonly string NA = "<NA>";
-      public static readonly string Analysis = "Analysis";
-      public static readonly string CopyAsImage = "Copy as image";
       public static readonly string InvalidObject = "Invalid Object";
       public static readonly string InvalidObjectToolTip = "Full path in hierarchy of invalid object";
       public static readonly string GroupingModeHierarchical = "Hierarchy";
@@ -186,7 +177,6 @@ namespace OSPSuite.Assets
       public static readonly string GroupingModeAdvanced = "Advanced";
       public static readonly string Cancel = "Cancel";
       public static readonly string CopySelection = "Copy Selection";
-      public static readonly string ApplicationMolecule = "Application Molecule";
       public static readonly string NumberOfProcessors = "Max. number of processors to use";
       public static readonly string Boundary = "Boundary";
       public static readonly string OptimalValue = "Optimal Value";
@@ -211,13 +201,10 @@ namespace OSPSuite.Assets
       public static readonly string ValueOriginDeterminationMethod = "Method";
       public static readonly string ValueOrigin = "Value Origin";
       public static readonly string CalculationMethod = "Calculation Method";
-      public static readonly string MoleculeObserver = "Molecule Observer";
-      public static readonly string ContainerObserver = "Container Observer";
       public static readonly string UnitsEditorCaption = "Unit Settings";
       public static readonly string EditManually = "Edit manually";
       public static readonly string ShouldColorGroupObservedData = "Color group observed data from same folder when dropping to chart";
       public static readonly string EditAllCurvesProperties = "Edit Options for Selected";
-      public static readonly string CurvesAndAxisOptions = "Curves and Axis Options";
       public static readonly string CurvesColorGrouping = "Curves Color Grouping";
       public static readonly string ChartOptions = "Chart Options";
       public static readonly string ChartExportOptions = "Chart Export Options";
@@ -238,6 +225,11 @@ namespace OSPSuite.Assets
       public static readonly string Undefined = "Undefined";
       public static readonly string ExportHistory = "Export History";
       public static readonly string AddOutputPath = "Add Output Path";
+      public static readonly string RunSimulations = "Run Simulations";
+      public static readonly string StartImport = "Start Import";
+      public static readonly string SnapshotFile = "Select snapshot file";
+      public static readonly string ExportProjectToSnapshotDescription = "Export project to snapshot...";
+      public static readonly string LoadProjectFromSnapshotDescription = "Load project from snapshot...";
 
       public static string EditTableParameter(string parameter, bool editable) => $"{(editable ? "Edit" : "Show")} table parameter '{parameter}'";
 
@@ -372,11 +364,6 @@ namespace OSPSuite.Assets
          return $"New name for {type} '{name}'";
       }
 
-      public static string ReallyDeleteObservedData(string observedDataName)
-      {
-         return $"Really delete observed data '{observedDataName}' from project";
-      }
-
       public static string ReallyClearHistory = "Really clear command history? This action is irreversible even if the project is not saved afterwards.";
 
       public static class SimulationUI
@@ -391,46 +378,21 @@ namespace OSPSuite.Assets
 
       public static class Importer
       {
-         public static readonly string ImportAll = "Import All";
-         public static readonly string Import = "Import";
-         public static readonly string NoPreview = "No Preview Available";
-         public static readonly string LogScale = "Log Scale";
-         public static readonly string LinearScale = "Linear Scale";
          public static readonly string NamingPattern = "Naming Pattern";
-         public static readonly string ExcelFile = "Excel File";
-         public static readonly string OriginalDataPreviewView = "Preview of Original Data";
-         public static readonly string SetRange = "Set Range";
-         public static readonly string Close = "Close";
-         public static readonly string PreviewExcelData = "Preview Original Data";
-         public static readonly string MetaData = "Meta Data";
-         public static readonly string Data = "Data";
          public static readonly string NoneEditorNullText = "<None>";
-         public static readonly string GroupByEditorNullText = "<Group By>";
          public static readonly string NothingSelectableEditorNullText = "<Nothing Selectable>";
-         public static readonly string PleaseEnterMetaDataInformation = "Please enter meta data information.";
-         public static readonly string PleaseEnterData = "Please enter data";
          public static readonly string ApplyToAll = "Apply to All";
          public static readonly string PleaseEnterDimensionAndUnitInformation = "Please enter the dimension and unit information.";
          public static readonly string PleaseSelectDataFile = "Please select a data file.";
-         public static readonly string UnitInformation = "Unit Information";
-         public static readonly string TheUnitInformationMustBeEnteredOrConfirmed = "The unit information must be entered or confirmed.";
-         public static readonly string TheMetaDataInformationMustBeEnteredOrConfirmed = "The meta data must be entered or confirmed.";
          public static readonly string ResetMapping = "Reset Mapping";
          public static readonly string ResetMappingToolTip = "Automatically recalculates the format based on the sheet currently selected and sets the mapping settings accordingly.";
          public static readonly string ClearMappingToolTip = "Clears all the mappings. Same as clicking all the X buttons to the right of the grid.";
          public static readonly string ClearMapping = "Clear All";
-         public static readonly string Format = "Format: ";
          public static readonly string AddKeys = "Add Keys";
-         public static readonly string Columns = "Columns";
-         public static readonly string Mappings = "Mappings";
-         public static readonly string FormatPlain = "Format";
-         public static readonly string DataMapping = "Data Mapping";
          public static readonly string ImportPreview = "Import preview";
-         public static readonly string ThreeDots = "...";
          public static readonly string File = "File:";
          public static readonly string ManualInput = "Manual input";
          public static readonly string LloqColumnEditorTitle = "Please select the lloq column.";
-         public static readonly string ConfirmationImport = "Import";
          public static readonly string NanAction = "Action";
          public static readonly string NanActionThrowsError = "Prevent the import";
          public static readonly string NanActionIgnoreRow = "Ignore the row";
@@ -444,13 +406,9 @@ namespace OSPSuite.Assets
          public static readonly string ExcelColumn = "Data Column/Value";
          public static readonly string MappingName = "Mapping Name";
          public static readonly string MappingSettings = "Mapping Settings";
-         public static readonly string UnitColumn = "Unit";
          public static readonly string ExtraColumn = "Edit Extra Fields";
-         public static readonly string ErrorColumn = "Error";
-         public static readonly string ErrorType = "Error type";
          public static readonly string LoadAllSheets = "Add All Sheets";
          public static readonly string SourceTab = "Source";
-         public static readonly string ConfirmationTab = "Confirmation";
          public static readonly string PreviewLayout = "Preview";
          public static readonly string SourceLayout = "Source";
          public static readonly string Separator = "Separator";
@@ -468,9 +426,7 @@ namespace OSPSuite.Assets
          public static readonly string CloseAllTabsButThis = "Close all tabs but this";
          public static readonly string CloseAllTabsToTheRight = "Close all tabs to the right";
          public static readonly string ResetAllTabs = "Reopen all sheets";
-         public static readonly string UseFilterForImport = "Use the filters selected not only for visualization but also for importing the data";
          public static readonly string Title = "Import Observed Data";
-         public static readonly string LLOQ = "LLOQ";
          public static readonly string LloqDescription = "LLOQ values will be imported from the measurement column if values are written in the form < xxx (eg <0.001)";
          public static readonly string SaveConfiguration = "Save Configuration";
          public static readonly string ApplyConfiguration = "Load Configuration";
@@ -482,9 +438,6 @@ namespace OSPSuite.Assets
 
          public static readonly string ReloadWillCauseChangeOfDataSets =
             "Reloading will cause the following changes in observed data. Do you really want to reload?";
-
-         public static readonly string UnexpectedExceptionWhenLoading =
-            "An unexpected error occurred while loading the file. The file format is probably not supported. Please check the <href =https://docs.open-systems-pharmacology.org/shared-tools-and-example-workflows/import-edit-observed-data#supported-formats >documentation</href> for more details";
 
          public static readonly string DataSetsWillBeOverwritten = "Datasets that will be overwritten";
          public static readonly string NewDataStetsWillBeImported = "New datasets that will be imported";
@@ -519,16 +472,12 @@ namespace OSPSuite.Assets
             return sb.ToString();
          }
 
-         public static readonly string UseFiltersForImport = "Use filters for importing data";
-
          public static readonly string UseFiltersForImportTooltip =
             "When selected, the filter will apply to the data during the import process. When deselected, the filter only affects this view. Check documentation for more information on defining filters: <href=https://docs.open-systems-pharmacology.org/shared-tools-and-example-workflows/features-of-tables#filtering>https://docs.open-systems-pharmacology.org/shared-tools-and-example-workflows/features-of-tables#filtering</href>";
 
          public static readonly string AddGroupByTitle = "Add Group By";
          public static readonly string MetaDataTitle = "Meta data";
-         public static readonly string IgnoredParameterTitle = "Ignored parameter";
          public static readonly string NotConfiguredField = "Field not configured yet";
-         public static readonly string AddGroupBy = "Add a new grouping by";
          public static readonly string MissingMandatoryMapping = "Field is mandatory and has not configured yet";
          public static readonly string MissingUnit = "Field must contain a valid unit description";
 
@@ -567,10 +516,6 @@ namespace OSPSuite.Assets
             return $"The column {parameter} will be used as meta data to extract the following data: {target}";
          }
 
-         public static readonly string IgnoredParameterHint = "This parameter will be ignored";
-
-         public static readonly string GroupByDescription = "Group by";
-
          public static string MetaDataDescription(string metaDataId)
          {
             return $"{metaDataId}";
@@ -580,18 +525,7 @@ namespace OSPSuite.Assets
          {
             return $"{parameter}({unit})";
          }
-
-         public static readonly string UnitInformationCaption = "Unit Information";
          public static readonly string UnitInformationDescription = "Here you can enter unit information which will be used for all created import data table columns";
-         public static readonly string AddInformationDescription = "Add a new grouping by field";
-         public static readonly string LloqInformationDescription = "Here you can enter lloq information which will be used for all created import data table columns";
-         public static readonly string ErrorTypeInformationDescription = "Here you can enter error type information which will be used for all created import data table columns";
-
-         public class ToolTips
-         {
-            public static readonly string NamingPattern = "Set a pattern for renaming imported data";
-            public static readonly string RangeSelect = "Override the default range by selecting a new range and pressing OK.\nTo revert to the default range click OK without a new range selected.";
-         }
 
          public static readonly string ImportFileFilter = "Excel Files (*.xls, *.xlsx)|*.xls;*.xlsx|Comma Separated Value Files (*.csv)|*.csv|NonMem Files (*.NMdat)|*.NMdat|All Files (*.*)|*.*";
 
@@ -612,12 +546,12 @@ namespace OSPSuite.Assets
                {
                   sb.AppendLine($"    - Output Path: {mapping.OutputPath}");
                }
+
                sb.AppendLine();
             }
 
             return sb.ToString();
          }
-
       }
 
       public static class Diff
@@ -628,7 +562,6 @@ namespace OSPSuite.Assets
          public static readonly string ExcludeMolecule = "Exclude Molecule";
          public static readonly string IncludeMolecule = "Include Molecule";
          public static readonly string Count = "Number of item";
-         public static readonly string Assignment = "Assignment";
          public static readonly string OneObjectIsNull = "One object used in the comparison is null";
          public static readonly string Connection = "Connection";
          public static readonly string SourceAmount = "Source Amount";
@@ -656,7 +589,6 @@ namespace OSPSuite.Assets
          public static readonly string NoDifferenceFound = "No difference found.";
          public static readonly string Stationary = "Stationary";
          public static readonly string IsStateVariable = "Is state variable";
-         public static readonly string Criteria = "Criteria";
       }
 
       public static class Commands
@@ -667,7 +599,6 @@ namespace OSPSuite.Assets
          public static readonly string AddLabel = "Add Label";
          public static readonly string EditComment = "Edit Comment";
          public static readonly string Rollback = "Rollback";
-         public static readonly string ExtendedDescription = "Extended Description";
          public static readonly string ClearHistory = "Clear History";
          public static readonly string ExportHistory = "Export...";
 
@@ -690,7 +621,6 @@ namespace OSPSuite.Assets
          public static readonly string SearchMatchAny = "Match any";
          public static readonly string SearchMatchWholePhrase = "Match whole phrase";
          public static readonly string SearchMatchCase = "Match case";
-         public static readonly string SearchPlaceholder = "Enter search to search...";
          public static readonly string Find = "Find";
          public static readonly string Clear = "Clear";
          public static readonly string RelatedItemType = "Type";
@@ -850,39 +780,6 @@ namespace OSPSuite.Assets
          public static string Undefined = "";
       }
 
-      public static class Reporting
-      {
-         public static readonly string DefaultTitle = "Report";
-         public static readonly string SelectFile = "Select report file...";
-         public static readonly string ObservedData = "Observed Data";
-         public static readonly string Font = "Font";
-         public static readonly string CreateReport = "Create";
-         public static readonly string Verbose = "Extended output (descriptions, images etc...)";
-         public static readonly string OpenReportAfterCreation = "Open the report once created";
-         public static readonly string Draft = "Draft watermark";
-         public static readonly string SaveArtifacts = "Save reporting artifacts (exported in folder <report_name>_Files)";
-         public static readonly string FirstPageSettings = "First page settings";
-         public static readonly string Options = "Options";
-         public static readonly string Output = "Output settings";
-         public static readonly string TemplateSelection = "Template selection";
-         public static readonly string Author = "Author";
-         public static readonly string Title = "Title";
-         public static readonly string Type = "Type";
-         public static readonly string Subtitle = "Subtitle";
-         public static readonly string Template = "Template";
-         public static readonly string OutputFile = "File";
-         public static readonly string Color = "Color";
-         public static readonly string GrayScale = "Gray scale";
-         public static readonly string BlackAndWhite = "Black & White";
-         public static readonly string ReportToPDFTitle = "Create PDF Report...";
-         public static readonly string DeleteWorkingFolder = "Delete working folder (Developer only)";
-
-         public static string ReportFor(string objectType)
-         {
-            return $"{objectType} Report";
-         }
-      }
-
       public static class Comparisons
       {
          public static readonly string RelativeTolerance = "Comparison tolerance (relative) ";
@@ -909,8 +806,6 @@ namespace OSPSuite.Assets
          public static readonly string RunComparison = "Start";
          public static readonly string Left = "Left";
          public static readonly string Right = "Right";
-         public static readonly string ComparisonResults = "Results";
-         public static readonly string ComparisonSettings = "Settings";
          public static readonly string ExportToExcel = "Export to Excel";
          public static readonly string ShowSettings = "Settings";
          public static readonly string HideSettings = "Hide";
@@ -921,23 +816,16 @@ namespace OSPSuite.Assets
          public static readonly string ObjectName = "Object";
          public static readonly string Property = "Property";
          public static readonly string Comparison = "Comparison";
-         public static readonly string ValueDescription = "Value Description";
 
          public static string ComparisonTitle(string objectType)
          {
             return $"{objectType} {Comparison}";
-         }
-
-         public static string ValuePointAt(string tableFormulaName, string formulaOwnerName, double xDisplayValue)
-         {
-            return $"{tableFormulaName} in {formulaOwnerName}: X={xDisplayValue}";
          }
       }
 
       public static class ParameterIdentification
       {
          public static readonly string ParameterSelection = "Parameters";
-         public static readonly string OutputSelection = "Outputs";
          public static readonly string DataSelection = "Data";
          public static readonly string Configuration = "Configuration";
          public static readonly string ParameterIdentificationDefaultName = "Parameter Identification";
@@ -959,7 +847,6 @@ namespace OSPSuite.Assets
          public static readonly string General = "General";
          public static readonly string AlgorithmParameters = "Algorithm Parameters";
          public static readonly string Algorithm = "Algorithm";
-         public static readonly string ResidualCalculation = "Residual Calculation";
          public static readonly string Options = "Options";
          public static readonly string Residuals = "Residuals";
          public static readonly string ResidualCount = "# of Residuals";
@@ -978,7 +865,6 @@ namespace OSPSuite.Assets
          public static readonly string PredictedVsObservedAnalysis = "Predicted vs. Observed";
          public static readonly string SimulatedChartAxis = "Simulated";
          public static readonly string ObservedChartAxis = "Observed";
-         public static readonly string MarkerDeviation = "Marker_Deviation";
          public static readonly string Deviation = "Deviation";
          public static readonly string ResidualsVsTimeAnalysis = "Residuals vs. Time";
          public static readonly string ResidualHistogramAnalysis = "Histogram of Residuals";
@@ -995,7 +881,6 @@ namespace OSPSuite.Assets
          public static readonly string CalculateSensitivity = "Calculate Sensitivity";
          public static readonly string Duration = "Elapsed Time";
          public static readonly string ConfidenceInterval = "95% Confidence Interval";
-         public static readonly string Parameter = "Parameter";
          public static readonly string ExportParametersHistory = "Parameters History";
          public static readonly string ParametersHistory = "Parameters History";
          public static readonly string CorrelationMatrixNotAvailable = $"Correlation matrix was not calculated. Ensure that the option '{CalculateSensitivity}' is selected";
@@ -1061,7 +946,6 @@ namespace OSPSuite.Assets
          {
             return $"Parameter identification '{parameterIdentificationName}' finished in {duration}";
          }
-
 
          public static string SensitivityCalculationFailed(string parameterIdentificationName, IReadOnlyList<string> errorMessages, string duration = null)
          {
@@ -1362,7 +1246,6 @@ namespace OSPSuite.Assets
             public static string Source = "Source";
             public static string QuantityName = "Q'Name";
             public static string QuantityType = "Type";
-            public static string QuantityPath = "Path";
             public static string OrderIndex = "OrderIndex";
             public static string Used = "Used";
          }
@@ -1381,7 +1264,6 @@ namespace OSPSuite.Assets
             public static string LineStyle = "Style";
             public static string Symbol = "Symbol";
             public static string LineThickness = "Thickness";
-            public static readonly string RenameTemplate = "Rename Template";
          }
 
          public static class AxisOptions
@@ -1391,14 +1273,14 @@ namespace OSPSuite.Assets
             public static string NumberMode = "Numbers";
             public static string Dimension = "Dimension";
             public static string UnitName = "Unit";
-            public static string yAxisType = "y-Axis";
             public static string GridLines = "Grid";
             public static string Min = "Min";
             public static string Max = "Max";
+            public static string MajorInterval = "Major Interval";
+            public static string MinorTicks = "Minor Ticks";
             public static string Caption = "Caption";
             public static string DefaultLinestyle = "Default Linestyle";
             public static string DefaultColor = "Default Color";
-            public static readonly string NewName = "New Name";
          }
 
          public static class FontAndSizeSettings
@@ -1442,7 +1324,6 @@ namespace OSPSuite.Assets
             public static string DeviationLineDescription = "Will create two deviation lines according to the given fold value which has to be greater than 1 (foldValue >1). An x-fold deviation range includes simulated values within x-fold and 1/x-fold of observed values.";
             public static string DeviationLineNameUpper(float foldValue) => $"{foldValue}-fold deviation";
             public static string DeviationLineNameLower(float foldValue) => $"{foldValue}-fold deviation Lower";
-
          }
       }
 
@@ -1473,10 +1354,34 @@ namespace OSPSuite.Assets
                 $"The version of this project {numberDisplay(projectVersion)} is too old and cannot be loaded.\n\n" +
                 $"Visit our download page at {downloadUrl} to download an older version of the software compatible with this project.";
       }
+
+      public static string LoadObjectFromSnapshot(string objectType) => $"Load {objectType.ToLowerInvariant()} from snapshot";
+      public static string SelectSnapshotExportFile(string objectName, string objectType) => $"Export snapshot for {objectType.ToLowerInvariant()} '{objectName}'";
+      public static string DoYouWantToProceed(params string[] messages) => $"WARNING:\n{messages.ToString("\n")}\n\nDo you wish to continue?";
+
+      public static readonly string SnapshotOfProjectWithChangedSimulationText = "Some simulations are in a changed state (red icon) and may not be re-imported correctly.";
+      public static readonly string SnapshotOfProjectWithChangedSimulation = DoYouWantToProceed(SnapshotOfProjectWithChangedSimulationText);
+
+      public static string Starting(string type, string name) => $"Starting {type.ToLower()} '{name}'...";
+
+      public static string LoadingSnapshot(string snapshotFile, string type) => $"Loading {type} from {ObjectTypes.Snapshot.ToLower()} file '{snapshotFile}'";
+
+      public static string SnapshotLoaded(string typeToLoad) => $"{typeToLoad} loaded from {ObjectTypes.Snapshot.ToLower()}";
+
+      public static string LoadingSimulation(string simulationName, int count, int total) => $"Loading simulation '{simulationName}' ({count}/{total})...";
+
+      public static string StartingQualificationPlan(string qualificationPlan) => Starting(ObjectTypes.QualificationPlan, qualificationPlan);
+
+      public static string StartingQualificationStep(string qualificationStep) => Starting(ObjectTypes.QualificationStep, qualificationStep);
    }
 
    public static class Error
    {
+      public static string SnapshotParameterNotFoundInContainer(string parameterName, string container) => $"Snapshot parameter '{parameterName}' was not found in '{container}'.";
+      public static string UnableToFindAQualificationStepRunnerFor(string qualificationStep) => $"Cannot find {ObjectTypes.QualificationStep} runner for '{qualificationStep}'";
+      public static string CouldNotFind(string objectType, string objectName) => $"Cannot find {objectType.ToLower()} '{objectName}'";
+      public static string CouldNotFindQualificationStep(string qualificationStepType) => CouldNotFind(ObjectTypes.QualificationStep, qualificationStepType);
+      public static string NotMappingDefinedForQualificationStep(string qualificationStepType) => $"No mapping defined for {ObjectTypes.QualificationStep.ToLower()} '{qualificationStepType}'";
       public static readonly string NameIsRequired = "Name is required.";
       public static readonly string ValueIsRequired = "Value is required.";
       public static readonly string DescriptionIsRequired = "Description is required";
@@ -1497,7 +1402,6 @@ namespace OSPSuite.Assets
       public static readonly string NoResultsAvailableForExportToCSV = "No results available for export to CSV";
       public static readonly string NamingConventionEmpty = "Column naming conventions cannot be empty.";
       public static readonly string NamingConventionNull = "Column naming conventions cannot be null.";
-      public static readonly string InvalidMappingColumn = "An invalid mapping column has been used. Check your import configuration and data file";
       public static readonly string InvalidErrorDimension = "The dimension of the error units must be the same as the dimension of the measurement units.";
       public static readonly string NaNOnData = "Data contains NaN values at imported columns. Select a different action for NaN values or clean your data.";
       public static readonly string UnsupportedFileType = "The type of file that you are trying to open is not currently supported";
@@ -1505,16 +1409,20 @@ namespace OSPSuite.Assets
       public static readonly string SimpleParseErrorMessage = "There were errors while parsing your data. Navigate to the sheets to read the concrete error.";
       public static readonly string FoldValueMustBeGreaterThanOne = "Fold value must be a number greater than one.";
       public static readonly string ImporterEmptyFile = "The file you are trying to load is empty.";
+      public static readonly string SnapshotIsOutdated = "Snapshot is outdated and cannot be loaded for the following reason: ";
 
       public static string CannotFindParentContainerWithPath(string parentPath, string containerName, string buildingBlockName, string moduleName) =>
          $"Cannot find parent container '{parentPath}' defined as target of container '{containerName}' in building block '{buildingBlockName}' in module '{moduleName}'";
 
-      public static string NoUnitColumnValues(string mappingName) => $"No values for the unit were found in the excel column mapped for '{mappingName}' \n";
+      public static string CannotFindSimulationParameterInSnapshot(string parameterPath, string simulationName, string project) =>
+         $"Could not find {ObjectTypes.Parameter} with path '{parameterPath}' in {ObjectTypes.Simulation} '{simulationName}' defined in snapshot {project}.";
+
+      public static string SnapshotDuplicateEntryByName(string name, string type) =>
+         $"Another {type} named '{name}' already exists in the project. Snapshot file is corrupted.";
+
+      public static string SnapshotFileMismatch(string desiredType) => $"Snapshot file cannot be used to load a {desiredType.ToLowerInvariant()}.";
 
       public static string ParseErrorMessage(string errors) => $"There were errors while parsing your data: {errors}";
-
-      public static string ErrorWhenPlottingDataRepository(int sheetName, string exceptionMessage) =>
-         $"It was not possible to plot the data sets. Please, check your configuration for any missing grouping or meta data parameter. An error occur while plotting data set number:{sheetName + 1} produced the following error: {exceptionMessage}";
 
       public static string SheetWithDuplicateHeader(string sheetName, IEnumerable<string> duplicateHeaders)
       {
@@ -1604,11 +1512,6 @@ namespace OSPSuite.Assets
          return $"Attempting to add a meta data with a key:{key}. That key is already present in the repository with value:{existingValue}";
       }
 
-      public static string ExistingValueInDataRepository(string name, float proposedValue, string units)
-      {
-         return $"There is already a row with {name} = {proposedValue} {units}";
-      }
-
       public static string CouldNotFindMoleculeInContainer(string moleculeName, string containerPath)
       {
          return $"Could not find molecule '{moleculeName}' in container '{containerPath}'";
@@ -1616,7 +1519,6 @@ namespace OSPSuite.Assets
 
       public static readonly string NoOutputMappingDefined = "No output mapping defined";
       public static readonly string NoIdentificationParameterDefined = "No identification parameter defined";
-      public static readonly string CannotStartTwoConcurrentParameterIdentifications = "Cannot start two concurrent parameter identifications";
       public static readonly string CannotStartTwoConcurrentSensitivityAnalyses = "Cannot start two concurrent sensitivity analyses";
       public static readonly string NoOptimizationAlgorithmSelected = "No optimization algorithm selected";
       public static readonly string OutputMappingIsInvalid = "Output mapping is invalid";
@@ -1628,8 +1530,6 @@ namespace OSPSuite.Assets
 
       public static readonly string CovarianceMatrixCannotBeCalculated = "Covariance matrix cannot be calculated";
       public static readonly string CorrelationMatrixCannotBeCalculated = "Correlation matrix cannot be calculated";
-
-      public static string CannotSelectTheSamePartialProcessMoreThanOnce(string name) => $"'{name}' cannot be selected more than once.";
 
       public static string CannotSelectTheObservedDataMoreThanOnce(string name) => $"'{name}' cannot be selected more than once for the same output.";
 
@@ -1662,35 +1562,12 @@ namespace OSPSuite.Assets
       {
          return $"Could not retrieve simulation results for output '{fullOutputPath}'";
       }
-
-      public static readonly string InvalidPKValueType = "PK value {0} has invalid type (e.g. complex)";
       public static readonly string TableFormulaWithOffsetUsesNonTableFormulaObject = "Object used in table formula with offset must be based an a table formula";
       public static readonly string ScaleFactorShouldBeGreaterThanZero = "Scale factor should be greater than 0";
-
-      public static string TimeFromRepositoryNotStrictlyMonotone(double valueBefore, double valueAfter, string displayUnit, string repositoryName)
-      {
-         var hint = hintForNotStrictlyMonotone(valueBefore, valueAfter, displayUnit);
-
-         return $"The time column in data set '{repositoryName}' is not strictly monotonically increasing ({hint}).\nEnsure that time always increases (e.g. 0.5, 1, 2, 4 hours).";
-      }
 
       private static string hintForNotStrictlyMonotone(double valueBefore, double valueAfter, string displayUnit)
       {
          return Equals(valueAfter, valueBefore) ? $"{valueBefore} {displayUnit} is duplicated" : $"{valueBefore} {displayUnit} is immediately followed by {valueAfter} {displayUnit}";
-      }
-
-      public static string TimeFromSheetNotStrictlyMonotone(double valueBefore, double valueAfter, string displayUnit, string sheetName)
-      {
-         var hint = hintForNotStrictlyMonotone(valueBefore, valueAfter, displayUnit);
-
-         return $"The time column in sheet '{sheetName}' is not strictly monotonically increasing ({hint}).\nEnsure that time always increases (e.g. 0.5, 1, 2, 4 hours).";
-      }
-
-      public static string TimeNotStrictlyMonotone(double valueBefore, double valueAfter, string displayUnit)
-      {
-         var hint = hintForNotStrictlyMonotone(valueBefore, valueAfter, displayUnit);
-
-         return $"The time column is not strictly monotonically increasing ({hint}).\nEnsure that time always increases (e.g. 0.5, 1, 2, 4 hours).";
       }
 
       public static string UnableToFindEntityWithAlias(string alias) => $"Unable to find entity with alias '{alias}'";
@@ -1700,21 +1577,10 @@ namespace OSPSuite.Assets
          return $"Data column {columnName} has {xDim} values and its base grid has {yDim} values";
       }
 
-      public const string OnlyLocalParametersInPassiveTransports = "Passive transport {0} contains parameters with BuildMode != LOCAL";
-
       public static string BothNeighborsSatisfying(string neighborhood) => $"Both neighbors of {neighborhood} satisfy the criteria";
 
       public static string BothNeighborsSatisfyingForTransport(string message, string transporter) => $"{message} for transport {transporter}";
-
-      public static readonly string UnknownParameterBuildMode = "Unknown molecule parameter build mode";
-      public static readonly string ConstMoleculeParameterInNeighborhood = "Constant parameters are not allowed in the molecule properties container of the neighborhood";
-      public static readonly string NullParameter = "Cannot create parameter value: parameter not found in target container";
-      public static readonly string NullMoleculeAmount = "Cannot create molecule initial condition: molecule amount not found in target container";
-      public static readonly string NullInitialCondition = "Cannot create molecule initial condition: molecule container not found";
       public static readonly string NullFormulaCachePassedToClone = "Formula cache passed to clone function is null";
-      public static readonly string EmptyMoleculeName = "Molecule name is empty";
-      public static readonly string TransportMoleculeNamesNotSet = "Transport molecule names object passed is not set";
-      public static readonly string TransportMoleculeNamesBothListsNonEmpty = "Molecule names to transport and molecule names not to transport are both nonempty";
       public static readonly string InvalidFile = "Invalid File";
       public static readonly string InvalidAuxiliaryType = "The error type is invalid. Valid types are 'ArithmeticStdDev' and 'GeometricStdDev'";
       public static readonly string MoreThanOneMeasurementColumnFound = "More than one measurement column was found in the data repository.";
@@ -1733,37 +1599,22 @@ namespace OSPSuite.Assets
          return $"Cannot add help parameter '{parameterName}' with an undefined formula (null) in calculation method '{calculationMethod}' for category '{category}'";
       }
 
-      public static string HelpParameterAlreadyDefinedWithAnotherFormula(string calculationMethod, string parameterPath)
-      {
-         return $"There is another parameter defined at '{calculationMethod}' with another formula. Help parameter for calculation method {parameterPath} cannot be created";
-      }
-
       public static string FloatingMoleculeParameterNotDefined(string molecule, string parameter, double value)
       {
          return $"Parameter '{parameter}' defined in molecule '{molecule}' has an invalid value: {value}";
       }
 
-      public static string MoleculeNameNotUnique(string moleculeName) => $"Molecule name '{moleculeName}' is not unique";
-
       public static string MoleculeNameExistsInAnotherList(string moleculeName)
       {
-         return $"Cannot add molecule '{moleculeName}' into both molecules to include and molecules to exclude lists";
+         return $"Cannot add molecule '{moleculeName}' to both the include list AND exclude list";
       }
+
       public static string BuildingBlockTypeAlreadyAddedToModule(string objectName, string type) => $"BuildingBlock '{type}' for '{objectName}' was already added to module";
-
-      public const string NotImplemented = "This feature is not implemented yet";
-
-      public static string CouldNotFindAReporterFor(Type type)
-      {
-         return $"Unable to find a reporter for '{type.Name}'";
-      }
 
       public static string AliasAlreadyUsedInFormula(string alias, string formula)
       {
          return $"Alias '{alias}' is already used in formula '{formula}'";
       }
-
-      public static string CouldNotLoadSimulationFromFile(string pkmlFileFullPath) => CouldNotLoadObjectFromFile(pkmlFileFullPath, ObjectTypes.Simulation);
 
       public static string CouldNotLoadObjectFromFile(string pkmlFileFullPath, string objectType)
       {
@@ -1780,21 +1631,16 @@ namespace OSPSuite.Assets
          return $"Could not load chart template. Make sure that the file '{templateFilePath}' is a template file.";
       }
 
-      public static string CannotFindResource(string resourceFullPath) => $"Cannot find resource located at '{resourceFullPath}'";
-
-      public static string IndividualIdDoesNotMatchTheValueLength(int individualId, int count)
+      public static string CannotLoadTemplateCreatedForAnotherChartType(string templateName, string templateChartType, string managedChartType)
       {
-         return $"Individual Id '{individualId}' does not match the expected number of individual '{count}'. A reason could be that the results were imported starting with an id of 1 instead of 0.";
+         return $"Cannot load the template '{templateName}'. The template was created for charts of type '{templateChartType}' and cannot be used for charts of type '{managedChartType}'.";
       }
+
+      public static string CannotFindResource(string resourceFullPath) => $"Cannot find resource located at '{resourceFullPath}'";
 
       public static string CannotFindSimulationParameterForIdentificationParameter(string fullQuantityPath, string name)
       {
          return $"Cannot find simulation parameter '{fullQuantityPath}' used in identification parameter '{name}'";
-      }
-
-      public static string CaptionRowOutOfRange(int captionRow, int lastRowInWorkBook, string sheetName)
-      {
-         return rowOutOfRange(captionRow, lastRowInWorkBook, "caption", sheetName);
       }
 
       private static string rowOutOfRange(int captionRow, int lastRowInWorkBook, string rowName, string sheetName)
@@ -1802,26 +1648,9 @@ namespace OSPSuite.Assets
          return string.Format("Cannot import data from {4} worksheet.{3}The {2} row ({0}) is greater than the total rows in the workbook ({1})", captionRow, lastRowInWorkBook, rowName, Environment.NewLine, sheetName);
       }
 
-      public static string UnitRowOutOfRange(int unitRow, int lastRow, string sheetName)
-      {
-         return rowOutOfRange(unitRow, lastRow, "unit", sheetName);
-      }
-
-      public static string FirstDataRowOutOfRange(int firstDataRow, int lastRow, string sheetName)
-      {
-         return rowOutOfRange(firstDataRow, lastRow, "first data", sheetName);
-      }
-
       public static string RemoveHigherAxisTypeFirst(string type) => $"Please remove Y-Axis {type} first.";
 
-      public static string LastDataRowLessThanFirstDataRow(int dataEndRow, int dataStartRow, string sheetName)
-      {
-         return $"Cannot import data from {sheetName} worksheet.{Environment.NewLine}The first data row index is greater than the last data row index";
-      }
-
       public static string ExportToCsvNotSupportedForDifferentBaseGrid = "Export to CSV is only supported for data columns sharing the same base grid.";
-
-      public const string MESSAGE_ERROR_NAN = "Error information has been truncated because invalid values have been replaced by NaN.\n\n An arithmetic error must be at least 0.\n A geometric error must be at least 1.\n";
 
       public const string QualificationOutputFolderNotDefined = "Qualification output folder not defined.";
 
@@ -1916,6 +1745,20 @@ namespace OSPSuite.Assets
 
       public static string CannotNavigateBeyondLumenSegment(string keyword, string path) => $"Usage of keyword '{keyword}' is not valid for '{path}'";
 
+      public static string CannotFindBuildingBlockInSnapshot(string buildingBlockType, string buildingBlockName, string project) => $"Could not find {buildingBlockType} '{buildingBlockName}' in snapshot '{project}'.";
+
+      public static string CannotFindSimulationInSnapshot(string simulationName, string project) => CannotFindBuildingBlockInSnapshot(ObjectTypes.Simulation, simulationName, project);
+
+      public static string CannotLoadSnapshotFromFile(string fileFullPath) => $"Cannot load snapshot from file '{fileFullPath}'. Please make sure that the file exists and that it is a valid snapshot file.";
+
+      public static string FileDoesNotExist(string fileFullPath) => $"File '{fileFullPath}' does not exist.";
+
+      public static string UnableToLoadQualificationConfigurationFromFile(string fileFullPath) => $"Unable to read configuration from file '{fileFullPath}'";
+
+      public static string SimulationUsedInPlotsAreNotExported(IReadOnlyList<string> simulationNames, string project)
+         => $"{ObjectTypes.Simulation.PluralizeIf(simulationNames)} {simulationNames.ToString(", ", "'")} used in plots {"is".PluralizeIf(simulationNames)} not found in the list of exported simulations for {ObjectTypes.Project} {project}";
+
+      public static string NeighborIsLogical(string neighborName, string neighborhoodName) => $"Container {neighborName} is defined as logical for neighborhood '{neighborhoodName}'";
 
       public static class SensitivityAnalysis
       {
@@ -1945,7 +1788,6 @@ namespace OSPSuite.Assets
          public static readonly string InitialValuesInconsistent = "Initial values inconsistent with constraints";
          public static readonly string InitialConstraintsInconsistent = "Initial constraints inconsistent";
          public static readonly string NotEnoughDegreesOfFreedom = "Not enough degrees of freedom";
-         public static readonly string ErrorObjectiveFunction = "Error in objective function: {0}";
          public static string UnknownStatus(string status) => $"Unknown status: {status}";
          public static readonly string GeneralInputError = "General input error";
          public static string OptimizationFailed(string error) => $"Levenberg-Marquardt optimization failed: {error}";
@@ -1993,17 +1835,36 @@ namespace OSPSuite.Assets
          {
             sb.AppendLine($"- {errorMessage}");
          }
+
          return sb.ToString();
       }
+
+      public static string SnapshotNotFoundFor(string modelTypeName) => $"Snapshot not found for '{modelTypeName}'.";
+
+      public static string MapToModelNotSupportedWithoutContext(string modelType, string contextType) => $"{modelType} should not be created from snapshot directly. Instead use the overload with {contextType}.";
+
+      public static string MapToSnapshotNotSupportedWithoutContext(string snapshotType, string contextType) => $"{snapshotType} should not be created from model directly. Instead use the overload with {contextType}.";
+
+      public static string CannotCreateIdentificationParameter(string parameterPath, string parameterIdentificationName)
+         => $"Cannot create identification parameter '{parameterPath}' for parameter identification '{parameterIdentificationName}'.";
+
+      public static string CouldNotFindSimulation(string simulationName) => CouldNotFind(ObjectTypes.Simulation, simulationName);
+
+      public static string CouldNotFindOutputInSimulation(string outputFullPath, string simulationName) => $"Cannot find output '{outputFullPath}' in simulation '{simulationName}'";
    }
 
    public static class Validation
    {
       public const string ValueIsRequired = "Value is required";
       public static readonly string NameIsRequired = "Name is required";
-      public static readonly string OutputFileNotValid = "Please specify an output file with full path information.";
       public static readonly string StartTimeLessThanOrEqualToEndTime = "Start time value should be less than end time value.";
       public static readonly string EndTimeGreaterThanOrEqualToStartTime = "End time value should be greater than start time value.";
+      public static readonly string FormulaCannotBeEmpty = "Formula cannot be empty";
+
+      public static string LineThicknessShouldBeBetween(int min, int max)
+      {
+         return $"Line thickness should be a value between {min} and {max}";
+      }
 
       public static string FileDoesNotExist(string fileFullPath)
       {
@@ -2039,11 +1900,6 @@ namespace OSPSuite.Assets
       public static string FormulaIsNotValid(string formula, string buildingBlock, string errorMessage)
       {
          return $"Invalid Formula {formula} in Building Block {buildingBlock}: {errorMessage}";
-      }
-
-      public static string Removed(string path)
-      {
-         return $"Entity with path '{path}' not created.";
       }
 
       public static string CannotCreateApplicationSourceNotFound(string applicationName, string moleculeName, string containerName)
@@ -2136,6 +1992,10 @@ namespace OSPSuite.Assets
       }
 
       public static readonly string LogAxisMaxMustBeGreaterThanZero = "Loagarithmic axis maximum must be greater than 0";
+
+      public static readonly string AxisMajorIntervalMustBeGreaterThanZero = "The axis major interval must be greater than 0";
+
+      public static readonly string AxisMinorTicksMustBeGreaterThanZeroAndLessThan100 = "The number of minor ticks must be greater than 0 and less than 100";
    }
 
    public static class Rules
@@ -2206,7 +2066,12 @@ namespace OSPSuite.Assets
       public static string LargeNumberOfOutputPoints(int numberOfPoints) =>
          $"The selected output resolution will generate {numberOfPoints} points and may severely impact the software performance.\nAre you sure you want to run with these setting? If not, consider changing output resolution in simulations settings";
 
-      public static string NeighborhoodWasNotFoundInModel(string neighborhoodName, string buildingBlockName) => $"The neighborhood '{neighborhoodName}' from building block '{buildingBlockName}' was not added to the simulation";
+      public static string NeighborhoodWasNotFoundInModel(string neighborhoodName, string buildingBlockName) => $"The neighborhood '{neighborhoodName}' from building block '{buildingBlockName}' was not added to the simulation because it is not defined or at least one of the containers is logical";
+
+      public static string UnitNotFoundInDimensionForParameter(string unit, string dimension, string parameterName)
+      {
+         return $"Unit '{unit}' not found for parameter {parameterName} with dimension '{dimension}'";
+      }
 
       public static string ExpressionMoleculeNotFoundInSimulation(string moleculeName) => $"The molecule '{moleculeName}' is not part of the simulation structure";
 
@@ -2241,6 +2106,10 @@ namespace OSPSuite.Assets
    {
       public static string AsDeveloperOnly(string menuName) => $"{menuName} (Developer only)...";
 
+      public static readonly string ExportProjectToSnapshot = "Export to Snapshot";
+      public static readonly string LoadProjectFromSnapshot = "Load from Snapshot";
+      public static readonly string ExportProjectToSnapshotMenu = $"&{ExportProjectToSnapshot}...";
+      public static readonly string LoadProjectFromSnapshotMenu = $"{LoadProjectFromSnapshot}...";
       public static readonly string NewExpressionProfile = "Add &Expression Profile";
       public static readonly string ExportToExcel = "Export to Excel...";
       public static readonly string ExportToPng = "Export to Png...";
@@ -2259,7 +2128,6 @@ namespace OSPSuite.Assets
       public static readonly string CreateGroup = "Create Subfolder...";
       public static readonly string EditAllMetaData = "Edit All MetaData...";
       public static readonly string EditMetaData = "Edit MetaData...";
-      public static readonly string RemoveEmptyGroups = "Empty Subfolders";
       public static readonly string ManageProjectDisplayUnits = "Manage Project Display Units";
       public static readonly string ManageUserDisplayUnits = "Manage User Display Units";
       public static readonly string UpdateAllToDisplayUnits = "Update All Display Units";
@@ -2291,7 +2159,6 @@ namespace OSPSuite.Assets
       public static readonly string StopParameterIdentification = "Stop";
       public static readonly string FeedbackView = "Show Visual Feedback";
       public static readonly string ReplaceSimulation = "Replace Simulation";
-      public static readonly string ExportForR = "Export for R";
       public static readonly string ExportForMatlab = AsDeveloperOnly("Export for Matlab®");
       public static readonly string ExportForCpp = AsDeveloperOnly("Export to C++ code");
       public static readonly string ExportSimModelXml = AsDeveloperOnly("Export SimModel Xml");
@@ -2319,10 +2186,6 @@ namespace OSPSuite.Assets
    public static class MenuDescriptions
    {
       public static readonly string NewExpressionProfileDescription = "Create a new expression profile...";
-      public static readonly string UpdateChartTemplateFromCurrentSettings = "Updates the template from current chart settings";
-      public static readonly string ApplyTemplateToCurrentChart = "Applies the template to the current chart";
-      public static readonly string CreateNewTemplateFromCurrentChartSettings = "Create new template from current chart settings";
-      public static readonly string ManageTemplates = "Manage all simulation templates";
       public static readonly string SaveFavoritesToFile = "Save favorites to file";
       public static readonly string LoadFavoritesFromFile = "Load favorites from file";
       public static readonly string ExportJournalToFile = "Export visible journal pages to a single file. Hide pages using search and filter.";
@@ -2356,10 +2219,6 @@ namespace OSPSuite.Assets
          public static readonly float MinLimitDocScale = 1 / 5F;
          public static readonly float MaxLimitDocScale = 2F;
          public static readonly PointF InsertLocationOffset = new PointF(0F, 30F);
-         public static readonly float ZoomFitToPageFactor = 0F;
-         public static readonly int LayoutDepthChildren = 0;
-         public static readonly int LayoutDepthGrandChildren = 1;
-         public static readonly int LayoutDepthAll = 5;
       }
 
       public static class Reaction
@@ -2448,26 +2307,6 @@ namespace OSPSuite.Assets
          return sb;
       }
 
-      public static string ChangeColorOfCurveTemplate(string curveTemplateName, string newName, string oldName)
-      {
-         return $"Changed color of curve template {curveTemplateName} from {newName} to {oldName}";
-      }
-
-      public static string ChangeLineStyleOfCurveTemplate(string curveTemplateName, string newLineStyle, string oldLineStyle)
-      {
-         return $"Changed line style of curve template {curveTemplateName} from {newLineStyle} to {oldLineStyle}";
-      }
-
-      public static string ChangeLineThicknessOfCurveTemplate(string curveTemplateName, int newLineThickness, int oldLineThickness)
-      {
-         return $"Changed line thickness of curve template {curveTemplateName} from {newLineThickness} to {oldLineThickness}";
-      }
-
-      public static string ChangeSymbolOfCurveTemplate(string curveTemplateName, string newSymbol, string oldSymbol)
-      {
-         return $"Changed symbol of curve template {curveTemplateName} from {newSymbol} to {oldSymbol}";
-      }
-
       public static string RenameObservedData(string oldName, string newName)
       {
          return $"Renamed observed data from '{oldName}' to '{newName}'";
@@ -2492,6 +2331,9 @@ namespace OSPSuite.Assets
 
    public static class ObjectTypes
    {
+      public static readonly string QualificationStep = "Qualification Step";
+      public static readonly string QualificationPlan = "Qualification Plan";
+      public static readonly string Snapshot = "Snapshot";
       public static readonly string CalculationMethod = "Calculation Method";
       public static readonly string MoleculeBuildingBlock = "Molecule Building Block";
       public static readonly string ReactionBuildingBlock = "Reaction Building Block";
@@ -2521,7 +2363,6 @@ namespace OSPSuite.Assets
       public static readonly string ExplicitFormula = "Formula";
       public static readonly string Neighborhood = "Neighborhood";
       public static readonly string PassiveTransportBuilder = "Passive Transport";
-      public static readonly string ActiveTransportBuilder = "Active Transport";
       public static readonly string TransportBuilder = "Transport";
       public static readonly string Transport = "Transport";
       public static readonly string FormulaUsablePath = "Reference";
@@ -2536,14 +2377,12 @@ namespace OSPSuite.Assets
       public static readonly string TableFormula = "Table";
       public static readonly string BlackBoxFormula = "Calculation Method";
       public static readonly string SumFormula = "Sum Formula";
-      public static readonly string Quantities = "Quantities";
       public static readonly string Model = "Model";
       public static readonly string MoleculeList = "Molecule List";
       public static readonly string SolverProperty = "Solver Property";
       public static readonly string SimulationSettings = "Simulation Settings";
       public static readonly string OutputSelections = "Output Selections";
       public static readonly string ChartTemplate = "Chart Template";
-      public static readonly string Unit = "Unit";
       public static readonly string Reference = "Reference";
       public static readonly string TagCondition = "Tag conditions";
       public static readonly string History = "History";
@@ -2554,7 +2393,6 @@ namespace OSPSuite.Assets
       public static readonly string BuildingBlock = "Building Block";
       public static readonly string ObservedData = "Observed Data";
       public static readonly string ImporterConfiguration = "Importer Configuration";
-      public static readonly string CurveTemplate = "Curve Template";
       public static readonly string DataTable = "DataTable";
       public static readonly string JournalPage = "Page";
       public static readonly string RelatedItem = "Related Item";
@@ -2581,7 +2419,6 @@ namespace OSPSuite.Assets
       public static readonly string ManageProjectDisplayUnits = "Manage the display units defined in the current project";
       public static readonly string UpdateAllToDisplayUnits = "Update all entities to use the predefined display units";
       public static readonly string FavoritesToolTip = "Add as favorite";
-      public static readonly string ExportSelectedJournalEntriesToWord = $"Export selected journal pages to {Captions.Word}";
       public static readonly string DefaultCurveColor = string.Format("Sets the color for each curve added to this axis.{0}Set white to not use a default color and instead use automatically selected colors.{0}Default color has no effect for X axis", Environment.NewLine);
       public static readonly string DefaultCurveColorTitle = "Default Color for Curve";
       public static readonly string DefaultLineStyle = string.Format("Sets the line style for each curve added to this axis.{0}Setting 'None' will use the default style for the curve.{0}Default line style has no effect for X axis.", Environment.NewLine);
@@ -2660,7 +2497,6 @@ namespace OSPSuite.Assets
          public static readonly string Undo = "Undo last command";
          public static readonly string AddLabel = "Add a special label to the history";
          public static readonly string EditComment = "Enter a comment for the selected line";
-         public static readonly string Rollback = "Click on the line to rollback to, then click the rollback arrow";
       }
 
       public static class BuildingBlockSpatialStructure
@@ -2686,7 +2522,6 @@ namespace OSPSuite.Assets
    {
       public static readonly string ObservedDataOrganDescription = "Organ where the data was measured";
       public static readonly string ObservedDataCompartmentDescription = "Compartment where the data was measured";
-      public static readonly string ObservedDataMoleculeDescription = "Molecule for which the data was measured";
       public static readonly string MoleculeNameDescription = "Name of the molecule for which the data were measured";
    }
 

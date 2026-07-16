@@ -88,6 +88,10 @@ namespace OSPSuite.UI.Views.Charts
 
          createColumn(x => x.Max, AxisOptionsColumns.Max);
 
+         createColumn(x => x.MajorInterval, AxisOptionsColumns.MajorInterval);
+
+         createColumn(x => x.MinorTicks, AxisOptionsColumns.MinorTicks);
+
          createColumn(x => x.GridLines, AxisOptionsColumns.GridLines, _gridLinesRepository);
 
          createColumn(x => x.DefaultColor, AxisOptionsColumns.DefaultColor, _colorRepository, toolTip: ToolTips.DefaultCurveColor)

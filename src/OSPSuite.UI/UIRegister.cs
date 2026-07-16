@@ -1,6 +1,5 @@
 ﻿using DevExpress.XtraRichEdit;
 using Northwoods.Go;
-using OSPSuite.Core.Diagram;
 using OSPSuite.Core.Serialization.Diagram;
 using OSPSuite.Presentation.Services;
 using OSPSuite.Presentation.Views;

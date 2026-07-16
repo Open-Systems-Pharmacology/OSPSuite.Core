@@ -1,10 +1,7 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
-using FakeItEasy;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain.Populations;
-using OSPSuite.Helpers;
 using OSPSuite.Utility.Collections;
 
 namespace OSPSuite.Core.Domain

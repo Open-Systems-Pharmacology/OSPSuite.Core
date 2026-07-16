@@ -1,13 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
+using OSPSuite.CLI.Core.MinimalImplementations;
 using OSPSuite.Core.Chart;
 using OSPSuite.Core.Commands;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Data;
+using OSPSuite.Core.Domain.Populations;
 using OSPSuite.Core.Domain.Services;
-using OSPSuite.R.MinimalImplementations;
 using OSPSuite.Utility.Visitor;
 
 namespace OSPSuite.R.Domain
@@ -24,6 +26,12 @@ namespace OSPSuite.R.Domain
       public SimulationEntitySources EntitySources { get; set; } = new SimulationEntitySources();
       public OutputMappings OutputMappings { get; set; }
       public DataRepository ResultsDataRepository { get; set; }
+
+      public IndividualValuesCache IndividualValuesCache { get; set; }
+
+      public AgingData AgingData { get; set; }
+
+      public bool IsPopulation => IndividualValuesCache != null;
 
       public void RemoveUsedObservedData(DataRepository dataRepository)
       {
@@ -50,10 +58,7 @@ namespace OSPSuite.R.Domain
       public Simulation(IModelCoreSimulation modelCoreSimulation)
       {
          CoreSimulation = modelCoreSimulation;
-         BuildConfiguration = new SimulationBuilder(Configuration);
       }
-
-      public SimulationBuilder BuildConfiguration { get; }
 
       public string Name
       {
@@ -61,7 +66,7 @@ namespace OSPSuite.R.Domain
          set
          {
             CoreSimulation.Name = value;
-            new RenameModelCommand(CoreSimulation.Model, value).Execute(new RExecutionContext());
+            new RenameModelCommand(CoreSimulation.Model, value).Execute(new ExecutionContext());
          }
       }
 
@@ -139,6 +144,19 @@ namespace OSPSuite.R.Domain
       public double? MolWeightFor(IQuantity quantity) => CoreSimulation.MolWeightFor(quantity);
 
       public double? MolWeightFor(string quantityPath) => CoreSimulation.MolWeightFor(quantityPath);
+
+      /// <summary>
+      ///    Returns the name of the calculation method used for the given <paramref name="moleculeName" /> and
+      ///    <paramref name="category" />. Returns <c>null</c> if no override is defined for the combination.
+      /// </summary>
+      public string CalculationMethodFor(string moleculeName, string category)
+      {
+         return Configuration.CalculationMethodOverridesFor(moleculeName)
+            .UsedCalculationMethods
+            .FirstOrDefault(x => x.Category == category)
+            ?.CalculationMethod;
+      }
+
       public bool HasChanged { get; set; }
    }
 }

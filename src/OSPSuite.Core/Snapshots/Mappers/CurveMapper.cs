@@ -1,0 +1,74 @@
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using OSPSuite.Assets;
+using OSPSuite.Core.Domain.UnitSystem;
+using OSPSuite.Core.Services;
+
+namespace OSPSuite.Core.Snapshots.Mappers
+{
+   public class CurveMapper : SnapshotMapperBase<Core.Chart.Curve, Curve, SimulationAnalysisContext>
+   {
+      private readonly CurveOptionsMapper _curveOptionsMapper;
+      private readonly IDimensionFactory _dimensionFactory;
+      private readonly IOSPSuiteLogger _logger;
+
+      public CurveMapper(CurveOptionsMapper curveOptionsMapper, IDimensionFactory dimensionFactory, IOSPSuiteLogger logger)
+      {
+         _curveOptionsMapper = curveOptionsMapper;
+         _dimensionFactory = dimensionFactory;
+         _logger = logger;
+      }
+
+      public override async Task<Curve> MapToSnapshot(Core.Chart.Curve curve)
+      {
+         var snapshot = await SnapshotFrom(curve, x =>
+         {
+            x.Name = SnapshotValueFor(curve.Name);
+            x.X = curve.xData?.PathAsString;
+            x.Y = curve.yData?.PathAsString;
+         });
+         snapshot.CurveOptions = await _curveOptionsMapper.MapToSnapshot(curve.CurveOptions);
+         return snapshot;
+      }
+
+      public override async Task<Core.Chart.Curve> MapToModel(Curve snapshot, SimulationAnalysisContext simulationAnalysisContext)
+      {
+         var curve = new Core.Chart.Curve { Name = snapshot.Name };
+         var curveOptions = await _curveOptionsMapper.MapToModel(snapshot.CurveOptions, simulationAnalysisContext);
+         curve.CurveOptions.UpdateFrom(curveOptions);
+
+         var yData = findCurveWithPath(snapshot.Y, simulationAnalysisContext.DataRepositories);
+         if (yData == null)
+         {
+            //Only show a warning if the output were already calculated. Otherwise curves will not be generated
+            if (simulationAnalysisContext.RunSimulation)
+               _logger.AddWarning(Error.CouldNotFindQuantityWithPath(snapshot.Y));
+
+            return null;
+         }
+
+         curve.SetyData(yData, _dimensionFactory);
+
+         Domain.Data.DataColumn xData = yData.BaseGrid;
+         if (!string.Equals(snapshot.X, xData?.Name))
+            xData = findCurveWithPath(snapshot.X, simulationAnalysisContext.DataRepositories);
+
+         if (xData == null)
+         {
+            if (simulationAnalysisContext.RunSimulation)
+               _logger.AddWarning(Error.CouldNotFindQuantityWithPath(snapshot.X));
+
+            return null;
+         }
+
+         curve.SetxData(xData, _dimensionFactory);
+         return curve;
+      }
+
+      private Domain.Data.DataColumn findCurveWithPath(string path, IReadOnlyList<Domain.Data.DataRepository> dataRepositories)
+      {
+         return dataRepositories.SelectMany(x => x.Columns).FirstOrDefault(x => string.Equals(x.QuantityInfo.PathAsString, path));
+      }
+   }
+}

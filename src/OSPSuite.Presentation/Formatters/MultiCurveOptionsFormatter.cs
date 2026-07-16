@@ -1,6 +1,5 @@
 ﻿using OSPSuite.Assets;
 using OSPSuite.Core.Chart;
-using OSPSuite.Core.Services;
 using OSPSuite.Utility.Format;
 
 namespace OSPSuite.Presentation.Formatters

@@ -52,13 +52,6 @@ namespace OSPSuite.Presentation.Presenters.ContextMenus
             .AsDisabledIf(isRunning);
       }
 
-      public static IMenuBarButton ExportParameterIdentificationToR(ParameterIdentification parameterIdentification, IContainer container)
-      {
-         return CreateMenuButton.WithCaption(MenuNames.ExportForR.WithEllipsis())
-            .WithIcon(ApplicationIcons.R)
-            .WithCommandFor<ExportParameterIdentificationToRUICommand, ParameterIdentification>(parameterIdentification, container);
-      }
-
       public static IMenuBarButton ExportParameterIdentificationToMatlab(ParameterIdentification parameterIdentification, IContainer container)
       {
          return CreateMenuButton.WithCaption(MenuNames.ExportForMatlab.WithEllipsis())

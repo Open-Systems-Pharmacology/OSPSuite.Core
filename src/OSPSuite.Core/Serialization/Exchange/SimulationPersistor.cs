@@ -1,4 +1,5 @@
-﻿using OSPSuite.Core.Domain;
+﻿using System.Xml.Linq;
+using OSPSuite.Core.Domain;
 using OSPSuite.Core.Serialization.Xml;
 using IContainer = OSPSuite.Utility.Container.IContainer;
 
@@ -8,6 +9,7 @@ namespace OSPSuite.Core.Serialization.Exchange
    {
       void Save(SimulationTransfer simulationTransfer, string fileName);
       SimulationTransfer Load(string pkmlFileFullPath, IWithIdRepository withIdRepository = null);
+      string Serialize(SimulationTransfer simulationTransfer);
    }
 
    public class SimulationPersistor : ISimulationPersistor
@@ -26,20 +28,20 @@ namespace OSPSuite.Core.Serialization.Exchange
          _pkmlPersistor = pkmlPersistor;
       }
 
-      public void Save(SimulationTransfer simulationTransfer, string fileName)
+      public void Save(SimulationTransfer simulationTransfer, string fileName) => xElementFor(simulationTransfer).PermissiveSave(fileName);
+
+      public string Serialize(SimulationTransfer simulationTransfer) => xElementFor(simulationTransfer).ToString();
+
+      private XElement xElementFor(SimulationTransfer simulationTransfer)
       {
          using (var serializationContext = SerializationTransaction.Create(_container))
          {
             var serializer = _xmlSerializerRepository.SerializerFor(simulationTransfer);
-            var element = serializer.Serialize(simulationTransfer, serializationContext);
-
-            element.PermissiveSave(fileName);
+            return serializer.Serialize(simulationTransfer, serializationContext);
          }
       }
 
-      public SimulationTransfer Load(string pkmlFileFullPath, IWithIdRepository withIdRepository = null)
-      {
-         return _pkmlPersistor.Load<SimulationTransfer>(pkmlFileFullPath, withIdRepository: withIdRepository);
-      }
+      public SimulationTransfer Load(string pkmlFileFullPath, IWithIdRepository withIdRepository = null) => 
+         _pkmlPersistor.Load<SimulationTransfer>(pkmlFileFullPath, withIdRepository: withIdRepository);
    }
 }

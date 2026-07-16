@@ -2,7 +2,6 @@
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
-using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
@@ -21,6 +20,7 @@ using DevExpress.XtraGrid.Views.Grid;
 using DevExpress.XtraGrid.Views.Grid.ViewInfo;
 using OSPSuite.Assets;
 using OSPSuite.Core.Extensions;
+using OSPSuite.Presentation.Extensions;
 using OSPSuite.UI.Mappers;
 using OSPSuite.UI.Services;
 using OSPSuite.Utility.Extensions;
@@ -325,17 +325,6 @@ namespace OSPSuite.UI.Controls
       }
 
       /// <summary>
-      ///    Returns a stream containing the layout of the grid view
-      /// </summary>
-      /// <returns></returns>
-      public Stream LayoutToStream()
-      {
-         var stream = new MemoryStream();
-         SaveLayoutToStream(stream);
-         return stream;
-      }
-
-      /// <summary>
       ///    Returns the grid hit info for a valid hit, null otherwise
       /// </summary>
       /// <returns></returns>
@@ -399,17 +388,6 @@ namespace OSPSuite.UI.Controls
          return hi == null ? null : hi.Column;
       }
 
-      /// <summary>
-      ///    Load the grid view layout from the stream containing the serialized layout
-      /// </summary>
-      /// <param name="stream"></param>
-      public void LoadLayoutFromStream(Stream stream)
-      {
-         // Set the position to the beginning of the stream.
-         stream.Seek(0, SeekOrigin.Begin);
-         RestoreLayoutFromStream(stream);
-      }
-
       private bool gridIsCellSelectMode()
       {
          return OptionsSelection.MultiSelectMode == GridMultiSelectMode.CellSelect;
@@ -443,21 +421,21 @@ namespace OSPSuite.UI.Controls
 
       private void addCopyMenuItemsForRowSelect(GridViewMenu gridViewMenu)
       {
-         var copyRowMenu = new DXMenuItem(Captions.CopySelectedRows, (o, args) => copyRowSelectionToClipboard()) { Shortcut = Shortcut.CtrlC, SvgImage = ApplicationIcons.CopySelection };
+         var copyRowMenu = new DXMenuItem(Captions.CopySelectedRows, (o, args) => copyRowSelectionToClipboard()) { Shortcut = Shortcut.CtrlC, SvgImage = ApplicationIcons.CopySelection.ToSvgImage() };
          gridViewMenu.Items.Insert(0, copyRowMenu);
       }
 
       private void addCopyMenuItemsForCellSelect(GridViewMenu gridViewMenu)
       {
-         var copyRowMenu = new DXMenuItem(Captions.CopySelectedRows, (o, args) => copyRowSelectionToClipboard()) { SvgImage = ApplicationIcons.CopySelection };
-         var copySelectionMenu = new DXMenuItem(Captions.CopySelection, (o, args) => processSelectiveCopyToClipboard()) { Shortcut = Shortcut.CtrlC, SvgImage = ApplicationIcons.CopySelection };
+         var copyRowMenu = new DXMenuItem(Captions.CopySelectedRows, (o, args) => copyRowSelectionToClipboard()) { SvgImage = ApplicationIcons.CopySelection.ToSvgImage() };
+         var copySelectionMenu = new DXMenuItem(Captions.CopySelection, (o, args) => processSelectiveCopyToClipboard()) { Shortcut = Shortcut.CtrlC, SvgImage = ApplicationIcons.CopySelection.ToSvgImage() };
          gridViewMenu.Items.Insert(0, copyRowMenu);
          gridViewMenu.Items.Insert(0, copySelectionMenu);
       }
 
       private void addCommonCopyMenuItems(GridViewMenu gridViewMenu)
       {
-         var copyAllMenu = new DXMenuItem(Captions.CopyTable, (o, args) => copyEntireGridToClipboard()) { Shortcut = Shortcut.CtrlShiftC, SvgImage = ApplicationIcons.Copy };
+         var copyAllMenu = new DXMenuItem(Captions.CopyTable, (o, args) => copyEntireGridToClipboard()) { Shortcut = Shortcut.CtrlShiftC, SvgImage = ApplicationIcons.Copy.ToSvgImage() };
          gridViewMenu.Items.Insert(0, copyAllMenu);
       }
 

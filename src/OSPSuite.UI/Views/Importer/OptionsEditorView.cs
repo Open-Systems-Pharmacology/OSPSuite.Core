@@ -1,10 +1,9 @@
-﻿using OSPSuite.Presentation.Presenters.Importer;
-using OSPSuite.UI.Controls;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using DevExpress.Data.Extensions;
-using DevExpress.Utils.Extensions;
+using OSPSuite.Presentation.Presenters.Importer;
+using OSPSuite.UI.Controls;
 
 namespace OSPSuite.UI.Views.Importer
 {
@@ -29,12 +28,6 @@ namespace OSPSuite.UI.Views.Importer
             _comboBoxEdit.SelectedIndex = 0;
          else
             _comboBoxEdit.SelectedIndex = list.FindIndex( o => o == selected);
-      }
-
-      public void Clear()
-      {
-         _comboBoxEdit.Properties.Items.Clear();
-         _comboBoxEdit.SelectedText = "";
       }
 
       public event EventHandler<OptionChangedEventArgs> OnOptionChanged = delegate { };

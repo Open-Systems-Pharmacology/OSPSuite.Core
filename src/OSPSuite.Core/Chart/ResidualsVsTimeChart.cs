@@ -8,6 +8,8 @@ namespace OSPSuite.Core.Chart
    {
       public const string ZERO = "Zero";
 
+      public override CurveChartTypes CurveChartType => CurveChartTypes.ResidualVsTime;
+
       public override Curve CreateCurve(DataColumn columnX, DataColumn columnY, string curveName, IDimensionFactory dimensionFactory)
       {
          var curve = base.CreateCurve(columnX, columnY, curveName, dimensionFactory);
@@ -18,6 +20,7 @@ namespace OSPSuite.Core.Chart
             curve.Symbol = Symbols.Circle;
             curve.LineStyle = LineStyles.None;
          }
+
          return curve;
       }
    }

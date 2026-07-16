@@ -291,4 +291,119 @@ namespace OSPSuite.Core.Domain
          _parameterValues.Select(x => x.Path.ToString()).ShouldOnlyContain($"Organism|VenousBlood|Plasma|protein|{Constants.Parameters.REL_EXP}", "Organism|VenousBlood|Plasma|protein|somename");
       }
    }
+
+   internal class When_creating_expression_parameters_from_a_molecule_and_reference_expression_profile : concern_for_ParameterValuesCreator
+   {
+      private IContainer _organContainer;
+      private MoleculeBuilder _protein;
+      private ParameterValue[] _parameterValues;
+      private Container _compartmentContainer;
+      private ExpressionProfileBuildingBlock _referenceExpressionProfile;
+
+      protected override void Context()
+      {
+         base.Context();
+         var expressionParameter = new ExpressionParameter
+         {
+            Path = new ObjectPath("Organism", "VenousBlood", "Plasma", "protein", Constants.Parameters.REL_EXP)
+         };
+
+         var expressionParameter2 = new ExpressionParameter
+         {
+            Path = new ObjectPath("Organism", "VenousBlood", "Plasma", "protein", "somename")
+         };
+         _referenceExpressionProfile = new ExpressionProfileBuildingBlock
+         {
+            expressionParameter,
+            expressionParameter2
+         }.WithName("protein|something|something");
+
+         _protein = new MoleculeBuilder().WithName("protein");
+         _protein.QuantityType = QuantityType.Transporter;
+         var parameter = new Parameter().WithName(Constants.Parameters.REL_EXP);
+         var parameter2 = new Parameter().WithName("somename");
+         expressionParameter.Formula = new ExplicitFormula("5");
+         expressionParameter2.Value = 5.0;
+         expressionParameter2.Formula = null;
+         parameter.ContainerCriteria = new DescriptorCriteria { new MatchTagCondition("Plasma") };
+         parameter2.ContainerCriteria = new DescriptorCriteria { new MatchTagCondition("Plasma") };
+         _protein.AddParameter(parameter);
+         _protein.AddParameter(parameter2);
+         var anotherParameter = new Parameter().WithName("some other parameter");
+
+         _protein.AddParameter(anotherParameter);
+
+         _organContainer = new Container().WithName("VenousBlood").WithMode(ContainerMode.Physical);
+         _organContainer.ParentPath = new ObjectPath("Organism");
+         _compartmentContainer = new Container().WithName("Plasma").WithMode(ContainerMode.Physical);
+         _organContainer.Add(_compartmentContainer);
+      }
+
+      protected override void Because()
+      {
+         _parameterValues = sut.CreateExpressionFrom(_organContainer, _protein, _referenceExpressionProfile).ToArray();
+      }
+
+      [Observation]
+      public void the_parameter_value_should_have_matching_formula()
+      {
+         _parameterValues[0].Formula.IsExplicit().ShouldBeTrue();
+         _parameterValues[1].Formula.ShouldBeNull();
+      }
+
+      [Observation]
+      public void the_parameter_value_should_have_matching_value()
+      {
+         _parameterValues[0].Value.ShouldBeNull();
+         _parameterValues[1].Value.ShouldBeEqualTo(5.0);
+      }
+
+      [Observation]
+      public void the_parameter_values_should_include_expression_parameters_for_the_compartment()
+      {
+         _parameterValues.Select(x => x.Path.ToString()).ShouldOnlyContain($"Organism|VenousBlood|Plasma|protein|{Constants.Parameters.REL_EXP}", "Organism|VenousBlood|Plasma|protein|somename");
+      }
+   }
+
+   internal class When_creating_expression_parameters_with_mismatched_molecule_name_in_reference_profile : concern_for_ParameterValuesCreator
+   {
+      private IContainer _organContainer;
+      private MoleculeBuilder _protein;
+      private IReadOnlyList<ParameterValue> _parameterValues;
+      private ExpressionProfileBuildingBlock _referenceExpressionProfile;
+
+      protected override void Context()
+      {
+         base.Context();
+         var expressionParameter = new ExpressionParameter
+         {
+            Path = new ObjectPath("Organism", "VenousBlood", "Plasma", "otherMolecule", Constants.Parameters.REL_EXP)
+         };
+         _referenceExpressionProfile = new ExpressionProfileBuildingBlock
+         {
+            expressionParameter
+         }.WithName("otherMolecule|something|something");
+
+         _protein = new MoleculeBuilder().WithName("protein");
+         var parameter = new Parameter().WithName(Constants.Parameters.REL_EXP);
+         parameter.ContainerCriteria = new DescriptorCriteria { new MatchTagCondition("Plasma") };
+         _protein.AddParameter(parameter);
+
+         _organContainer = new Container().WithName("VenousBlood").WithMode(ContainerMode.Physical);
+         _organContainer.ParentPath = new ObjectPath("Organism");
+         var compartmentContainer = new Container().WithName("Plasma").WithMode(ContainerMode.Physical);
+         _organContainer.Add(compartmentContainer);
+      }
+
+      protected override void Because()
+      {
+         _parameterValues = sut.CreateExpressionFrom(_organContainer, _protein, _referenceExpressionProfile);
+      }
+
+      [Observation]
+      public void should_not_create_any_parameter_values()
+      {
+         _parameterValues.ShouldBeEmpty();
+      }
+   }
 }

@@ -44,7 +44,7 @@ namespace OSPSuite.Core.Domain.Builder
          if (_moleculeNamesToInclude.Contains(moleculeName))
             return;
 
-         if (_moleculeNamesToExclude.Contains(moleculeName))
+         if (_moleculeNamesToExclude.Contains(moleculeName) && !ForAll)
             throw new OSPSuiteException(Error.MoleculeNameExistsInAnotherList(moleculeName));
 
          _moleculeNamesToInclude.Add(moleculeName);
@@ -67,8 +67,7 @@ namespace OSPSuite.Core.Domain.Builder
       /// <summary>
       ///    Add molecule name to be excluded from use.
       ///    <para />
-      ///    If molecule name already exists in the list or in
-      ///    <see cref="MoleculeNames" />, an exception will be thrown
+      ///    If molecule name already exists in the list of <see cref="MoleculeNames" />, an exception will be thrown (unless ForAll is <c>true</c>)
       /// </summary>
       public virtual void AddMoleculeNameToExclude(string moleculeName)
       {
@@ -78,7 +77,7 @@ namespace OSPSuite.Core.Domain.Builder
          if (_moleculeNamesToExclude.Contains(moleculeName))
             return;
 
-         if (_moleculeNamesToInclude.Contains(moleculeName))
+         if (_moleculeNamesToInclude.Contains(moleculeName) && !ForAll)
             throw new OSPSuiteException(Error.MoleculeNameExistsInAnotherList(moleculeName));
 
          _moleculeNamesToExclude.Add(moleculeName);

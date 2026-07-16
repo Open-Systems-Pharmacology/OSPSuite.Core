@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using OSPSuite.Assets;
 using OSPSuite.Core.Chart;
 using OSPSuite.Core.Domain;
@@ -19,7 +18,7 @@ namespace OSPSuite.Presentation.Presenters
    {
    }
 
-   public abstract class SimulationVsObservedDataChartPresenter<TChart> : SimulationAnalysisChartPresenter<TChart, ISimulationVsObservedDataView, ISimulationVsObservedDataPresenter>, ISimulationVsObservedDataPresenter 
+   public abstract class SimulationVsObservedDataChartPresenter<TChart> : SimulationAnalysisChartPresenter<TChart, ISimulationVsObservedDataView, ISimulationVsObservedDataPresenter>, ISimulationVsObservedDataPresenter
       where TChart : ChartWithObservedData, ISimulationAnalysis
    {
       protected ISimulation _simulation;
@@ -38,9 +37,15 @@ namespace OSPSuite.Presentation.Presenters
       public override void UpdateAnalysisBasedOn(IAnalysable analysable)
       {
          _simulation = analysable.DowncastTo<ISimulation>();
+         UpdateTemplatesBasedOn(_simulation as IWithChartTemplates);
 
-         ClearChartAndDataRepositories();
-         UpdateCacheColor();
+         if (ChartIsBeingUpdated)
+         {
+            UpdateTemplateFromChart();
+            ClearChartAndDataRepositories();
+         }
+         else
+            UpdateCacheColor();
 
          if (!_simulation.ResultsDataRepository.IsNull())
          {
@@ -73,11 +78,6 @@ namespace OSPSuite.Presentation.Presenters
       {
          // In the case of these charts that are for a single simulation, we just need to override the default implementation to not include the simulation name
          return _chartPresenterContext.CurveNamer.CurveNameForColumn(SimulationFor(dataColumn), dataColumn, addSimulationName: false);
-      }
-
-      protected void AddUsedObservedDataToChart()
-      {
-         _simulation.OutputMappings.All.GroupBy(x => x.FullOutputPath).Each(AddObservedDataForOutput);
       }
 
       public void Handle(SimulationOutputMappingsChangedEvent eventToHandle)

@@ -76,12 +76,13 @@ namespace OSPSuite.Helpers
          parameter.Dimension = dimension;
       }
 
-      public static IParameter ConstantParameterWithValue(double value)
+      public static IParameter ConstantParameterWithValue(double value, bool isDefault = false)
       {
          var parameter = new Parameter().WithFormula(new ConstantFormula(value).WithId("constantFormulaId"));
          parameter.Visible = true;
          addDimensionTo(parameter);
          parameter.IsFixedValue = true;
+         parameter.IsDefault = isDefault;
          return parameter;
       }
 

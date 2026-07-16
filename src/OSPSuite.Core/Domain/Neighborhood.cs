@@ -76,5 +76,7 @@ namespace OSPSuite.Core.Domain
       }
 
       public bool IsDefined => FirstNeighbor != null && SecondNeighbor != null;
+
+      public bool HasOnlyPhysicalNeighbors => IsDefined && FirstNeighbor.Mode == ContainerMode.Physical && SecondNeighbor.Mode == ContainerMode.Physical;
    }
 }

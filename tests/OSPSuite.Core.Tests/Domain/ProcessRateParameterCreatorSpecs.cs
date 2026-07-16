@@ -28,21 +28,22 @@ namespace OSPSuite.Core.Domain
       private IFormula _kinetic;
       private IParameter _processRateParameter;
       private ProcessBuilder _processBuilder;
-      private SimulationConfiguration _simulationConfiguration;
       private FormulaUsablePath _formulaUsablePathB;
       private FormulaUsablePath _formulaUsablePathA;
       private FormulaUsablePath _formulaUsablePathFU;
       private FormulaUsablePath _formulaUsablePathBW;
       private SimulationBuilder _simulationBuilder;
+      private FormulaUsablePath _formulaUsablePathC;
+      private FormulaUsablePath _formulaUsablePathD;
+      private readonly string _processBuilderName = "Reaction";
 
       protected override void Context()
       {
          base.Context();
-         _simulationConfiguration = new SimulationConfiguration();
-         _simulationBuilder = new SimulationBuilder(_simulationConfiguration);
+         _simulationBuilder = A.Fake<SimulationBuilder>();
          _processBuilder = new ReactionBuilder();
          _processBuilder.CreateProcessRateParameter = true;
-         _kinetic = new ExplicitFormula("(A+B)*fu/BW");
+         _kinetic = new ExplicitFormula("C*(A+B)*fu/BW");
          _formulaUsablePathA = new FormulaUsablePath(ObjectPath.PARENT_CONTAINER, "A").WithAlias("A");
          _kinetic.AddObjectPath(_formulaUsablePathA);
          _formulaUsablePathB = new FormulaUsablePath("B").WithAlias("B");
@@ -51,13 +52,22 @@ namespace OSPSuite.Core.Domain
          _kinetic.AddObjectPath(_formulaUsablePathFU);
          _formulaUsablePathBW = new FormulaUsablePath("Organism", "BW").WithAlias("BW");
          _kinetic.AddObjectPath(_formulaUsablePathBW);
+         _formulaUsablePathC = new FormulaUsablePath(_processBuilderName, "C").WithAlias("C");
+         _formulaUsablePathD = new FormulaUsablePath(_processBuilderName, "D").WithAlias("D");
+         _kinetic.AddObjectPath(_formulaUsablePathC);
+         _kinetic.AddObjectPath(_formulaUsablePathD);
          _processBuilder.CreateProcessRateParameter = true;
          _processBuilder.ProcessRateParameterPersistable = true;
          A.CallTo(() => _formulaMapper.MapFrom(_kinetic, _simulationBuilder)).Returns(_kinetic);
-         _processBuilder.Name = "Reaction";
+         _processBuilder.Name = _processBuilderName;
          _processBuilder.Formula = _kinetic;
          _processRateParameter = new Parameter();
          A.CallTo(() => _objectBaseFactory.Create<IParameter>()).Returns(_processRateParameter);
+
+         var localParameter = new Parameter { BuildMode = ParameterBuildMode.Local }.WithName("C");
+         var globalParameter = new Parameter { BuildMode = ParameterBuildMode.Global }.WithName("D");
+         _processBuilder.AddParameter(localParameter);
+         _processBuilder.AddParameter(globalParameter);
       }
 
       protected override void Because()
@@ -81,6 +91,18 @@ namespace OSPSuite.Core.Domain
       public void created_parameter_should_be_default()
       {
          _processRateParameter.IsDefault.ShouldBeTrue();
+      }
+
+      [Observation]
+      public void should_not_update_paths_for_absolute_paths_resolving_global_parameters()
+      {
+         _formulaUsablePathD.ShouldOnlyContainInOrder(_processBuilderName, "D");
+      }
+
+      [Observation]
+      public void should_update_paths_for_absolute_paths_resolving_local_parameters()
+      {
+         _formulaUsablePathC.ShouldOnlyContainInOrder(ObjectPath.PARENT_CONTAINER, "C");
       }
 
       [Observation]

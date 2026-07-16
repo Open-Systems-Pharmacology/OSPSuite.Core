@@ -1,4 +1,7 @@
-﻿using DevExpress.Utils;
+﻿using System;
+using System.Drawing;
+using System.Linq;
+using DevExpress.Utils;
 using DevExpress.XtraCharts;
 using OSPSuite.Core.Chart;
 using OSPSuite.Core.Chart.Mappers;
@@ -10,11 +13,9 @@ using OSPSuite.UI.Extensions;
 using OSPSuite.Utility;
 using OSPSuite.Utility.Extensions;
 using OSPSuite.Utility.Format;
-using System;
-using System.Drawing;
-using System.Linq;
 using DevExpressAxis = DevExpress.XtraCharts.Axis;
 using OSPAxis = OSPSuite.Core.Chart.Axis;
+using Range = DevExpress.XtraCharts.Range;
 
 namespace OSPSuite.UI.Binders
 {
@@ -49,8 +50,8 @@ namespace OSPSuite.UI.Binders
          if (AxisType == AxisTypes.Y)
             return xyDiagram.AxisY;
 
-         int axisTypeIndex = (int) AxisType;
-         const int secondaryAxisOffset = (int) AxisTypes.Y2;
+         int axisTypeIndex = (int)AxisType;
+         const int secondaryAxisOffset = (int)AxisTypes.Y2;
 
          // create yN-Axis, if necessary, and also the preceding yN-Axes
          for (int i = xyDiagram.SecondaryAxesY.Count; i <= axisTypeIndex - secondaryAxisOffset; i++)
@@ -59,6 +60,7 @@ namespace OSPSuite.UI.Binders
             var secondaryAxisY = new SecondaryAxisY(typeOfAxisView.ToString());
             xyDiagram.SecondaryAxesY.Add(secondaryAxisY);
          }
+
          return xyDiagram.SecondaryAxesY[axisTypeIndex - secondaryAxisOffset];
       }
 
@@ -149,6 +151,7 @@ namespace OSPSuite.UI.Binders
             {
                Axis.ResetRange();
             }
+
             return;
          }
 
@@ -165,13 +168,13 @@ namespace OSPSuite.UI.Binders
             if (!Axis.Min.HasValue)
             {
                var rangeMin = Convert.ToSingle(_axisView.WholeRange.MinValue);
-               Axis.Min = Axis.Max.HasValue ? Math.Min(Axis.Max.Value, rangeMin) :  rangeMin;
+               Axis.Min = Axis.Max.HasValue ? Math.Min(Axis.Max.Value, rangeMin) : rangeMin;
             }
 
             if (!Axis.Max.HasValue)
                Axis.Max = Math.Max(Axis.Min.Value, Convert.ToSingle(_axisView.WholeRange.MaxValue));
-               
          }
+
          _explicitRange = !_explicitRange;
       }
 
@@ -209,9 +212,51 @@ namespace OSPSuite.UI.Binders
          _axisView.NumericScaleOptions.AutoGrid = true;
       }
 
+      // The manual tick override is only applied for linearly scaled axes. Logarithmic axes keep their
+      // decade gridlines and the fixed minor count handled in setAxisRange.
+      private bool hasManualTickSettings => Axis.Scaling != Scalings.Log && (hasValidMajorInterval || Axis.MinorTicks.HasValue);
+
+      private bool hasValidMajorInterval => Axis.MajorInterval.HasValue && Axis.MajorInterval.Value > 0;
+
+      // The charting component throws if the minor tick count is outside [MIN_MINOR_TICKS, MAX_MINOR_TICKS]. An out-of-range
+      // value is flagged to the user by the axis validation rules; here we simply fall back to the automatic count.
+      private bool hasValidMinorTicks =>
+         Axis.MinorTicks.HasValue && Axis.MinorTicks.Value >= OSPAxis.MIN_MINOR_TICKS && Axis.MinorTicks.Value <= OSPAxis.MAX_MINOR_TICKS;
+
+      private void applyManualTickSettings()
+      {
+         if (hasValidMajorInterval)
+         {
+            _axisView.NumericScaleOptions.AutoGrid = false;
+            _axisView.NumericScaleOptions.GridSpacing = Axis.MajorInterval.Value;
+            _axisView.NumericScaleOptions.GridAlignment = NumericGridAlignment.Ones;
+            _axisView.NumericScaleOptions.MeasureUnit = NumericMeasureUnit.Ones;
+         }
+         else
+         {
+            _axisView.NumericScaleOptions.AutoGrid = true;
+         }
+
+         if (hasValidMinorTicks)
+         {
+            _axisView.MinorCount = Axis.MinorTicks.Value;
+            _axisView.Tickmarks.MinorVisible = true;
+         }
+         else
+         {
+            _axisView.MinorCount = _defaultMinorTickCount;
+         }
+      }
+
       private void configureAxisScale(int axisWidthInPixel)
       {
-         var ticksConfig = new TicksConfig {AutoScale = true};
+         if (hasManualTickSettings)
+         {
+            applyManualTickSettings();
+            return;
+         }
+
+         var ticksConfig = new TicksConfig { AutoScale = true };
 
          if (shouldApplyPreferredMinorTicks())
             ticksConfig = calculateMinorIntervalsPerMajorInterval(axisWidthInPixel);
@@ -300,7 +345,7 @@ namespace OSPSuite.UI.Binders
                pattern = $"V:E{_numericFormatterOptions.DecimalPlace}";
                break;
             case NumberModes.Normal:
-               pattern = "V:G";
+               pattern = "V:G15";
                break;
             case NumberModes.Relative:
                pattern = "V:P";
@@ -308,6 +353,7 @@ namespace OSPSuite.UI.Binders
             default:
                return;
          }
+
          updateLabelTextPattern(pattern);
       }
 

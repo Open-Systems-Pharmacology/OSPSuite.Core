@@ -119,8 +119,18 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
       protected void SelectColorForPath(string path)
       {
-         if (!_colorCache.Contains(path))
-            _colorCache[path] = Chart.SelectNewColor();
+         // prefer colors from peer charts that already contain the path-color match
+         var peerColor = (Chart as AnalysisChart)?.PeerColorForPath(path);
+         if (peerColor.HasValue)
+         {
+            _colorCache[path] = peerColor.Value;
+            return;
+         }
+
+         if (_colorCache.Contains(path))
+            return;
+
+         _colorCache[path] = Chart.SelectNewColor();
       }
 
       protected void UpdateColorForCalculationColumn(Curve curve, DataColumn calculationColumn)

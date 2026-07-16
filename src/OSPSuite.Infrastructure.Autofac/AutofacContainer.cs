@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using Autofac;
-using OSPSuite.Core;
 using OSPSuite.Utility.Container;
 using OSPSuite.Utility.Extensions;
 using IContainer = Autofac.IContainer;
@@ -152,11 +150,6 @@ namespace OSPSuite.Infrastructure.Container.Autofac
       public IDisposable OptimizeDependencyResolution()
       {
          return new AutofacBuilderDisposer(this);
-      }
-
-      public void AddActivationHook<T>() where T: IAutofacActivationHook, new()
-      {
-         _activationHooks.Add(new T());
       }
    }
 }

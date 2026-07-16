@@ -2,7 +2,6 @@
 using OSPSuite.Assets;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
-using OSPSuite.Core.Domain.ParameterIdentifications;
 using OSPSuite.Utility.Validation;
 
 namespace OSPSuite.Presentation.DTO.ParameterIdentifications

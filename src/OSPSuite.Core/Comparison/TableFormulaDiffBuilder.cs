@@ -1,5 +1,4 @@
 ﻿using OSPSuite.Core.Domain.Formulas;
-using OSPSuite.Core.Services;
 
 namespace OSPSuite.Core.Comparison
 {

@@ -115,8 +115,6 @@ namespace OSPSuite.Presentation.Presenters.Charts
       ///    Removed all the output mappings from the list the DataBrowser keeps.
       /// </summary>
       void RemoveAllOutputMappings();
-
-      IReadOnlyList<OutputMappings> GetOutputMappings();
    }
 
    public class DataBrowserPresenter : PresenterWithColumnSettings<IDataBrowserView, IDataBrowserPresenter>, IDataBrowserPresenter
@@ -321,11 +319,6 @@ namespace OSPSuite.Presentation.Presenters.Charts
          AddColumnSettings(BrowserColumns.Category).WithCaption(Category).WithVisible(false);
          AddColumnSettings(BrowserColumns.Source).WithCaption(Source).WithVisible(false);
          AddColumnSettings(BrowserColumns.Used).WithCaption(Used).WithVisible(true);
-      }
-
-      public IReadOnlyList<OutputMappings> GetOutputMappings()
-      {
-         return _allOutputMappings.ToList().AsReadOnly();
       }
    }
 }

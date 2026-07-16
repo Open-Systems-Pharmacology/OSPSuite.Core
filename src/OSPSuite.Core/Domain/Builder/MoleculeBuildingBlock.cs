@@ -15,6 +15,22 @@ namespace OSPSuite.Core.Domain.Builder
 
       public IEnumerable<MoleculeBuilder> AllFloating() => this.Where(x => x.IsFloating);
 
+      public IEnumerable<MoleculeBuilder> AllStationary() => this.Where(x => !x.IsFloating);
+
+      public IEnumerable<MoleculeBuilder> AllXenobiotic() => this.Where(x => x.IsXenobiotic);
+
+      public IEnumerable<MoleculeBuilder> AllEndogenous() => this.Where(x => !x.IsXenobiotic);
+
+      public IEnumerable<MoleculeBuilder> AllOfType(QuantityType quantityType) => this.Where(x => x.QuantityType.Is(quantityType));
+
+      public IEnumerable<MoleculeBuilder> AllXenobioticFloating() => this.Where(x => x.IsXenobiotic && x.IsFloating);
+
+      public IEnumerable<MoleculeBuilder> AllXenobioticStationary() => this.Where(x => x.IsXenobiotic && !x.IsFloating);
+
+      public IEnumerable<MoleculeBuilder> AllEndogenousFloating() => this.Where(x => !x.IsXenobiotic && x.IsFloating);
+
+      public IEnumerable<MoleculeBuilder> AllEndogenousStationary() => this.Where(x => !x.IsXenobiotic && !x.IsFloating);
+
       public IEnumerable<MoleculeBuilder> AllPresentFor(IEnumerable<InitialConditionsBuildingBlock> initialConditions)
       {
          var moleculeNames = initialConditions.SelectMany(x => x)

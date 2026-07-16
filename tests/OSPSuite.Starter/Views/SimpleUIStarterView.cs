@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Linq;
 using System.Windows.Forms;
-using OSPSuite.Utility.Container;
 using DevExpress.XtraEditors;
 using OSPSuite.Core.Services;
 using OSPSuite.Presentation.Services;
 using OSPSuite.UI.Controls;
-using OSPSuite.UI.Services;
+using OSPSuite.Utility.Container;
 
 namespace OSPSuite.Starter.Views
 {

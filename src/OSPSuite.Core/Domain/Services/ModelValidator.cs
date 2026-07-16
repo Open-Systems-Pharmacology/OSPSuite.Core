@@ -83,6 +83,10 @@ namespace OSPSuite.Core.Domain.Services
             case TableFormulaWithXArgument formulaWithXArgument:
                checkPathInEntity(formulaWithXArgument.FormulaUsablePathBy(formulaWithXArgument.TableObjectAlias));
                return;
+            
+            case null:
+               addNotificationType(NotificationType.Error, objectWithError, Validation.FormulaCannotBeEmpty);
+               return;
          }
 
          //in all other cases, we check the object path used in the formula

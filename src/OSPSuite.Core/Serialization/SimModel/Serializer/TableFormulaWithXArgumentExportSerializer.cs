@@ -1,7 +1,6 @@
 ﻿using System.Xml.Linq;
 using OSPSuite.Core.Serialization.SimModel.DTO;
 using OSPSuite.Serializer.Xml.Extensions;
-using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Serialization.SimModel.Serializer
 {

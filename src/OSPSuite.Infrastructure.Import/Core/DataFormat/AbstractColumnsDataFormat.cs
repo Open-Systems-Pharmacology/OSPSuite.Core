@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Core.Domain;
+using OSPSuite.Core.Extensions;
 using OSPSuite.Core.Import;
 using OSPSuite.Infrastructure.Import.Core.Extensions;
 using OSPSuite.Utility.Collections;
@@ -70,9 +71,9 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
 
             var concreteColumnInfo = columnInfos[mappedColumn.Name];
             //initial settings for fraction dimension
-            if (concreteColumnInfo.DefaultDimension?.Name == Constants.Dimension.FRACTION &&
+            if (hasUnitlessDefaultDimension(concreteColumnInfo) &&
                 mappedColumn.Unit.ColumnName.IsNullOrEmpty() &&
-                mappedColumn.Unit.SelectedUnit == UnitDescription.InvalidUnit)
+                isInvalidUnitSelected(mappedColumn))
             {
                mappedColumn.Dimension = concreteColumnInfo.DefaultDimension;
                mappedColumn.Unit = new UnitDescription(mappedColumn.Dimension.DefaultUnitName);
@@ -92,6 +93,12 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
             }
          }
       }
+
+      private static bool hasUnitlessDefaultDimension(ColumnInfo concreteColumnInfo) => 
+         concreteColumnInfo.DefaultDimension != null && concreteColumnInfo.DefaultDimension.Name.IsOneOf(Constants.Dimension.FRACTION, Constants.Dimension.DIMENSIONLESS);
+
+      private static bool isInvalidUnitSelected(Column mappedColumn) => 
+         mappedColumn.Unit.SelectedUnit.IsOneOf(UnitDescription.InvalidUnit, null);
 
       private void setSecondaryColumnUnit(ColumnInfoCache columnInfos)
       {

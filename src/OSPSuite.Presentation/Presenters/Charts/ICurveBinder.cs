@@ -17,7 +17,6 @@ namespace OSPSuite.Presentation.Presenters.Charts
       bool HasLLOQ { get; }
       IEnumerable<string> SeriesIds { get; }
       void Refresh(bool shouldRefreshData = true);
-      void ShowAllSeries();
       void HideAllSeries();
       void ShowCurveInLegend(bool showInLegend);
       bool ContainsSeries(string seriesId);
@@ -29,6 +28,12 @@ namespace OSPSuite.Presentation.Presenters.Charts
       bool IsSeriesLLOQ(string seriesId);
 
       int OriginalCurveIndexForRow(DataRow row);
+
+      /// <summary>
+      ///    Returns the y value of the underlying data for the given <paramref name="row" /> in the unit of the y axis.
+      ///    This is also available for rows representing empty points (e.g. a value of 0 on a logarithmic scale)
+      /// </summary>
+      double YValueForRow(DataRow row);
 
       bool IsValidFor(DataMode dataMode, AxisTypes curveAxisType);
       

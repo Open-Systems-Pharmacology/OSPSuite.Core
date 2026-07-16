@@ -391,8 +391,6 @@ namespace OSPSuite.UI.Controls
             treeNode.Delete();
       }
 
-      public void DestroyNode(string id) => destroyNode(treeListNodeById(id));
-
       private void destroyNode(TreeListNode node) => DestroyNode(NodeFrom(node));
 
       private void removeNode(TreeListNode node) => RemoveNode(NodeFrom(node));

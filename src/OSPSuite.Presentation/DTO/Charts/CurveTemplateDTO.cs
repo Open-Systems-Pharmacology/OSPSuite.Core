@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
+using OSPSuite.Assets;
 using OSPSuite.Utility.Validation;
 using OSPSuite.Core.Chart;
 using OSPSuite.Core.Domain;
@@ -97,8 +98,14 @@ namespace OSPSuite.Presentation.DTO.Charts
                yield return GenericRules.NonEmptyRule<CurveTemplateDTO>(x => x.xDataPath);
                yield return GenericRules.NonEmptyRule<CurveTemplateDTO>(x => x.yDataPath);
                yield return GenericRules.NonEmptyRule<CurveTemplateDTO>(x => x.Name);
+               yield return lineThicknessWithinLimits;
             }
          }
+
+         private static IBusinessRule lineThicknessWithinLimits { get; } = CreateRule.For<CurveTemplateDTO>()
+            .Property(x => x.LineThickness)
+            .WithRule((dto, lineThickness) => lineThickness >= Constants.MIN_LINE_THICKNESS && lineThickness <= Constants.MAX_LINE_THICKNESS)
+            .WithError(Validation.LineThicknessShouldBeBetween(Constants.MIN_LINE_THICKNESS, Constants.MAX_LINE_THICKNESS));
       }
    }
 }

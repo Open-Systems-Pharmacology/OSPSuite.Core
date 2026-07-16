@@ -43,7 +43,6 @@ namespace OSPSuite.Presentation.Presenters.Diagram
       void Zoom(float factor);
 
       void ShowChildren(IContainerBase containerBase);
-      void HideChildren(IContainerBase containerBase);
       void HideNotLinkedNodes();
       void ShowLinkedNodes();
 
@@ -51,11 +50,7 @@ namespace OSPSuite.Presentation.Presenters.Diagram
       void SetDefaultExpansion();
       void ShowDefaultExpansion();
       void ExpandSelection();
-      void ExpandSelectionChildren();
-      void ExpandSelectionRecursive();
       void CollapseSelection();
-      void CollapseSelectionChildren();
-      void CollapseSelectionRecursive();
       bool SelectionContains<T>() where T : class, IHasLayoutInfo;
       T GetFirstSelected<T>() where T : class, IHasLayoutInfo;
 
@@ -224,11 +219,6 @@ namespace OSPSuite.Presentation.Presenters.Diagram
          setHidden(containerBase.GetDirectChildren<IBaseNode>(), false);
       }
 
-      public void HideChildren(IContainerBase containerBase)
-      {
-         setHidden(containerBase.GetDirectChildren<IBaseNode>(), true);
-      }
-
       private void setHidden<T>(IEnumerable<T> nodes, bool hidden) where T : IHasLayoutInfo
       {
          foreach (var node in nodes)
@@ -316,46 +306,11 @@ namespace OSPSuite.Presentation.Presenters.Diagram
          }
       }
 
-      public void ExpandSelectionChildren()
-      {
-         foreach (var node in _view.GetSelectedNodes<IContainerNode>())
-         {
-            node.Expand(1);
-         }
-      }
-
-      public void ExpandSelectionRecursive()
-      {
-         foreach (var node in _view.GetSelectedNodes<IContainerNode>())
-         {
-            node.Expand(100);
-         }
-      }
-
       public void CollapseSelection()
       {
          foreach (var node in _view.GetSelectedNodes<IContainerNode>())
          {
             node.Collapse(0);
-         }
-      }
-
-      public void CollapseSelectionChildren()
-      {
-         foreach (var node in _view.GetSelectedNodes<IContainerNode>())
-         {
-            foreach (var node1 in node.GetDirectChildren<IContainerNode>())
-            {
-               node1.Collapse(0);
-            }
-         }
-      }
-
-      public void CollapseSelectionRecursive()
-      {
-         foreach (var node in _view.GetSelectedNodes<IContainerNode>())
-         {
-            node.Collapse(100);
          }
       }
 

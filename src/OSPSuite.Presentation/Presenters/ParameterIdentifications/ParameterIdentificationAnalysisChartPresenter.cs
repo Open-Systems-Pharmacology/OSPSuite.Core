@@ -38,6 +38,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
       public override void UpdateAnalysisBasedOn(IAnalysable analysable)
       {
          _parameterIdentification = analysable.DowncastTo<ParameterIdentification>();
+         UpdateTemplatesBasedOn(_chartPresenterContext.ProjectRetriever.CurrentProject);
 
          if (ChartIsBeingUpdated)
          {
@@ -80,12 +81,6 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
       protected void AddCurvesFor(DataRepository dataRepository, Action<DataColumn, Curve> action)
       {
          Chart.AddCurvesFor(dataRepository.AllButBaseGrid(), NameForColumn, _chartPresenterContext.DimensionFactory, action);
-      }
-
-      protected ParameterIdentificationRunResult RunResultWithBestError(
-         IReadOnlyList<ParameterIdentificationRunResult> parameterIdentificationResults)
-      {
-         return parameterIdentificationResults.MinimumBy(x => x.TotalError);
       }
 
       protected void AddUsedObservedDataToChart()

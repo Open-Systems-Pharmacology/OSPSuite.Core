@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using OSPSuite.Assets;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
@@ -29,7 +30,7 @@ namespace OSPSuite.Core
       protected override void Context()
       {
          base.Context();
-         //we create the simulation in context as some tests are modifying it
+         //we create the simulation configuration in context as some tests are modifying it
          _simulationConfiguration = IoC.Resolve<ModelHelperForSpecs>().CreateSimulationConfiguration();
       }
 
@@ -39,6 +40,29 @@ namespace OSPSuite.Core
          _result = sut.CreateModelFrom(_simulationConfiguration, _modelName);
          _model = _result.Model;
          _simulationBuilder = _result.SimulationBuilder;
+      }
+   }
+
+   internal class When_overriding_molecule_calculation_methods : concern_for_ModelConstructor
+   {
+      protected override void Context()
+      {
+         base.Context();
+         _simulationConfiguration.AddCalculationMethodsOverridesFor("A", new List<UsedCalculationMethod> { new UsedCalculationMethod("PartitionCoeff", "CM2") });
+      }
+
+      [Observation]
+      public void should_have_used_the_calculation_method_CM2_for_the_molecule_A()
+      {
+         _model.MoleculeContainerInNeighborhood("lng_pls_to_lng_cell", "A").GetSingleChildByName<IParameter>("K").Formula.Name.ShouldBeEqualTo("PartitionCoeff_2");
+         _model.MoleculeContainerInNeighborhood("bon_pls_to_bon_cell", "A").GetSingleChildByName<IParameter>("K").Formula.Name.ShouldBeEqualTo("PartitionCoeff_2");
+      }
+
+      [Observation]
+      public void should_have_used_the_calculation_method_CM2_for_the_molecule_B()
+      {
+         _model.MoleculeContainerInNeighborhood("lng_pls_to_lng_cell", "B").GetSingleChildByName<IParameter>("K").Formula.Name.ShouldBeEqualTo("PartitionCoeff_2");
+         _model.MoleculeContainerInNeighborhood("bon_pls_to_bon_cell", "B").GetSingleChildByName<IParameter>("K").Formula.Name.ShouldBeEqualTo("PartitionCoeff_2");
       }
    }
 
@@ -466,7 +490,7 @@ namespace OSPSuite.Core
          var parameterValue = parameterValues.First(x => x.Name == parameter.Name);
          var entitySource = _simulationBuilder.SimulationEntitySourceFor(parameter);
          entitySource.SourcePath.ShouldBeEqualTo(parameterValue.Path);
-         entitySource.SimulationEntityPath.ShouldBeEqualTo(new[] {ORGANISM, Bone, Cell, "FormulaParameterOverwritten"}.ToPathString());
+         entitySource.SimulationEntityPath.ShouldBeEqualTo(new[] { ORGANISM, Bone, Cell, "FormulaParameterOverwritten" }.ToPathString());
       }
 
       [Observation]
@@ -621,7 +645,7 @@ namespace OSPSuite.Core
       protected override void Context()
       {
          base.Context();
-         var simulationBuilder = new SimulationBuilder(_simulationConfiguration);
+         var simulationBuilder = new SimulationBuilderForSpecs(_simulationConfiguration);
 
          _parameterValue = simulationBuilder.ParameterValues.First(x => x.Name.Equals("FormulaParameterOverwritten"));
          _parameterValue.Value = double.NaN;
@@ -643,13 +667,20 @@ namespace OSPSuite.Core
       {
          base.Context();
          //we use a sim builder here to modify the configuration on the fly
-         var simulationBuilder = new SimulationBuilder(_simulationConfiguration);
+         var simulationBuilder = new SimulationBuilderForSpecs(_simulationConfiguration);
 
          var initialCondition = simulationBuilder.InitialConditions.First();
          var physicalContainer = simulationBuilder.SpatialStructureAndMergeBehaviors.SelectMany(x => x.spatialStructure.TopContainers)
             .Select(x => initialCondition.ContainerPath.TryResolve<IContainer>(x)).First(x => x != null);
-
          physicalContainer.Mode = ContainerMode.Logical;
+
+         // "Organism|ArterialBlood|Plasma" -> is being set to Logical explicitly on the previous line,
+         // as we now are not creating neighborhoods from logical containers, a further validation ends up on this exception:
+         // Could not find neighborhood between 'MyModel|Organism|ArterialBlood|Plasma' and 'MyModel|Organism|Bone|Plasma'
+         // referenced by formula 'FormulaReferencingNBH' used by 'MyModel|Organism|ArterialBlood|Plasma|RefParam'
+         // This parameter has to be removed since the validation will make this fail before testing the initial condition.
+         var parameterWithFormula = physicalContainer.Children.FirstOrDefault(x => x.Name == "RefParam") as Parameter;
+         physicalContainer.RemoveChild(parameterWithFormula);
       }
 
       [Observation]
@@ -665,7 +696,7 @@ namespace OSPSuite.Core
       {
          base.Context();
          //we use a sim builder here to modify the configuration on the fly
-         var simulationBuilder = new SimulationBuilder(_simulationConfiguration);
+         var simulationBuilder = new SimulationBuilderForSpecs(_simulationConfiguration);
          var molecule = simulationBuilder.MoleculeByName("A");
          var paraToRemove = molecule.Parameters.SingleOrDefault(para => para.Name == "logMA");
          molecule.RemoveParameter(paraToRemove);
@@ -743,6 +774,68 @@ namespace OSPSuite.Core
          var parameterValues = _simulationConfiguration.ModuleConfigurations[0].SelectedParameterValues;
          var parameterValue = parameterValues.First(x => x.Name == parameter.Name);
          _simulationBuilder.SimulationEntitySourceFor(parameter).SourcePath.ShouldBeEqualTo(parameterValue.Path);
+      }
+   }
+
+   internal class When_creating_models_in_parallel_using_a_shared_model_constructor_instance : ContextForIntegration<IModelConstructor>
+   {
+      private const int NUMBER_OF_PARALLEL_RUNS = 8;
+      private SimulationConfiguration[] _simulationConfigurations;
+      private CreationResult[] _results;
+      private string _expectedModelFingerprint;
+
+      protected override void Context()
+      {
+         base.Context();
+         sut = IoC.Resolve<IModelConstructor>();
+
+         //one configuration per run created sequentially so that only the model construction itself runs in parallel
+         _simulationConfigurations = new SimulationConfiguration[NUMBER_OF_PARALLEL_RUNS];
+         for (var i = 0; i < NUMBER_OF_PARALLEL_RUNS; i++)
+         {
+            _simulationConfigurations[i] = IoC.Resolve<ModelHelperForSpecs>().CreateSimulationConfiguration();
+         }
+
+         //sequential baseline used to verify that the models created in parallel are complete
+         var baselineResult = sut.CreateModelFrom(IoC.Resolve<ModelHelperForSpecs>().CreateSimulationConfiguration(), "MyModel");
+         _expectedModelFingerprint = structuralFingerprintOf(baselineResult.Model);
+      }
+
+      /// <summary>
+      ///    Returns the sorted entity paths of all entities in the model together with the name of the formula they use.
+      ///    Comparing fingerprints catches races that would attach entities or formulas to the wrong nodes
+      /// </summary>
+      private static string structuralFingerprintOf(IModel model)
+      {
+         return model.Root.GetAllChildren<IEntity>()
+            .Select(entityFingerprint)
+            .OrderBy(x => x)
+            .ToString("\n");
+      }
+
+      private static string entityFingerprint(IEntity entity)
+      {
+         var formulaName = (entity as IUsingFormula)?.Formula?.Name;
+         return formulaName == null ? entity.EntityPath() : $"{entity.EntityPath()}|{formulaName}";
+      }
+
+      protected override void Because()
+      {
+         _results = new CreationResult[NUMBER_OF_PARALLEL_RUNS];
+         Parallel.For(0, NUMBER_OF_PARALLEL_RUNS, i => { _results[i] = sut.CreateModelFrom(_simulationConfigurations[i], "MyModel"); });
+      }
+
+      [Observation]
+      public void should_create_a_valid_model_for_each_parallel_run()
+      {
+         //the case study creates a warning for a parameter not found
+         _results.Each(result => result.ValidationResult.ValidationState.ShouldBeEqualTo(ValidationState.ValidWithWarnings, result.ValidationResult.Messages.Select(m => m.Text).ToString("\n")));
+      }
+
+      [Observation]
+      public void should_create_models_with_the_same_structure_as_a_model_created_sequentially()
+      {
+         _results.Each(result => structuralFingerprintOf(result.Model).ShouldBeEqualTo(_expectedModelFingerprint));
       }
    }
 }

@@ -75,4 +75,198 @@ namespace OSPSuite.Core.Domain
          _results.ShouldOnlyContain(_drug,_molecule);
       }
    }
+
+   public abstract class concern_for_MoleculeBuildingBlock_filters : concern_for_MoleculeBuildingBlock
+   {
+      protected MoleculeBuilder _xenobioticFloatingDrug;
+      protected MoleculeBuilder _xenobioticStationaryDrug;
+      protected MoleculeBuilder _endogenousFloatingEnzyme;
+      protected MoleculeBuilder _endogenousStationaryEnzyme;
+      protected MoleculeBuilder _endogenousStationaryTransporter;
+      protected MoleculeBuilder _endogenousStationaryOtherProtein;
+
+      protected override void Context()
+      {
+         base.Context();
+         _xenobioticFloatingDrug = addMolecule("XenoFloatingDrug", isFloating: true, QuantityType.Drug, isXenobiotic: true);
+         _xenobioticStationaryDrug = addMolecule("XenoStationaryDrug", isFloating: false, QuantityType.Drug, isXenobiotic: true);
+         _endogenousFloatingEnzyme = addMolecule("EndoFloatingEnzyme", isFloating: true, QuantityType.Enzyme, isXenobiotic: false);
+         _endogenousStationaryEnzyme = addMolecule("EndoStationaryEnzyme", isFloating: false, QuantityType.Enzyme, isXenobiotic: false);
+         _endogenousStationaryTransporter = addMolecule("EndoStationaryTransporter", isFloating: false, QuantityType.Transporter, isXenobiotic: false);
+         _endogenousStationaryOtherProtein = addMolecule("EndoStationaryOtherProtein", isFloating: false, QuantityType.OtherProtein, isXenobiotic: false);
+      }
+
+      private MoleculeBuilder addMolecule(string name, bool isFloating, QuantityType quantityType, bool isXenobiotic)
+      {
+         var molecule = new MoleculeBuilder
+         {
+            Name = name,
+            IsFloating = isFloating,
+            QuantityType = quantityType,
+            IsXenobiotic = isXenobiotic
+         };
+         sut.Add(molecule);
+         return molecule;
+      }
+   }
+
+   public class When_retrieving_all_floating_molecules : concern_for_MoleculeBuildingBlock_filters
+   {
+      private IEnumerable<MoleculeBuilder> _results;
+
+      protected override void Because()
+      {
+         _results = sut.AllFloating();
+      }
+
+      [Observation]
+      public void should_return_only_floating_molecules()
+      {
+         _results.ShouldOnlyContain(_xenobioticFloatingDrug, _endogenousFloatingEnzyme);
+      }
+   }
+
+   public class When_retrieving_all_stationary_molecules : concern_for_MoleculeBuildingBlock_filters
+   {
+      private IEnumerable<MoleculeBuilder> _results;
+
+      protected override void Because()
+      {
+         _results = sut.AllStationary();
+      }
+
+      [Observation]
+      public void should_return_only_stationary_molecules()
+      {
+         _results.ShouldOnlyContain(_xenobioticStationaryDrug, _endogenousStationaryEnzyme, _endogenousStationaryTransporter, _endogenousStationaryOtherProtein);
+      }
+   }
+
+   public class When_retrieving_all_xenobiotic_molecules : concern_for_MoleculeBuildingBlock_filters
+   {
+      private IEnumerable<MoleculeBuilder> _results;
+
+      protected override void Because()
+      {
+         _results = sut.AllXenobiotic();
+      }
+
+      [Observation]
+      public void should_return_only_xenobiotic_molecules()
+      {
+         _results.ShouldOnlyContain(_xenobioticFloatingDrug, _xenobioticStationaryDrug);
+      }
+   }
+
+   public class When_retrieving_all_endogenous_molecules : concern_for_MoleculeBuildingBlock_filters
+   {
+      private IEnumerable<MoleculeBuilder> _results;
+
+      protected override void Because()
+      {
+         _results = sut.AllEndogenous();
+      }
+
+      [Observation]
+      public void should_return_only_endogenous_molecules()
+      {
+         _results.ShouldOnlyContain(_endogenousFloatingEnzyme, _endogenousStationaryEnzyme, _endogenousStationaryTransporter, _endogenousStationaryOtherProtein);
+      }
+   }
+
+   public class When_retrieving_all_molecules_of_a_specific_quantity_type : concern_for_MoleculeBuildingBlock_filters
+   {
+      private IEnumerable<MoleculeBuilder> _results;
+
+      protected override void Because()
+      {
+         _results = sut.AllOfType(QuantityType.Drug);
+      }
+
+      [Observation]
+      public void should_return_only_molecules_with_that_type()
+      {
+         _results.ShouldOnlyContain(_xenobioticFloatingDrug, _xenobioticStationaryDrug);
+      }
+   }
+
+   public class When_retrieving_all_molecules_of_a_composite_quantity_type : concern_for_MoleculeBuildingBlock_filters
+   {
+      private IEnumerable<MoleculeBuilder> _results;
+
+      protected override void Because()
+      {
+         _results = sut.AllOfType(QuantityType.Protein);
+      }
+
+      [Observation]
+      public void should_return_molecules_whose_type_is_a_subset_of_the_composite_type()
+      {
+         _results.ShouldOnlyContain(_endogenousFloatingEnzyme, _endogenousStationaryEnzyme, _endogenousStationaryTransporter, _endogenousStationaryOtherProtein);
+      }
+   }
+
+   public class When_retrieving_all_xenobiotic_floating_molecules : concern_for_MoleculeBuildingBlock_filters
+   {
+      private IEnumerable<MoleculeBuilder> _results;
+
+      protected override void Because()
+      {
+         _results = sut.AllXenobioticFloating();
+      }
+
+      [Observation]
+      public void should_return_only_xenobiotic_floating_molecules()
+      {
+         _results.ShouldOnlyContain(_xenobioticFloatingDrug);
+      }
+   }
+
+   public class When_retrieving_all_xenobiotic_stationary_molecules : concern_for_MoleculeBuildingBlock_filters
+   {
+      private IEnumerable<MoleculeBuilder> _results;
+
+      protected override void Because()
+      {
+         _results = sut.AllXenobioticStationary();
+      }
+
+      [Observation]
+      public void should_return_only_xenobiotic_stationary_molecules()
+      {
+         _results.ShouldOnlyContain(_xenobioticStationaryDrug);
+      }
+   }
+
+   public class When_retrieving_all_endogenous_floating_molecules : concern_for_MoleculeBuildingBlock_filters
+   {
+      private IEnumerable<MoleculeBuilder> _results;
+
+      protected override void Because()
+      {
+         _results = sut.AllEndogenousFloating();
+      }
+
+      [Observation]
+      public void should_return_only_endogenous_floating_molecules()
+      {
+         _results.ShouldOnlyContain(_endogenousFloatingEnzyme);
+      }
+   }
+
+   public class When_retrieving_all_endogenous_stationary_molecules : concern_for_MoleculeBuildingBlock_filters
+   {
+      private IEnumerable<MoleculeBuilder> _results;
+
+      protected override void Because()
+      {
+         _results = sut.AllEndogenousStationary();
+      }
+
+      [Observation]
+      public void should_return_only_endogenous_stationary_molecules()
+      {
+         _results.ShouldOnlyContain(_endogenousStationaryEnzyme, _endogenousStationaryTransporter, _endogenousStationaryOtherProtein);
+      }
+   }
 }

@@ -124,7 +124,8 @@ namespace OSPSuite.Core.Services
       protected override void Because()
       {
          var simulationConfiguration = new SimulationConfiguration();
-         _result = sut.CheckCircularReferencesIn(new ModelConfiguration(_model, simulationConfiguration, new SimulationBuilder(simulationConfiguration)));
+         var simulationBuilder = A.Fake<SimulationBuilder>();
+         _result = sut.CheckCircularReferencesIn(new ModelConfiguration(_model, simulationConfiguration, simulationBuilder));
       }
 
       protected Parameter CreateParameter(string name, string objectPath)
@@ -187,6 +188,7 @@ namespace OSPSuite.Core.Services
       private SimulationConfiguration _simulationConfiguration;
       protected ValidationResult _results;
       protected Container _eventContainer;
+      private SimulationBuilder _simulationBuilder;
 
       protected override void Context()
       {
@@ -200,11 +202,12 @@ namespace OSPSuite.Core.Services
          _container.Add(_parameter1);
          _container.Add(_parameter2);
          _simulationConfiguration = new SimulationConfiguration();
+         _simulationBuilder = A.Fake<SimulationBuilder>();
       }
 
       protected override void Because()
       {
-         _results = sut.CheckCircularReferencesIn(new ModelConfiguration(_model, _simulationConfiguration, new SimulationBuilder(_simulationConfiguration)));
+         _results = sut.CheckCircularReferencesIn(new ModelConfiguration(_model, _simulationConfiguration, _simulationBuilder));
       }
    }
 

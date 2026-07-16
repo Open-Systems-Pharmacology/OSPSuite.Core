@@ -52,11 +52,6 @@ namespace OSPSuite.UI.Diagram.Elements
          get { return _moleculeNode; }
       }
 
-      public IElementBaseNode GetOtherNode(IElementBaseNode node)
-      {
-         return (IElementBaseNode) GetOtherNode((GoNode) node);
-      }
-
       public override bool Visible
       {
          get

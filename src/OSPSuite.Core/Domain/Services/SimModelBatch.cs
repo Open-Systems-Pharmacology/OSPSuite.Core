@@ -65,7 +65,6 @@ namespace OSPSuite.Core.Domain.Services
          var simulationExport = CreateSimulationExport(_modelCoreSimulation, SimModelExportMode.Optimized, variableMoleculePaths);
          var simulation = CreateSimulation(simulationExport, x =>
          {
-            x.CheckForNegativeValues = CheckForNegativeValues;
             x.AutoReduceTolerances = AutoReduceTolerances;
             x.KeepXMLNodeAsString = KeepXMLNodeInSimModelSimulation;
          });

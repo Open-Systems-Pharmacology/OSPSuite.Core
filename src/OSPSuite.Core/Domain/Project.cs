@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Utility.Collections;
@@ -161,11 +160,13 @@ namespace OSPSuite.Core.Domain
       public void AddChartTemplate(CurveChartTemplate chartTemplate)
       {
          _chartTemplates.Add(chartTemplate);
+         HasChanged = true;
       }
 
       public void RemoveChartTemplate(string chartTemplateName)
       {
-         _chartTemplates.Remove(chartTemplateName); ;
+         _chartTemplates.Remove(chartTemplateName);
+         HasChanged = true;
       }
 
       public CurveChartTemplate ChartTemplateByName(string templateName)
@@ -176,14 +177,10 @@ namespace OSPSuite.Core.Domain
       public void RemoveAllChartTemplates()
       {
          _chartTemplates.Clear();
+         HasChanged = true;
       }
 
       public IEnumerable<CurveChartTemplate> ChartTemplates => _chartTemplates;
-
-      public CurveChartTemplate DefaultChartTemplate
-      {
-         get { return ChartTemplates.FirstOrDefault(x => x.IsDefault) ?? ChartTemplates.OrderBy(x => x.Name).FirstOrDefault(); }
-      }
 
       public IReadOnlyCollection<ParameterIdentification> AllParameterIdentifications => _allParameterIdentifications;
 
@@ -219,5 +216,7 @@ namespace OSPSuite.Core.Domain
 
 
       public abstract IEnumerable<IUsesObservedData> AllUsersOfObservedData { get; }
+
+      public virtual IReadOnlyCollection<DataRepository> AllDataRepositories() => AllObservedData;
    }
 }

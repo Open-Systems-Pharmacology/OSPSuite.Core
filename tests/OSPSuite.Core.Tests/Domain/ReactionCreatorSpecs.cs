@@ -39,7 +39,7 @@ namespace OSPSuite.Core.Domain
 
          _model = A.Fake<IModel>();
          _simulationConfiguration = new SimulationConfiguration();
-         _simulationBuilder = new SimulationBuilder(_simulationConfiguration);
+         _simulationBuilder =A.Fake<SimulationBuilder>();
          _reactionBuilder = new ReactionBuilder
          {
             ContainerCriteria = new DescriptorCriteria(),

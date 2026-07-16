@@ -37,6 +37,7 @@ namespace OSPSuite.Core.Domain.Services
       private readonly IEventBuilderTask _eventBuilderTask;
       private readonly IEntitySourcePathUpdater _entitySourcePathUpdater;
       private readonly ISimulationQuantityValueWarningTask _simulationQuantityValueWarningTask;
+      private readonly ISimulationBuilderFactory _simulationBuilderFactory;
 
       public ModelConstructor(
          IObjectBaseFactory objectBaseFactory,
@@ -58,7 +59,8 @@ namespace OSPSuite.Core.Domain.Services
          ISpatialStructureMerger spatialStructureMerger,
          IEventBuilderTask eventBuilderTask,
          IEntitySourcePathUpdater entitySourcePathUpdater,
-         ISimulationQuantityValueWarningTask simulationQuantityValueWarningTask
+         ISimulationQuantityValueWarningTask simulationQuantityValueWarningTask,
+         ISimulationBuilderFactory simulationBuilderFactory
       )
       {
          _objectBaseFactory = objectBaseFactory;
@@ -81,12 +83,13 @@ namespace OSPSuite.Core.Domain.Services
          _eventBuilderTask = eventBuilderTask;
          _entitySourcePathUpdater = entitySourcePathUpdater;
          _simulationQuantityValueWarningTask = simulationQuantityValueWarningTask;
+         _simulationBuilderFactory = simulationBuilderFactory;
       }
 
       public CreationResult CreateModelFrom(SimulationConfiguration simulationConfiguration, string modelName)
       {
          var model = _objectBaseFactory.Create<IModel>().WithName(modelName);
-         var simulationBuilder = new SimulationBuilder(simulationConfiguration);
+         var simulationBuilder = _simulationBuilderFactory.CreateFor(simulationConfiguration);
          var modelConfiguration = new ModelConfiguration(model, simulationConfiguration, simulationBuilder);
          var creationResult = buildProcess(modelConfiguration,
             //One function per process step
@@ -106,6 +109,8 @@ namespace OSPSuite.Core.Domain.Services
          //This needs to be done before we validate the model to ensure that all references can be found
          _formulaTask.ExpandDynamicReferencesIn(model);
 
+         _formulaTask.ExpandDynamicFormulaIn(model);
+         
          creationResult.Add(validateModel(modelConfiguration));
 
          if (creationResult.State == ValidationState.Invalid)
@@ -119,9 +124,7 @@ namespace OSPSuite.Core.Domain.Services
       private void finalizeModel(IModel model, SimulationBuilder simulationBuilder, CreationResult creationResult)
       {
          _formulaTask.CheckFormulaOriginIn(model);
-
-         _formulaTask.ExpandDynamicFormulaIn(model);
-
+         
          // now we should be able to resolve all references
          _referencesResolver.ResolveReferencesIn(model);
 
@@ -261,7 +264,7 @@ namespace OSPSuite.Core.Domain.Services
 
       private ValidationResult createObserversAndEvents(ModelConfiguration modelConfiguration)
       {
-         _eventBuilderTask.MergeEventGroups(modelConfiguration);
+         _eventBuilderTask.CreateEvents(modelConfiguration);
 
          // Observers needs to be created last as they might reference parameters defined in the event builder
          _observerBuilderTask.CreateObservers(modelConfiguration);

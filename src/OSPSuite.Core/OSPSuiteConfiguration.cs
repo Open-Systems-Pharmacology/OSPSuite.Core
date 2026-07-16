@@ -14,7 +14,6 @@ namespace OSPSuite.Core
       protected abstract string[] LatestVersionWithOtherMajor { get; }
 
       public string ChartLayoutTemplateFolderPath { get; }
-      public string TeXTemplateFolderPath { get; }
       public string PKParametersFilePath { get; set; }
       public string DimensionFilePath { get; set; }
       public abstract string ProductName { get; }
@@ -74,7 +73,6 @@ namespace OSPSuite.Core
          CurrentUserFolderPath = CurrentUserFolderPathFor(Version);
          AllUsersFolderPath = AllUserFolderPathFor(Version);
          PKParametersFilePath = LocalOrAllUsersPathForFile(Constants.Files.PK_PARAMETERS_FILE_NAME);
-         TeXTemplateFolderPath = LocalOrAllUsersPathForFolder(Constants.Files.TEX_TEMPLATE_FOLDER_NAME);
          ChartLayoutTemplateFolderPath = LocalOrAllUsersPathForFolder(Constants.Files.CHART_LAYOUT_FOLDER_NAME);
          DimensionFilePath = LocalOrAllUsersPathForFile(Constants.Files.DIMENSIONS_FILE_NAME);
          UserSettingsFilePath = CurrentUserFile(UserSettingsFileName);

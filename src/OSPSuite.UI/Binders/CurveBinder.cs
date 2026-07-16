@@ -141,16 +141,6 @@ namespace OSPSuite.UI.Binders
          series.Visible = Curve.ShowLLOQ && Curve.Visible;
       }
 
-      protected Series CreateSeries(string name, ViewType viewType, string valueDataMember)
-      {
-         return CreateSeries<SeriesViewBase>(name, viewType, valueDataMember);
-      }
-
-      protected Series CreateSeries(string name, ViewType viewType, IReadOnlyList<string> valueDataMembers)
-      {
-         return CreateSeries<SeriesViewBase>(name, viewType, valueDataMembers);
-      }
-
       protected Series CreateSeries<TSeriesView>(string name, ViewType viewType, string valueDataMember, Action<TSeriesView> configuration = null) where TSeriesView : SeriesViewBase
       {
          return CreateSeries(name, viewType, new[] { valueDataMember }, configuration);
@@ -327,18 +317,23 @@ namespace OSPSuite.UI.Binders
                double x = xDimension.BaseUnitValueToUnitValue(xUnit, ValueInBaseUnit(xData, baseGrid, baseIndex));
                double y = yDimension.BaseUnitValueToUnitValue(yUnit, ValueInBaseUnit(yData, baseGrid, baseIndex));
 
-               if (!isValidXValue(x) || !IsValidYValue(y))
+               if (!isValidXValue(x))
                   return;
 
                var row = _dataTable.NewRow();
                row[X] = x;
-               row[Y] = y;
                row[INDEX_OF_VALUE_IN_CURVE] = baseIndex;
 
                if (HasLLOQ)
                   row[LLOQ_SUFFIX] = LLOQ;
 
-               AddRelatedValuesToRow(row, yData, yDimension, yUnit, y, baseGrid, baseIndex);
+               //A y value that cannot be plotted on the axis (e.g. 0 on a log scale) is kept as an empty point
+               //so that the curve shows a gap instead of a line connecting the neighboring valid points
+               if (IsValidYValue(y))
+               {
+                  row[Y] = y;
+                  AddRelatedValuesToRow(row, yData, yDimension, yUnit, y, baseGrid, baseIndex);
+               }
 
                _dataTable.Rows.Add(row);
             }
@@ -456,8 +451,6 @@ namespace OSPSuite.UI.Binders
 
       public void HideAllSeries() => updateSeriesVisibility(visible: false);
 
-      public void ShowAllSeries() => updateSeriesVisibility(visible: true);
-
       private void updateSeriesVisibility(bool visible) => _series.Each(s => s.Visible = visible);
 
       public abstract void ShowCurveInLegend(bool showInLegend);
@@ -467,6 +460,14 @@ namespace OSPSuite.UI.Binders
       public bool IsSeriesLLOQ(string seriesId) => string.Equals(_LLOQSeriesId, seriesId);
 
       public int OriginalCurveIndexForRow(DataRow row) => (int)row[INDEX_OF_VALUE_IN_CURVE];
+
+      public double YValueForRow(DataRow row)
+      {
+         var yData = ActiveYData;
+         var baseGrid = activeBaseGrid(Curve.xData, yData);
+         var yUnit = Curve.yDimension.Unit(_yAxis.UnitName);
+         return Curve.yDimension.BaseUnitValueToUnitValue(yUnit, ValueInBaseUnit(yData, baseGrid, OriginalCurveIndexForRow(row)));
+      }
 
       public bool IsValidFor(DataMode dataMode, AxisTypes yAxisType) =>
          _dataMode == dataMode &&

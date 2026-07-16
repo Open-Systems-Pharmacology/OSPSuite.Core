@@ -128,19 +128,9 @@ namespace OSPSuite.Presentation.Presenters
          return indexBefore;
       }
 
-      protected TSubPresenter PresenterAtPosition(int position)
-      {
-         return _subPresenterItemManager.PresenterAtPosition(position);
-      }
-
       protected ISubPresenterItem ItemAtPosition(int position)
       {
          return _subPresenterItemManager.ItemAtPosition(position);
-      }
-      
-      protected void ActivateControl(ISubPresenterItem subPresenterItem)
-      {
-         ActivateControl(subPresenterItem.Index);
       }
 
       protected void ActivateControl(int position)

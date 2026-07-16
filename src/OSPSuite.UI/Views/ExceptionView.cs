@@ -6,6 +6,7 @@ using DevExpress.XtraEditors.Controls;
 using DevExpress.XtraLayout.Utils;
 using OSPSuite.Assets;
 using OSPSuite.Presentation.Views;
+using OSPSuite.Presentation.Extensions;
 using OSPSuite.UI.Extensions;
 
 namespace OSPSuite.UI.Views
@@ -61,7 +62,7 @@ namespace OSPSuite.UI.Views
       public void Initialize(string caption, ApplicationIcon icon, string issueTrackerUrl, string productName)
       {
          Text = caption;
-         IconOptions.SvgImage = icon;
+         IconOptions.SvgImage = icon.ToSvgImage();
          _issueTrackerUrl = issueTrackerUrl;
          Description = Captions.ExceptionViewDescription(issueTrackerUrl, html:false);
          issueTrackerLink.Text = Captions.IssueTrackerLinkFor(productName);

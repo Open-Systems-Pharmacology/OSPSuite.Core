@@ -1,7 +1,10 @@
-﻿using OSPSuite.Assets;
+﻿using System.Drawing;
+using DevExpress.LookAndFeel;
+using OSPSuite.Assets;
 using OSPSuite.Core.Chart;
 using OSPSuite.DataBinding;
 using OSPSuite.DataBinding.DevExpress;
+using OSPSuite.Presentation.DTO.Charts;
 using OSPSuite.Presentation.Extensions;
 using OSPSuite.Presentation.Formatters;
 using OSPSuite.Presentation.Presenters.Charts;
@@ -30,6 +33,9 @@ namespace OSPSuite.UI.Views.Charts
          colorLayoutControlItem.Text = Captions.Chart.CurveOptions.Color.FormatForLabel();
          styleLayoutControlItem.Text = Captions.Chart.CurveOptions.LineStyle.FormatForLabel();
          symbolLayoutControlItem.Text = Captions.Chart.CurveOptions.Symbol.FormatForLabel();
+         lineThicknessLayoutControlItem.Text = Captions.LineThickness.FormatForLabel();
+         lineThicknessTextEdit.Properties.NullValuePrompt = Captions.Chart.MultiCurveOptions.CurrentValue;
+         lineThicknessTextEdit.Properties.NullValuePromptForeColor = LookAndFeelHelper.GetSystemColor(lineThicknessTextEdit.LookAndFeel, SystemColors.WindowText);
          visibleLayoutControlItem.Text = Captions.Chart.CurveOptions.Visible.FormatForLabel();
          inLegendLayoutControlItem.Text = Captions.Chart.CurveOptions.VisibleInLegend.FormatForLabel();
       }
@@ -52,6 +58,9 @@ namespace OSPSuite.UI.Views.Charts
             .WithValues(_presenter.AllSymbols)
             .WithFormat(_symbolsFormatter);
 
+         _screenBinder.Bind(x => x.LineThickness)
+            .To(lineThicknessTextEdit);
+
          _screenBinder.Bind(x => x.Visible)
             .To(visibleComboBoxEdit)
             .WithValues(_presenter.AllBooleanOptions)
@@ -61,6 +70,8 @@ namespace OSPSuite.UI.Views.Charts
             .To(inLegendComboBoxEdit)
             .WithValues(_presenter.AllBooleanOptions)
             .WithFormat(_boolFormatter);
+
+         RegisterValidationFor(_screenBinder);
       }
 
       public void AttachPresenter(ICurveMultiItemEditorPresenter presenter)

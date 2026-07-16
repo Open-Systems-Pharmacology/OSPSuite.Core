@@ -1,4 +1,3 @@
-using System;
 using System.Linq;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
@@ -17,16 +16,11 @@ namespace OSPSuite.Core
       protected SimulationConfiguration _simulationConfiguration;
       protected SimulationBuilder _simulationBuilder;
 
-      public override void GlobalContext()
-      {
-         base.GlobalContext();
-         _simulationConfiguration = IoC.Resolve<ModelHelperForSpecs>().CreateSimulationConfiguration();
-         _simulationBuilder = new SimulationBuilder(_simulationConfiguration);
-      }
-
       protected override void Context()
       {
          sut = new SpatialStructure();
+         _simulationConfiguration = IoC.Resolve<ModelHelperForSpecs>().CreateSimulationConfiguration();
+         _simulationBuilder = new SimulationBuilderForSpecs(_simulationConfiguration);
       }
    }
 

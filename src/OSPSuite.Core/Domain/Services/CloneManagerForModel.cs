@@ -20,6 +20,13 @@ namespace OSPSuite.Core.Domain.Services
       ///    Clones the <paramref name="model " /> and ensure that all references are finalized
       /// </summary>
       IModel CloneModel(IModel model);
+
+      /// <summary>
+      ///    Special clone method that will keep the id of the object being cloned as well as all children implementing IWithId
+      /// </summary>
+      /// <returns>A clone of the object with all id kept.</returns>
+      /// <remarks>This method should be used with care as it can create issues if the object is added to a repository</remarks>
+      T CloneAndKeepId<T>(T objectToClone) where T : class, IUpdatable;
    }
 
    public class CloneManagerForModel : CloneManagerStrategy, ICloneManagerForModel
@@ -31,21 +38,19 @@ namespace OSPSuite.Core.Domain.Services
          _modelFinalizer = modelFinalizer;
       }
 
-      /// <summary>
-      ///    Creates clone of the given formula.
-      /// </summary>
-      /// <param name="sourceFormula">Formula to be cloned</param>
-      /// <returns>Clone (deep copy) of the formula</returns>
-      protected override IFormula CreateFormulaCloneFor(IFormula sourceFormula)
-      {
-         return CloneFormula(sourceFormula);
-      }
+      protected override IFormula CreateFormulaCloneFor(IFormula sourceFormula, bool keepId) => CloneFormula(sourceFormula, keepId);
 
       public IModel CloneModel(IModel model)
       {
          var cloneModel = Clone(model);
          _modelFinalizer.FinalizeClone(cloneModel, model);
          return cloneModel;
+      }
+
+      public T CloneAndKeepId<T>(T objectToClone) where T : class, IUpdatable
+      {
+         //special case for transient object where we want to keep id to ensure we can match even if references are not the same
+         return CloneObject(objectToClone, keepId: true);
       }
    }
 }

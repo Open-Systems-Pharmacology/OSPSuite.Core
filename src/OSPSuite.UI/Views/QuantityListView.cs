@@ -6,6 +6,7 @@ using DevExpress.XtraGrid.Columns;
 using DevExpress.XtraGrid.Menu;
 using DevExpress.XtraGrid.Views.Grid;
 using OSPSuite.Assets;
+using OSPSuite.Presentation.Extensions;
 using OSPSuite.Core.Domain;
 using OSPSuite.DataBinding.DevExpress;
 using OSPSuite.DataBinding.DevExpress.XtraGrid;
@@ -187,8 +188,8 @@ namespace OSPSuite.UI.Views
             _gridViewBinder = gridViewBinder;
             _presenter = presenter;
             _groupRowHandle = groupRowHandle;
-            Items.Add(new DXMenuItem("Select all", (o, e) => updateSelection(selected: true)) {SvgImage = ApplicationIcons.CheckAll});
-            Items.Add(new DXMenuItem("Deselect all", (o, e) => updateSelection(selected: false)) {SvgImage = ApplicationIcons.UncheckAll});
+            Items.Add(new DXMenuItem("Select all", (o, e) => updateSelection(selected: true)) {SvgImage = ApplicationIcons.CheckAll.ToSvgImage()});
+            Items.Add(new DXMenuItem("Deselect all", (o, e) => updateSelection(selected: false)) {SvgImage = ApplicationIcons.UncheckAll.ToSvgImage()});
          }
 
          private void updateSelection(bool selected)

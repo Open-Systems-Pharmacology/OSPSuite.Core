@@ -1,5 +1,4 @@
-﻿using System.Xml.Linq;
-using OSPSuite.Core.Domain.PKAnalyses;
+﻿using OSPSuite.Core.Domain.PKAnalyses;
 using OSPSuite.Core.Domain.UnitSystem;
 using IContainer = OSPSuite.Utility.Container.IContainer;
 

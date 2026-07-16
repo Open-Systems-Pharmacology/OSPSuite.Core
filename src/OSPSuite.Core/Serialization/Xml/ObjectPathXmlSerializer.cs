@@ -1,9 +1,8 @@
 using System.Xml.Linq;
-using OSPSuite.Serializer.Xml.Extensions;
-using OSPSuite.Utility.Container;
-using OSPSuite.Utility.Extensions;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Extensions;
+using OSPSuite.Serializer.Xml.Extensions;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Serialization.Xml
 {

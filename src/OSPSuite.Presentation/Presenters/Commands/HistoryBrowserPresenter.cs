@@ -24,11 +24,6 @@ namespace OSPSuite.Presentation.Presenters.Commands
       void UpdateHistory();
 
       /// <summary>
-      ///    Adjust column width
-      /// </summary>
-      void BestFitColumns();
-
-      /// <summary>
       ///    Performs a roll back to the given state
       /// </summary>
       void RollBack(int state);
@@ -232,18 +227,13 @@ namespace OSPSuite.Presentation.Presenters.Commands
          View.BindTo(_historyItemDtoList);
       }
 
-      public void BestFitColumns()
-      {
-         View.BestFitColumns();
-      }
-
       public void ExportHistory()
       {
          var projectName = Path.GetFileNameWithoutExtension(_projectRetriever.CurrentProject.FilePath);
          if (string.IsNullOrEmpty(projectName))
             projectName = Captions.Undefined;
 
-         var reportFileName = _dialogCreator.AskForFileToSave(Captions.ExportHistory, Constants.Filter.EXPORT_HISTORY_FILE_FILTER, Captions.Reporting.DefaultTitle, projectName);
+         var reportFileName = _dialogCreator.AskForFileToSave(Captions.ExportHistory, Constants.Filter.EXPORT_HISTORY_FILE_FILTER, Constants.DirectoryKey.REPORT, projectName);
          if (reportFileName.IsNullOrEmpty()) return;
 
          var reportOptions = new ReportOptions { ReportFullPath = reportFileName, SheetName = projectName, OpenReport = true };

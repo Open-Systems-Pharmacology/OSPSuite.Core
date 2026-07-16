@@ -1,20 +1,18 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using OSPSuite.DataBinding.DevExpress;
-using OSPSuite.DataBinding.DevExpress.XtraGrid;
-using OSPSuite.Utility;
-using OSPSuite.Utility.Extensions;
 using DevExpress.XtraEditors.Controls;
 using DevExpress.XtraEditors.Repository;
 using OSPSuite.Assets;
-using OSPSuite.Core.Chart;
 using OSPSuite.Core.Domain;
+using OSPSuite.DataBinding.DevExpress;
+using OSPSuite.DataBinding.DevExpress.XtraGrid;
 using OSPSuite.Presentation.DTO.Charts;
 using OSPSuite.Presentation.Presenters.Charts;
 using OSPSuite.Presentation.Views.Charts;
 using OSPSuite.UI.Controls;
 using OSPSuite.UI.Extensions;
 using OSPSuite.UI.RepositoryItems;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.UI.Views.Charts
 {
@@ -24,7 +22,6 @@ namespace OSPSuite.UI.Views.Charts
       private readonly GridViewBinder<CurveTemplateDTO> _gridViewBinder;
       private readonly RepositoryItemColorEdit _colorRepository;
       private readonly RepositoryItemComboBox _lineStyleRepository;
-      private readonly RepositoryItemComboBox _lineThicknessRepository;
       private readonly RepositoryItemComboBox _symbolRepository;
       private readonly RepositoryItemCheckedComboBoxEdit _quantityTypeRepository;
       private readonly UxRepositoryItemButtonEdit _buttonRepository;
@@ -35,7 +32,6 @@ namespace OSPSuite.UI.Views.Charts
          InitializeComponent();
          _gridViewBinder = new GridViewBinder<CurveTemplateDTO>(mainView);
          _lineStyleRepository = new UxRepositoryItemLineStyles(mainView);
-         _lineThicknessRepository = new UxRepositoryItemComboBox(mainView);
          _symbolRepository = new UxRepositoryItemSymbols(mainView);
          _colorRepository = new UxRepositoryItemColorPickEditWithHistory(mainView);
          _buttonRepository = new UxRepositoryItemButtonEdit(ButtonPredefines.Delete);
@@ -51,8 +47,6 @@ namespace OSPSuite.UI.Views.Charts
 
       public override void InitializeBinding()
       {
-         _lineThicknessRepository.FillComboBoxRepositoryWith(new[] { 1, 2, 3 });
-
          _gridViewBinder.AutoBind(x => x.Name)
             .WithCaption(Captions.CurveName);
 
@@ -82,8 +76,7 @@ namespace OSPSuite.UI.Views.Charts
          _gridViewBinder.AutoBind(x => x.LineStyle)
             .WithRepository(x => _lineStyleRepository);
 
-         _gridViewBinder.AutoBind(x => x.LineThickness)
-            .WithRepository(x => _lineThicknessRepository);
+         _gridViewBinder.AutoBind(x => x.LineThickness);
 
          _gridViewBinder.AutoBind(x => x.Symbol)
             .WithRepository(x => _symbolRepository);

@@ -34,7 +34,7 @@ namespace OSPSuite.Core.Domain.Services
       private readonly IConcentrationBasedFormulaUpdater _concentrationBasedFormulaUpdater;
       private readonly IParameterValueToParameterMapper _parameterValueToParameterMapper;
       private readonly IEntityTracker _entityTracker;
-      private readonly ValidatorForForFormula _formulaValidator;
+      private readonly IModelValidatorFactory _modelValidatorFactory;
 
       public QuantityValuesUpdater(
          IKeywordReplacerTask keywordReplacerTask,
@@ -43,7 +43,7 @@ namespace OSPSuite.Core.Domain.Services
          IConcentrationBasedFormulaUpdater concentrationBasedFormulaUpdater,
          IParameterValueToParameterMapper parameterValueToParameterMapper,
          IEntityTracker entityTracker,
-         ValidatorForForFormula formulaValidator)
+         IModelValidatorFactory modelValidatorFactory)
       {
          _keywordReplacerTask = keywordReplacerTask;
          _cloneManagerForModel = cloneManagerForModel;
@@ -51,12 +51,13 @@ namespace OSPSuite.Core.Domain.Services
          _concentrationBasedFormulaUpdater = concentrationBasedFormulaUpdater;
          _parameterValueToParameterMapper = parameterValueToParameterMapper;
          _entityTracker = entityTracker;
-         _formulaValidator = formulaValidator;
+         _modelValidatorFactory = modelValidatorFactory;
       }
 
       public ValidationResult UpdateQuantitiesValues(ModelConfiguration modelConfiguration)
       {
-         var valueUpdater = new ValueUpdaterParams(modelConfiguration);
+         //the validator is stateful and is created per call so that the updater remains stateless
+         var valueUpdater = new ValueUpdaterParams(modelConfiguration, _modelValidatorFactory.Create<ValidatorForForFormula>());
          updateMoleculeAmountFromInitialConditions(modelConfiguration);
 
          //Add expressions profile before individual as some settings might be overwritten in the individual for aging
@@ -205,7 +206,7 @@ namespace OSPSuite.Core.Domain.Services
          if (parameter.Formula is ConstantFormula constantFormula)
             constantFormula.Value = actualParameterValue;
          //now we have a non constant formula. Let's try to see if the reference can be resolved. If yes, we will simply set the value of the parameter
-         else if (_formulaValidator.IsFormulaValid(parameter))
+         else if (valueUpdater.FormulaValidator.IsFormulaValid(parameter))
             parameter.Value = actualParameterValue;
          //Otherwise, we will create a new constant formula with the value
          else
@@ -309,10 +310,12 @@ namespace OSPSuite.Core.Domain.Services
       {
          public ModelConfiguration ModelConfiguration { get; }
          public ValidationResult ValidationResult { get; }
+         public ValidatorForForFormula FormulaValidator { get; }
 
-         public ValueUpdaterParams(ModelConfiguration modelConfiguration)
+         public ValueUpdaterParams(ModelConfiguration modelConfiguration, ValidatorForForFormula formulaValidator)
          {
             ModelConfiguration = modelConfiguration;
+            FormulaValidator = formulaValidator;
             ValidationResult = new ValidationResult();
          }
 

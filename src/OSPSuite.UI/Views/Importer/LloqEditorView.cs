@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Windows.Forms;
 using DevExpress.XtraLayout.Utils;
 using OSPSuite.Assets;
@@ -40,12 +37,6 @@ namespace OSPSuite.UI.Views.Importer
             LloqDescriptionLabelLayoutControlItem.Visibility = LayoutVisibility.Always;
             LloqColumnLayoutControlItem.Visibility = LayoutVisibility.Never;
          }
-      }
-      public void FillComboBox(IEnumerable<string> columns, string defaultValue)
-      {
-         //ColumnsComboBox.Properties.Items.Clear();
-         //ColumnsComboBox.Properties.Items.AddRange(columns.ToArray());
-         //ColumnsComboBox.EditValue = defaultValue;
       }
 
       public void FillLloqSelector(IView view)

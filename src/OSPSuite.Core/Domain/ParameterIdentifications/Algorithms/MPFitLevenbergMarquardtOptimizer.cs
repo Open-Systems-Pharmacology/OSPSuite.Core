@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
-using OSPSuite.Utility.Extensions;
 using MPFitLib;
 using OSPSuite.Assets;
-using OSPSuite.Utility.Exceptions;
 using OSPSuite.Core.Extensions;
+using OSPSuite.Utility.Exceptions;
 using PropertyNames = OSPSuite.Assets.Captions.ParameterIdentification.AlgorithmProperties.Names;
 using PropertyDescriptions = OSPSuite.Assets.Captions.ParameterIdentification.AlgorithmProperties.Descriptions;
 

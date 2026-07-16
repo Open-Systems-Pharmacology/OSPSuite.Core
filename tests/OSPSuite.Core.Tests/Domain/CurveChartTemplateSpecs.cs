@@ -25,7 +25,7 @@ namespace OSPSuite.Core.Domain
       {
          base.Context();
          _cloneManager= A.Fake<ICloneManager>();
-         _sourceTemplate = new CurveChartTemplate {Name = "TOTO",ChartSettings = {BackColor = Color.Red}};
+         _sourceTemplate = new CurveChartTemplate {Name = "TOTO",ChartSettings = {BackColor = Color.Red}, ChartType = CurveChartTypes.PredictedVsObserved};
          _sourceTemplate.AddAxis(new Axis(AxisTypes.X));
          var curveTemplate = new CurveTemplate{Name = "XX"};
          _cloneCurve = new CurveTemplate();
@@ -43,6 +43,7 @@ namespace OSPSuite.Core.Domain
       {
          sut.ChartSettings.BackColor.ShouldBeEqualTo(Color.Red);
          sut.Name.ShouldBeEqualTo("TOTO");
+         sut.ChartType.ShouldBeEqualTo(CurveChartTypes.PredictedVsObserved);
       }
 
       [Observation]

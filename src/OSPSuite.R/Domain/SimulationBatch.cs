@@ -79,7 +79,7 @@ namespace OSPSuite.R.Domain
 
       public void Initialize(IModelCoreSimulation simulation, SimulationBatchOptions simulationBatchOptions, SimulationRunOptions simulationRunOptions)
       {
-         _simModelBatch.CheckForNegativeValues = simulationRunOptions?.CheckForNegativeValues ?? true;
+         _simModelBatch.CheckForNegativeValues = simulation.Settings?.Solver?.CheckForNegativeValues ?? true;
          _simModelBatch.AutoReduceTolerances = simulationRunOptions?.AutoReduceTolerances ?? true;
 
          //SimModel optionally caches XML used for loading a simulation as string.

@@ -1,5 +1,4 @@
-﻿using System;
-using OSPSuite.Presentation.Settings;
+﻿using OSPSuite.Presentation.Settings;
 
 namespace OSPSuite.Presentation.Views.Charts
 {
@@ -7,6 +6,5 @@ namespace OSPSuite.Presentation.Views.Charts
    {
       void ApplyAllColumnSettings();
       void ApplyColumnSettings(GridColumnSettings columnSettings);
-      void Refresh();
    }
 }
