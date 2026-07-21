@@ -41,7 +41,6 @@ namespace OSPSuite.Presentation.Presentation
       protected List<DataRepository> _dataRepositoryList;
       protected BaseGrid _baseGrid2;
       protected BaseGrid _baseGrid3;
-      protected readonly string _bottomCompartment = "Plasma";
 
       protected override void Context()
       {
@@ -79,8 +78,6 @@ namespace OSPSuite.Presentation.Presentation
          {
             DataInfo = new DataInfo(ColumnOrigins.Observation),
          };
-         _standardColumn.BottomCompartment = _bottomCompartment;
-         _standardColumn2.BottomCompartment = _bottomCompartment;
          A.CallTo(() => _dimensionFactory.MergedDimensionFor(_baseGrid)).Returns(_baseGrid.Dimension);
          A.CallTo(() => _dimensionFactory.MergedDimensionFor(_standardColumn)).Returns(_standardColumn.Dimension);
       }
@@ -417,7 +414,7 @@ namespace OSPSuite.Presentation.Presentation
    {
       protected override void Because()
       {
-         _dataBrowserPresenter.UsedChanged += Raise.With(new UsedColumnsEventArgs(new[] { _standardColumn, }, true, false));
+         _dataBrowserPresenter.UsedChanged += Raise.With(new UsedColumnsEventArgs(new[] { _standardColumn, }, true));
       }
 
       [Observation]
@@ -506,7 +503,7 @@ namespace OSPSuite.Presentation.Presentation
 
       protected override void Because()
       {
-         _dataBrowserPresenter.UsedChanged += Raise.With(new UsedColumnsEventArgs(new[] { _standardColumn, }, false, false));
+         _dataBrowserPresenter.UsedChanged += Raise.With(new UsedColumnsEventArgs(new[] { _standardColumn, }, false));
       }
 
       [Observation]
@@ -524,34 +521,6 @@ namespace OSPSuite.Presentation.Presentation
 
    public class When_the_chart_editor_presenter_is_updating_curves_that_are_linked_to_simulation : concern_for_ChartEditorPresenter
    {
-      protected override void Context()
-      {
-         base.Context();
-         var calculationColumn = new DataColumn("Standard", DomainHelperForSpecs.ConcentrationDimensionForSpecs(), _baseGrid)
-         {
-            DataInfo = new DataInfo(ColumnOrigins.Calculation),
-            BottomCompartment = _bottomCompartment
-         };
-
-         sut.AddCurveForColumn(calculationColumn, isLinkedDataToSimulation: false);
-         sut.AddCurveForColumn(_standardColumn2, isLinkedDataToSimulation: false);
-      }
-
-      protected override void Because()
-      {
-         sut.AddCurveForColumn(_standardColumn2, isLinkedDataToSimulation: true);
-      }
-
-      [Observation]
-      public void should_update_the_curve_with_same_color()
-      {
-         sut.Chart.Curves.Count.ShouldBeEqualTo(2);
-         sut.Chart.Curves.All(x => x.Color == sut.Chart.Curves.First().Color).ShouldBeTrue();
-      }
-   }
-
-   public class When_adding_curves_that_are_linked_to_simulation_curves : concern_for_ChartEditorPresenter
-   {
       private DataColumn _calculationColumn;
 
       protected override void Context()
@@ -560,22 +529,113 @@ namespace OSPSuite.Presentation.Presentation
          _calculationColumn = new DataColumn("Standard", DomainHelperForSpecs.ConcentrationDimensionForSpecs(), _baseGrid)
          {
             DataInfo = new DataInfo(ColumnOrigins.Calculation),
-            BottomCompartment = _bottomCompartment
+            QuantityInfo = new QuantityInfo(new[] {"Sim", "Organism", "PeripheralVenousBlood", "Plasma", "Drug"}, QuantityType.Drug)
          };
 
-         sut.AddCurveForColumn(_calculationColumn, isLinkedDataToSimulation: false);
+         sut.AddCurveForColumn(_calculationColumn).Color = Color.Red;
+         sut.AddCurveForColumn(_standardColumn2).Color = Color.Green;
       }
 
       protected override void Because()
       {
-         sut.AddCurveForColumn(_standardColumn2, isLinkedDataToSimulation: true);
+         sut.AddCurveForColumn(_standardColumn2, linkedOutputPath: _calculationColumn.PathAsString);
       }
 
       [Observation]
-      public void should_add_curve_with_same_color()
+      public void should_update_the_existing_curve_with_the_color_of_the_linked_output_curve()
       {
          sut.Chart.Curves.Count.ShouldBeEqualTo(2);
-         sut.Chart.Curves.All(x => x.Color == sut.Chart.Curves.First().Color).ShouldBeTrue();
+         sut.Chart.Curves.All(x => x.Color == Color.Red).ShouldBeTrue();
+      }
+   }
+
+   public class When_adding_curves_that_are_linked_to_simulation_curves : concern_for_ChartEditorPresenter
+   {
+      private DataColumn _calculationColumn;
+      private Curve _curve;
+
+      protected override void Context()
+      {
+         base.Context();
+         _calculationColumn = new DataColumn("Standard", DomainHelperForSpecs.ConcentrationDimensionForSpecs(), _baseGrid)
+         {
+            DataInfo = new DataInfo(ColumnOrigins.Calculation),
+            QuantityInfo = new QuantityInfo(new[] {"Sim", "Organism", "PeripheralVenousBlood", "Plasma", "Drug"}, QuantityType.Drug)
+         };
+
+         sut.AddCurveForColumn(_calculationColumn).Color = Color.Red;
+      }
+
+      protected override void Because()
+      {
+         _curve = sut.AddCurveForColumn(_standardColumn2, linkedOutputPath: _calculationColumn.PathAsString);
+      }
+
+      [Observation]
+      public void should_add_the_curve_with_the_color_of_the_linked_output_curve()
+      {
+         sut.Chart.Curves.Count.ShouldBeEqualTo(2);
+         _curve.Color.ShouldBeEqualTo(Color.Red);
+      }
+   }
+
+   public class When_adding_a_curve_linked_to_an_output_when_multiple_outputs_share_the_same_compartment : concern_for_ChartEditorPresenter
+   {
+      private DataColumn _calculationColumn1;
+      private DataColumn _calculationColumn2;
+      private Curve _curve;
+
+      protected override void Context()
+      {
+         base.Context();
+         _calculationColumn1 = new DataColumn("Venous", DomainHelperForSpecs.ConcentrationDimensionForSpecs(), _baseGrid)
+         {
+            DataInfo = new DataInfo(ColumnOrigins.Calculation),
+            QuantityInfo = new QuantityInfo(new[] {"Sim", "Organism", "PeripheralVenousBlood", "Plasma", "Drug"}, QuantityType.Drug)
+         };
+         _calculationColumn2 = new DataColumn("Arterial", DomainHelperForSpecs.ConcentrationDimensionForSpecs(), _baseGrid)
+         {
+            DataInfo = new DataInfo(ColumnOrigins.Calculation),
+            QuantityInfo = new QuantityInfo(new[] {"Sim", "Organism", "ArterialBlood", "Plasma", "Drug"}, QuantityType.Drug)
+         };
+
+         sut.AddCurveForColumn(_calculationColumn1).Color = Color.Red;
+         sut.AddCurveForColumn(_calculationColumn2).Color = Color.Blue;
+      }
+
+      protected override void Because()
+      {
+         _curve = sut.AddCurveForColumn(_standardColumn2, linkedOutputPath: _calculationColumn2.PathAsString);
+      }
+
+      [Observation]
+      public void should_apply_the_color_of_the_output_the_data_is_mapped_to_and_not_the_color_of_the_first_output()
+      {
+         _curve.Color.ShouldBeEqualTo(Color.Blue);
+      }
+   }
+
+   public class When_adding_a_curve_linked_to_an_output_that_has_no_curve_in_the_chart : concern_for_ChartEditorPresenter
+   {
+      private Curve _curve;
+      private Color _defaultColor;
+
+      protected override void Context()
+      {
+         base.Context();
+         _defaultColor = sut.AddCurveForColumn(_standardColumn2).Color;
+         _chart.RemoveCurvesForColumn(_standardColumn2);
+      }
+
+      protected override void Because()
+      {
+         _curve = sut.AddCurveForColumn(_standardColumn2, linkedOutputPath: "Sim|Organism|Liver|Cell|Drug");
+      }
+
+      [Observation]
+      public void should_keep_the_default_color_of_the_curve()
+      {
+         _curve.Color.ShouldBeEqualTo(_defaultColor);
       }
    }
 

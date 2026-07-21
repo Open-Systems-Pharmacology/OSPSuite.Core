@@ -112,11 +112,13 @@ namespace OSPSuite.Presentation.Presenters.Charts
       /// <summary>
       ///    Adds a new curve to a the chart for the <paramref name="dataColumn" /> if one does not already exist.
       ///    Curve options will be applied if they are specified and a new curve is created.
+      ///    When <paramref name="linkedOutputPath" /> is specified, the curve takes the color of the simulation curve
+      ///    with this path if one exists in the chart.
       /// </summary>
       /// <returns>
       ///    The new curve or existing if chart already contains a curve for the specified <paramref name="dataColumn" />
       /// </returns>
-      Curve AddCurveForColumn(DataColumn dataColumn, CurveOptions defaultCurveOptions = null, bool isLinkedDataToSimulation = false);
+      Curve AddCurveForColumn(DataColumn dataColumn, CurveOptions defaultCurveOptions = null, string linkedOutputPath = null);
 
       /// <summary>
       ///    Adds a curves to the chart for all dataColumns in <paramref name="dataColumnList" /> if they do not already exist.
@@ -404,17 +406,17 @@ namespace OSPSuite.Presentation.Presenters.Charts
       {
          using (_chartUpdater.UpdateTransaction(Chart, e.Used ? CurveChartUpdateModes.Add : CurveChartUpdateModes.Remove))
          {
-            updateColumnUsedProperty(e.Columns, e.Used, e.IsLinkedDataToSimulation);
+            updateColumnUsedProperty(e.Columns, e.Used, e.LinkedOutputPath);
          }
       }
 
-      private void updateColumnUsedProperty(IReadOnlyList<DataColumn> columns, bool used, bool isLinkedDataToSimulations)
+      private void updateColumnUsedProperty(IReadOnlyList<DataColumn> columns, bool used, string linkedOutputPath)
       {
          columns.Each(column =>
          {
             if (used)
             {
-               var curve = AddCurveForColumn(column, isLinkedDataToSimulation: isLinkedDataToSimulations);
+               var curve = AddCurveForColumn(column, linkedOutputPath: linkedOutputPath);
                updateCurveProperty(curve);
             }
             else
@@ -662,23 +664,23 @@ namespace OSPSuite.Presentation.Presenters.Charts
          }
       }
 
-      public Curve AddCurveForColumn(DataColumn dataColumn, CurveOptions defaultCurveOptions = null, bool isLinkedDataToSimulation = false)
+      public Curve AddCurveForColumn(DataColumn dataColumn, CurveOptions defaultCurveOptions = null, string linkedOutputPath = null)
       {
          var (exists, curve) = createAndConfigureCurve(dataColumn);
 
          if (exists)
          {
             // An existing curve that is linked to a simulation curve might need a color update to match the simulation curve
-            if (isLinkedDataToSimulation)
-               updateCurveColorForLinkedData(curve);
+            if (!string.IsNullOrEmpty(linkedOutputPath))
+               updateCurveColorForLinkedData(curve, linkedOutputPath);
             return curve;
          }
 
          Chart.UpdateCurveColorAndStyle(curve, dataColumn, AllDataColumns);
 
          // override new curve coloring when the curve is linked to a simulation curve
-         if (isLinkedDataToSimulation)
-            updateCurveColorForLinkedData(curve);
+         if (!string.IsNullOrEmpty(linkedOutputPath))
+            updateCurveColorForLinkedData(curve, linkedOutputPath);
 
          if (defaultCurveOptions != null)
             curve.CurveOptions.UpdateFrom(defaultCurveOptions);
@@ -687,24 +689,19 @@ namespace OSPSuite.Presentation.Presenters.Charts
          return curve;
       }
 
-      private void updateCurveColorForLinkedData(Curve curve)
+      private void updateCurveColorForLinkedData(Curve curve, string linkedOutputPath)
       {
-         var matchedColor = colorForLinkedCurve(Chart, curve);
+         var matchedColor = colorForLinkedCurve(Chart, linkedOutputPath);
          if (matchedColor.HasValue)
          {
             curve.Color = matchedColor.Value;
          }
       }
 
-      private static Color? colorForLinkedCurve(CurveChart chart, Curve newCurve)
+      private static Color? colorForLinkedCurve(CurveChart chart, string linkedOutputPath)
       {
-         var compartment = newCurve.yData.BottomCompartment;
-
-         if (string.IsNullOrEmpty(compartment))
-            return null;
-
          var match = chart.Curves.Where(c => c.yData.IsCalculation())
-            .FirstOrDefault(c => c.yData.BottomCompartment?.Equals(compartment, StringComparison.OrdinalIgnoreCase) == true);
+            .FirstOrDefault(c => string.Equals(c.yData.PathAsString, linkedOutputPath));
 
          return match?.Color;
       }

@@ -318,6 +318,7 @@ namespace OSPSuite.Presentation.Presentation
    {
       private OutputMappings _fakeOutputMappings;
       private readonly List<DataRepository> _linkedDataRepositories = new List<DataRepository>();
+      private readonly List<UsedColumnsEventArgs> _usedChangedEvents = new List<UsedColumnsEventArgs>();
 
       protected override void Context()
       {
@@ -330,6 +331,7 @@ namespace OSPSuite.Presentation.Presentation
          _allDataColumnDTOs[0].Used = true;
          _allDataColumnDTOs[1].Used = false;
          sut.AddOutputMappings(_fakeOutputMappings);
+         sut.UsedChanged += (o, e) => _usedChangedEvents.Add(e);
       }
 
       protected override void Because()
@@ -342,6 +344,51 @@ namespace OSPSuite.Presentation.Presentation
       {
          _allDataColumnDTOs[0].Used.ShouldBeTrue();
          _allDataColumnDTOs[1].Used.ShouldBeTrue();
+      }
+
+      [Observation]
+      public void should_notify_the_used_changed_event_for_the_linked_data_with_the_path_of_the_output()
+      {
+         var eventForLinkedData = _usedChangedEvents.Single(x => x.Columns.Contains(_column2));
+         eventForLinkedData.LinkedOutputPath.ShouldBeEqualTo(_column1.PathAsString);
+      }
+   }
+
+   public class When_the_used_state_of_an_output_column_is_changed_while_linking_is_enabled : concern_for_DataBrowserPresenter
+   {
+      private OutputMappings _fakeOutputMappings;
+      private readonly List<DataRepository> _linkedDataRepositories = new List<DataRepository>();
+      private readonly List<UsedColumnsEventArgs> _usedChangedEvents = new List<UsedColumnsEventArgs>();
+
+      protected override void Context()
+      {
+         base.Context();
+         _column1.DataInfo.Origin = ColumnOrigins.CalculationAuxiliary;
+         sut.AddDataColumns(new[] { _column1, _column2 });
+         _linkedDataRepositories.Add(_column2.Repository);
+         _fakeOutputMappings = A.Fake<OutputMappings>();
+         A.CallTo(() => _fakeOutputMappings.AllDataRepositoryMappedTo(_column1.PathAsString)).Returns(_linkedDataRepositories);
+         sut.AddOutputMappings(_fakeOutputMappings);
+         sut.OutputObservedDataLinkingChanged(true);
+         sut.UsedChanged += (o, e) => _usedChangedEvents.Add(e);
+      }
+
+      protected override void Because()
+      {
+         sut.UsedChangedFor(_allDataColumnDTOs[0], true);
+      }
+
+      [Observation]
+      public void should_update_the_used_state_of_the_linked_observed_data()
+      {
+         _allDataColumnDTOs[1].Used.ShouldBeTrue();
+      }
+
+      [Observation]
+      public void should_notify_the_used_changed_event_for_the_linked_observed_data_with_the_path_of_the_output()
+      {
+         var eventForLinkedData = _usedChangedEvents.Single(x => x.Columns.Contains(_column2));
+         eventForLinkedData.LinkedOutputPath.ShouldBeEqualTo(_column1.PathAsString);
       }
    }
 
