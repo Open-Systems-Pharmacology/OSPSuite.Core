@@ -700,7 +700,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
       private static Color? colorForLinkedCurve(CurveChart chart, string linkedOutputPath)
       {
-         var match = chart.Curves.Where(c => c.yData.IsCalculation())
+         var match = chart.Curves.Where(c => c.yData != null && c.yData.IsCalculation())
             .FirstOrDefault(c => string.Equals(c.yData.PathAsString, linkedOutputPath));
 
          return match?.Color;
