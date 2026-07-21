@@ -28,7 +28,6 @@ namespace OSPSuite.Core.Domain.Data
       private WeakRef<DataRepository> _repository;
       protected List<float> _values;
       public IDimension Dimension { get; set; }
-      public string BottomCompartment { get; set; }
 
       internal Cache<AuxiliaryType, DataColumn> RelatedColumnsCache { get; } = new Cache<AuxiliaryType, DataColumn>(x => x.DataInfo.AuxiliaryType);
 

@@ -53,11 +53,11 @@ namespace OSPSuite.Presentation.Presenters.Charts
       /// </summary>
       /// <param name="dataColumnDTOs">The list of columns</param>
       /// <param name="used">true if the columns should be used, otherwise false</param>
-      /// <param name="isLinkedDataToSimulations">
-      ///    true if the columns should be linked to the simulation, so same color should be
-      ///    applied
+      /// <param name="linkedOutputPath">
+      ///    Full path of the simulation output the columns are linked to, so the same color as the output curve
+      ///    can be applied, otherwise null
       /// </param>
-      void SetUsedState(IReadOnlyList<DataColumnDTO> dataColumnDTOs, bool used, bool isLinkedDataToSimulations = false);
+      void SetUsedState(IReadOnlyList<DataColumnDTO> dataColumnDTOs, bool used, string linkedOutputPath = null);
 
       /// <summary>
       ///    Returns all <see cref="DataColumn" /> currently selected by the user
@@ -181,7 +181,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
       public void UsedChangedFor(DataColumnDTO dataColumnDTO, bool used)
       {
-         raiseUsedChanged(dataColumnDTO.DataColumn, used, isLinkedDataToSimulations: false);
+         raiseUsedChanged(dataColumnDTO.DataColumn, used, linkedOutputPath: null);
          updateDataSelection(_view.SelectedColumns);
          updateLinkedObservedData(dataColumnDTO.DataColumn, used);
       }
@@ -191,7 +191,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
          if (!_isLinkedMappedOutputs) return;
 
          var linkedObservedData = getLinkedObservedDataFromOutputPath(dataColumn.PathAsString);
-         SetUsedState(linkedObservedData, used);
+         SetUsedState(linkedObservedData, used, dataColumn.PathAsString);
       }
 
       private IReadOnlyList<DataColumnDTO> getLinkedObservedDataFromOutputPath(string outputPath)
@@ -242,12 +242,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
          {
             var outputColumnUsed = dataColumnDTO.Used;
             var linkedObservedData = getLinkedObservedDataFromOutputPath(dataColumnDTO.DataColumn.PathAsString);
-            //The bottom compartment also needs to be updated since it will take the value from the output data column
-            foreach (var columnDTO in linkedObservedData)
-            {
-               columnDTO.DataColumn.BottomCompartment = dataColumnDTO.BottomCompartment;
-            }
-            SetUsedState(linkedObservedData, outputColumnUsed,  isLinkedDataToSimulations: true);
+            SetUsedState(linkedObservedData, outputColumnUsed, dataColumnDTO.DataColumn.PathAsString);
          }
       }
 
@@ -256,10 +251,10 @@ namespace OSPSuite.Presentation.Presenters.Charts
          _view.SetGroupRowFormat(format);
       }
 
-      public void SetUsedState(IReadOnlyList<DataColumnDTO> dataColumnDTOs, bool used, bool isLinkedDataToSimulations = false)
+      public void SetUsedState(IReadOnlyList<DataColumnDTO> dataColumnDTOs, bool used, string linkedOutputPath = null)
       {
          updateUsedStateForColumns(dataColumnDTOs, used);
-         raiseUsedChanged(columnsFrom(dataColumnDTOs), used, isLinkedDataToSimulations);
+         raiseUsedChanged(columnsFrom(dataColumnDTOs), used, linkedOutputPath);
          updateDataSelection(_view.SelectedColumns);
       }
 
@@ -280,14 +275,14 @@ namespace OSPSuite.Presentation.Presenters.Charts
          dataColumnDTOs.Each(dto => dto.Used = used);
       }
 
-      private void raiseUsedChanged(IReadOnlyList<DataColumn> dataColumns, bool used, bool isLinkedDataToSimulations)
+      private void raiseUsedChanged(IReadOnlyList<DataColumn> dataColumns, bool used, string linkedOutputPath)
       {
-         UsedChanged(this, new UsedColumnsEventArgs(dataColumns, used, isLinkedDataToSimulations));
+         UsedChanged(this, new UsedColumnsEventArgs(dataColumns, used, linkedOutputPath));
       }
 
-      private void raiseUsedChanged(DataColumn dataColumn, bool used, bool isLinkedDataToSimulations)
+      private void raiseUsedChanged(DataColumn dataColumn, bool used, string linkedOutputPath)
       {
-         raiseUsedChanged(new[] { dataColumn }, used, isLinkedDataToSimulations);
+         raiseUsedChanged(new[] { dataColumn }, used, linkedOutputPath);
       }
 
       private void updateDataSelection(IReadOnlyList<DataColumnDTO> selectedDataColumnDTOs)

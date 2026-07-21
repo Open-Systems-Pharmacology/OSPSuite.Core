@@ -85,7 +85,6 @@ namespace OSPSuite.Presentation.Presenters.Charts
          DataColumn = dataColumn;
          Used = false;
          _pathElements = displayQuantityPathFunc(dataColumn);
-         DataColumn.BottomCompartment = BottomCompartment;
       }
 
       private string displayNameFor(PathElementId pathElementId) => _pathElements[pathElementId].DisplayName;
