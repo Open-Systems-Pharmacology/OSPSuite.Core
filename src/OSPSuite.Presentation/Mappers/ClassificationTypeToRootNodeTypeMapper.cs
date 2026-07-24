@@ -11,7 +11,7 @@ namespace OSPSuite.Presentation.Mappers
 
    public class ClassificationTypeToRootNodeTypeMapper : IClassificationTypeToRootNodeTypeMapper
    {
-      public RootNodeType MapFrom(ClassificationType classificationType)
+      public virtual RootNodeType MapFrom(ClassificationType classificationType)
       {
          switch (classificationType)
          {
