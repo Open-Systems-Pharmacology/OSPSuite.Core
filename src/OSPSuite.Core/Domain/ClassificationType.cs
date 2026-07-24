@@ -9,6 +9,14 @@ namespace OSPSuite.Core.Domain
       ParameterIdentification,
       SensitiviyAnalysis,
       QualificationPlan,
-      Module
+      Module,
+      Compound,
+      Formulation,
+      Individual,
+      Population,
+      Protocol,
+      Event,
+      ObserverSet,
+      ExpressionProfile
    }
 }
