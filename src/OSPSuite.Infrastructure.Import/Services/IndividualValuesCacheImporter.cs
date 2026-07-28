@@ -94,7 +94,6 @@ namespace OSPSuite.Infrastructure.Import.Services
             if (allParameters.Contains(pathWithUnitsRemoved))
             {
                individualValuesCache.RenamePath(parameterPath, pathWithUnitsRemoved);
-               parameterValue.ParameterPath = pathWithUnitsRemoved;
                continue;
             }
 
