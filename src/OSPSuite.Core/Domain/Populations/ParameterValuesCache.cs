@@ -87,7 +87,10 @@ namespace OSPSuite.Core.Domain.Populations
 
          var values = _parameterValuesCache[possibleKey];
          Remove(possibleKey);
-         _parameterValuesCache.Add(newPath, values);
+         //the cache is keyed by the path stored in the entry. Renaming only the key would be undone as soon as
+         //the cache is cloned, since the clone is built from the entries
+         values.ParameterPath = newPath;
+         _parameterValuesCache.Add(values);
       }
 
       private int numberOfValuesPerPath => !_parameterValuesCache.Any() ? 0 : _parameterValuesCache.First().Count;

@@ -238,6 +238,19 @@ namespace OSPSuite.Core.Domain
       {
          sut.Has("PATH1").ShouldBeFalse();
       }
+
+      [Observation]
+      public void should_have_renamed_the_path_stored_in_the_entry()
+      {
+         sut.ParameterValuesFor("PATH2").ParameterPath.ShouldBeEqualTo("PATH2");
+      }
+
+      [Observation]
+      public void should_keep_the_renamed_path_when_the_cache_is_cloned()
+      {
+         //the clone is keyed from the path stored in each entry
+         sut.Clone().AllParameterPaths().ShouldOnlyContain("PATH2");
+      }
    }
 
    public class When_renaming_a_parameter_path_that_does_exist_containing_unit : concern_for_ParameterValuesCache
@@ -265,6 +278,12 @@ namespace OSPSuite.Core.Domain
       {
          sut.Has("PATH1").ShouldBeFalse();
          sut.Has("PATH1 [mg]").ShouldBeFalse();
+      }
+
+      [Observation]
+      public void should_have_renamed_the_path_stored_in_the_entry()
+      {
+         sut.ParameterValuesFor("PATH2").ParameterPath.ShouldBeEqualTo("PATH2");
       }
    }
 
