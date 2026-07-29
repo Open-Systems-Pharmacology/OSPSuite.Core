@@ -41,7 +41,7 @@
     <PackageReference Include="DevExpress.Win.Design" Version="25.2.7" Condition="'$(ExcludeDesigner)' != 'true'" />
     <PackageReference Include="Northwoods.GoWin" Version="5.2.0" />
     <PackageReference Include="OSPSuite.DataBinding.DevExpress" Version="7.0.0.6" />
-    <PackageReference Include="OSPSuite.Utility" Version="5.0.0.10" />
+    <PackageReference Include="OSPSuite.Utility" Version="5.0.0.11" />
     <PackageReference Include="WindowsAPICodePack.Shell.CommonFileDialogs" Version="1.1.5" />
   </ItemGroup>
   <ItemGroup>
