@@ -62,7 +62,7 @@ namespace OSPSuite.UI.Services
          };
 
          if (containsHyperlink(message))
-            args.HyperlinkClick += (o, e) => { Process.Start(e.Link); };
+            args.HyperlinkClick += (o, e) => { Process.Start(new ProcessStartInfo(e.Link) {UseShellExecute = true}); };
 
          return args;
       }
