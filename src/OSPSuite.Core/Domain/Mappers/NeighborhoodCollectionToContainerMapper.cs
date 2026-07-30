@@ -71,10 +71,27 @@ namespace OSPSuite.Core.Domain.Mappers
             .Each(x =>
             {
                mergeNeighborhoodsInStructure(neighborhoodsParentContainer, definedNeighborhoods(x.neighborhoods), x.mergeBehavior);
-               notDefinedNeighborhoods(x.neighborhoods).Each(n => neighborhoodMapResult.Add(n, x.spatialStructure));
+               notDefinedNeighborhoods(x.neighborhoods).Each(n =>
+               {
+                  removeNeighborhoodRedefinedWithInvalidNeighbors(neighborhoodsParentContainer, n);
+                  neighborhoodMapResult.Add(n, x.spatialStructure);
+               });
             });
 
          return neighborhoodMapResult;
+      }
+
+      /// <summary>
+      ///    Removes the neighborhood named after <paramref name="invalidNeighborhoodBuilder" /> from
+      ///    <paramref name="neighborhoods" /> if it was created by a previously merged spatial structure. A module redefining
+      ///    a neighborhood with neighbors that cannot be resolved discards it, whatever the merge behavior. This is the only
+      ///    way for a module to remove a neighborhood defined in another module.
+      /// </summary>
+      private void removeNeighborhoodRedefinedWithInvalidNeighbors(IContainer neighborhoods, NeighborhoodBuilder invalidNeighborhoodBuilder)
+      {
+         var existingNeighborhood = neighborhoods.GetSingleChildByName(invalidNeighborhoodBuilder.Name);
+         if (existingNeighborhood != null)
+            neighborhoods.RemoveChild(existingNeighborhood);
       }
 
       private void mergeNeighborhoodsInStructure(IContainer neighborhoods, IReadOnlyList<Neighborhood> neighborhoodsToMerge, MergeBehavior mergeBehavior)
