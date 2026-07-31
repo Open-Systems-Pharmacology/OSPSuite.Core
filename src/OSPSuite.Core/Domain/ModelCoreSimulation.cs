@@ -54,7 +54,7 @@ namespace OSPSuite.Core.Domain
 
    public class ModelCoreSimulation : ObjectBase, IModelCoreSimulation
    {
-      public IModel Model { get; set; }
+      public virtual IModel Model { get; set; }
 
       public SimulationConfiguration Configuration { get; set; }
 
