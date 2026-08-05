@@ -140,7 +140,6 @@
          this.Controls.Add(this.uxLayoutControl);
          this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
          this.Margin = new System.Windows.Forms.Padding(5);
-         this.MaximumSize = new System.Drawing.Size(250, 155);
          this.Name = "HeavyWorkView";
          this.Text = "Processing...";
          ((System.ComponentModel.ISupportInitialize)(this._errorProvider)).EndInit();
