@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using OSPSuite.Core.Chart;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
@@ -59,9 +60,25 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
       public virtual void InitializeAnalysis(TChart chart)
       {
+         unbindChart();
          Chart = chart;
+         Chart.PropertyChanged += chartPropertyChanged;
          BindChartToEditors();
          InitEditorLayout();
+      }
+
+      private void unbindChart()
+      {
+         if (Chart == null)
+            return;
+
+         Chart.PropertyChanged -= chartPropertyChanged;
+      }
+
+      private void chartPropertyChanged(object sender, PropertyChangedEventArgs e)
+      {
+         if (string.Equals(e.PropertyName, nameof(Chart.Name)))
+            updateViewCaptionFromChart();
       }
 
       protected Action PostEditorLayout
@@ -168,6 +185,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
       public virtual void Clear()
       {
+         unbindChart();
          _chartPresenterContext.Clear();
          ChartEditorPresenter.ColumnSettingsChanged -= columnSettingsChanged;
          ChartEditorPresenter.ChartChanged -= ChartChanged;
