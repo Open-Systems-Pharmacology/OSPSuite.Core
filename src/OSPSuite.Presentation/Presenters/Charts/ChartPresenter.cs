@@ -78,7 +78,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
       private void chartPropertyChanged(object sender, PropertyChangedEventArgs e)
       {
          if (string.Equals(e.PropertyName, nameof(Chart.Name)))
-            updateViewCaptionFromChart();
+            ChartChanged();
       }
 
       protected Action PostEditorLayout
