@@ -15,6 +15,7 @@ namespace OSPSuite.Presentation.Nodes
       ITreeNode CreateFor(ClassifiableParameterIdentification classifiableParameterIdentification);
       ITreeNode CreateFor(ClassifiableSensitivityAnalysis classifiableSensitivityAnalysis);
       ITreeNode CreateFor(ClassifiableObservedData observedData);
+      ITreeNode CreateFor(UsedObservedData usedObservedData);
       ITreeNode<TObjectBase> CreateFor<TObjectBase>(TObjectBase entity) where TObjectBase : class, IObjectBase;
       ITreeNode CreateFor(string nodeText, string id, string iconName);
       ITreeNode CreateFor(string nodeText, string id);

@@ -20,6 +20,19 @@ namespace OSPSuite.Starter.Domain
       public OutputMappings OutputMappings { get; set; } = new OutputMappings();
       public DataRepository ResultsDataRepository { get; set; }
 
+      public IEnumerable<UsedObservedData> UsedObservedData
+      {
+         get { yield break; }
+      }
+
+      public void AddUsedObservedData(DataRepository dataRepository)
+      {
+      }
+
+      public void AddUsedObservedData(UsedObservedData usedObservedData)
+      {
+      }
+
       public void RemoveUsedObservedData(DataRepository dataRepository)
       {
       }
