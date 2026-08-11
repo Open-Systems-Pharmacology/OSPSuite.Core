@@ -213,6 +213,13 @@ namespace OSPSuite.Core.Services
       }
 
       [Observation]
+      public void should_add_matching_output_mappings_only_for_the_newly_used_observed_data()
+      {
+         A.CallTo(() => _outputMappingMatchingTask.AddMatchingOutputMapping(_obsData1, _simulation)).MustHaveHappened();
+         A.CallTo(() => _outputMappingMatchingTask.AddMatchingOutputMapping(_alreadyUsedObservedData, _simulation)).MustNotHaveHappened();
+      }
+
+      [Observation]
       public void should_mark_the_simulation_as_changed()
       {
          A.CallToSet(() => _simulation.HasChanged).To(true).MustHaveHappened();

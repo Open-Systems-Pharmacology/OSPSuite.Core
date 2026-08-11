@@ -227,7 +227,7 @@ namespace OSPSuite.Core.Domain.Services
             return;
 
          observedDataToAdd.Each(simulation.AddUsedObservedData);
-         observedDataList.Each(observedData => _outputMappingMatchingTask.AddMatchingOutputMapping(observedData, simulation));
+         observedDataToAdd.Each(observedData => _outputMappingMatchingTask.AddMatchingOutputMapping(observedData, simulation));
          simulation.HasChanged = true;
 
          _executionContext.PublishEvent(new ObservedDataAddedToAnalysableEvent(simulation, observedDataToAdd, showData));
