@@ -2120,6 +2120,8 @@ namespace OSPSuite.Assets
       public static readonly string Remove = "Remove...";
       public static readonly string DeleteSubMenu = "Delete";
       public static readonly string Rename = "Rename...";
+      public static readonly string RemoveAnalysis = "Remove";
+      public static readonly string RemoveAllAnalyses = "Remove All";
       public static readonly string GroupBy = "Create Subfolders By...";
       public static readonly string DeleteSubFoldersAndKeepData = "All Subfolders and Keep Data";
       public static readonly string DeleteSubFoldersAndData = "All Subfolders and Data";

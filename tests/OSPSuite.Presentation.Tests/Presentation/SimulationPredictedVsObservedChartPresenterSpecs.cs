@@ -26,7 +26,7 @@ namespace OSPSuite.Presentation.Presentation
 {
    public abstract class concern_for_SimulationPredictedVsObservedChartPresenter : ContextSpecification<SimulationPredictedVsObservedChartPresenter>
    {
-      private ISimulationVsObservedDataView _view;
+      protected ISimulationVsObservedDataView _view;
       private IChartEditorAndDisplayPresenter _chartEditorAndDisplayPresenter;
       private ICurveNamer _curveNamer;
       protected ISimulation _simulation;
@@ -150,6 +150,41 @@ namespace OSPSuite.Presentation.Presentation
          A.CallTo(() => _observedDataRepository.AllObservedDataUsedBy(A<ISimulation>._)).Returns(new List<DataRepository>() { _calculationData });
 
          sut.InitializeAnalysis(_predictedVsObservedChart);
+      }
+   }
+
+   public class When_the_chart_of_an_initialized_analysis_is_renamed : concern_for_SimulationPredictedVsObservedChartPresenter
+   {
+      protected override void Because()
+      {
+         _predictedVsObservedChart.Name = "New chart name";
+      }
+
+      [Observation]
+      public void should_update_the_view_caption()
+      {
+         _view.Caption.ShouldBeEqualTo("New chart name");
+      }
+   }
+
+   public class When_the_chart_presenter_has_been_cleared : concern_for_SimulationPredictedVsObservedChartPresenter
+   {
+      protected override void Context()
+      {
+         base.Context();
+         sut.Clear();
+         _view.Caption = "Caption before rename";
+      }
+
+      protected override void Because()
+      {
+         _predictedVsObservedChart.Name = "New chart name";
+      }
+
+      [Observation]
+      public void should_not_update_the_view_caption_when_the_chart_is_renamed()
+      {
+         _view.Caption.ShouldBeEqualTo("Caption before rename");
       }
    }
 

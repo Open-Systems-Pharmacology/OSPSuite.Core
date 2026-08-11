@@ -14,17 +14,21 @@ using OSPSuite.Presentation.Views;
 
 namespace OSPSuite.Presentation.Presenters
 {
+   public interface IPresenterWithAnalyses : IPresenterWithContextMenu<ISimulationAnalysisPresenter>
+   {
+      void RemoveAnalysis(ISimulationAnalysisPresenter simulationAnalysisPresenter);
+      void RemoveAllAnalyses();
+      void CloneAnalysis(ISimulationAnalysis analysis);
+   }
+
    public interface IEditAnalyzablePresenter :
       IListener<SimulationAnalysisCreatedEvent>,
       IListener<SimulationResultsUpdatedEvent>,
       IListener<SimulationStatusChangedEvent>,
-      IPresenterWithContextMenu<ISimulationAnalysisPresenter>, IPresenterWithSettings
+      IPresenterWithAnalyses, IPresenterWithSettings
 
    {
-      void RemoveAnalysis(ISimulationAnalysisPresenter simulationAnalysisPresenter);
-      void RemoveAllAnalyses();
       void SetSelectedTabIndex(int tabIndex);
-      void CloneAnalysis(ISimulationAnalysis analysis);
    }
 
    public interface IEditAnalyzablePresenter<TAnalyzable> : ISingleStartPresenter<TAnalyzable>, IEditAnalyzablePresenter where TAnalyzable : IAnalysable
