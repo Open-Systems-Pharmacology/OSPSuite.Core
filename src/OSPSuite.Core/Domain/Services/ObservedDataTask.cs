@@ -58,6 +58,17 @@ namespace OSPSuite.Core.Domain.Services
       ///    in Parameter Identifications and also requiring confirmation by the user.
       /// </summary>
       void RemoveUsedObservedDataFromSimulation(IReadOnlyList<UsedObservedData> usedObservedDataList);
+
+      /// <summary>
+      ///    Adds the given observed data to the analysable. Curves will not be shown
+      /// </summary>
+      void AddObservedDataToAnalysable(IReadOnlyList<DataRepository> observedDataList, IAnalysable analysable);
+
+      /// <summary>
+      ///    Adds the given observed data to the analysable. Curves will be shown if the <paramref name="showData" /> flag is
+      ///    set to <c>true</c>
+      /// </summary>
+      void AddObservedDataToAnalysable(IReadOnlyList<DataRepository> observedDataList, IAnalysable analysable, bool showData);
    }
 
    public abstract class ObservedDataTask : IObservedDataTask
@@ -68,16 +79,19 @@ namespace OSPSuite.Core.Domain.Services
       private readonly IContainerTask _containerTask;
       private readonly IObjectTypeResolver _objectTypeResolver;
       private readonly IConfirmationManager _confirmationManager;
+      private readonly IOutputMappingMatchingTask _outputMappingMatchingTask;
 
       protected ObservedDataTask(IDialogCreator dialogCreator, IOSPSuiteExecutionContext executionContext,
          IDataRepositoryExportTask dataRepositoryExportTask, IContainerTask containerTask,
-         IObjectTypeResolver objectTypeResolver, IConfirmationManager confirmationManager)
+         IObjectTypeResolver objectTypeResolver, IConfirmationManager confirmationManager,
+         IOutputMappingMatchingTask outputMappingMatchingTask)
       {
          _dialogCreator = dialogCreator;
          _executionContext = executionContext;
          _dataRepositoryExportTask = dataRepositoryExportTask;
          _containerTask = containerTask;
          _objectTypeResolver = objectTypeResolver;
+         _outputMappingMatchingTask = outputMappingMatchingTask;
          _confirmationManager = confirmationManager;
       }
 
@@ -195,6 +209,29 @@ namespace OSPSuite.Core.Domain.Services
       public void SuppressWarningOnRemovingObservedDataEntryFromSimulation()
       {
          _confirmationManager.SuppressConfirmation(ConfirmationFlags.ObservedDataEntryRemoved);
+      }
+
+      public void AddObservedDataToAnalysable(IReadOnlyList<DataRepository> observedDataList, IAnalysable analysable)
+      {
+         AddObservedDataToAnalysable(observedDataList, analysable, showData: false);
+      }
+
+      public void AddObservedDataToAnalysable(IReadOnlyList<DataRepository> observedDataList, IAnalysable analysable, bool showData)
+      {
+         var simulation = analysable as ISimulation;
+         if (simulation == null)
+            return;
+
+         var observedDataToAdd = observedDataList.Where(x => !simulation.UsesObservedData(x)).ToList();
+         if (!observedDataToAdd.Any())
+            return;
+
+         observedDataToAdd.Each(simulation.AddUsedObservedData);
+         observedDataToAdd.Each(observedData => _outputMappingMatchingTask.AddMatchingOutputMapping(observedData, simulation));
+         simulation.HasChanged = true;
+
+         _executionContext.PublishEvent(new ObservedDataAddedToAnalysableEvent(simulation, observedDataToAdd, showData));
+         _executionContext.PublishEvent(new SimulationStatusChangedEvent(simulation));
       }
 
       public void RemoveUsedObservedDataFromSimulation(IReadOnlyList<UsedObservedData> usedObservedDataList)

@@ -12,8 +12,11 @@ namespace OSPSuite.Core.Domain
 
       //ResultsDataRepository will be null for Population Simulations and should never be called for them
       DataRepository ResultsDataRepository { get; set; }
-      void RemoveUsedObservedData(DataRepository dataRepository);
 
+      IEnumerable<UsedObservedData> UsedObservedData { get; }
+      void AddUsedObservedData(DataRepository dataRepository);
+      void AddUsedObservedData(UsedObservedData usedObservedData);
+      void RemoveUsedObservedData(DataRepository dataRepository);
 
       /// <summary>
       ///    Remove the output mappings mapped to the dataRepository
