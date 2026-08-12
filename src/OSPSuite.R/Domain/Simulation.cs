@@ -23,6 +23,7 @@ namespace OSPSuite.R.Domain
       public bool ComesFromPKSim { get; } = false;
       public bool UsesObservedData(DataRepository observedData) => false;
       public IEnumerable<CurveChart> Charts { get; } = new List<CurveChart>();
+      public IEnumerable<UsedObservedData> UsedObservedData { get; } = new List<UsedObservedData>();
       public SimulationEntitySources EntitySources { get; set; } = new SimulationEntitySources();
       public OutputMappings OutputMappings { get; set; }
       public DataRepository ResultsDataRepository { get; set; }
@@ -32,6 +33,16 @@ namespace OSPSuite.R.Domain
       public AgingData AgingData { get; set; }
 
       public bool IsPopulation => IndividualValuesCache != null;
+
+      public void AddUsedObservedData(DataRepository dataRepository)
+      {
+         // nothing to do in R
+      }
+
+      public void AddUsedObservedData(UsedObservedData usedObservedData)
+      {
+         // nothing to do in R
+      }
 
       public void RemoveUsedObservedData(DataRepository dataRepository)
       {

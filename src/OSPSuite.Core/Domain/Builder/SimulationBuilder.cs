@@ -167,6 +167,50 @@ namespace OSPSuite.Core.Domain.Builder
          targetBuilder.EventGroupType = sourceBuilder.EventGroupType;
 
          mergeDescriptorCriteria(targetBuilder.SourceCriteria, sourceBuilder.SourceCriteria);
+
+         mergeApplications(targetBuilder, sourceBuilder);
+      }
+
+      /// <summary>
+      ///    Merges the given event group builders, and all equally named event group builders defined under them, as
+      ///    applications. This is required because <see cref="ApplicationBuilder.MoleculeName" /> is a property and not a
+      ///    child entity and is therefore not covered by the generic container merge
+      /// </summary>
+      private void mergeApplications(EventGroupBuilder targetBuilder, EventGroupBuilder sourceBuilder)
+      {
+         if (targetBuilder is ApplicationBuilder targetApplication && sourceBuilder is ApplicationBuilder sourceApplication)
+            mergeApplication(targetApplication, sourceApplication);
+
+         var targetEventGroups = targetBuilder.GetChildren<EventGroupBuilder>().ToList();
+         foreach (var sourceEventGroup in sourceBuilder.GetChildren<EventGroupBuilder>().ToList())
+         {
+            //The container merge already placed every source event group in the target, so this is only null when the
+            //target uses that name for something that is not an event group. For a group that was added as is, target
+            //and source are the same instance and merging them is a no-op
+            var targetEventGroup = targetEventGroups.FirstOrDefault(x => string.Equals(x.Name, sourceEventGroup.Name));
+            if (targetEventGroup != null)
+               mergeApplications(targetEventGroup, sourceEventGroup);
+         }
+      }
+
+      private void mergeApplication(ApplicationBuilder targetApplication, ApplicationBuilder sourceApplication)
+      {
+         //Application molecules only define where the administered molecule is applied. They are meaningless for another
+         //molecule, so the ones inherited from the base builder are dropped when the administered molecule changes
+         if (!string.Equals(targetApplication.MoleculeName, sourceApplication.MoleculeName))
+            removeApplicationMoleculesNotDefinedIn(targetApplication, sourceApplication);
+
+         targetApplication.MoleculeName = sourceApplication.MoleculeName;
+      }
+
+      private void removeApplicationMoleculesNotDefinedIn(ApplicationBuilder targetApplication, ApplicationBuilder sourceApplication)
+      {
+         //the container merge added the application molecules of the source to the target by name
+         var sourceMoleculeNames = sourceApplication.Molecules.Select(x => x.Name).ToList();
+         targetApplication.Molecules
+            .Where(x => !sourceMoleculeNames.Contains(x.Name))
+            .ToList()
+            .Each(targetApplication.RemoveMolecule);
       }
 
       private void mergeReactions(ReactionBuilder targetReaction, BuilderSource<ReactionBuilder> sourceReaction)

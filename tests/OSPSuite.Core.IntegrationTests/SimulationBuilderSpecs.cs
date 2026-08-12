@@ -22,6 +22,19 @@ internal class concern_for_SimulationBuilder : ContextForIntegration<SimulationB
       _simulationConfiguration = IoC.Resolve<ModelHelperForSpecs>().CreateSimulationConfiguration();
       _modelHelper = IoC.Resolve<ModelHelperForSpecs>();
    }
+
+   protected ApplicationBuilder CreateApplicationBuilder(string name, string moleculeName, string applicationMoleculeName, string containerName)
+   {
+      var applicationBuilder = new ApplicationBuilder().WithName(name);
+      applicationBuilder.MoleculeName = moleculeName;
+
+      var applicationMoleculeBuilder = new ApplicationMoleculeBuilder().WithName(applicationMoleculeName).WithParentContainer(applicationBuilder);
+      applicationMoleculeBuilder.RelativeContainerPath = new ObjectPath("..", containerName);
+
+      return applicationBuilder;
+   }
+
+   protected ApplicationBuilder ApplicationBuilderFor(string name) => sut.EventGroups.OfType<ApplicationBuilder>().Single(x => x.Name == name);
 }
 
 
@@ -546,4 +559,102 @@ internal class When_extending_event_group_builder_with_source_criteria : concern
       var eventGroup = sut.EventGroups.Single(x => x.Name == "EG1");
       eventGroup.SourceCriteria.Operator.ShouldBeEqualTo(CriteriaOperator.And);
    }
+}
+
+internal class When_extending_an_application_builder_with_another_administered_molecule : concern_for_SimulationBuilder
+{
+   protected override void Context()
+   {
+      base.Context();
+
+      var application1 = CreateApplicationBuilder("App1", "MoleculeX", "AppMoleculeX", "C1");
+      var module1 = new Module { new EventGroupBuildingBlock { application1 } };
+
+      var application2 = CreateApplicationBuilder("App1", "MoleculeY", "AppMoleculeY", "C2");
+      var module2 = new Module { new EventGroupBuildingBlock { application2 } };
+      module2.MergeBehavior = MergeBehavior.Extend;
+
+      _simulationConfiguration.AddModuleConfiguration(new ModuleConfiguration(module1));
+      _simulationConfiguration.AddModuleConfiguration(new ModuleConfiguration(module2));
+      sut = new SimulationBuilderForSpecs(_simulationConfiguration);
+   }
+
+   [Observation]
+   public void the_administered_molecule_should_be_from_module_2()
+   {
+      ApplicationBuilderFor("App1").MoleculeName.ShouldBeEqualTo("MoleculeY");
+   }
+
+   [Observation]
+   public void the_application_molecules_should_only_be_the_ones_from_module_2()
+   {
+      ApplicationBuilderFor("App1").Molecules.Select(x => x.Name).ShouldOnlyContain("AppMoleculeY");
+   }
+}
+
+internal class When_extending_an_application_builder_with_the_same_administered_molecule : concern_for_SimulationBuilder
+{
+   protected override void Context()
+   {
+      base.Context();
+
+      var application1 = CreateApplicationBuilder("App1", "MoleculeX", "AppMolecule1", "C1");
+      var module1 = new Module { new EventGroupBuildingBlock { application1 } };
+
+      var application2 = CreateApplicationBuilder("App1", "MoleculeX", "AppMolecule2", "C2");
+      var module2 = new Module { new EventGroupBuildingBlock { application2 } };
+      module2.MergeBehavior = MergeBehavior.Extend;
+
+      _simulationConfiguration.AddModuleConfiguration(new ModuleConfiguration(module1));
+      _simulationConfiguration.AddModuleConfiguration(new ModuleConfiguration(module2));
+      sut = new SimulationBuilderForSpecs(_simulationConfiguration);
+   }
+
+   [Observation]
+   public void the_administered_molecule_should_be_unchanged()
+   {
+      ApplicationBuilderFor("App1").MoleculeName.ShouldBeEqualTo("MoleculeX");
+   }
+
+   [Observation]
+   public void the_application_molecules_should_be_the_ones_from_both_modules()
+   {
+      ApplicationBuilderFor("App1").Molecules.Select(x => x.Name).ShouldOnlyContain("AppMolecule1", "AppMolecule2");
+   }
+}
+
+internal class When_extending_an_event_group_builder_containing_an_application_with_another_administered_molecule : concern_for_SimulationBuilder
+{
+   protected override void Context()
+   {
+      base.Context();
+
+      var eventGroup1 = new EventGroupBuilder().WithName("EG1");
+      CreateApplicationBuilder("App1", "MoleculeX", "AppMoleculeX", "C1").WithParentContainer(eventGroup1);
+      var module1 = new Module { new EventGroupBuildingBlock { eventGroup1 } };
+
+      var eventGroup2 = new EventGroupBuilder().WithName("EG1");
+      CreateApplicationBuilder("App1", "MoleculeY", "AppMoleculeY", "C2").WithParentContainer(eventGroup2);
+      var module2 = new Module { new EventGroupBuildingBlock { eventGroup2 } };
+      module2.MergeBehavior = MergeBehavior.Extend;
+
+      _simulationConfiguration.AddModuleConfiguration(new ModuleConfiguration(module1));
+      _simulationConfiguration.AddModuleConfiguration(new ModuleConfiguration(module2));
+      sut = new SimulationBuilderForSpecs(_simulationConfiguration);
+   }
+
+   [Observation]
+   public void the_administered_molecule_should_be_from_module_2()
+   {
+      nestedApplicationBuilder().MoleculeName.ShouldBeEqualTo("MoleculeY");
+   }
+
+   [Observation]
+   public void the_application_molecules_should_only_be_the_ones_from_module_2()
+   {
+      nestedApplicationBuilder().Molecules.Select(x => x.Name).ShouldOnlyContain("AppMoleculeY");
+   }
+
+   private ApplicationBuilder nestedApplicationBuilder() =>
+      sut.EventGroups.Single(x => x.Name == "EG1").GetChildren<ApplicationBuilder>().Single(x => x.Name == "App1");
 }
