@@ -63,6 +63,10 @@ namespace OSPSuite.Core.Domain.Services
 
       private bool isEquivalentButNotExtensionNeighborhood(NeighborhoodBuilder neighborhood1, NeighborhoodBuilder neighborhood2)
       {
+         // a neighborhood with undefined neighbors does not define a location and cannot be equivalent to another neighborhood
+         if (!neighborhood1.HasDefinedNeighborPaths || !neighborhood2.HasDefinedNeighborPaths)
+            return false;
+
          // shared name means that one extends the other, or they are actually the same instance
          if (Equals(neighborhood1.Name, neighborhood2.Name))
             return false;

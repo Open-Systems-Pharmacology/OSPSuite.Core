@@ -31,6 +31,33 @@ namespace OSPSuite.Core.Mappers
       }
    }
 
+   internal class When_mapping_a_neighborhood_builder_with_an_undefined_neighbor_path : concern_for_NeighborhoodBuilderToNeighborhoodMapper
+   {
+      private NeighborhoodBuilder _neighborhoodBuilder;
+      private Neighborhood _neighborhood;
+      private ModelConfiguration _modelConfiguration;
+
+      protected override void Context()
+      {
+         base.Context();
+         _neighborhoodBuilder = new NeighborhoodBuilder().WithName("tralala");
+         //only the first neighbor path is defined
+         _neighborhoodBuilder.FirstNeighborPath = new ObjectPath("First");
+         _modelConfiguration = new ModelConfiguration(A.Fake<IModel>(), new SimulationConfiguration(), A.Fake<SimulationBuilder>());
+      }
+
+      protected override void Because()
+      {
+         _neighborhood = sut.MapFrom(_neighborhoodBuilder, new List<string>(), new List<string>(), _modelConfiguration);
+      }
+
+      [Observation]
+      public void should_return_null()
+      {
+         _neighborhood.ShouldBeNull();
+      }
+   }
+
    internal class When_mapping_a_neighborhood_builder_to_a_neighborhood : concern_for_NeighborhoodBuilderToNeighborhoodMapper
    {
       private NeighborhoodBuilder _neighborhoodBuilder;

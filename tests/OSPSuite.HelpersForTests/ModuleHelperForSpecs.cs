@@ -71,13 +71,9 @@ namespace OSPSuite.Helpers
          };
 
          var module1 = createModule1();
-         var bonePlasma = module1.SpatialStructure.TopContainers
-            .FindByName(ORGANISM)
-            .FindByName(Bone)
-            .WithName(Plasma);
-
-         var logicalContainer = createContainerWithName(Plasma, ContainerMode.Logical);
-         addLogicalNeighborhood(module1.SpatialStructure,(IContainer)bonePlasma, logicalContainer);
+         //Bone is a logical container in the spatial structure of module1
+         var bone = module1.SpatialStructure.TopContainers.FindByName(ORGANISM).Container(Bone);
+         addLogicalNeighborhood(module1.SpatialStructure, bone);
          var module2 = createModule2();
          var module3 = createModule3();
 
@@ -450,18 +446,15 @@ namespace OSPSuite.Helpers
          neighborhood6.AddTag("Cell2Plasma");
          neighborhood6.AddParameter(NewConstantParameter("SA", 22));
 
-         var neighborhood7 = _neighborhoodFactory.CreateBetween(bonePlasma, boneCell).WithName("does_not_match_existing");
-         neighborhood7.FirstNeighborPath = new ObjectPath("Organism", "NOPE");
-         spatialStructure.AddNeighborhood(neighborhood7);
-
          spatialStructure.ResolveReferencesInNeighborhoods();
          return spatialStructure;
       }
 
-      private void addLogicalNeighborhood(SpatialStructure spatialStructure, IContainer bonePlasma, IContainer logicalContainer)
+      private void addLogicalNeighborhood(SpatialStructure spatialStructure, IContainer bone)
       {
-         var neighborhood8 = _neighborhoodFactory.CreateBetween(bonePlasma, logicalContainer).WithName("not_physical");
-         neighborhood8.FirstNeighborPath = new ObjectPath("Organism", "NOPE");
+         //neighborhood between a physical container (bone plasma) and a logical container (bone)
+         var bonePlasma = bone.Container(Plasma);
+         var neighborhood8 = _neighborhoodFactory.CreateBetween(bonePlasma, bone).WithName("not_physical");
          spatialStructure.AddNeighborhood(neighborhood8);
       }
 

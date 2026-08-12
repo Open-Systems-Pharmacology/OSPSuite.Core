@@ -43,8 +43,7 @@ namespace OSPSuite.Core
       public void should_return_a_successful_validation_with_warning()
       {
          _result.ValidationResult.ValidationState.ShouldBeEqualTo(ValidationState.ValidWithWarnings, _result.ValidationResult.Messages.Select(m => m.Text).ToString("\n"));
-         _result.ValidationResult.Messages.FirstOrDefault(x => x.Text.Equals(Warning.NeighborhoodWasNotFoundInModel("does_not_match_existing", "Module1 - SPATIAL STRUCTURE MODULE 1"))).ShouldNotBeNull();
-         _result.ValidationResult.Messages.FirstOrDefault(x => x.Text.Equals(Warning.NeighborhoodWasNotFoundInModel("not_physical", "Module1 - SPATIAL STRUCTURE MODULE 1"))).ShouldNotBeNull();
+         _result.ValidationResult.Messages.FirstOrDefault(x => x.Text.Equals(Warning.NeighborIsLogical(Bone, "not_physical"))).ShouldNotBeNull();
       }
 
       [Observation]
@@ -67,9 +66,9 @@ namespace OSPSuite.Core
       }
 
       [Observation]
-      public void should_have_removed_neighborhoods_pointing_to_invalid_neighbors()
+      public void should_have_created_the_neighborhood_between_a_physical_and_a_logical_container()
       {
-         _model.Neighborhoods.FindByName("does_not_match_existing").ShouldBeNull();
+         _model.Neighborhoods.FindByName("not_physical").ShouldNotBeNull();
       }
 
       [Observation]
@@ -461,6 +460,8 @@ namespace OSPSuite.Core
    internal class When_extending_a_neighborhood_with_neighbors_that_cannot_be_resolved : concern_for_ModuleIntegration
    {
       private const string NEIGHBORHOOD_NAME = "art_pls_to_bon_pls";
+      private readonly ObjectPath _invalidNeighborPath = new ObjectPath(Constants.ORGANISM, "DOES_NOT_EXIST");
+      private readonly ObjectPath _validNeighborPath = new ObjectPath(Constants.ORGANISM, Bone, Plasma);
       private INeighborhoodBuilderFactory _neighborhoodFactory;
       private Module _module2;
 
@@ -476,7 +477,7 @@ namespace OSPSuite.Core
          _module2 = configuration.ModuleConfigurations[1].Module;
 
          //redefine a neighborhood of the first module with a neighbor that cannot be resolved in the merged structure
-         var neighborhood = _neighborhoodFactory.CreateBetween(new ObjectPath(Constants.ORGANISM, "DOES_NOT_EXIST"), new ObjectPath(Constants.ORGANISM, Bone, Plasma));
+         var neighborhood = _neighborhoodFactory.CreateBetween(_invalidNeighborPath, _validNeighborPath);
          neighborhood.Name = NEIGHBORHOOD_NAME;
          _module2.SpatialStructure.AddNeighborhood(neighborhood);
 
@@ -484,21 +485,24 @@ namespace OSPSuite.Core
       };
 
       [Observation]
-      public void the_neighborhood_created_by_the_first_module_should_have_been_removed_from_the_model()
+      public void should_fail_the_simulation_construction_with_an_error()
       {
-         _model.Neighborhoods.FindByName(NEIGHBORHOOD_NAME).ShouldBeNull();
+         _result.ValidationResult.ValidationState.ShouldBeEqualTo(ValidationState.Invalid);
+         _result.ValidationResult.Messages.FirstOrDefault(x => x.Text.Equals(Error.NeighborhoodNeighborsNotFoundInModel(NEIGHBORHOOD_NAME, _invalidNeighborPath.PathAsString, _validNeighborPath.PathAsString, _module2.SpatialStructure.DisplayName))).ShouldNotBeNull();
       }
 
       [Observation]
-      public void should_warn_that_the_neighborhood_was_not_added_to_the_simulation()
+      public void should_not_have_removed_the_neighborhood_defined_in_the_first_module()
       {
-         _result.ValidationResult.Messages.FirstOrDefault(x => x.Text.Equals(Warning.NeighborhoodWasNotFoundInModel(NEIGHBORHOOD_NAME, _module2.SpatialStructure.DisplayName))).ShouldNotBeNull();
+         _model.Neighborhoods.FindByName(NEIGHBORHOOD_NAME).ShouldNotBeNull();
       }
    }
 
    internal class When_overwriting_a_neighborhood_with_neighbors_that_cannot_be_resolved : concern_for_ModuleIntegration
    {
       private const string NEIGHBORHOOD_NAME = "art_pls_to_bon_pls";
+      private readonly ObjectPath _invalidNeighborPath = new ObjectPath(Constants.ORGANISM, "DOES_NOT_EXIST");
+      private readonly ObjectPath _validNeighborPath = new ObjectPath(Constants.ORGANISM, Bone, Plasma);
       private INeighborhoodBuilderFactory _neighborhoodFactory;
       private Module _module2;
 
@@ -514,7 +518,7 @@ namespace OSPSuite.Core
          _module2 = configuration.ModuleConfigurations[1].Module;
 
          //redefine a neighborhood of the first module with a neighbor that cannot be resolved in the merged structure
-         var neighborhood = _neighborhoodFactory.CreateBetween(new ObjectPath(Constants.ORGANISM, "DOES_NOT_EXIST"), new ObjectPath(Constants.ORGANISM, Bone, Plasma));
+         var neighborhood = _neighborhoodFactory.CreateBetween(_invalidNeighborPath, _validNeighborPath);
          neighborhood.Name = NEIGHBORHOOD_NAME;
          _module2.SpatialStructure.AddNeighborhood(neighborhood);
 
@@ -522,15 +526,220 @@ namespace OSPSuite.Core
       };
 
       [Observation]
-      public void the_neighborhood_created_by_the_first_module_should_have_been_removed_from_the_model()
+      public void should_fail_the_simulation_construction_with_an_error()
+      {
+         _result.ValidationResult.ValidationState.ShouldBeEqualTo(ValidationState.Invalid);
+         _result.ValidationResult.Messages.FirstOrDefault(x => x.Text.Equals(Error.NeighborhoodNeighborsNotFoundInModel(NEIGHBORHOOD_NAME, _invalidNeighborPath.PathAsString, _validNeighborPath.PathAsString, _module2.SpatialStructure.DisplayName))).ShouldNotBeNull();
+      }
+
+      [Observation]
+      public void should_not_have_removed_the_neighborhood_defined_in_the_first_module()
+      {
+         _model.Neighborhoods.FindByName(NEIGHBORHOOD_NAME).ShouldNotBeNull();
+      }
+   }
+
+   internal class When_creating_a_new_neighborhood_with_neighbors_that_cannot_be_resolved : concern_for_ModuleIntegration
+   {
+      private const string NEIGHBORHOOD_NAME = "neighborhood_with_invalid_neighbors";
+      private readonly ObjectPath _invalidNeighborPath = new ObjectPath(Constants.ORGANISM, "DOES_NOT_EXIST");
+      private readonly ObjectPath _validNeighborPath = new ObjectPath(Constants.ORGANISM, Bone, Plasma);
+      private INeighborhoodBuilderFactory _neighborhoodFactory;
+      private Module _module2;
+
+      protected override void Context()
+      {
+         base.Context();
+         _neighborhoodFactory = IoC.Resolve<INeighborhoodBuilderFactory>();
+      }
+
+      protected override Func<ModuleHelperForSpecs, SimulationConfiguration> SimulationConfigurationBuilder() => x =>
+      {
+         var configuration = x.CreateSimulationConfigurationForExtendMergeBehavior();
+         _module2 = configuration.ModuleConfigurations[1].Module;
+
+         //add a new neighborhood with a neighbor that cannot be resolved in the merged structure
+         var neighborhood = _neighborhoodFactory.CreateBetween(_invalidNeighborPath, _validNeighborPath);
+         neighborhood.Name = NEIGHBORHOOD_NAME;
+         _module2.SpatialStructure.AddNeighborhood(neighborhood);
+
+         return configuration;
+      };
+
+      [Observation]
+      public void should_fail_the_simulation_construction_with_an_error()
+      {
+         _result.ValidationResult.ValidationState.ShouldBeEqualTo(ValidationState.Invalid);
+         _result.ValidationResult.Messages.FirstOrDefault(x => x.Text.Equals(Error.NeighborhoodNeighborsNotFoundInModel(NEIGHBORHOOD_NAME, _invalidNeighborPath.PathAsString, _validNeighborPath.PathAsString, _module2.SpatialStructure.DisplayName))).ShouldNotBeNull();
+      }
+
+      [Observation]
+      public void should_not_have_created_the_neighborhood()
+      {
+         _model.Neighborhoods.FindByName(NEIGHBORHOOD_NAME).ShouldBeNull();
+      }
+   }
+
+   internal class When_extending_a_neighborhood_with_a_neighborhood_without_neighbors : concern_for_ModuleIntegration
+   {
+      private const string NEIGHBORHOOD_NAME = "bon_pls_to_ven_pls";
+      private INeighborhoodBuilderFactory _neighborhoodFactory;
+      private Module _module2;
+
+      protected override void Context()
+      {
+         base.Context();
+         _neighborhoodFactory = IoC.Resolve<INeighborhoodBuilderFactory>();
+      }
+
+      protected override Func<ModuleHelperForSpecs, SimulationConfiguration> SimulationConfigurationBuilder() => x =>
+      {
+         var configuration = x.CreateSimulationConfigurationForExtendMergeBehavior();
+         _module2 = configuration.ModuleConfigurations[1].Module;
+
+         //redefine the neighborhood without neighbors to remove it from the simulation
+         var neighborhood = _neighborhoodFactory.Create().WithName(NEIGHBORHOOD_NAME);
+         _module2.SpatialStructure.AddNeighborhood(neighborhood);
+
+         return configuration;
+      };
+
+      [Observation]
+      public void should_have_removed_the_neighborhood_defined_in_the_first_module()
       {
          _model.Neighborhoods.FindByName(NEIGHBORHOOD_NAME).ShouldBeNull();
       }
 
       [Observation]
-      public void should_warn_that_the_neighborhood_was_not_added_to_the_simulation()
+      public void should_warn_that_the_neighborhood_was_removed_from_the_simulation()
       {
-         _result.ValidationResult.Messages.FirstOrDefault(x => x.Text.Equals(Warning.NeighborhoodWasNotFoundInModel(NEIGHBORHOOD_NAME, _module2.SpatialStructure.DisplayName))).ShouldNotBeNull();
+         _result.ValidationResult.ValidationState.ShouldBeEqualTo(ValidationState.ValidWithWarnings, _result.ValidationResult.Messages.Select(m => m.Text).ToString("\n"));
+         _result.ValidationResult.Messages.FirstOrDefault(x => x.Text.Equals(Warning.NeighborhoodRemovedFromModel(NEIGHBORHOOD_NAME, _module2.SpatialStructure.DisplayName))).ShouldNotBeNull();
+      }
+   }
+
+   internal class When_overwriting_a_neighborhood_with_a_neighborhood_without_neighbors : concern_for_ModuleIntegration
+   {
+      private const string NEIGHBORHOOD_NAME = "bon_pls_to_ven_pls";
+      private INeighborhoodBuilderFactory _neighborhoodFactory;
+      private Module _module2;
+
+      protected override void Context()
+      {
+         base.Context();
+         _neighborhoodFactory = IoC.Resolve<INeighborhoodBuilderFactory>();
+      }
+
+      protected override Func<ModuleHelperForSpecs, SimulationConfiguration> SimulationConfigurationBuilder() => x =>
+      {
+         var configuration = x.CreateSimulationConfigurationForOverrideMergeBehavior();
+         _module2 = configuration.ModuleConfigurations[1].Module;
+
+         //redefine the neighborhood without neighbors to remove it from the simulation
+         var neighborhood = _neighborhoodFactory.Create().WithName(NEIGHBORHOOD_NAME);
+         _module2.SpatialStructure.AddNeighborhood(neighborhood);
+
+         return configuration;
+      };
+
+      [Observation]
+      public void should_have_removed_the_neighborhood_defined_in_the_first_module()
+      {
+         _model.Neighborhoods.FindByName(NEIGHBORHOOD_NAME).ShouldBeNull();
+      }
+
+      [Observation]
+      public void should_warn_that_the_neighborhood_was_removed_from_the_simulation()
+      {
+         //the validation state is not asserted here because the underlying simulation configuration
+         //contains a pre-existing event error ('StartTime' reference) that is unrelated to the removal
+         _result.ValidationResult.Messages.FirstOrDefault(x => x.Text.Equals(Warning.NeighborhoodRemovedFromModel(NEIGHBORHOOD_NAME, _module2.SpatialStructure.DisplayName))).ShouldNotBeNull();
+      }
+   }
+
+   internal class When_the_first_module_defines_a_neighborhood_without_neighbors : concern_for_ModuleIntegration
+   {
+      private const string NEIGHBORHOOD_NAME = "neighborhood_without_neighbors";
+      private INeighborhoodBuilderFactory _neighborhoodFactory;
+      private Module _module1;
+
+      protected override void Context()
+      {
+         base.Context();
+         _neighborhoodFactory = IoC.Resolve<INeighborhoodBuilderFactory>();
+      }
+
+      protected override Func<ModuleHelperForSpecs, SimulationConfiguration> SimulationConfigurationBuilder() => x =>
+      {
+         var configuration = x.CreateSimulationConfigurationForExtendMergeBehavior();
+         _module1 = configuration.ModuleConfigurations[0].Module;
+
+         //there is no neighborhood to remove in the first module. The neighborhood is simply ignored
+         var neighborhood = _neighborhoodFactory.Create().WithName(NEIGHBORHOOD_NAME);
+         _module1.SpatialStructure.AddNeighborhood(neighborhood);
+
+         return configuration;
+      };
+
+      [Observation]
+      public void should_not_fail_the_simulation_construction()
+      {
+         _result.ValidationResult.ValidationState.ShouldNotBeEqualTo(ValidationState.Invalid);
+      }
+
+      [Observation]
+      public void should_not_have_created_the_neighborhood()
+      {
+         _model.Neighborhoods.FindByName(NEIGHBORHOOD_NAME).ShouldBeNull();
+      }
+
+      [Observation]
+      public void should_not_warn_that_a_neighborhood_was_removed()
+      {
+         _result.ValidationResult.Messages.FirstOrDefault(x => x.Text.Equals(Warning.NeighborhoodRemovedFromModel(NEIGHBORHOOD_NAME, _module1.SpatialStructure.DisplayName))).ShouldBeNull();
+      }
+   }
+
+   internal class When_a_module_defines_a_neighborhood_without_neighbors_matching_no_existing_neighborhood : concern_for_ModuleIntegration
+   {
+      private const string NEIGHBORHOOD_NAME = "neighborhood_without_neighbors";
+      private INeighborhoodBuilderFactory _neighborhoodFactory;
+      private Module _module2;
+
+      protected override void Context()
+      {
+         base.Context();
+         _neighborhoodFactory = IoC.Resolve<INeighborhoodBuilderFactory>();
+      }
+
+      protected override Func<ModuleHelperForSpecs, SimulationConfiguration> SimulationConfigurationBuilder() => x =>
+      {
+         var configuration = x.CreateSimulationConfigurationForExtendMergeBehavior();
+         _module2 = configuration.ModuleConfigurations[1].Module;
+
+         //no neighborhood with this name exists in the previously merged modules. The neighborhood is simply ignored
+         var neighborhood = _neighborhoodFactory.Create().WithName(NEIGHBORHOOD_NAME);
+         _module2.SpatialStructure.AddNeighborhood(neighborhood);
+
+         return configuration;
+      };
+
+      [Observation]
+      public void should_not_fail_the_simulation_construction()
+      {
+         _result.ValidationResult.ValidationState.ShouldNotBeEqualTo(ValidationState.Invalid);
+      }
+
+      [Observation]
+      public void should_not_have_created_the_neighborhood()
+      {
+         _model.Neighborhoods.FindByName(NEIGHBORHOOD_NAME).ShouldBeNull();
+      }
+
+      [Observation]
+      public void should_not_warn_that_a_neighborhood_was_removed()
+      {
+         _result.ValidationResult.Messages.FirstOrDefault(x => x.Text.Equals(Warning.NeighborhoodRemovedFromModel(NEIGHBORHOOD_NAME, _module2.SpatialStructure.DisplayName))).ShouldBeNull();
       }
    }
 
