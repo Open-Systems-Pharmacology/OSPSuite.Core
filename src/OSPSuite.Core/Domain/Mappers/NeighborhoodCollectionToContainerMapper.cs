@@ -10,9 +10,10 @@ using OSPSuite.Utility.Extensions;
 namespace OSPSuite.Core.Domain.Mappers
 {
    /// <summary>
-   ///    Returns a result that includes a top container named "NEIGHBORHOODS" with all mapped neighborhoods
-   ///    and a list of all neighborhoods that were not included because one or both neighbors were not found in the
-   ///    simulation spatial structure
+   ///    Returns a result that includes a top container named "NEIGHBORHOODS" with all mapped neighborhoods,
+   ///    a list of all invalid neighborhoods that could not be created because one or both neighbors were not found in the
+   ///    simulation spatial structure, and a list of all neighborhoods that were removed because a module redefines them
+   ///    without neighbors
    /// </summary>
    internal interface INeighborhoodCollectionToContainerMapper : IMapper<ModelConfiguration, NeighborhoodMapResult>
    {
@@ -49,21 +50,29 @@ namespace OSPSuite.Core.Domain.Mappers
 
          var mapToNeighborhood = mapToNeighborhoodDef(modelConfiguration);
 
+         //neighborhoods defined without neighbors represent a removal and are not mapped into the model
          IReadOnlyList<(NeighborhoodBuilder builder, Neighborhood neighborhood)> allNeighborHoodsFrom(SpatialStructure spatialStructure) =>
-            spatialStructure.Neighborhoods.Select(x => (builder: x, neighborhood: mapToNeighborhood(x))).ToList();
+            spatialStructure.Neighborhoods.Where(x => !x.HasNoNeighbors).Select(x => (builder: x, neighborhood: mapToNeighborhood(x))).ToList();
 
-         IReadOnlyList<Neighborhood> definedNeighborhoods(IReadOnlyList<(NeighborhoodBuilder builder, Neighborhood neighborhood)> allNeighborhoods) => allNeighborhoods.Where(x => x.neighborhood != null).Select(x => x.neighborhood).ToList();
-         IReadOnlyList<NeighborhoodBuilder> notDefinedNeighborhoods(IReadOnlyList<(NeighborhoodBuilder builder, Neighborhood neighborhood)> allNeighborhoods) => allNeighborhoods.Where(x => x.neighborhood == null).Select(x => x.builder).ToList();
+         IReadOnlyList<Neighborhood> definedNeighborhoods(IReadOnlyList<(NeighborhoodBuilder builder, Neighborhood neighborhood)> allNeighborhoods) => 
+            allNeighborhoods.Where(x => x.neighborhood != null).Select(x => x.neighborhood).ToList();
+         
+         IReadOnlyList<NeighborhoodBuilder> invalidNeighborhoods(IReadOnlyList<(NeighborhoodBuilder builder, Neighborhood neighborhood)> allNeighborhoods) => 
+            allNeighborhoods.Where(x => x.neighborhood == null).Select(x => x.builder).ToList();
+         
+         IReadOnlyList<NeighborhoodBuilder> neighborhoodsWithoutNeighbors(SpatialStructure spatialStructure) => 
+            spatialStructure.Neighborhoods.Where(x => x.HasNoNeighbors).ToList();
 
          //we use a cache to ensure that we are replacing neighborhoods defined in multiple structures
          var firstSpatialStructure = allSpatialStructureAndMergeBehaviors[0].spatialStructure;
          var allOtherSpatialStructuresWithMergeBehavior = allSpatialStructureAndMergeBehaviors.Skip(1).ToList();
 
          //first step: Add the neighborhoods from the first structure
+         //a neighborhood without neighbors in the first structure has nothing to remove and is simply ignored
          var allNeighbors = allNeighborHoodsFrom(firstSpatialStructure);
          neighborhoodsParentContainer.AddChildren(definedNeighborhoods(allNeighbors));
 
-         notDefinedNeighborhoods(allNeighbors).Each(x => neighborhoodMapResult.Add(x, firstSpatialStructure));
+         invalidNeighborhoods(allNeighbors).Each(x => neighborhoodMapResult.AddInvalid(x, firstSpatialStructure));
 
          //now merge all other neighborhoods
          allOtherSpatialStructuresWithMergeBehavior
@@ -71,10 +80,27 @@ namespace OSPSuite.Core.Domain.Mappers
             .Each(x =>
             {
                mergeNeighborhoodsInStructure(neighborhoodsParentContainer, definedNeighborhoods(x.neighborhoods), x.mergeBehavior);
-               notDefinedNeighborhoods(x.neighborhoods).Each(n => neighborhoodMapResult.Add(n, x.spatialStructure));
+               invalidNeighborhoods(x.neighborhoods).Each(n => neighborhoodMapResult.AddInvalid(n, x.spatialStructure));
+               neighborhoodsWithoutNeighbors(x.spatialStructure).Each(n => removeNeighborhood(neighborhoodsParentContainer, n, x.spatialStructure, neighborhoodMapResult));
             });
 
          return neighborhoodMapResult;
+      }
+
+      /// <summary>
+      ///    Removes the neighborhood named after <paramref name="neighborhoodWithoutNeighbors" /> from
+      ///    <paramref name="neighborhoods" /> if it was created by a previously merged spatial structure. Redefining a
+      ///    neighborhood without neighbors is the only way for a module to remove a neighborhood defined in another module.
+      ///    This applies whatever the merge behavior of the module.
+      /// </summary>
+      private void removeNeighborhood(IContainer neighborhoods, NeighborhoodBuilder neighborhoodWithoutNeighbors, SpatialStructure spatialStructure, NeighborhoodMapResult neighborhoodMapResult)
+      {
+         var existingNeighborhood = neighborhoods.GetSingleChildByName(neighborhoodWithoutNeighbors.Name);
+         if (existingNeighborhood == null)
+            return;
+
+         neighborhoods.RemoveChild(existingNeighborhood);
+         neighborhoodMapResult.AddRemoved(neighborhoodWithoutNeighbors, spatialStructure);
       }
 
       private void mergeNeighborhoodsInStructure(IContainer neighborhoods, IReadOnlyList<Neighborhood> neighborhoodsToMerge, MergeBehavior mergeBehavior)
@@ -142,6 +168,10 @@ namespace OSPSuite.Core.Domain.Mappers
       /// </summary>
       private IReadOnlyList<string> moleculeNamesFor(NeighborhoodBuilder neighborhoodBuilder, ICache<string, List<string>> moleculesStartValuesForFloatingMolecules)
       {
+         // undefined neighbor paths cannot contain any molecule
+         if (!neighborhoodBuilder.HasDefinedNeighborPaths)
+            return new List<string>();
+
          var pathToFirstNeighbor = neighborhoodBuilder.FirstNeighborPath.PathAsString;
          var pathToSecondNeighbor = neighborhoodBuilder.SecondNeighborPath.PathAsString;
 
@@ -157,28 +187,44 @@ namespace OSPSuite.Core.Domain.Mappers
 
    internal class NeighborhoodMapResult
    {
-      private readonly List<(NeighborhoodBuilder builder, SpatialStructure buildingBlock)> _ignoredNeighborhoods;
+      private readonly List<(NeighborhoodBuilder builder, SpatialStructure buildingBlock)> _invalidNeighborhoods;
+      private readonly List<(NeighborhoodBuilder builder, SpatialStructure buildingBlock)> _removedNeighborhoods;
       private readonly IContainer _container;
 
       public NeighborhoodMapResult(IContainer container)
       {
          _container = container;
-         _ignoredNeighborhoods = new List<(NeighborhoodBuilder builder, SpatialStructure buildingBlock)>();
+         _invalidNeighborhoods = new List<(NeighborhoodBuilder builder, SpatialStructure buildingBlock)>();
+         _removedNeighborhoods = new List<(NeighborhoodBuilder builder, SpatialStructure buildingBlock)>();
       }
 
       /// <summary>
-      ///    Adds the ignored <paramref name="builder" /> and the source <paramref name="buildingBlock" /> to the list of ignored
-      ///    neighborhoods
+      ///    Adds the <paramref name="builder" /> and the source <paramref name="buildingBlock" /> to the list of invalid
+      ///    neighborhoods (at least one neighbor could not be found in the simulation)
       /// </summary>
-      public void Add(NeighborhoodBuilder builder, SpatialStructure buildingBlock)
+      public void AddInvalid(NeighborhoodBuilder builder, SpatialStructure buildingBlock)
       {
-         _ignoredNeighborhoods.Add((builder, buildingBlock));
+         _invalidNeighborhoods.Add((builder, buildingBlock));
       }
 
-      internal void Deconstruct(out IContainer container, out IReadOnlyList<(NeighborhoodBuilder builder, SpatialStructure buildingBlock)> ignoredNeighborhoods)
+      /// <summary>
+      ///    Adds the <paramref name="builder" /> and the source <paramref name="buildingBlock" /> to the list of removed
+      ///    neighborhoods (the neighborhood was removed from the simulation because <paramref name="builder" /> defines no
+      ///    neighbors)
+      /// </summary>
+      public void AddRemoved(NeighborhoodBuilder builder, SpatialStructure buildingBlock)
+      {
+         _removedNeighborhoods.Add((builder, buildingBlock));
+      }
+
+      internal void Deconstruct(
+         out IContainer container,
+         out IReadOnlyList<(NeighborhoodBuilder builder, SpatialStructure buildingBlock)> invalidNeighborhoods,
+         out IReadOnlyList<(NeighborhoodBuilder builder, SpatialStructure buildingBlock)> removedNeighborhoods)
       {
          container = _container;
-         ignoredNeighborhoods = _ignoredNeighborhoods;
+         invalidNeighborhoods = _invalidNeighborhoods;
+         removedNeighborhoods = _removedNeighborhoods;
       }
    }
 }

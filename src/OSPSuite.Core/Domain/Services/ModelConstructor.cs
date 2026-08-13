@@ -288,25 +288,38 @@ namespace OSPSuite.Core.Domain.Services
          //we update the replacement context first when the root container is created so that we can replace keywords from the root container
          modelConfiguration.UpdateReplacementContext();
 
-         IReadOnlyList<(NeighborhoodBuilder builder, SpatialStructure buildingBlock)> ignoredNeighborhoods;
-         (model.Neighborhoods, ignoredNeighborhoods) = _spatialStructureMerger.MergeNeighborhoods(modelConfiguration);
-
+         IReadOnlyList<(NeighborhoodBuilder builder, SpatialStructure buildingBlock)> invalidNeighborhoods;
+         IReadOnlyList<(NeighborhoodBuilder builder, SpatialStructure buildingBlock)> removedNeighborhoods;
+         (model.Neighborhoods, invalidNeighborhoods, removedNeighborhoods) = _spatialStructureMerger.MergeNeighborhoods(modelConfiguration);
 
          var validationResult = validate<SpatialStructureValidator>(modelConfiguration);
          if (modelConfiguration.ShouldValidate)
-            validationResult.AddMessagesFrom(warnMissingNeighborhoods(ignoredNeighborhoods));
+         {
+            validationResult.AddMessagesFrom(errorsForInvalidNeighborhoods(invalidNeighborhoods));
+            validationResult.AddMessagesFrom(warningsForRemovedNeighborhoods(removedNeighborhoods));
+         }
 
          return validationResult;
       }
 
-      private ValidationResult warnMissingNeighborhoods(IReadOnlyList<(NeighborhoodBuilder builder, SpatialStructure buildingBlock)> ignoredNeighborhoods)
+      private ValidationResult errorsForInvalidNeighborhoods(IReadOnlyList<(NeighborhoodBuilder builder, SpatialStructure buildingBlock)> invalidNeighborhoods)
       {
-         return new ValidationResult(ignoredNeighborhoods.Select(x => messageForMissingNeighborhood(x.builder, x.buildingBlock)));
+         return new ValidationResult(invalidNeighborhoods.Select(x => messageForInvalidNeighborhood(x.builder, x.buildingBlock)));
       }
 
-      private ValidationMessage messageForMissingNeighborhood(NeighborhoodBuilder builder, SpatialStructure buildingBlock)
+      private ValidationMessage messageForInvalidNeighborhood(NeighborhoodBuilder builder, SpatialStructure buildingBlock)
       {
-         return new ValidationMessage(NotificationType.Warning, Warning.NeighborhoodWasNotFoundInModel(builder.Name, buildingBlock.DisplayName), builder, buildingBlock);
+         return new ValidationMessage(NotificationType.Error, Error.NeighborhoodNeighborsNotFoundInModel(builder.Name, builder.FirstNeighborPath.PathAsString, builder.SecondNeighborPath.PathAsString, buildingBlock.DisplayName), builder, buildingBlock);
+      }
+
+      private ValidationResult warningsForRemovedNeighborhoods(IReadOnlyList<(NeighborhoodBuilder builder, SpatialStructure buildingBlock)> removedNeighborhoods)
+      {
+         return new ValidationResult(removedNeighborhoods.Select(x => messageForRemovedNeighborhood(x.builder, x.buildingBlock)));
+      }
+
+      private ValidationMessage messageForRemovedNeighborhood(NeighborhoodBuilder builder, SpatialStructure buildingBlock)
+      {
+         return new ValidationMessage(NotificationType.Warning, Warning.NeighborhoodRemovedFromModel(builder.Name, buildingBlock.DisplayName), builder, buildingBlock);
       }
 
       private ValidationResult checkCircularReferences(ModelConfiguration modelConfiguration)

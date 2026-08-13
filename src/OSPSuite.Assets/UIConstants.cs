@@ -1733,6 +1733,9 @@ namespace OSPSuite.Assets
 
       public static string SecondNeighborNotDefinedFor(string neighborhoodName) => $"Second neighbor is undefined for neighborhood '{neighborhoodName}'";
 
+      public static string NeighborhoodNeighborsNotFoundInModel(string neighborhoodName, string firstNeighborPath, string secondNeighborPath, string buildingBlockName) =>
+         $"Cannot create the neighborhood '{neighborhoodName}' from building block '{buildingBlockName}': at least one neighbor cannot be found in the simulation (first neighbor: '{firstNeighborPath}', second neighbor: '{secondNeighborPath}').\nTo remove the neighborhood from the simulation, redefine it without neighbors instead.";
+
       public const string InParentTagCanOnlyBeUsedWithAndOperator = "IN PARENT tag can only be used with AND operator";
 
       public static string KeywordCannotBeInFirstPosition(string keyword, string path) => $"Keyword '{keyword}' cannot be used in first position in '{path}'";
@@ -1757,8 +1760,6 @@ namespace OSPSuite.Assets
 
       public static string SimulationUsedInPlotsAreNotExported(IReadOnlyList<string> simulationNames, string project)
          => $"{ObjectTypes.Simulation.PluralizeIf(simulationNames)} {simulationNames.ToString(", ", "'")} used in plots {"is".PluralizeIf(simulationNames)} not found in the list of exported simulations for {ObjectTypes.Project} {project}";
-
-      public static string NeighborIsLogical(string neighborName, string neighborhoodName) => $"Container {neighborName} is defined as logical for neighborhood '{neighborhoodName}'";
 
       public static class SensitivityAnalysis
       {
@@ -2066,7 +2067,9 @@ namespace OSPSuite.Assets
       public static string LargeNumberOfOutputPoints(int numberOfPoints) =>
          $"The selected output resolution will generate {numberOfPoints} points and may severely impact the software performance.\nAre you sure you want to run with these setting? If not, consider changing output resolution in simulations settings";
 
-      public static string NeighborhoodWasNotFoundInModel(string neighborhoodName, string buildingBlockName) => $"The neighborhood '{neighborhoodName}' from building block '{buildingBlockName}' was not added to the simulation because it is not defined or at least one of the containers is logical";
+      public static string NeighborhoodRemovedFromModel(string neighborhoodName, string buildingBlockName) => $"The neighborhood '{neighborhoodName}' was removed from the simulation because it is defined without neighbors in building block '{buildingBlockName}'";
+
+      public static string NeighborIsLogical(string neighborName, string neighborhoodName) => $"Container {neighborName} is defined as logical for neighborhood '{neighborhoodName}'";
 
       public static string UnitNotFoundInDimensionForParameter(string unit, string dimension, string parameterName)
       {

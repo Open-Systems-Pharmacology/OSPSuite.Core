@@ -53,6 +53,10 @@ namespace OSPSuite.Core.Domain.Mappers
       public Neighborhood MapFrom(NeighborhoodBuilder neighborhoodBuilder, IReadOnlyList<string> moleculeNames,
          IEnumerable<string> moleculeNamesWithCopyPropertiesRequired, ModelConfiguration modelConfiguration)
       {
+         //At least one neighbor path is undefined. The neighborhood cannot be created
+         if (!neighborhoodBuilder.HasDefinedNeighborPaths)
+            return null;
+
          var (model, simulationBuilder, replacementContext) = modelConfiguration;
 
          var neighborhood = _objectBaseFactory.Create<Neighborhood>();

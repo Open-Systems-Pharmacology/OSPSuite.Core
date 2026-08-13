@@ -5,6 +5,7 @@ using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Services;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Services
 {
@@ -52,6 +53,39 @@ namespace OSPSuite.Core.Services
       public void the_error_should_only_be_reported_once_instead_of_for_both_neighborhoods()
       {
          _result.Messages.Count().ShouldBeEqualTo(1);
+      }
+   }
+
+   internal class When_validating_a_simulation_configuration_with_multiple_neighborhoods_without_neighbors : concern_for_SimulationConfigurationValidator
+   {
+      private SimulationConfiguration _simulationConfiguration;
+      private ValidationResult _result;
+
+      protected override void Context()
+      {
+         base.Context();
+         _simulationConfiguration = new SimulationConfiguration();
+         _simulationConfiguration.AddModuleConfiguration(new ModuleConfiguration(moduleWithNeighborhoodWithoutNeighbors("name1")));
+         _simulationConfiguration.AddModuleConfiguration(new ModuleConfiguration(moduleWithNeighborhoodWithoutNeighbors("name2")));
+      }
+
+      private Module moduleWithNeighborhoodWithoutNeighbors(string neighborhoodName)
+      {
+         var spatialStructure = new SpatialStructure { NeighborhoodsContainer = new Container() };
+         spatialStructure.AddNeighborhood(new NeighborhoodBuilder().WithName(neighborhoodName));
+
+         return new Module { spatialStructure };
+      }
+
+      protected override void Because()
+      {
+         _result = sut.Validate(_simulationConfiguration);
+      }
+
+      [Observation]
+      public void should_not_report_the_neighborhoods_as_equivalent()
+      {
+         _result.ValidationState.ShouldBeEqualTo(ValidationState.Valid, _result.Messages.Select(x => x.Text).ToString("\n"));
       }
    }
 

@@ -39,10 +39,10 @@ namespace OSPSuite.Core.Domain.Services
             _result.AddMessage(NotificationType.Error, neighborhood, Error.SecondNeighborNotDefinedFor(neighborhood.Name));
 
          if (neighborhood.FirstNeighbor?.Mode == ContainerMode.Logical)
-            _result.AddMessage(NotificationType.Warning, neighborhood, Error.NeighborIsLogical(neighborhood.FirstNeighbor.Name, neighborhood.Name));
+            _result.AddMessage(NotificationType.Warning, neighborhood, Warning.NeighborIsLogical(neighborhood.FirstNeighbor.Name, neighborhood.Name));
 
          if (neighborhood.SecondNeighbor?.Mode == ContainerMode.Logical)
-            _result.AddMessage(NotificationType.Warning, neighborhood, Error.NeighborIsLogical(neighborhood.SecondNeighbor.Name, neighborhood.Name));
+            _result.AddMessage(NotificationType.Warning, neighborhood, Warning.NeighborIsLogical(neighborhood.SecondNeighbor.Name, neighborhood.Name));
       }
    }
 }
