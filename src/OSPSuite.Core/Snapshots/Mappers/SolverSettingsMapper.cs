@@ -24,6 +24,7 @@ namespace OSPSuite.Core.Snapshots.Mappers
             snapshot.HMin = SnapshotValueFor(solverSettings.HMin, _defaultSolverSettings.HMin);
             snapshot.HMax = SnapshotValueFor(solverSettings.HMax, _defaultSolverSettings.HMax);
             snapshot.MxStep = SnapshotValueFor(solverSettings.MxStep, _defaultSolverSettings.MxStep);
+            snapshot.CheckForNegativeValues = SnapshotValueFor(solverSettings.CheckForNegativeValues, _defaultSolverSettings.CheckForNegativeValues);
          });
       }
 
@@ -40,6 +41,7 @@ namespace OSPSuite.Core.Snapshots.Mappers
          solverSettings.HMin = ModelValueFor(snapshot.HMin, _defaultSolverSettings.HMin);
          solverSettings.HMax = ModelValueFor(snapshot.HMax, _defaultSolverSettings.HMax);
          solverSettings.MxStep = ModelValueFor(snapshot.MxStep, _defaultSolverSettings.MxStep);
+         solverSettings.CheckForNegativeValues = ModelValueFor(snapshot.CheckForNegativeValues, _defaultSolverSettings.CheckForNegativeValues);
 
          return Task.FromResult(solverSettings);
       }

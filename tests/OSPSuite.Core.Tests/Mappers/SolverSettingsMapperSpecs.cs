@@ -28,7 +28,8 @@ namespace OSPSuite.Core.Mappers
             DomainHelperForSpecs.ConstantParameterWithValue(2.5).WithName(Constants.Parameters.H_MAX),
             DomainHelperForSpecs.ConstantParameterWithValue(100).WithName(Constants.Parameters.MX_STEP),
             DomainHelperForSpecs.ConstantParameterWithValue(1e-5).WithName(Constants.Parameters.REL_TOL),
-            DomainHelperForSpecs.ConstantParameterWithValue(1e-7).WithName(Constants.Parameters.ABS_TOL)
+            DomainHelperForSpecs.ConstantParameterWithValue(1e-7).WithName(Constants.Parameters.ABS_TOL),
+            DomainHelperForSpecs.ConstantParameterWithValue(0).WithName(Constants.Parameters.CHECK_FOR_NEGATIVE_VALUES)
          };
 
          var solverSettings = A.Fake<SolverSettings>();
@@ -39,6 +40,7 @@ namespace OSPSuite.Core.Mappers
          solverSettings.H0 = 5;
          solverSettings.HMax = 6;
          solverSettings.UseJacobian = false;
+         solverSettings.CheckForNegativeValues = true;
          A.CallTo(() => _solverSettingsFactory.CreateCVODE()).Returns(solverSettings);
 
          sut = new Helpers.Snapshots.SolverSettingsMapper(_solverSettingsFactory);
@@ -63,6 +65,7 @@ namespace OSPSuite.Core.Mappers
          _snapshot.HMin.ShouldBeEqualTo(_solverSettings.HMin);
          _snapshot.HMax.ShouldBeEqualTo(_solverSettings.HMax);
          _snapshot.H0.ShouldBeEqualTo(_solverSettings.H0);
+         _snapshot.CheckForNegativeValues.ShouldBeEqualTo(_solverSettings.CheckForNegativeValues);
       }
    }
 
@@ -92,6 +95,7 @@ namespace OSPSuite.Core.Mappers
          _newSolverSettings.MxStep.ShouldBeEqualTo(_snapshot.MxStep.Value);
          _newSolverSettings.HMin.ShouldBeEqualTo(_snapshot.HMin.Value);
          _newSolverSettings.UseJacobian.ShouldBeEqualTo(_snapshot.UseJacobian.Value);
+         _newSolverSettings.CheckForNegativeValues.ShouldBeEqualTo(_snapshot.CheckForNegativeValues.Value);
       }
 
       [Observation]

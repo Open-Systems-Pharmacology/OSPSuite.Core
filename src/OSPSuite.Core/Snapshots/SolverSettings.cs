@@ -9,5 +9,6 @@
       public double? HMin { get; set; }
       public double? HMax { get; set; }
       public int? MxStep { get; set; }
+      public bool? CheckForNegativeValues { get; set; }
    }
 }
