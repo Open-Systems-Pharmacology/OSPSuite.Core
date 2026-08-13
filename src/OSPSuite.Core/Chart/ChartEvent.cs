@@ -47,4 +47,11 @@ namespace OSPSuite.Core.Chart
       {
       }
    }
+
+   public class ChartAutoUpdateChangedEvent : ChartEvent
+   {
+      public ChartAutoUpdateChangedEvent(IChart chart) : base(chart)
+      {
+      }
+   }
 }

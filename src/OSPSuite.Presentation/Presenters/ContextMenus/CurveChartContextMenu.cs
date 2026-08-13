@@ -53,20 +53,13 @@ namespace OSPSuite.Presentation.Presenters.ContextMenus
 
          yield return CreateMenuCheckButton.WithCaption(MenuNames.AutoUpdateChart)
             .WithChecked(curveChart.AutoUpdateEnabled)
-            .WithCheckedAction(enabled => updateAutoUpdateMode(curveChart, chartDisplayPresenter, enabled));
+            .WithCheckedAction(chartDisplayPresenter.UpdateAutoUpdateMode);
 
          if (curveChart.IsAnImplementationOf<PredictedVsObservedChart>())
          {
             yield return CreateMenuButton.WithCaption(MenuNames.AddDeviationLines)
                .WithActionCommand(chartDisplayPresenter.AddDeviationLines);
          }
-      }
-
-      private static void updateAutoUpdateMode(CurveChart curveChart, IChartDisplayPresenter chartDisplayPresenter, bool enabled)
-      {
-         curveChart.AutoUpdateEnabled = enabled;
-         if (curveChart.AutoUpdateEnabled)
-            chartDisplayPresenter.Refresh();
       }
    }
 

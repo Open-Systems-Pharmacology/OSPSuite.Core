@@ -947,4 +947,78 @@ namespace OSPSuite.Presentation.Presentation
          _colorsForCurveName[_curve3.Id].Equals(_colorsForCurveName[_curve2.Id]).ShouldBeFalse();
       }
    }
+
+   public class When_notified_that_the_automatic_update_mode_of_the_edited_chart_has_changed : concern_for_ChartEditorPresenter
+   {
+      protected override void Context()
+      {
+         base.Context();
+         _chart.AutoUpdateEnabled = false;
+      }
+
+      protected override void Because()
+      {
+         sut.Handle(new ChartAutoUpdateChangedEvent(_chart));
+      }
+
+      [Observation]
+      public void should_update_the_automatic_update_check_box_of_the_view()
+      {
+         A.CallTo(() => _view.SetAutoUpdateModeCheckBox(false)).MustHaveHappened();
+      }
+   }
+
+   public class When_notified_that_the_automatic_update_mode_of_another_chart_has_changed : concern_for_ChartEditorPresenter
+   {
+      protected override void Because()
+      {
+         sut.Handle(new ChartAutoUpdateChangedEvent(new CurveChart { AutoUpdateEnabled = false }));
+      }
+
+      [Observation]
+      public void should_not_update_the_automatic_update_check_box_of_the_view()
+      {
+         A.CallTo(() => _view.SetAutoUpdateModeCheckBox(false)).MustNotHaveHappened();
+      }
+   }
+
+   public class When_setting_the_automatic_update_mode_of_the_edited_chart_to_its_current_value : concern_for_ChartEditorPresenter
+   {
+      protected override void Because()
+      {
+         sut.UpdateAutoUpdateChartMode(autoMode: true);
+      }
+
+      [Observation]
+      public void should_not_trigger_an_update_of_the_chart_display()
+      {
+         A.CallTo(() => _eventPublisher.PublishEvent(A<ApplyChangesEvent>._)).MustNotHaveHappened();
+      }
+   }
+
+   public class When_enabling_the_automatic_update_mode_of_the_edited_chart : concern_for_ChartEditorPresenter
+   {
+      protected override void Context()
+      {
+         base.Context();
+         _chart.AutoUpdateEnabled = false;
+      }
+
+      protected override void Because()
+      {
+         sut.UpdateAutoUpdateChartMode(autoMode: true);
+      }
+
+      [Observation]
+      public void should_enable_the_automatic_update_of_the_chart()
+      {
+         _chart.AutoUpdateEnabled.ShouldBeTrue();
+      }
+
+      [Observation]
+      public void should_trigger_an_update_of_the_chart_display()
+      {
+         A.CallTo(() => _eventPublisher.PublishEvent(A<ApplyChangesEvent>.That.Matches(x => Equals(x.Chart, _chart)))).MustHaveHappened();
+      }
+   }
 }

@@ -14,6 +14,7 @@ using OSPSuite.Presentation.Presenters.Charts;
 using OSPSuite.Presentation.Presenters.ContextMenus;
 using OSPSuite.Presentation.Services.Charts;
 using OSPSuite.Presentation.Views.Charts;
+using OSPSuite.Utility.Events;
 using OSPSuite.Utility.Exceptions;
 using DataRow = System.Data.DataRow;
 using DataTable = System.Data.DataTable;
@@ -38,6 +39,7 @@ namespace OSPSuite.Presentation.Presentation
       protected IApplicationSettings _applicationSettings;
       protected IApplicationController _applicationController;
       protected IDialogCreator _dialogCreator;
+      protected IEventPublisher _eventPublisher;
 
       protected override void Context()
       {
@@ -52,8 +54,9 @@ namespace OSPSuite.Presentation.Presentation
          _applicationSettings = A.Fake<IApplicationSettings>();
          _applicationController = A.Fake<IApplicationController>();
          _dialogCreator = A.Fake<IDialogCreator>();
+         _eventPublisher = A.Fake<IEventPublisher>();
 
-         sut = new ChartDisplayPresenter(_chartDisplayView, _curveBinderFactory, _contextMenuFactory, _axisBinderFactory, _dataModeMapper, _chartExportTask, _applicationSettings, _applicationController, _dialogCreator);
+         sut = new ChartDisplayPresenter(_chartDisplayView, _curveBinderFactory, _contextMenuFactory, _axisBinderFactory, _dataModeMapper, _chartExportTask, _applicationSettings, _applicationController, _dialogCreator, _eventPublisher);
          var dataRepository = DomainHelperForSpecs.SimulationDataRepositoryFor("Sim");
 
          A.CallTo(() => _dimensionFactory.MergedDimensionFor(A<DataColumn>._)).ReturnsLazily(x => x.GetArgument<DataColumn>(0).Dimension);
@@ -449,6 +452,79 @@ namespace OSPSuite.Presentation.Presentation
       public void should_return_nan()
       {
          double.IsNaN(sut.GetYValueFromDataRow("unknown series", _row)).ShouldBeTrue();
+      }
+   }
+
+   public class When_disabling_the_automatic_update_of_the_displayed_chart : concern_for_ChartDisplayPresenter
+   {
+      protected override void Because()
+      {
+         sut.UpdateAutoUpdateMode(enabled: false);
+      }
+
+      [Observation]
+      public void should_disable_the_automatic_update_of_the_chart()
+      {
+         _curveChart.AutoUpdateEnabled.ShouldBeFalse();
+      }
+
+      [Observation]
+      public void should_notify_that_the_automatic_update_mode_of_the_chart_has_changed()
+      {
+         A.CallTo(() => _eventPublisher.PublishEvent(A<ChartAutoUpdateChangedEvent>.That.Matches(x => Equals(x.Chart, _curveChart)))).MustHaveHappened();
+      }
+   }
+
+   public class When_enabling_the_automatic_update_of_the_displayed_chart : concern_for_ChartDisplayPresenter
+   {
+      protected override void SetupChart()
+      {
+         base.SetupChart();
+         _curveChart.AutoUpdateEnabled = false;
+      }
+
+      protected override void Context()
+      {
+         base.Context();
+         //the chart was already drawn while editing it, only the calls triggered by the mode change are of interest here
+         Fake.ClearRecordedCalls(_chartDisplayView);
+      }
+
+      protected override void Because()
+      {
+         sut.UpdateAutoUpdateMode(enabled: true);
+      }
+
+      [Observation]
+      public void should_enable_the_automatic_update_of_the_chart()
+      {
+         _curveChart.AutoUpdateEnabled.ShouldBeTrue();
+      }
+
+      [Observation]
+      public void should_notify_that_the_automatic_update_mode_of_the_chart_has_changed()
+      {
+         A.CallTo(() => _eventPublisher.PublishEvent(A<ChartAutoUpdateChangedEvent>.That.Matches(x => Equals(x.Chart, _curveChart)))).MustHaveHappened();
+      }
+
+      [Observation]
+      public void should_refresh_the_displayed_chart()
+      {
+         A.CallTo(() => _chartDisplayView.ShowWatermark(A<string>._)).MustHaveHappened();
+      }
+   }
+
+   public class When_setting_the_automatic_update_of_the_displayed_chart_to_its_current_value : concern_for_ChartDisplayPresenter
+   {
+      protected override void Because()
+      {
+         sut.UpdateAutoUpdateMode(enabled: true);
+      }
+
+      [Observation]
+      public void should_not_notify_that_the_automatic_update_mode_of_the_chart_has_changed()
+      {
+         A.CallTo(() => _eventPublisher.PublishEvent(A<ChartAutoUpdateChangedEvent>._)).MustNotHaveHappened();
       }
    }
 }
