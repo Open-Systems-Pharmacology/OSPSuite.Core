@@ -188,6 +188,10 @@ namespace OSPSuite.Core.Domain.Services
          var (_, simulationBuilder, replacementContext) = valueUpdater.ModelConfiguration;
          _entityTracker.Track(parameter, parameterValue, simulationBuilder);
 
+         //the value origin is only taken over if the value or formula is effectively overridden
+         if (parameterValue.Formula != null || parameterValue.Value.IsFinite())
+            parameter.ValueOrigin.UpdateAllFrom(parameterValue.ValueOrigin);
+
          //Formula is defined, we update in the parameter instance
          if (parameterValue.Formula != null)
          {
@@ -233,11 +237,13 @@ namespace OSPSuite.Core.Domain.Services
                updateMoleculeAmountFormula(molecule, _cloneManagerForModel.Clone(initialCondition.Formula));
                _entityTracker.Track(molecule, initialCondition, simulationBuilder);
                _keywordReplacerTask.ReplaceIn(molecule, replacementContext);
+               molecule.ValueOrigin.UpdateAllFrom(initialCondition.ValueOrigin);
             }
             else if (startValueShouldBeSetAsConstantFormula(initialCondition, molecule))
             {
                updateMoleculeAmountFormula(molecule, createConstantFormula(initialCondition));
                _entityTracker.Track(molecule, initialCondition, simulationBuilder);
+               molecule.ValueOrigin.UpdateAllFrom(initialCondition.ValueOrigin);
             }
 
             molecule.ScaleDivisor = initialCondition.ScaleDivisor;
