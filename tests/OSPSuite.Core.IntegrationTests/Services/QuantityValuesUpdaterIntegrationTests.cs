@@ -6,8 +6,10 @@ using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Formulas;
 using OSPSuite.Core.Domain.Services;
+using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Helpers;
 using OSPSuite.Utility.Container;
+using OSPSuite.Utility.Extensions;
 using static OSPSuite.Core.Domain.Constants.Distribution;
 using IContainer = OSPSuite.Core.Domain.IContainer;
 
@@ -187,6 +189,176 @@ namespace OSPSuite.Core.Services
       {
          var parameter = _model.Root.EntityAt<IParameter>("Liver", "Param");
          parameter.Value.ShouldBeEqualTo(24.28, 1e-2);
+      }
+   }
+
+   internal abstract class concern_for_QuantityValuesUpdaterIntegration_with_value_origin : concern_for_QuantityValuesUpdaterIntegration
+   {
+      protected IParameter _individualParameter;
+      protected IParameter _expressionParameter;
+      protected MoleculeAmount _moleculeAmount;
+      protected ValueOrigin _originalValueOrigin;
+      protected IndividualBuildingBlock _individual;
+      protected ExpressionProfileBuildingBlock _expressionProfile;
+      protected InitialConditionsBuildingBlock _initialConditions;
+      protected ModelConfiguration _modelConfiguration;
+
+      public override void GlobalContext()
+      {
+         base.GlobalContext();
+         var formulaFactory = IoC.Resolve<IFormulaFactory>();
+         var amountDimension = IoC.Resolve<IDimensionFactory>().Dimension(Constants.Dimension.MOLAR_AMOUNT);
+
+         _originalValueOrigin = new ValueOrigin
+         {
+            Source = ValueOriginSources.Publication,
+            Method = ValueOriginDeterminationMethods.InVitro,
+            Description = "Original"
+         };
+
+         _individualParameter = _modelHelper.NewConstantParameter("IndividualParam", 10);
+         _expressionParameter = _modelHelper.NewConstantParameter("ExpressionParam", 10);
+         _moleculeAmount = new MoleculeAmount
+         {
+            Name = "A",
+            Dimension = amountDimension,
+            Formula = formulaFactory.ConstantFormula(1, amountDimension)
+         };
+
+         new IQuantity[] { _parameter, _individualParameter, _expressionParameter, _moleculeAmount }
+            .Each(x => x.ValueOrigin.UpdateAllFrom(_originalValueOrigin));
+
+         _liver.Add(_individualParameter);
+         _liver.Add(_expressionParameter);
+         _liver.Add(_moleculeAmount);
+
+         var molecules = new MoleculeBuildingBlock { new MoleculeBuilder { Name = "A" } };
+         _module.Add(molecules);
+
+         _individual = new IndividualBuildingBlock();
+         _expressionProfile = new ExpressionProfileBuildingBlock().WithName("A|Human|Healthy");
+         _initialConditions = new InitialConditionsBuildingBlock();
+
+         AddBuilders(amountDimension);
+
+         _simulationConfiguration.Individual = _individual;
+         _simulationConfiguration.AddExpressionProfile(_expressionProfile);
+         _simulationConfiguration.AddModuleConfiguration(new ModuleConfiguration(_module, _initialConditions, _parameterValues));
+         _simulationBuilder = new SimulationBuilderForSpecs(_simulationConfiguration);
+         _modelConfiguration = new ModelConfiguration(_model, _simulationConfiguration, _simulationBuilder);
+      }
+
+      protected abstract void AddBuilders(IDimension amountDimension);
+
+      protected override void Because()
+      {
+         sut.UpdateQuantitiesValues(_modelConfiguration);
+      }
+
+      protected ValueOrigin ValueOriginFor(string parameterName) => _model.Root.EntityAt<IParameter>("Liver", parameterName).ValueOrigin;
+   }
+
+   internal class When_updating_the_quantities_values_using_builders_defining_a_value_origin : concern_for_QuantityValuesUpdaterIntegration_with_value_origin
+   {
+      private ValueOrigin _parameterValueOrigin;
+      private ValueOrigin _individualValueOrigin;
+      private ValueOrigin _expressionValueOrigin;
+      private ValueOrigin _initialConditionValueOrigin;
+
+      protected override void AddBuilders(IDimension amountDimension)
+      {
+         _parameterValueOrigin = valueOrigin(ValueOriginSources.Database, "ParameterValue");
+         _individualValueOrigin = valueOrigin(ValueOriginSources.Internet, "IndividualParameter");
+         _expressionValueOrigin = valueOrigin(ValueOriginSources.ParameterIdentification, "ExpressionParameter");
+         _initialConditionValueOrigin = valueOrigin(ValueOriginSources.Other, "InitialCondition");
+
+         _parameterValues.Add(withValueOrigin(new ParameterValue
+         {
+            Path = new ObjectPath(_organism.Name, _liver.Name, _parameter.Name),
+            Value = 20
+         }, _parameterValueOrigin));
+
+         _individual.Add(withValueOrigin(new IndividualParameter
+         {
+            Path = new ObjectPath(_organism.Name, _liver.Name, _individualParameter.Name),
+            Value = 30
+         }, _individualValueOrigin));
+
+         _expressionProfile.Add(withValueOrigin(new ExpressionParameter
+         {
+            Path = new ObjectPath(_organism.Name, _liver.Name, _expressionParameter.Name),
+            Value = 40
+         }, _expressionValueOrigin));
+
+         _initialConditions.Add(withValueOrigin(new InitialCondition
+         {
+            Path = new ObjectPath(_organism.Name, _liver.Name, _moleculeAmount.Name),
+            Value = 50,
+            IsPresent = true,
+            Dimension = amountDimension
+         }, _initialConditionValueOrigin));
+      }
+
+      private T withValueOrigin<T>(T pathAndValueEntity, ValueOrigin valueOrigin) where T : PathAndValueEntity
+      {
+         pathAndValueEntity.ValueOrigin.UpdateAllFrom(valueOrigin);
+         return pathAndValueEntity;
+      }
+
+      private ValueOrigin valueOrigin(ValueOriginSource source, string description) =>
+         new ValueOrigin { Source = source, Method = ValueOriginDeterminationMethods.Assumption, Description = description };
+
+      [Observation]
+      public void should_take_over_the_value_origin_defined_in_the_parameter_value()
+      {
+         ValueOriginFor(_parameter.Name).ShouldBeEqualTo(_parameterValueOrigin);
+      }
+
+      [Observation]
+      public void should_take_over_the_value_origin_defined_in_the_individual_parameter()
+      {
+         ValueOriginFor(_individualParameter.Name).ShouldBeEqualTo(_individualValueOrigin);
+      }
+
+      [Observation]
+      public void should_take_over_the_value_origin_defined_in_the_expression_parameter()
+      {
+         ValueOriginFor(_expressionParameter.Name).ShouldBeEqualTo(_expressionValueOrigin);
+      }
+
+      [Observation]
+      public void should_take_over_the_value_origin_defined_in_the_initial_condition()
+      {
+         _model.Root.EntityAt<MoleculeAmount>("Liver", "A").ValueOrigin.ShouldBeEqualTo(_initialConditionValueOrigin);
+      }
+   }
+
+   internal class When_updating_the_quantities_values_using_builders_that_do_not_override_the_value : concern_for_QuantityValuesUpdaterIntegration_with_value_origin
+   {
+      protected override void AddBuilders(IDimension amountDimension)
+      {
+         _parameterValues.Add(new ParameterValue
+         {
+            Path = new ObjectPath(_organism.Name, _liver.Name, _parameter.Name)
+         });
+
+         _individual.Add(new IndividualParameter
+         {
+            Path = new ObjectPath(_organism.Name, _liver.Name, _individualParameter.Name)
+         });
+
+         _expressionProfile.Add(new ExpressionParameter
+         {
+            Path = new ObjectPath(_organism.Name, _liver.Name, _expressionParameter.Name)
+         });
+      }
+
+      [Observation]
+      public void should_have_kept_the_value_origin_defined_in_the_model()
+      {
+         ValueOriginFor(_parameter.Name).ShouldBeEqualTo(_originalValueOrigin);
+         ValueOriginFor(_individualParameter.Name).ShouldBeEqualTo(_originalValueOrigin);
+         ValueOriginFor(_expressionParameter.Name).ShouldBeEqualTo(_originalValueOrigin);
       }
    }
 }
