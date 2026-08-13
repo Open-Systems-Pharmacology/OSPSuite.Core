@@ -202,6 +202,8 @@ namespace OSPSuite.Presentation.Presenters.Charts
       /// Applies the watermark to the chart if the chart is in preview mode and auto update is enabled, otherwise does nothing
       /// </summary>
       void UpdateWatermark();
+
+      void UpdateAutoUpdateMode(bool enabled);
    }
 
    public class ChartDisplayPresenter : AbstractPresenter<IChartDisplayView, IChartDisplayPresenter>, IChartDisplayPresenter
@@ -213,6 +215,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
       private readonly ICurveChartExportTask _chartExportTask;
       private readonly IApplicationSettings _applicationSettings;
       private readonly IApplicationController _applicationController;
+      private readonly IEventPublisher _eventPublisher;
       private readonly Cache<AxisTypes, IAxisBinder> _axisBinders;
       private readonly Cache<string, ICurveBinder> _curveBinders;
       private readonly Cache<string, ICurveBinder> _quickCurveBinderCache;
@@ -247,7 +250,8 @@ namespace OSPSuite.Presentation.Presenters.Charts
          ICurveChartExportTask chartExportTask,
          IApplicationSettings applicationSettings,
          IApplicationController applicationController,
-         IDialogCreator dialogCreator)
+         IDialogCreator dialogCreator,
+         IEventPublisher eventPublisher)
          : base(chartDisplayView)
       {
          _curveBinderFactory = curveBinderFactory;
@@ -262,6 +266,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
          _displayChartFontAndSizeSettings = new ChartFontAndSizeSettings();
          _applicationController = applicationController;
          _dialogCreator = dialogCreator;
+         _eventPublisher = eventPublisher;
       }
 
       public CurveChart Chart { get; private set; }
@@ -301,6 +306,18 @@ namespace OSPSuite.Presentation.Presenters.Charts
       }
 
       public void Refresh() => updateChart();
+
+      public void UpdateAutoUpdateMode(bool enabled)
+      {
+         if (Chart.AutoUpdateEnabled == enabled)
+            return;
+
+         Chart.AutoUpdateEnabled = enabled;
+         _eventPublisher.PublishEvent(new ChartAutoUpdateChangedEvent(Chart));
+
+         if (Chart.AutoUpdateEnabled)
+            Refresh();
+      }
 
       private void rebuildQuickCurveBinderCache()
       {
@@ -582,7 +599,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
          if (!Chart.AutoUpdateEnabled)
          {
             _curveBinders.Each(x => x.HideAllSeries());
-            View.ShowWatermark(Captions.ApplyChangesToUpdateChart);
+            View.ShowWatermark(Captions.ApplyUpdatesToRefreshTheChart);
             return;
          }
 

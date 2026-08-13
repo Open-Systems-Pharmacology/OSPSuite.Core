@@ -27,7 +27,8 @@ namespace OSPSuite.Presentation.Presenters.Charts
    ///    - ChartOptions for editing properties of chartSettings.
    /// </summary>
    public interface IChartEditorPresenter : IPresenter<IChartEditorView>,
-      IListener<ChartUpdatedEvent>
+      IListener<ChartUpdatedEvent>,
+      IListener<ChartAutoUpdateChangedEvent>
    {
       CurveChart Chart { get; }
 
@@ -454,6 +455,9 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
       public void UpdateAutoUpdateChartMode(bool autoMode)
       {
+         if (Chart.AutoUpdateEnabled == autoMode)
+            return;
+
          Chart.AutoUpdateEnabled = autoMode;
          if (Chart.AutoUpdateEnabled)
             UpdateChartDisplay();
@@ -764,6 +768,14 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
          if (chartUpdatedEvent.PropagateChartChangeEvent)
             ChartChanged();
+      }
+
+      public void Handle(ChartAutoUpdateChangedEvent chartAutoUpdateChangedEvent)
+      {
+         if (!canHandle(chartAutoUpdateChangedEvent))
+            return;
+
+         _view.SetAutoUpdateModeCheckBox(Chart.AutoUpdateEnabled);
       }
 
       private void refreshColorGroupingPresenter()
