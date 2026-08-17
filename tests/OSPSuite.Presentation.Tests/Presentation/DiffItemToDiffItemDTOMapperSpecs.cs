@@ -384,31 +384,56 @@ namespace OSPSuite.Presentation.Presentation
       }
    }
 
-   public class When_mapping_a_property_diff_item_with_a_building_block_ancestor_should_use_its_module_qualified_display_name : concern_for_DiffItemToDiffItemDTOMapper
+   public class When_mapping_a_property_diff_item_of_an_object_defined_in_a_building_block : concern_for_DiffItemToDiffItemDTOMapper
    {
-      private MoleculeBuildingBlock _bb;
-
       protected override void Context()
       {
          base.Context();
 
-         var module = new Module().WithName("ModA");
-         _bb = new MoleculeBuildingBlock().WithName("BB1");
-         _bb.Module = module;
+         var buildingBlock = new IndividualBuildingBlock().WithName("Human");
+         buildingBlock.Module = new Module().WithName("ModA");
 
          _diffItem = new PropertyValueDiffItem
          {
-            Object1 = new Parameter().WithName("P1"),
-            Object2 = new Parameter().WithName("P1"),
+            Object1 = new IndividualParameter { Path = new ObjectPath("Organism", "Lumen", "Stomach", "pH") },
+            Object2 = new IndividualParameter { Path = new ObjectPath("Organism", "Lumen", "Stomach", "pH") },
             FormattedValue1 = "x",
             FormattedValue2 = "y",
-            CommonAncestor = _bb,
+            CommonAncestor = buildingBlock,
             PropertyName = "Value"
          };
       }
 
       [Observation]
-      public void should_use_the_ancestor_building_block_display_name_including_module()
+      public void should_use_the_name_of_the_object_being_compared_and_not_the_one_of_the_building_block()
+      {
+         _dto.ObjectName.ShouldBeEqualTo("pH");
+      }
+   }
+
+   public class When_mapping_a_property_diff_item_of_a_building_block_itself : concern_for_DiffItemToDiffItemDTOMapper
+   {
+      protected override void Context()
+      {
+         base.Context();
+
+         var buildingBlock1 = new MoleculeBuildingBlock().WithName("BB1");
+         buildingBlock1.Module = new Module().WithName("ModA");
+         var buildingBlock2 = new MoleculeBuildingBlock().WithName("BB1");
+         buildingBlock2.Module = new Module().WithName("ModB");
+
+         _diffItem = new PropertyValueDiffItem
+         {
+            Object1 = buildingBlock1,
+            Object2 = buildingBlock2,
+            FormattedValue1 = "x",
+            FormattedValue2 = "y",
+            PropertyName = "Value"
+         };
+      }
+
+      [Observation]
+      public void should_use_the_module_qualified_display_name_of_the_building_block()
       {
          _dto.ObjectName.ShouldBeEqualTo("ModA - BB1");
       }
