@@ -566,6 +566,7 @@ namespace OSPSuite.Assets
          public static readonly string Connection = "Connection";
          public static readonly string SourceAmount = "Source Amount";
          public static readonly string TargetAmount = "Target Amount";
+         public static readonly string PKSimVersion = "PK-Sim Version";
 
          public static string PropertyDiffers(string propertyName, int value1, int value2) => PropertyDiffers(propertyName, $"{value1}", $"{value2}");
 

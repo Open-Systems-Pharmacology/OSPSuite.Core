@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using OSPSuite.Assets;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Extensions;
@@ -34,7 +35,7 @@ namespace OSPSuite.Core.Comparison
       public override void Compare(IComparison<TBuildingBlock> comparison)
       {
          base.Compare(comparison);
-         CompareValues(x => x.PKSimVersion, x => x.PKSimVersion, comparison);
+         CompareValues(x => x.PKSimVersion, Captions.Diff.PKSimVersion, comparison);
       }
    }
 }
