@@ -28,4 +28,11 @@ internal class SnapshotVersionsSpecs : StaticContextSpecification
    {
       SnapshotVersions.FindByPKSimProjectVersion(SnapshotVersions.Current + 1).ShouldBeEqualTo(SnapshotVersions.Current);
    }
+
+   [Observation]
+   public void the_current_version_should_be_v13()
+   {
+      SnapshotVersions.Current.ShouldBeEqualTo(SnapshotVersions.V13);
+      SnapshotVersions.Current.Version.ShouldBeEqualTo(81);
+   }
 }

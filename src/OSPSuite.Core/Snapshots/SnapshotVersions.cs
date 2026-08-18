@@ -12,7 +12,8 @@ namespace OSPSuite.Core.Snapshots
       public static readonly SnapshotVersion V10 = addVersion(78, "10");
       public static readonly SnapshotVersion V11 = addVersion(79, "11");
       public static readonly SnapshotVersion V12 = addVersion(80, "12");
-      public static readonly SnapshotVersion Current = V12;
+      public static readonly SnapshotVersion V13 = addVersion(81, "13");
+      public static readonly SnapshotVersion Current = V13;
 
       private static SnapshotVersion addVersion(int versionNumber, string versionDisplay)
       {

@@ -340,6 +340,141 @@ namespace OSPSuite.Core.Mappers
       }
    }
 
+   public class When_mapping_all_localized_parameters_from_a_v12_snapshot_and_the_application_is_now_located_under_the_no_formulation_container : concern_for_ParameterMapper
+   {
+      private LocalizedParameter _localParameter;
+      private Container _applicationContainer;
+
+      protected override async Task Context()
+      {
+         await base.Context();
+         var eventContainer = new Container().WithName(Constants.EVENTS);
+         var eventGroupContainer = new Container().WithName("iv 0.001 mg (5 min)").Under(eventContainer);
+         var noFormulationContainer = new Container().WithName(ParameterMapper.NoFormulation).Under(eventGroupContainer);
+         _applicationContainer = new Container().WithName("Application_1").Under(noFormulationContainer);
+         _applicationContainer.Add(_parameter);
+
+         _localParameter = new LocalizedParameter
+         {
+            Path = "Events|iv 0.001 mg (5 min)|Application_1|P1",
+            Value = 5,
+            Unit = _parameter.DisplayUnit.Name
+         };
+      }
+
+      protected override Task Because()
+      {
+         return sut.MapLocalizedParameters(new[] { _localParameter }, _applicationContainer, new SnapshotContext(new TestProject(), SnapshotVersions.V12));
+      }
+
+      [Observation]
+      public void should_insert_the_no_formulation_container_in_the_path_and_map_the_matching_parameters()
+      {
+         _parameter.ValueInDisplayUnit.ShouldBeEqualTo(5);
+      }
+   }
+
+   public class When_mapping_all_localized_parameters_from_a_v12_snapshot_and_the_application_is_located_under_a_formulation_container : concern_for_ParameterMapper
+   {
+      private LocalizedParameter _localParameter;
+      private Container _applicationContainer;
+
+      protected override async Task Context()
+      {
+         await base.Context();
+         var eventContainer = new Container().WithName(Constants.EVENTS);
+         var eventGroupContainer = new Container().WithName("po 10 mg").Under(eventContainer);
+         var formulationContainer = new Container().WithName("Oral solution").Under(eventGroupContainer);
+         _applicationContainer = new Container().WithName("Application_1").Under(formulationContainer);
+         _applicationContainer.Add(_parameter);
+
+         _localParameter = new LocalizedParameter
+         {
+            Path = "Events|po 10 mg|Oral solution|Application_1|P1",
+            Value = 5,
+            Unit = _parameter.DisplayUnit.Name
+         };
+      }
+
+      protected override Task Because()
+      {
+         return sut.MapLocalizedParameters(new[] { _localParameter }, _applicationContainer, new SnapshotContext(new TestProject(), SnapshotVersions.V12));
+      }
+
+      [Observation]
+      public void should_map_the_matching_parameters_without_changing_the_path()
+      {
+         _parameter.ValueInDisplayUnit.ShouldBeEqualTo(5);
+      }
+   }
+
+   public class When_mapping_all_localized_parameters_from_a_v11_snapshot_with_a_path_starting_with_applications_for_an_application_without_formulation : concern_for_ParameterMapper
+   {
+      private LocalizedParameter _localParameter;
+      private Container _applicationContainer;
+
+      protected override async Task Context()
+      {
+         await base.Context();
+         var eventContainer = new Container().WithName(Constants.EVENTS);
+         var eventGroupContainer = new Container().WithName("iv 0.001 mg (5 min)").Under(eventContainer);
+         var noFormulationContainer = new Container().WithName(ParameterMapper.NoFormulation).Under(eventGroupContainer);
+         _applicationContainer = new Container().WithName("Application_1").Under(noFormulationContainer);
+         _applicationContainer.Add(_parameter);
+
+         _localParameter = new LocalizedParameter
+         {
+            Path = "Applications|iv 0.001 mg (5 min)|Application_1|P1",
+            Value = 5,
+            Unit = _parameter.DisplayUnit.Name
+         };
+      }
+
+      protected override Task Because()
+      {
+         return sut.MapLocalizedParameters(new[] { _localParameter }, _applicationContainer, new SnapshotContext(new TestProject(), SnapshotVersions.V11));
+      }
+
+      [Observation]
+      public void should_replace_applications_with_events_and_insert_the_no_formulation_container_in_the_path_and_map_the_matching_parameters()
+      {
+         _parameter.ValueInDisplayUnit.ShouldBeEqualTo(5);
+      }
+   }
+
+   public class When_mapping_all_localized_parameters_from_a_current_snapshot_with_an_application_path : concern_for_ParameterMapper
+   {
+      private LocalizedParameter _localParameter;
+      private Container _applicationContainer;
+
+      protected override async Task Context()
+      {
+         await base.Context();
+         var eventContainer = new Container().WithName(Constants.EVENTS);
+         var eventGroupContainer = new Container().WithName("iv 0.001 mg (5 min)").Under(eventContainer);
+         _applicationContainer = new Container().WithName("Application_1").Under(eventGroupContainer);
+         _applicationContainer.Add(_parameter);
+
+         _localParameter = new LocalizedParameter
+         {
+            Path = "Events|iv 0.001 mg (5 min)|Application_1|P1",
+            Value = 5,
+            Unit = _parameter.DisplayUnit.Name
+         };
+      }
+
+      protected override Task Because()
+      {
+         return sut.MapLocalizedParameters(new[] { _localParameter }, _applicationContainer, new SnapshotContext(new TestProject(), SnapshotVersions.Current));
+      }
+
+      [Observation]
+      public void should_map_the_matching_parameters_without_changing_the_path()
+      {
+         _parameter.ValueInDisplayUnit.ShouldBeEqualTo(5);
+      }
+   }
+
    public class When_mapping_all_localized_parameters_containing_an_unknown_parameter_by_path : concern_for_ParameterMapper
    {
       private LocalizedParameter _localParameter;
