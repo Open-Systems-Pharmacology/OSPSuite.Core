@@ -179,7 +179,7 @@ namespace OSPSuite.Core.Snapshots.Mappers
 
       /// <summary>
       ///    Only use for conversion of older snapshot. Inserts the <see cref="NoFormulation" /> container in the
-      ///    <paramref name="path" /> if it has the shape Events|&lt;event group&gt;|Application_&lt;n&gt;|...
+      ///    <paramref name="path" /> if it has the shape Events|event group|Application_1|...
       ///    Paths that do not match this shape are left unchanged.
       /// </summary>
       public static void InsertNoFormulationContainer(ObjectPath path)
@@ -187,7 +187,7 @@ namespace OSPSuite.Core.Snapshots.Mappers
          //only use for conversion of older snapshot. Do not use in code otherwise
          const string applicationPrefix = "Application_";
 
-         //index of the application container in a simulation-localized path with the shape Events|<event group>|Application_<n>|...
+         //index of the application container in a simulation-localized path with the shape Events|event group|Application_1|...
          const int applicationContainerIndex = 2;
 
          if (path.Count <= applicationContainerIndex)
