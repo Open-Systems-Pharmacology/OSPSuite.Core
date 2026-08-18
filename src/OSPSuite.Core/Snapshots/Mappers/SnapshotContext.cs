@@ -31,5 +31,10 @@ namespace OSPSuite.Core.Snapshots.Mappers
       ///    Returns true if the format is V11 or earlier
       /// </summary>
       public bool IsV11FormatOrEarlier => Version <= SnapshotVersions.V11;
+
+      /// <summary>
+      ///    Returns true if the format is V12 or earlier
+      /// </summary>
+      public bool IsV12FormatOrEarlier => Version <= SnapshotVersions.V12;
    }
 }

@@ -90,6 +90,9 @@ namespace OSPSuite.Core.Snapshots.Mappers
          if (parameterIdentificationContext.IsV11FormatOrEarlier)
             updatePathsForV12(parameterPath);
 
+         if (parameterIdentificationContext.IsV12FormatOrEarlier)
+            updatePathsForV13(parameterPath);
+
          return new ParameterSelection(simulation, parameterPath);
       }
 
@@ -102,6 +105,9 @@ namespace OSPSuite.Core.Snapshots.Mappers
          replaceRenalClearanceName(parameterPath, Processes.GlomerularFiltration);
          replaceRenalClearanceName(parameterPath, Processes.RenalClearances);
       }
+
+      //applications defined without a formulation are now located under a dedicated 'No formulation' container
+      private static void updatePathsForV13(ObjectPath parameterPath) => ParameterMapper.InsertNoFormulationContainer(parameterPath);
 
       // renal clearances container names have been modified to append the name of the compound
       private static void replaceRenalClearanceName(ObjectPath parameterPath, string processName)

@@ -267,4 +267,145 @@ namespace OSPSuite.Core.Mappers
          _newParameterIdentification.AllLinkedParameters[4].PathArray.ShouldContain("Renal Clearances-test-Alprazolam");
       }
    }
+
+   public abstract class concern_for_IdentificationParameterMapper_with_application_parameters : concern_for_IdentificationParameterMapper
+   {
+      protected IdentificationParameter _newParameterIdentification;
+      protected Container _applicationContainer;
+      protected Container _eventGroupContainer;
+
+      protected override async Task Context()
+      {
+         await base.Context();
+         AddApplicationLinkedParameters();
+         _snapshot = await sut.MapToSnapshot(_identificationParameter);
+         UpdateSimulationStructure();
+         A.CallTo(() => _identificationParameterFactory.CreateFor(A<IEnumerable<ParameterSelection>>._, _parameterIdentificationContext.ParameterIdentification)).ReturnsLazily(x => createNewIdentificationParameter(x.Arguments.Get<IEnumerable<ParameterSelection>>(0)));
+      }
+
+      protected abstract void AddApplicationLinkedParameters();
+
+      protected virtual void UpdateSimulationStructure()
+      {
+      }
+
+      protected Container CreateApplicationContainer(string parameterName)
+      {
+         var applicationParameter = DomainHelperForSpecs.ConstantParameterWithValue(1).WithName(parameterName);
+         return new Container { new Container { applicationParameter }.WithName("ProtocolSchemaItem") }.WithName("Application_1");
+      }
+
+      protected void MoveApplicationUnderNoFormulationContainer()
+      {
+         _eventGroupContainer.RemoveChild(_applicationContainer);
+         _eventGroupContainer.Add(new Container { _applicationContainer }.WithName(ParameterMapper.NoFormulation));
+      }
+
+      private IdentificationParameter createNewIdentificationParameter(IEnumerable<ParameterSelection> parameterSelections)
+      {
+         var newIdentificationParameter = new IdentificationParameter();
+
+         parameterSelections.Each(newIdentificationParameter.AddLinkedParameter);
+         return newIdentificationParameter;
+      }
+
+      protected override async Task Because()
+      {
+         _newParameterIdentification = await sut.MapToModel(_snapshot, _parameterIdentificationContext);
+      }
+   }
+
+   public class When_updating_a_v12_snapshot_with_application_parameters : concern_for_IdentificationParameterMapper_with_application_parameters
+   {
+      protected override void AddApplicationLinkedParameters()
+      {
+         _applicationContainer = CreateApplicationContainer("Infusion time");
+         _eventGroupContainer = new Container { _applicationContainer }.WithName("iv 0.001 mg (5 min)");
+         var oralEventGroupContainer = new Container { new Container { CreateApplicationContainer("Dose") }.WithName("Oral solution") }.WithName("po 10 mg");
+         _simulation.Model.Root.Add(new Container { _eventGroupContainer, oralEventGroupContainer }.WithName(Constants.EVENTS));
+
+         _identificationParameter.AddLinkedParameter(new ParameterSelection(_simulation, new ObjectPath(Constants.EVENTS, "iv 0.001 mg (5 min)", "Application_1", "ProtocolSchemaItem", "Infusion time")));
+         _identificationParameter.AddLinkedParameter(new ParameterSelection(_simulation, new ObjectPath(Constants.EVENTS, "po 10 mg", "Oral solution", "Application_1", "ProtocolSchemaItem", "Dose")));
+      }
+
+      protected override void UpdateSimulationStructure()
+      {
+         MoveApplicationUnderNoFormulationContainer();
+      }
+
+      protected override SnapshotVersion GetSnapshotContextVersion()
+      {
+         return SnapshotVersions.V12;
+      }
+
+      [Observation]
+      public void should_insert_the_no_formulation_container_for_applications_defined_without_formulation()
+      {
+         _newParameterIdentification.AllLinkedParameters[5].Path.ShouldBeEqualTo("Events|iv 0.001 mg (5 min)|No formulation|Application_1|ProtocolSchemaItem|Infusion time");
+      }
+
+      [Observation]
+      public void should_not_change_the_path_for_applications_defined_with_a_formulation()
+      {
+         _newParameterIdentification.AllLinkedParameters[6].Path.ShouldBeEqualTo("Events|po 10 mg|Oral solution|Application_1|ProtocolSchemaItem|Dose");
+      }
+   }
+
+   public class When_updating_a_v11_snapshot_with_an_application_parameter_defined_without_formulation : concern_for_IdentificationParameterMapper_with_application_parameters
+   {
+      protected override void AddApplicationLinkedParameters()
+      {
+         _applicationContainer = CreateApplicationContainer("Infusion time");
+         _eventGroupContainer = new Container { _applicationContainer }.WithName("iv 0.001 mg (5 min)");
+         _simulation.Model.Root.Container(ParameterMapper.Applications).Add(_eventGroupContainer);
+
+         _identificationParameter.AddLinkedParameter(new ParameterSelection(_simulation, new ObjectPath(ParameterMapper.Applications, "iv 0.001 mg (5 min)", "Application_1", "ProtocolSchemaItem", "Infusion time")));
+      }
+
+      protected override void UpdateSimulationStructure()
+      {
+         _simulation.Model.Root.GetAllChildren<IContainer>().Each(container =>
+         {
+            if (container.Name.Equals(ParameterMapper.Applications))
+               container.Name = Constants.EVENTS;
+
+            if (container.Name.Equals("Glomerular Filtration-GFR"))
+               container.Name = "Glomerular Filtration-GFR-Alprazolam";
+
+            if (container.Name.Equals("Renal Clearances-test"))
+               container.Name = "Renal Clearances-test-Alprazolam";
+         });
+
+         MoveApplicationUnderNoFormulationContainer();
+      }
+
+      protected override SnapshotVersion GetSnapshotContextVersion()
+      {
+         return SnapshotVersions.V11;
+      }
+
+      [Observation]
+      public void should_replace_applications_with_events_and_insert_the_no_formulation_container()
+      {
+         _newParameterIdentification.AllLinkedParameters[5].Path.ShouldBeEqualTo("Events|iv 0.001 mg (5 min)|No formulation|Application_1|ProtocolSchemaItem|Infusion time");
+      }
+   }
+
+   public class When_updating_a_current_snapshot_with_an_application_parameter : concern_for_IdentificationParameterMapper_with_application_parameters
+   {
+      protected override void AddApplicationLinkedParameters()
+      {
+         _applicationContainer = CreateApplicationContainer("Infusion time");
+         _eventGroupContainer = new Container { _applicationContainer }.WithName("iv 0.001 mg (5 min)");
+         _simulation.Model.Root.Add(new Container { _eventGroupContainer }.WithName(Constants.EVENTS));
+
+         _identificationParameter.AddLinkedParameter(new ParameterSelection(_simulation, new ObjectPath(Constants.EVENTS, "iv 0.001 mg (5 min)", "Application_1", "ProtocolSchemaItem", "Infusion time")));
+      }
+
+      [Observation]
+      public void should_not_change_the_parameter_selection_paths()
+      {
+         _newParameterIdentification.AllLinkedParameters[5].Path.ShouldBeEqualTo("Events|iv 0.001 mg (5 min)|Application_1|ProtocolSchemaItem|Infusion time");
+      }
+   }
 }

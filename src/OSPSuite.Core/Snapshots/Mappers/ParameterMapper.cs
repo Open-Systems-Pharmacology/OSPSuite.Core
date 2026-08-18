@@ -21,7 +21,10 @@ namespace OSPSuite.Core.Snapshots.Mappers
    {
       //only use for conversion of older snapshot. Do not use in code otherwise
       public const string Applications = "Applications";
-      
+
+      //only use for conversion of older snapshot. Do not use in code otherwise
+      public const string NoFormulation = "No formulation";
+
       private readonly TableFormulaMapper _tableFormulaMapper;
       private readonly ValueOriginMapper _valueOriginMapper;
       private readonly IEntityPathResolver _entityPathResolver;
@@ -156,18 +159,49 @@ namespace OSPSuite.Core.Snapshots.Mappers
 
       private string adjustedPath(LocalizedParameter localizedParameter, SnapshotContext snapshotContext)
       {
-         if (!snapshotContext.IsV11FormatOrEarlier)
+         if (!snapshotContext.IsV12FormatOrEarlier)
             return localizedParameter.Path;
 
-         //for V11 or earlier, we may have to convert the path if it starts with Applications which was removed for Events
-         if (localizedParameter.Path.StartsWith(Applications))
-         {
-            var path = new ObjectPath(localizedParameter.Path.ToPathArray());
-            path.Replace(Applications, Constants.EVENTS);
-            return path.ToString();
-         }
+         //A V11 or earlier snapshot needs TWO conversions applied in order: the Applications container was removed for Events in V12,
+         //and applications without a formulation moved under a dedicated 'No formulation' container in V13. Applying only the first
+         //rewrite would produce a path that no longer exists in the current model structure.
+         var path = new ObjectPath(localizedParameter.Path.ToPathArray());
 
-         return localizedParameter.Path;
+         //for V11 or earlier, we may have to convert the path if it starts with Applications which was removed for Events
+         if (snapshotContext.IsV11FormatOrEarlier && localizedParameter.Path.StartsWith(Applications))
+            path.Replace(Applications, Constants.EVENTS);
+
+         //for V12 or earlier, applications defined without a formulation are now located under a dedicated 'No formulation' container
+         InsertNoFormulationContainer(path);
+
+         return path.ToString();
+      }
+
+      /// <summary>
+      ///    Only use for conversion of older snapshot. Inserts the <see cref="NoFormulation" /> container in the
+      ///    <paramref name="path" /> if it has the shape Events|event group|Application_1|...
+      ///    Paths that do not match this shape are left unchanged.
+      /// </summary>
+      public static void InsertNoFormulationContainer(ObjectPath path)
+      {
+         //only use for conversion of older snapshot. Do not use in code otherwise
+         const string applicationPrefix = "Application_";
+
+         //index of the application container in a simulation-localized path with the shape Events|event group|Application_1|...
+         const int applicationContainerIndex = 2;
+
+         if (path.Count <= applicationContainerIndex)
+            return;
+
+         if (!string.Equals(path[0], Constants.EVENTS))
+            return;
+
+         if (!path[applicationContainerIndex].StartsWith(applicationPrefix))
+            return;
+
+         var pathEntries = path.ToList();
+         pathEntries.Insert(applicationContainerIndex, NoFormulation);
+         path.ReplaceWith(pathEntries);
       }
 
       public virtual Task MapParameters(IReadOnlyList<SnapshotParameter> snapshots, IContainer container, string containerDescriptor, SnapshotContext snapshotContext)
