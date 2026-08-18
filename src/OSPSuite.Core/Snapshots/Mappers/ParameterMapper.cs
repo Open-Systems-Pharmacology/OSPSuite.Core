@@ -25,12 +25,6 @@ namespace OSPSuite.Core.Snapshots.Mappers
       //only use for conversion of older snapshot. Do not use in code otherwise
       public const string NoFormulation = "No formulation";
 
-      //only use for conversion of older snapshot. Do not use in code otherwise
-      public const string ApplicationPrefix = "Application_";
-
-      //index of the application container in a simulation-localized path with the shape Events|<event group>|Application_<n>|...
-      private const int APPLICATION_CONTAINER_INDEX = 2;
-
       private readonly TableFormulaMapper _tableFormulaMapper;
       private readonly ValueOriginMapper _valueOriginMapper;
       private readonly IEntityPathResolver _entityPathResolver;
@@ -168,6 +162,9 @@ namespace OSPSuite.Core.Snapshots.Mappers
          if (!snapshotContext.IsV12FormatOrEarlier)
             return localizedParameter.Path;
 
+         //A V11 or earlier snapshot needs TWO conversions applied in order: the Applications container was removed for Events in V12,
+         //and applications without a formulation moved under a dedicated 'No formulation' container in V13. Applying only the first
+         //rewrite would produce a path that no longer exists in the current model structure.
          var path = new ObjectPath(localizedParameter.Path.ToPathArray());
 
          //for V11 or earlier, we may have to convert the path if it starts with Applications which was removed for Events
@@ -187,17 +184,23 @@ namespace OSPSuite.Core.Snapshots.Mappers
       /// </summary>
       public static void InsertNoFormulationContainer(ObjectPath path)
       {
-         if (path.Count <= APPLICATION_CONTAINER_INDEX)
+         //only use for conversion of older snapshot. Do not use in code otherwise
+         const string applicationPrefix = "Application_";
+
+         //index of the application container in a simulation-localized path with the shape Events|<event group>|Application_<n>|...
+         const int applicationContainerIndex = 2;
+
+         if (path.Count <= applicationContainerIndex)
             return;
 
          if (!string.Equals(path[0], Constants.EVENTS))
             return;
 
-         if (!path[APPLICATION_CONTAINER_INDEX].StartsWith(ApplicationPrefix))
+         if (!path[applicationContainerIndex].StartsWith(applicationPrefix))
             return;
 
          var pathEntries = path.ToList();
-         pathEntries.Insert(APPLICATION_CONTAINER_INDEX, NoFormulation);
+         pathEntries.Insert(applicationContainerIndex, NoFormulation);
          path.ReplaceWith(pathEntries);
       }
 
