@@ -1,4 +1,5 @@
-﻿using System.Windows.Forms;
+﻿using System.Drawing;
+using System.Windows.Forms;
 using DevExpress.XtraEditors;
 using OSPSuite.Assets;
 using OSPSuite.Presentation.Presenters;
@@ -9,6 +10,10 @@ namespace OSPSuite.UI.Views
 {
    public partial class HeavyWorkView : BaseView, IHeavyWorkView
    {
+      private const int VIEW_WIDTH = 172;
+      private const int VIEW_HEIGHT = 110;
+      private const int VIEW_HEIGHT_WITH_CANCEL = 155;
+
       private IHeavyWorkPresenter _presenter;
 
       public HeavyWorkView()
@@ -16,6 +21,8 @@ namespace OSPSuite.UI.Views
          InitializeComponent();
          FormBorderStyle = FormBorderStyle.None;
          StartPosition = FormStartPosition.CenterParent;
+         //scrollbars should never appear in the progress popup, whatever the screen scaling
+         uxLayoutControl.AutoScroll = false;
          btnCancel.InitWithImage(ApplicationIcons.Cancel, Captions.CancelButton, ImageLocation.MiddleRight);
          btnCancel.Text = Captions.CancelButton;
          btnCancel.Click += (o, e) => OnEvent(cancelButtonClick);
@@ -31,11 +38,13 @@ namespace OSPSuite.UI.Views
       private void setLayout()
       {
          ShowInTaskbar = false;
+         //sizes defined in the designer are not scaled with screen DPI and need to be set explicitly
+         ClientSize = new Size(UIConstants.Size.ScaleForScreenDPI(VIEW_WIDTH), UIConstants.Size.ScaleForScreenDPI(VIEW_HEIGHT));
          if (CancelVisible)
          {
             FormBorderStyle = FormBorderStyle.FixedToolWindow;
             MaximizeBox = false;
-            Height = MaximumSize.Height;
+            Height = UIConstants.Size.ScaleForScreenDPI(VIEW_HEIGHT_WITH_CANCEL);
             Opacity = 1.0;
          }
          else
