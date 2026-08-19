@@ -125,8 +125,7 @@ namespace OSPSuite.Helpers
          return simulationConfiguration;
       }
 
-      //Same two modules as CreateSimulationConfigurationForOverrideMergeBehavior but without the event group
-      //building blocks so that the resulting model does not contain any pre-existing validation error
+      //Same as CreateSimulationConfigurationForOverrideMergeBehavior but without the event groups and their pre-existing validation error
       public SimulationConfiguration CreateSimulationConfigurationWithOverwriteModule()
       {
          var simulationConfiguration = new SimulationConfiguration

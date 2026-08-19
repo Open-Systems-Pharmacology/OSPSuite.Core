@@ -77,8 +77,7 @@ namespace OSPSuite.Core
          var moleculeAGlobalContainer = _model.Root.Container("A");
          moleculeAGlobalContainer.ShouldNotBeNull();
 
-         //all modules use the default Overwrite behavior. The last module (Module3) defines an empty
-         //global molecule properties container that replaces the ones defined in the previous modules
+         //the last module defines an empty global molecule properties container that replaces the ones from the previous modules
          moleculeAGlobalContainer.Parameter("P1").ShouldBeNull();
          moleculeAGlobalContainer.Parameter("P2").ShouldBeNull();
          moleculeAGlobalContainer.Parameter("P3").ShouldBeNull();
@@ -197,9 +196,6 @@ namespace OSPSuite.Core
          _objectBaseFactory = IoC.Resolve<IObjectBaseFactory>();
       }
 
-      //Adds a molecule properties container with a parameter K1 in ArterialBlood|Plasma of the first module
-      //and a top container named MoleculeProperties with a parameter K2 in the second module that will be
-      //inserted in ArterialBlood|Plasma of the merged structure
       protected SimulationConfiguration AddMoleculePropertiesTopContainer(ModuleHelperForSpecs helper, SimulationConfiguration configuration)
       {
          var module1 = configuration.ModuleConfigurations[0].Module;

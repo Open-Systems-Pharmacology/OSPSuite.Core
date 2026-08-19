@@ -77,9 +77,7 @@ namespace OSPSuite.Core.Domain.Services
             .Each(x => x.topContainers.Each(topContainer => tryMergeTopContainerInStructure(root, topContainer, x.mergeBehavior, x.spatialStructure)));
 
          //create the temporary GLOBAL MOLECULE PROPERTIES THAT WILL BE REMOVED AT THE END but used as based for copying
-         //The module merge behavior applies to the global molecule properties as to any other container:
-         //a module merged with Overwrite replaces the accumulated molecule properties (even with an empty container),
-         //a module merged with Extend merges into them
+         //Overwrite replaces the accumulated molecule properties (even with an empty container), Extend merges into them
          IContainer mergedGlobalMoleculeContainer = null;
          allSpatialStructureAndMergeBehaviors
             .Where(x => x.spatialStructure.GlobalMoleculeDependentProperties != null)
