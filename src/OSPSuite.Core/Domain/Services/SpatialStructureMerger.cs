@@ -77,20 +77,23 @@ namespace OSPSuite.Core.Domain.Services
             .Each(x => x.topContainers.Each(topContainer => tryMergeTopContainerInStructure(root, topContainer, x.mergeBehavior, x.spatialStructure)));
 
          //create the temporary GLOBAL MOLECULE PROPERTIES THAT WILL BE REMOVED AT THE END but used as based for copying
-         //For molecule properties, we always merged as we used to and never replace
-         var allGlobalMoleculeContainers = allSpatialStructureAndMergeBehaviors
-            .Select(x => x.spatialStructure.GlobalMoleculeDependentProperties)
-            .Select(mapToModelContainer)
-            .ToList();
+         //The module merge behavior applies to the global molecule properties as to any other container:
+         //a module merged with Overwrite replaces the accumulated molecule properties (even with an empty container),
+         //a module merged with Extend merges into them
+         IContainer mergedGlobalMoleculeContainer = null;
+         allSpatialStructureAndMergeBehaviors
+            .Where(x => x.spatialStructure.GlobalMoleculeDependentProperties != null)
+            .Each(x =>
+            {
+               var globalMoleculeContainer = mapToModelContainer(x.spatialStructure.GlobalMoleculeDependentProperties);
+               if (mergedGlobalMoleculeContainer == null || x.mergeBehavior == MergeBehavior.Overwrite)
+                  mergedGlobalMoleculeContainer = globalMoleculeContainer;
+               else
+                  _containerMergeTask.MergeContainers(mergedGlobalMoleculeContainer, globalMoleculeContainer);
+            });
 
-         var firstGlobalMoleculeContainer = allGlobalMoleculeContainers.FirstOrDefault();
-         var otherGlobalMoleculeContainer = allGlobalMoleculeContainers.Skip(1).ToList();
-
-         if (firstGlobalMoleculeContainer != null)
-         {
-            otherGlobalMoleculeContainer.Each(x => _containerMergeTask.MergeContainers(firstGlobalMoleculeContainer, x));
-            root.Add(firstGlobalMoleculeContainer);
-         }
+         if (mergedGlobalMoleculeContainer != null)
+            root.Add(mergedGlobalMoleculeContainer);
       }
 
       private void addToBuilderSource(SpatialStructure spatialStructure, SimulationBuilder simulationBuilder)
@@ -140,8 +143,7 @@ namespace OSPSuite.Core.Domain.Services
 
       private void replaceOrMergeContainerIntoParent(IContainer parentContainer, IContainer containerToMerge, MergeBehavior mergeBehavior)
       {
-         //Merge behavior is extend or we have a special case to deal with when dealing with MoleculeProperties container that we merge instead of replacing
-         if (mergeBehavior == MergeBehavior.Extend || containerToMerge.IsNamed(Constants.MOLECULE_PROPERTIES))
+         if (mergeBehavior == MergeBehavior.Extend)
             _containerMergeTask.AddOrMergeContainer(parentContainer, containerToMerge);
          else
             _containerMergeTask.AddOrReplaceInContainer(parentContainer, containerToMerge);

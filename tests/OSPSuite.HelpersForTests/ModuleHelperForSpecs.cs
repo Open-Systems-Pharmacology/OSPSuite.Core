@@ -125,6 +125,24 @@ namespace OSPSuite.Helpers
          return simulationConfiguration;
       }
 
+      //Same two modules as CreateSimulationConfigurationForOverrideMergeBehavior but without the event group
+      //building blocks so that the resulting model does not contain any pre-existing validation error
+      public SimulationConfiguration CreateSimulationConfigurationWithOverwriteModule()
+      {
+         var simulationConfiguration = new SimulationConfiguration
+         {
+            SimulationSettings = CreateSimulationSettings(),
+         };
+
+         var module1 = createModule1();
+         var module2 = createModule2();
+         module2.MergeBehavior = MergeBehavior.Overwrite;
+
+         simulationConfiguration.AddModuleConfiguration(new ModuleConfiguration(module1));
+         simulationConfiguration.AddModuleConfiguration(new ModuleConfiguration(module2, null, null));
+         return simulationConfiguration;
+      }
+
       public SimulationConfiguration CreateSimulationConfigurationForOverrideMergeBehavior()
       {
          var simulationConfiguration = new SimulationConfiguration
