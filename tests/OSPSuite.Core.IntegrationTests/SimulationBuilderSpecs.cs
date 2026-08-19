@@ -9,6 +9,7 @@ using OSPSuite.Core.Domain.Formulas;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Helpers;
 using OSPSuite.Utility.Container;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core;
 
@@ -657,4 +658,176 @@ internal class When_extending_an_event_group_builder_containing_an_application_w
 
    private ApplicationBuilder nestedApplicationBuilder() =>
       sut.EventGroups.Single(x => x.Name == "EG1").GetChildren<ApplicationBuilder>().Single(x => x.Name == "App1");
+}
+
+internal class When_extending_an_event_group_containing_an_event_with_a_different_start_condition : concern_for_SimulationBuilder
+{
+   protected override void Context()
+   {
+      base.Context();
+
+      var eventGroup1 = new EventGroupBuilder().WithName("EG1");
+      var event1 = new EventBuilder().WithName("E1").WithParentContainer(eventGroup1);
+      event1.Formula = new ExplicitFormula("Time > 10");
+      event1.OneTime = false;
+      event1.AddParameter(_modelHelper.NewConstantParameter("shared_param", 1));
+      event1.AddParameter(_modelHelper.NewConstantParameter("e1_only_param", 10));
+      var module1 = new Module { new EventGroupBuildingBlock { eventGroup1 } };
+
+      var eventGroup2 = new EventGroupBuilder().WithName("EG1");
+      var event2 = new EventBuilder().WithName("E1").WithParentContainer(eventGroup2);
+      event2.Formula = new ExplicitFormula("Time > 100");
+      event2.OneTime = true;
+      event2.AddParameter(_modelHelper.NewConstantParameter("shared_param", 2));
+      event2.AddParameter(_modelHelper.NewConstantParameter("e2_only_param", 20));
+      var module2 = new Module { new EventGroupBuildingBlock { eventGroup2 } };
+      module2.MergeBehavior = MergeBehavior.Extend;
+
+      _simulationConfiguration.AddModuleConfiguration(new ModuleConfiguration(module1));
+      _simulationConfiguration.AddModuleConfiguration(new ModuleConfiguration(module2));
+      sut = new SimulationBuilderForSpecs(_simulationConfiguration);
+   }
+
+   private EventBuilder mergedEvent() => sut.EventGroups.Single(x => x.Name == "EG1").Events.Single(x => x.Name == "E1");
+
+   [Observation]
+   public void the_start_condition_should_be_from_module_2()
+   {
+      mergedEvent().Formula.DowncastTo<ExplicitFormula>().FormulaString.ShouldBeEqualTo("Time > 100");
+   }
+
+   [Observation]
+   public void the_one_time_flag_should_be_from_module_2()
+   {
+      mergedEvent().OneTime.ShouldBeTrue();
+   }
+
+   [Observation]
+   public void the_event_parameters_should_be_extended()
+   {
+      var mergedEventBuilder = mergedEvent();
+      mergedEventBuilder.GetSingleChildByName<IParameter>("shared_param").Value.ShouldBeEqualTo(2);
+      mergedEventBuilder.GetSingleChildByName<IParameter>("e1_only_param").Value.ShouldBeEqualTo(10);
+      mergedEventBuilder.GetSingleChildByName<IParameter>("e2_only_param").Value.ShouldBeEqualTo(20);
+   }
+}
+
+internal class When_extending_an_event_group_containing_a_nested_event_group_with_a_redefined_event : concern_for_SimulationBuilder
+{
+   protected override void Context()
+   {
+      base.Context();
+
+      var eventGroup1 = new EventGroupBuilder().WithName("EG1");
+      var innerEventGroup1 = new EventGroupBuilder().WithName("Inner").WithParentContainer(eventGroup1);
+      var event1 = new EventBuilder().WithName("E1").WithParentContainer(innerEventGroup1);
+      event1.Formula = new ExplicitFormula("Time > 10");
+      event1.OneTime = false;
+      var module1 = new Module { new EventGroupBuildingBlock { eventGroup1 } };
+
+      var eventGroup2 = new EventGroupBuilder().WithName("EG1");
+      var innerEventGroup2 = new EventGroupBuilder().WithName("Inner").WithParentContainer(eventGroup2);
+      var event2 = new EventBuilder().WithName("E1").WithParentContainer(innerEventGroup2);
+      event2.Formula = new ExplicitFormula("Time > 100");
+      event2.OneTime = true;
+      var module2 = new Module { new EventGroupBuildingBlock { eventGroup2 } };
+      module2.MergeBehavior = MergeBehavior.Extend;
+
+      _simulationConfiguration.AddModuleConfiguration(new ModuleConfiguration(module1));
+      _simulationConfiguration.AddModuleConfiguration(new ModuleConfiguration(module2));
+      sut = new SimulationBuilderForSpecs(_simulationConfiguration);
+   }
+
+   private EventBuilder nestedEvent() =>
+      sut.EventGroups.Single(x => x.Name == "EG1").GetChildren<EventGroupBuilder>().Single(x => x.Name == "Inner").Events.Single(x => x.Name == "E1");
+
+   [Observation]
+   public void the_start_condition_should_be_from_module_2()
+   {
+      nestedEvent().Formula.DowncastTo<ExplicitFormula>().FormulaString.ShouldBeEqualTo("Time > 100");
+   }
+
+   [Observation]
+   public void the_one_time_flag_should_be_from_module_2()
+   {
+      nestedEvent().OneTime.ShouldBeTrue();
+   }
+}
+
+internal class When_extending_an_application_containing_a_transport_with_different_properties : concern_for_SimulationBuilder
+{
+   protected override void Context()
+   {
+      base.Context();
+
+      var application1 = CreateApplicationBuilder("App1", "MoleculeX", "AppMoleculeX", "C1");
+      var transport1 = new TransportBuilder().WithName("T1");
+      transport1.Formula = new ExplicitFormula("k1");
+      transport1.SourceCriteria = Create.Criteria(x => x.With("SourceA"));
+      transport1.TargetCriteria = Create.Criteria(x => x.With("TargetA"));
+      transport1.CreateProcessRateParameter = false;
+      transport1.AddParameter(_modelHelper.NewConstantParameter("shared_param", 1));
+      transport1.AddParameter(_modelHelper.NewConstantParameter("t1_only_param", 10));
+      application1.AddTransport(transport1);
+      var module1 = new Module { new EventGroupBuildingBlock { application1 } };
+
+      var application2 = CreateApplicationBuilder("App1", "MoleculeX", "AppMoleculeX", "C1");
+      var transport2 = new TransportBuilder().WithName("T1");
+      transport2.Formula = new ExplicitFormula("k2");
+      transport2.SourceCriteria = Create.Criteria(x => x.With("SourceB"));
+      transport2.TargetCriteria = Create.Criteria(x => x.With("TargetB"));
+      transport2.CreateProcessRateParameter = true;
+      transport2.ProcessRateParameterPersistable = true;
+      transport2.AddParameter(_modelHelper.NewConstantParameter("shared_param", 2));
+      transport2.AddParameter(_modelHelper.NewConstantParameter("t2_only_param", 20));
+      application2.AddTransport(transport2);
+      var module2 = new Module { new EventGroupBuildingBlock { application2 } };
+      module2.MergeBehavior = MergeBehavior.Extend;
+
+      _simulationConfiguration.AddModuleConfiguration(new ModuleConfiguration(module1));
+      _simulationConfiguration.AddModuleConfiguration(new ModuleConfiguration(module2));
+      sut = new SimulationBuilderForSpecs(_simulationConfiguration);
+   }
+
+   private TransportBuilder mergedTransport() => ApplicationBuilderFor("App1").Transports.Single(x => x.Name == "T1");
+
+   [Observation]
+   public void the_kinetic_should_be_from_module_2()
+   {
+      mergedTransport().Formula.DowncastTo<ExplicitFormula>().FormulaString.ShouldBeEqualTo("k2");
+   }
+
+   [Observation]
+   public void the_source_criteria_should_contain_conditions_from_both_modules()
+   {
+      var sourceCriteria = mergedTransport().SourceCriteria;
+      sourceCriteria.Count.ShouldBeEqualTo(2);
+      sourceCriteria.OfType<MatchTagCondition>().Select(x => x.Tag).ShouldContain("SourceA");
+      sourceCriteria.OfType<MatchTagCondition>().Select(x => x.Tag).ShouldContain("SourceB");
+   }
+
+   [Observation]
+   public void the_target_criteria_should_contain_conditions_from_both_modules()
+   {
+      var targetCriteria = mergedTransport().TargetCriteria;
+      targetCriteria.Count.ShouldBeEqualTo(2);
+      targetCriteria.OfType<MatchTagCondition>().Select(x => x.Tag).ShouldContain("TargetA");
+      targetCriteria.OfType<MatchTagCondition>().Select(x => x.Tag).ShouldContain("TargetB");
+   }
+
+   [Observation]
+   public void the_process_rate_parameter_flags_should_be_from_module_2()
+   {
+      mergedTransport().CreateProcessRateParameter.ShouldBeTrue();
+      mergedTransport().ProcessRateParameterPersistable.ShouldBeTrue();
+   }
+
+   [Observation]
+   public void the_transport_parameters_should_be_extended()
+   {
+      var transport = mergedTransport();
+      transport.GetSingleChildByName<IParameter>("shared_param").Value.ShouldBeEqualTo(2);
+      transport.GetSingleChildByName<IParameter>("t1_only_param").Value.ShouldBeEqualTo(10);
+      transport.GetSingleChildByName<IParameter>("t2_only_param").Value.ShouldBeEqualTo(20);
+   }
 }
