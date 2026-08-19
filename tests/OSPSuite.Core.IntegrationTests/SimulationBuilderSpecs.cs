@@ -831,3 +831,45 @@ internal class When_extending_an_application_containing_a_transport_with_differe
       transport.GetSingleChildByName<IParameter>("t2_only_param").Value.ShouldBeEqualTo(20);
    }
 }
+
+internal class When_extending_an_application_containing_a_transport_that_turns_off_the_process_rate_parameter : concern_for_SimulationBuilder
+{
+   protected override void Context()
+   {
+      base.Context();
+
+      var application1 = CreateApplicationBuilder("App1", "MoleculeX", "AppMoleculeX", "C1");
+      var transport1 = new TransportBuilder().WithName("T1");
+      transport1.Formula = new ExplicitFormula("k1");
+      transport1.CreateProcessRateParameter = true;
+      transport1.ProcessRateParameterPersistable = true;
+      application1.AddTransport(transport1);
+      var module1 = new Module { new EventGroupBuildingBlock { application1 } };
+
+      var application2 = CreateApplicationBuilder("App1", "MoleculeX", "AppMoleculeX", "C1");
+      var transport2 = new TransportBuilder().WithName("T1");
+      transport2.Formula = new ExplicitFormula("k2");
+      transport2.CreateProcessRateParameter = false;
+      application2.AddTransport(transport2);
+      var module2 = new Module { new EventGroupBuildingBlock { application2 } };
+      module2.MergeBehavior = MergeBehavior.Extend;
+
+      _simulationConfiguration.AddModuleConfiguration(new ModuleConfiguration(module1));
+      _simulationConfiguration.AddModuleConfiguration(new ModuleConfiguration(module2));
+      sut = new SimulationBuilderForSpecs(_simulationConfiguration);
+   }
+
+   private TransportBuilder mergedTransport() => ApplicationBuilderFor("App1").Transports.Single(x => x.Name == "T1");
+
+   [Observation]
+   public void the_process_rate_parameter_should_not_be_created()
+   {
+      mergedTransport().CreateProcessRateParameter.ShouldBeFalse();
+   }
+
+   [Observation]
+   public void the_process_rate_parameter_should_not_be_persistable()
+   {
+      mergedTransport().ProcessRateParameterPersistable.ShouldBeFalse();
+   }
+}
