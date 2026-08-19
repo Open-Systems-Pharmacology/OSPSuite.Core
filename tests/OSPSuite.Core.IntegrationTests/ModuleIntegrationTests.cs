@@ -119,7 +119,7 @@ namespace OSPSuite.Core
 
    internal class When_merging_the_global_molecule_properties_from_a_module_with_merge_behavior_overwrite : concern_for_ModuleIntegration
    {
-      protected override Func<ModuleHelperForSpecs, SimulationConfiguration> SimulationConfigurationBuilder() => x => x.CreateSimulationConfigurationWithOverwriteModule();
+      protected override Func<ModuleHelperForSpecs, SimulationConfiguration> SimulationConfigurationBuilder() => x => x.CreateSimulationConfigurationForOverrideMergeBehavior();
 
       [Observation]
       public void should_only_have_created_the_molecule_parameters_defined_in_the_overwrite_module()
@@ -227,7 +227,7 @@ namespace OSPSuite.Core
    internal class When_overwriting_a_molecule_properties_container_defined_as_top_container : concern_for_module_integration_with_a_molecule_properties_top_container
    {
       protected override Func<ModuleHelperForSpecs, SimulationConfiguration> SimulationConfigurationBuilder() =>
-         x => AddMoleculePropertiesTopContainer(x, x.CreateSimulationConfigurationWithOverwriteModule());
+         x => AddMoleculePropertiesTopContainer(x, x.CreateSimulationConfigurationForOverrideMergeBehavior());
 
       [Observation]
       public void should_only_add_the_local_molecule_parameters_defined_in_the_overwrite_module()
@@ -768,8 +768,7 @@ namespace OSPSuite.Core
       [Observation]
       public void should_warn_that_the_neighborhood_was_removed_from_the_simulation()
       {
-         //the validation state is not asserted here because the underlying simulation configuration
-         //contains a pre-existing event error ('StartTime' reference) that is unrelated to the removal
+         _result.ValidationResult.ValidationState.ShouldBeEqualTo(ValidationState.ValidWithWarnings, _result.ValidationResult.Messages.Select(m => m.Text).ToString("\n"));
          _result.ValidationResult.Messages.FirstOrDefault(x => x.Text.Equals(Warning.NeighborhoodRemovedFromModel(NEIGHBORHOOD_NAME, _module2.SpatialStructure.DisplayName))).ShouldNotBeNull();
       }
    }

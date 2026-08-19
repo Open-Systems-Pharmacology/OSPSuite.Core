@@ -74,7 +74,7 @@ namespace OSPSuite.Core
 
    public class When_creating_a_simulation_source_reference_from_a_simulation_source_in_overwrite_mode : concern_for_SimulationEntitySourceReferenceFactory
    {
-      protected override Func<ModuleHelperForSpecs, SimulationConfiguration> SimulationConfigurationBuilder() => x => x.CreateSimulationConfigurationWithOverwriteModule();
+      protected override Func<ModuleHelperForSpecs, SimulationConfiguration> SimulationConfigurationBuilder() => x => x.CreateSimulationConfigurationForOverrideMergeBehavior();
 
       [Observation]
       public void should_be_able_to_find_the_source_for_a_parameter_in_global_molecule_container()

@@ -125,23 +125,6 @@ namespace OSPSuite.Helpers
          return simulationConfiguration;
       }
 
-      //Same as CreateSimulationConfigurationForOverrideMergeBehavior but without the event groups and their pre-existing validation error
-      public SimulationConfiguration CreateSimulationConfigurationWithOverwriteModule()
-      {
-         var simulationConfiguration = new SimulationConfiguration
-         {
-            SimulationSettings = CreateSimulationSettings(),
-         };
-
-         var module1 = createModule1();
-         var module2 = createModule2();
-         module2.MergeBehavior = MergeBehavior.Overwrite;
-
-         simulationConfiguration.AddModuleConfiguration(new ModuleConfiguration(module1));
-         simulationConfiguration.AddModuleConfiguration(new ModuleConfiguration(module2, null, null));
-         return simulationConfiguration;
-      }
-
       public SimulationConfiguration CreateSimulationConfigurationForOverrideMergeBehavior()
       {
          var simulationConfiguration = new SimulationConfiguration
@@ -320,7 +303,7 @@ namespace OSPSuite.Helpers
             eventAssignment.UseAsValue = true;
             eventAssignment.ObjectPath = new ObjectPath(ORGANISM, ArterialBlood, Plasma, "A");
             eventBuilder.AddAssignment(eventAssignment);
-            eventBuilder.AddParameter(NewConstantParameter("Parameter1", 10));
+            eventBuilder.AddParameter(NewConstantParameter("StartTime", 10));
             eventGroup.Add(eventBuilder);
          }
 
