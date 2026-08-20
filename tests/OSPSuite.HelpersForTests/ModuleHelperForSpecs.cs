@@ -303,7 +303,7 @@ namespace OSPSuite.Helpers
             eventAssignment.UseAsValue = true;
             eventAssignment.ObjectPath = new ObjectPath(ORGANISM, ArterialBlood, Plasma, "A");
             eventBuilder.AddAssignment(eventAssignment);
-            eventBuilder.AddParameter(NewConstantParameter("Parameter1", 10));
+            eventBuilder.AddParameter(NewConstantParameter("StartTime", 10));
             eventGroup.Add(eventBuilder);
          }
 

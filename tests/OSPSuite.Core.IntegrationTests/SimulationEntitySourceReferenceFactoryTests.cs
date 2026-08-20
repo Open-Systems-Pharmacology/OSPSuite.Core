@@ -74,20 +74,27 @@ namespace OSPSuite.Core
 
    public class When_creating_a_simulation_source_reference_from_a_simulation_source_in_overwrite_mode : concern_for_SimulationEntitySourceReferenceFactory
    {
-      protected override Func<ModuleHelperForSpecs, SimulationConfiguration> SimulationConfigurationBuilder() => x => x.CreateSimulationConfiguration();
+      protected override Func<ModuleHelperForSpecs, SimulationConfiguration> SimulationConfigurationBuilder() => x => x.CreateSimulationConfigurationForOverrideMergeBehavior();
 
       [Observation]
       public void should_be_able_to_find_the_source_for_a_parameter_in_global_molecule_container()
       {
          var moleculeAGlobalContainer = _model.Root.Container("A");
          var parameter1 = moleculeAGlobalContainer.Parameter("P1");
-         var parameter2 = moleculeAGlobalContainer.Parameter("P2");
+         var parameter3 = moleculeAGlobalContainer.Parameter("P3");
 
          var parameter1SourceReference = ValidateSourceReferenceFor(parameter1);
          parameter1SourceReference.Module.Name.ShouldBeEqualTo("Module2");
 
-         var parameter2SourceReference = ValidateSourceReferenceFor(parameter2);
-         parameter2SourceReference.Module.Name.ShouldBeEqualTo("Module1");
+         var parameter3SourceReference = ValidateSourceReferenceFor(parameter3);
+         parameter3SourceReference.Module.Name.ShouldBeEqualTo("Module2");
+      }
+
+      [Observation]
+      public void should_not_have_created_the_molecule_parameters_defined_only_in_the_overwritten_module()
+      {
+         var moleculeAGlobalContainer = _model.Root.Container("A");
+         moleculeAGlobalContainer.Parameter("P2").ShouldBeNull();
       }
 
       [Observation]

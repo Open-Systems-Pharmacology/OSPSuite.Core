@@ -72,35 +72,15 @@ namespace OSPSuite.Core
       }
 
       [Observation]
-      public void should_have_merged_the_existing_parameters()
+      public void should_have_replaced_the_molecule_properties_with_the_ones_from_the_last_overwrite_module()
       {
          var moleculeAGlobalContainer = _model.Root.Container("A");
          moleculeAGlobalContainer.ShouldNotBeNull();
 
-         moleculeAGlobalContainer.Parameter("P1").Value.ShouldBeEqualTo(100);
-         moleculeAGlobalContainer.Parameter("P2").Value.ShouldBeEqualTo(20);
-         moleculeAGlobalContainer.Parameter("P3").Value.ShouldBeEqualTo(30);
-      }
-
-      [Observation]
-      public void should_track_the_parameter_accordingly()
-      {
-         var moleculeAGlobalContainer = _model.Root.Container("A");
-         var parameter1 = moleculeAGlobalContainer.Parameter("P1");
-         var parameter2 = moleculeAGlobalContainer.Parameter("P2");
-         var parameter3 = moleculeAGlobalContainer.Parameter("P3");
-         var module1 = _simulationConfiguration.ModuleConfigurations.Find(x => x.Module.IsNamed("Module1"));
-         var module2 = _simulationConfiguration.ModuleConfigurations.Find(x => x.Module.IsNamed("Module2"));
-         var module1Global = module1.Module.SpatialStructure.GlobalMoleculeDependentProperties;
-         var module2Global = module2.Module.SpatialStructure.GlobalMoleculeDependentProperties;
-         var parameter2Module1 = module1Global.Parameter("P2");
-         var parameter1Module2 = module2Global.Parameter("P1");
-         var parameter3Module2 = module2Global.Parameter("P3");
-
-         //we use entity path here because we are not dealing with simulations and we do not want to remove the first entry
-         _simulationBuilder.SimulationEntitySourceFor(parameter1).SourcePath.ShouldBeEqualTo(parameter1Module2.EntityPath());
-         _simulationBuilder.SimulationEntitySourceFor(parameter2).SourcePath.ShouldBeEqualTo(parameter2Module1.EntityPath());
-         _simulationBuilder.SimulationEntitySourceFor(parameter3).SourcePath.ShouldBeEqualTo(parameter3Module2.EntityPath());
+         //the last module defines an empty global molecule properties container that replaces the ones from the previous modules
+         moleculeAGlobalContainer.Parameter("P1").ShouldBeNull();
+         moleculeAGlobalContainer.Parameter("P2").ShouldBeNull();
+         moleculeAGlobalContainer.Parameter("P3").ShouldBeNull();
       }
 
       protected override Func<ModuleHelperForSpecs, SimulationConfiguration> SimulationConfigurationBuilder() => x => x.CreateSimulationConfigurationWithLogicalNeighborhood();
@@ -134,6 +114,143 @@ namespace OSPSuite.Core
          passiveTransportA.ShouldBeNull();
          passiveTransportB.ShouldNotBeNull();
          passiveTransportC.ShouldNotBeNull();
+      }
+   }
+
+   internal class When_merging_the_global_molecule_properties_from_a_module_with_merge_behavior_overwrite : concern_for_ModuleIntegration
+   {
+      protected override Func<ModuleHelperForSpecs, SimulationConfiguration> SimulationConfigurationBuilder() => x => x.CreateSimulationConfigurationForOverrideMergeBehavior();
+
+      [Observation]
+      public void should_only_have_created_the_molecule_parameters_defined_in_the_overwrite_module()
+      {
+         var moleculeAGlobalContainer = _model.Root.Container("A");
+         moleculeAGlobalContainer.ShouldNotBeNull();
+
+         moleculeAGlobalContainer.Parameter("P1").Value.ShouldBeEqualTo(100);
+         moleculeAGlobalContainer.Parameter("P2").ShouldBeNull();
+         moleculeAGlobalContainer.Parameter("P3").Value.ShouldBeEqualTo(30);
+      }
+
+      [Observation]
+      public void should_track_the_parameters_to_the_overwrite_module()
+      {
+         var moleculeAGlobalContainer = _model.Root.Container("A");
+         var parameter1 = moleculeAGlobalContainer.Parameter("P1");
+         var parameter3 = moleculeAGlobalContainer.Parameter("P3");
+         var module2 = _simulationConfiguration.ModuleConfigurations.Find(x => x.Module.IsNamed("Module2"));
+         var module2Global = module2.Module.SpatialStructure.GlobalMoleculeDependentProperties;
+         var parameter1Module2 = module2Global.Parameter("P1");
+         var parameter3Module2 = module2Global.Parameter("P3");
+
+         //we use entity path here because we are not dealing with simulations and we do not want to remove the first entry
+         _simulationBuilder.SimulationEntitySourceFor(parameter1).SourcePath.ShouldBeEqualTo(parameter1Module2.EntityPath());
+         _simulationBuilder.SimulationEntitySourceFor(parameter3).SourcePath.ShouldBeEqualTo(parameter3Module2.EntityPath());
+      }
+   }
+
+   internal class When_merging_the_global_molecule_properties_from_a_module_with_merge_behavior_extend : concern_for_ModuleIntegration
+   {
+      protected override Func<ModuleHelperForSpecs, SimulationConfiguration> SimulationConfigurationBuilder() => x => x.CreateSimulationConfigurationForExtendMergeBehavior();
+
+      [Observation]
+      public void should_have_merged_the_existing_parameters()
+      {
+         var moleculeAGlobalContainer = _model.Root.Container("A");
+         moleculeAGlobalContainer.ShouldNotBeNull();
+
+         moleculeAGlobalContainer.Parameter("P1").Value.ShouldBeEqualTo(100);
+         moleculeAGlobalContainer.Parameter("P2").Value.ShouldBeEqualTo(20);
+         moleculeAGlobalContainer.Parameter("P3").Value.ShouldBeEqualTo(30);
+      }
+
+      [Observation]
+      public void should_track_the_parameter_accordingly()
+      {
+         var moleculeAGlobalContainer = _model.Root.Container("A");
+         var parameter1 = moleculeAGlobalContainer.Parameter("P1");
+         var parameter2 = moleculeAGlobalContainer.Parameter("P2");
+         var parameter3 = moleculeAGlobalContainer.Parameter("P3");
+         var module1 = _simulationConfiguration.ModuleConfigurations.Find(x => x.Module.IsNamed("Module1"));
+         var module2 = _simulationConfiguration.ModuleConfigurations.Find(x => x.Module.IsNamed("Module2"));
+         var module1Global = module1.Module.SpatialStructure.GlobalMoleculeDependentProperties;
+         var module2Global = module2.Module.SpatialStructure.GlobalMoleculeDependentProperties;
+         var parameter2Module1 = module1Global.Parameter("P2");
+         var parameter1Module2 = module2Global.Parameter("P1");
+         var parameter3Module2 = module2Global.Parameter("P3");
+
+         //we use entity path here because we are not dealing with simulations and we do not want to remove the first entry
+         _simulationBuilder.SimulationEntitySourceFor(parameter1).SourcePath.ShouldBeEqualTo(parameter1Module2.EntityPath());
+         _simulationBuilder.SimulationEntitySourceFor(parameter2).SourcePath.ShouldBeEqualTo(parameter2Module1.EntityPath());
+         _simulationBuilder.SimulationEntitySourceFor(parameter3).SourcePath.ShouldBeEqualTo(parameter3Module2.EntityPath());
+      }
+   }
+
+   internal abstract class concern_for_module_integration_with_a_molecule_properties_top_container : concern_for_ModuleIntegration
+   {
+      private IObjectBaseFactory _objectBaseFactory;
+
+      protected override void Context()
+      {
+         base.Context();
+         _objectBaseFactory = IoC.Resolve<IObjectBaseFactory>();
+      }
+
+      protected SimulationConfiguration AddMoleculePropertiesTopContainer(ModuleHelperForSpecs helper, SimulationConfiguration configuration)
+      {
+         var module1 = configuration.ModuleConfigurations[0].Module;
+         var artPlasma = module1.SpatialStructure.TopContainers.FindByName(Constants.ORGANISM).EntityAt<IContainer>(ArterialBlood, Plasma);
+         artPlasma.Add(createMoleculeProperties(helper, "K1", 5));
+
+         var module2 = configuration.ModuleConfigurations[1].Module;
+         var topMoleculeProperties = createMoleculeProperties(helper, "K2", 10);
+         topMoleculeProperties.ParentPath = new ObjectPath(Constants.ORGANISM, ArterialBlood, Plasma);
+         module2.SpatialStructure.AddTopContainer(topMoleculeProperties);
+
+         return configuration;
+      }
+
+      private IContainer createMoleculeProperties(ModuleHelperForSpecs helper, string parameterName, double value)
+      {
+         var moleculeProperties = _objectBaseFactory.Create<IContainer>()
+            .WithName(Constants.MOLECULE_PROPERTIES)
+            .WithMode(ContainerMode.Logical)
+            .WithContainerType(ContainerType.Molecule);
+
+         moleculeProperties.Add(helper.NewConstantParameter(parameterName, value));
+         return moleculeProperties;
+      }
+
+      protected IContainer MoleculeAInArterialBloodPlasma => _model.Root.EntityAt<IContainer>(Constants.ORGANISM, ArterialBlood, Plasma, "A");
+   }
+
+   internal class When_overwriting_a_molecule_properties_container_defined_as_top_container : concern_for_module_integration_with_a_molecule_properties_top_container
+   {
+      protected override Func<ModuleHelperForSpecs, SimulationConfiguration> SimulationConfigurationBuilder() =>
+         x => AddMoleculePropertiesTopContainer(x, x.CreateSimulationConfigurationForOverrideMergeBehavior());
+
+      [Observation]
+      public void should_only_add_the_local_molecule_parameters_defined_in_the_overwrite_module()
+      {
+         var moleculeA = MoleculeAInArterialBloodPlasma;
+         moleculeA.ShouldNotBeNull();
+         moleculeA.Parameter("K1").ShouldBeNull();
+         moleculeA.Parameter("K2").Value.ShouldBeEqualTo(10);
+      }
+   }
+
+   internal class When_extending_a_molecule_properties_container_defined_as_top_container : concern_for_module_integration_with_a_molecule_properties_top_container
+   {
+      protected override Func<ModuleHelperForSpecs, SimulationConfiguration> SimulationConfigurationBuilder() =>
+         x => AddMoleculePropertiesTopContainer(x, x.CreateSimulationConfigurationForExtendMergeBehavior());
+
+      [Observation]
+      public void should_add_the_local_molecule_parameters_defined_in_both_modules()
+      {
+         var moleculeA = MoleculeAInArterialBloodPlasma;
+         moleculeA.ShouldNotBeNull();
+         moleculeA.Parameter("K1").Value.ShouldBeEqualTo(5);
+         moleculeA.Parameter("K2").Value.ShouldBeEqualTo(10);
       }
    }
 
@@ -651,8 +768,7 @@ namespace OSPSuite.Core
       [Observation]
       public void should_warn_that_the_neighborhood_was_removed_from_the_simulation()
       {
-         //the validation state is not asserted here because the underlying simulation configuration
-         //contains a pre-existing event error ('StartTime' reference) that is unrelated to the removal
+         _result.ValidationResult.ValidationState.ShouldBeEqualTo(ValidationState.ValidWithWarnings, _result.ValidationResult.Messages.Select(m => m.Text).ToString("\n"));
          _result.ValidationResult.Messages.FirstOrDefault(x => x.Text.Equals(Warning.NeighborhoodRemovedFromModel(NEIGHBORHOOD_NAME, _module2.SpatialStructure.DisplayName))).ShouldNotBeNull();
       }
    }
