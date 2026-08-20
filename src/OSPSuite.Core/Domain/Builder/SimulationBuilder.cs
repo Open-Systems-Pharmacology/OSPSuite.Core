@@ -168,29 +168,46 @@ namespace OSPSuite.Core.Domain.Builder
 
          mergeDescriptorCriteria(targetBuilder.SourceCriteria, sourceBuilder.SourceCriteria);
 
-         mergeApplications(targetBuilder, sourceBuilder);
+         mergeEventGroupProperties(targetBuilder, sourceBuilder);
       }
 
       /// <summary>
-      ///    Merges the given event group builders, and all equally named event group builders defined under them, as
-      ///    applications. This is required because <see cref="ApplicationBuilder.MoleculeName" /> is a property and not a
-      ///    child entity and is therefore not covered by the generic container merge
+      ///    Merges the given event group builders, and all equally named builders defined under them, property wise.
+      ///    This is required because values such as <see cref="ApplicationBuilder.MoleculeName" />, the start condition of an
+      ///    <see cref="EventBuilder" /> or the kinetic of a <see cref="TransportBuilder" /> are properties and not child
+      ///    entities and are therefore not covered by the generic container merge
       /// </summary>
-      private void mergeApplications(EventGroupBuilder targetBuilder, EventGroupBuilder sourceBuilder)
+      private void mergeEventGroupProperties(EventGroupBuilder targetBuilder, EventGroupBuilder sourceBuilder)
       {
          if (targetBuilder is ApplicationBuilder targetApplication && sourceBuilder is ApplicationBuilder sourceApplication)
             mergeApplication(targetApplication, sourceApplication);
 
-         var targetEventGroups = targetBuilder.GetChildren<EventGroupBuilder>().ToList();
-         foreach (var sourceEventGroup in sourceBuilder.GetChildren<EventGroupBuilder>().ToList())
+         mergeSameNamedChildren<EventBuilder>(targetBuilder, sourceBuilder, mergeEvent);
+         mergeSameNamedChildren<TransportBuilder>(targetBuilder, sourceBuilder, mergeTransportProperties);
+         mergeSameNamedChildren<EventGroupBuilder>(targetBuilder, sourceBuilder, mergeEventGroupProperties);
+      }
+
+      private void mergeSameNamedChildren<T>(IContainer targetContainer, IContainer sourceContainer, Action<T, T> mergeAction) where T : class, IEntity
+      {
+         var targetChildren = targetContainer.GetChildren<T>().ToList();
+         foreach (var sourceChild in sourceContainer.GetChildren<T>().ToList())
          {
-            //The container merge already placed every source event group in the target, so this is only null when the
-            //target uses that name for something that is not an event group. For a group that was added as is, target
-            //and source are the same instance and merging them is a no-op
-            var targetEventGroup = targetEventGroups.FirstOrDefault(x => string.Equals(x.Name, sourceEventGroup.Name));
-            if (targetEventGroup != null)
-               mergeApplications(targetEventGroup, sourceEventGroup);
+            //The container merge already placed every source child in the target, so this is only null when the target
+            //uses that name for another type of entity. A child that was added as is exists in the target as the same
+            //instance and there is nothing left to merge
+            var targetChild = targetChildren.FirstOrDefault(x => string.Equals(x.Name, sourceChild.Name));
+            if (targetChild == null || ReferenceEquals(targetChild, sourceChild))
+               continue;
+
+            mergeAction(targetChild, sourceChild);
          }
+      }
+
+      private void mergeEvent(EventBuilder targetEvent, EventBuilder sourceEvent)
+      {
+         targetEvent.OneTime = sourceEvent.OneTime;
+         //no need to clone the formula. it's either use as is or already a clone
+         targetEvent.Formula = sourceEvent.Formula;
       }
 
       private void mergeApplication(ApplicationBuilder targetApplication, ApplicationBuilder sourceApplication)
@@ -269,6 +286,11 @@ namespace OSPSuite.Core.Domain.Builder
       {
          var source = builderSource.Builder;
          mergeMoleculeLists(target, source);
+         mergeTransportProperties(target, source);
+      }
+
+      private void mergeTransportProperties(TransportBuilder target, TransportBuilder source)
+      {
          mergeDescriptorCriteria(target.SourceCriteria, source.SourceCriteria);
          mergeDescriptorCriteria(target.TargetCriteria, source.TargetCriteria);
          target.CreateProcessRateParameter = source.CreateProcessRateParameter;
