@@ -326,8 +326,14 @@ namespace OSPSuite.Core.Domain.Builder
 
       private void mergeObservers(ObserverBuilder target, BuilderSource<ObserverBuilder> source)
       {
-         mergeMoleculeLists(target, source.Builder);
-         target.Formula = source.Builder.Formula;
+         var sourceBuilder = source.Builder;
+         mergeMoleculeLists(target, sourceBuilder);
+         mergeDescriptorCriteria(target.ContainerCriteria, sourceBuilder.ContainerCriteria);
+         target.Dimension = sourceBuilder.Dimension;
+         target.Description = sourceBuilder.Description;
+         target.Icon = sourceBuilder.Icon;
+         //no need to clone the formula. it's either use as is or already a clone
+         target.Formula = sourceBuilder.Formula;
       }
 
       private void mergeMolecules(MoleculeBuilder target, BuilderSource<MoleculeBuilder> source)
