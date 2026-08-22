@@ -348,12 +348,7 @@ namespace OSPSuite.Core.Domain.Builder
          mergeSameNamedChildren<TransporterMoleculeContainer>(target, incoming, mergeTransporterMoleculeContainer);
       }
 
-      /// <summary>
-      ///    Merges the given transporter molecule containers property wise. This is required because the
-      ///    <see cref="TransporterMoleculeContainer.TransportName" /> and the properties of the active transport
-      ///    realizations nested under them (kinetic, source/target criteria, process rate parameter flags) are
-      ///    properties and not child entities and are therefore not covered by the generic container merge
-      /// </summary>
+      //TransportName and the properties of the nested active transport realizations are not covered by the generic container merge
       private void mergeTransporterMoleculeContainer(TransporterMoleculeContainer targetTransporter, TransporterMoleculeContainer sourceTransporter)
       {
          targetTransporter.TransportName = sourceTransporter.TransportName;
