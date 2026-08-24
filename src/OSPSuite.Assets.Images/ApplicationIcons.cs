@@ -20,10 +20,14 @@ namespace OSPSuite.Assets
       public static readonly ApplicationIcon AddToJournal = AddNamedIcon("AddAction", "AddToJournal");
       public static readonly ApplicationIcon AgingPopulationSimulation = AddNamedIcon("AgingPopulationSimulation");
       public static readonly ApplicationIcon AgingPopulationSimulationGreen = AddNamedIcon("AgingPopulationSimulationGreen");
+      public static readonly ApplicationIcon AgingPopulationSimulationGreenOrange = AddNamedIcon("AgingPopulationSimulationGreenOrange");
       public static readonly ApplicationIcon AgingPopulationSimulationRed = AddNamedIcon("AgingPopulationSimulationRed");
+      public static readonly ApplicationIcon AgingPopulationSimulationRedOrange = AddNamedIcon("AgingPopulationSimulationRedOrange");
       public static readonly ApplicationIcon AgingSimulation = AddNamedIcon("AgingSimulation");
       public static readonly ApplicationIcon AgingSimulationGreen = AddNamedIcon("AgingSimulationGreen");
+      public static readonly ApplicationIcon AgingSimulationGreenOrange = AddNamedIcon("AgingSimulationGreenOrange");
       public static readonly ApplicationIcon AgingSimulationRed = AddNamedIcon("AgingSimulationRed");
+      public static readonly ApplicationIcon AgingSimulationRedOrange = AddNamedIcon("AgingSimulationRedOrange");
       public static readonly ApplicationIcon Application = AddNamedIcon("Application");
       public static readonly ApplicationIcon Applications = AddNamedIcon("Application", "Applications");
       public static readonly ApplicationIcon ApplicationsError = AddNamedIcon("ApplicationError", "ApplicationsError");
@@ -285,7 +289,9 @@ namespace OSPSuite.Assets
       public static readonly ApplicationIcon PopulationRed = AddNamedIcon("PopulationRed");
       public static readonly ApplicationIcon PopulationSimulation = AddNamedIcon("PopulationSimulation");
       public static readonly ApplicationIcon PopulationSimulationGreen = AddNamedIcon("PopulationSimulationGreen");
+      public static readonly ApplicationIcon PopulationSimulationGreenOrange = AddNamedIcon("PopulationSimulationGreenOrange");
       public static readonly ApplicationIcon PopulationSimulationRed = AddNamedIcon("PopulationSimulationRed");
+      public static readonly ApplicationIcon PopulationSimulationRedOrange = AddNamedIcon("PopulationSimulationRedOrange");
       public static readonly ApplicationIcon PopulationSimulationSettings = AddNamedIcon("SimulationSettings", "PopulationSimulationSettings");
       public static readonly ApplicationIcon PortalVein = AddNamedIcon("PortalVein");
       public static readonly ApplicationIcon Previous = AddNamedIcon("Previous");
@@ -334,7 +340,9 @@ namespace OSPSuite.Assets
       public static readonly ApplicationIcon SimulationExplorer = AddNamedIcon("SimulationExplorer");
       public static readonly ApplicationIcon SimulationFolder = AddNamedIcon("SimulationFolder");
       public static readonly ApplicationIcon SimulationGreen = AddNamedIcon("SimulationGreen");
+      public static readonly ApplicationIcon SimulationGreenOrange = AddNamedIcon("SimulationGreenOrange");
       public static readonly ApplicationIcon SimulationRed = AddNamedIcon("SimulationRed");
+      public static readonly ApplicationIcon SimulationRedOrange = AddNamedIcon("SimulationRedOrange");
       public static readonly ApplicationIcon SimulationSettings = AddNamedIcon("SimulationSettings", IconNames.SIMULATION_SETTINGS);
       public static readonly ApplicationIcon SimulationSettingsFolder = AddNamedIcon("SimulationSettingsFolder");
       public static readonly ApplicationIcon SimulationSettingsGreen = AddNamedIcon("SimulationSettingsGreen");
@@ -663,6 +671,11 @@ namespace OSPSuite.Assets
       public static ApplicationIcon RedOverlayFor(ApplicationIcon applicationIcon)
       {
          return overlayFor(applicationIcon, "Red");
+      }
+
+      public static ApplicationIcon OrangeOverlayFor(ApplicationIcon applicationIcon)
+      {
+         return overlayFor(applicationIcon, "Orange");
       }
    }
 }
