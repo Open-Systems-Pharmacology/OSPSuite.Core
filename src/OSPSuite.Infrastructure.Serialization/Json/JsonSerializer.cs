@@ -11,6 +11,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using OSPSuite.Assets.Extensions;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Infrastructure.Serialization.Json
 {
@@ -123,15 +124,11 @@ namespace OSPSuite.Infrastructure.Serialization.Json
          if (!(jToken is JContainer container))
             return;
 
-         var specialValues = container.DescendantsAndSelf()
+         container.DescendantsAndSelf()
             .OfType<JValue>()
             .Where(x => x.Type == JTokenType.String && _specialFloatingPointValues.ContainsKey((string)x.Value))
-            .ToList();
-
-         foreach (var value in specialValues)
-         {
-            value.Replace(new JValue(_specialFloatingPointValues[(string)value.Value]));
-         }
+            .ToList()
+            .Each(value => value.Replace(new JValue(_specialFloatingPointValues[(string)value.Value])));
       }
 
       private JSchema validateSnapshot(Type snapshotType) => _schemas.GetOrAdd(snapshotType, createSchemaForType);
