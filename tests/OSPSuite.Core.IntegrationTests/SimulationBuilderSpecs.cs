@@ -874,6 +874,82 @@ internal class When_extending_an_application_containing_a_transport_that_turns_o
    }
 }
 
+internal class When_extending_an_observer_with_different_properties : concern_for_SimulationBuilder
+{
+   protected override void Context()
+   {
+      base.Context();
+
+      var observer1 = new ContainerObserverBuilder().WithName("Obs1");
+      observer1.Formula = new ExplicitFormula("obs1");
+      observer1.ContainerCriteria = Create.Criteria(x => x.With("Liver"));
+      observer1.Dimension = _modelHelper.AmountPerTimeDimension;
+      observer1.Description = "Observer from module 1";
+      observer1.Icon = "Icon_O1";
+      observer1.MoleculeList.AddMoleculeName("MolA");
+      var module1 = new Module { new ObserverBuildingBlock { observer1 } };
+
+      var observer2 = new ContainerObserverBuilder().WithName("Obs1");
+      observer2.Formula = new ExplicitFormula("obs2");
+      observer2.ContainerCriteria = Create.Criteria(x => x.With("Kidney"));
+      observer2.ContainerCriteria.Operator = CriteriaOperator.Or;
+      observer2.Dimension = Constants.Dimension.NO_DIMENSION;
+      observer2.Description = "Observer from module 2";
+      observer2.Icon = "Icon_O2";
+      observer2.MoleculeList.AddMoleculeName("MolB");
+      var module2 = new Module { new ObserverBuildingBlock { observer2 } };
+      module2.MergeBehavior = MergeBehavior.Extend;
+
+      _simulationConfiguration.AddModuleConfiguration(new ModuleConfiguration(module1));
+      _simulationConfiguration.AddModuleConfiguration(new ModuleConfiguration(module2));
+      sut = new SimulationBuilderForSpecs(_simulationConfiguration);
+   }
+
+   private ObserverBuilder mergedObserver() => sut.Observers.Single(x => x.Name == "Obs1");
+
+   [Observation]
+   public void the_container_criteria_should_contain_conditions_from_both_modules()
+   {
+      var criteria = mergedObserver().ContainerCriteria;
+      criteria.Count.ShouldBeEqualTo(2);
+      criteria.OfType<MatchTagCondition>().Select(x => x.Tag).ShouldContain("Liver");
+      criteria.OfType<MatchTagCondition>().Select(x => x.Tag).ShouldContain("Kidney");
+   }
+
+   [Observation]
+   public void the_container_criteria_operator_should_be_from_module_2()
+   {
+      mergedObserver().ContainerCriteria.Operator.ShouldBeEqualTo(CriteriaOperator.Or);
+   }
+
+   [Observation]
+   public void the_formula_should_be_from_module_2()
+   {
+      mergedObserver().Formula.DowncastTo<ExplicitFormula>().FormulaString.ShouldBeEqualTo("obs2");
+   }
+
+   [Observation]
+   public void the_dimension_should_be_from_module_2()
+   {
+      mergedObserver().Dimension.ShouldBeEqualTo(Constants.Dimension.NO_DIMENSION);
+   }
+
+   [Observation]
+   public void the_description_and_icon_should_be_from_module_2()
+   {
+      mergedObserver().Description.ShouldBeEqualTo("Observer from module 2");
+      mergedObserver().Icon.ShouldBeEqualTo("Icon_O2");
+   }
+
+   [Observation]
+   public void the_molecule_list_should_be_extended()
+   {
+      var moleculeList = mergedObserver().MoleculeList;
+      moleculeList.MoleculeNames.ShouldContain("MolA");
+      moleculeList.MoleculeNames.ShouldContain("MolB");
+   }
+}
+
 internal class When_extending_a_molecule_containing_an_active_transport_with_different_properties : concern_for_SimulationBuilder
 {
    protected override void Context()
