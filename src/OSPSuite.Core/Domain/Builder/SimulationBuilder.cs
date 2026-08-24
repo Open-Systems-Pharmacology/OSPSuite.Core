@@ -350,6 +350,15 @@ namespace OSPSuite.Core.Domain.Builder
          // calculation methods are replaced
          target.ClearUsedCalculationMethods();
          incoming.UsedCalculationMethods.Each(x => target.AddUsedCalculationMethod(x.Clone()));
+
+         mergeSameNamedChildren<TransporterMoleculeContainer>(target, incoming, mergeTransporterMoleculeContainer);
+      }
+
+      //TransportName and the properties of the nested active transport realizations are not covered by the generic container merge
+      private void mergeTransporterMoleculeContainer(TransporterMoleculeContainer targetTransporter, TransporterMoleculeContainer sourceTransporter)
+      {
+         targetTransporter.TransportName = sourceTransporter.TransportName;
+         mergeSameNamedChildren<TransportBuilder>(targetTransporter, sourceTransporter, mergeTransportProperties);
       }
 
       private void cacheEntities()
