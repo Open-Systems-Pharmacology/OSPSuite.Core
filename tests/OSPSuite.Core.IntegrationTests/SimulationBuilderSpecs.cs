@@ -963,3 +963,175 @@ internal class When_extending_a_reaction_with_additional_container_criteria : co
       _reaction2.ContainerCriteria.Count.ShouldBeEqualTo(1);
    }
 }
+
+internal class When_extending_an_observer_with_different_properties : concern_for_SimulationBuilder
+{
+   protected override void Context()
+   {
+      base.Context();
+
+      var observer1 = new ContainerObserverBuilder().WithName("Obs1");
+      observer1.Formula = new ExplicitFormula("obs1");
+      observer1.ContainerCriteria = Create.Criteria(x => x.With("Liver"));
+      observer1.Dimension = _modelHelper.AmountPerTimeDimension;
+      observer1.Description = "Observer from module 1";
+      observer1.Icon = "Icon_O1";
+      observer1.MoleculeList.AddMoleculeName("MolA");
+      var module1 = new Module { new ObserverBuildingBlock { observer1 } };
+
+      var observer2 = new ContainerObserverBuilder().WithName("Obs1");
+      observer2.Formula = new ExplicitFormula("obs2");
+      observer2.ContainerCriteria = Create.Criteria(x => x.With("Kidney"));
+      observer2.ContainerCriteria.Operator = CriteriaOperator.Or;
+      observer2.Dimension = Constants.Dimension.NO_DIMENSION;
+      observer2.Description = "Observer from module 2";
+      observer2.Icon = "Icon_O2";
+      observer2.MoleculeList.AddMoleculeName("MolB");
+      var module2 = new Module { new ObserverBuildingBlock { observer2 } };
+      module2.MergeBehavior = MergeBehavior.Extend;
+
+      _simulationConfiguration.AddModuleConfiguration(new ModuleConfiguration(module1));
+      _simulationConfiguration.AddModuleConfiguration(new ModuleConfiguration(module2));
+      sut = new SimulationBuilderForSpecs(_simulationConfiguration);
+   }
+
+   private ObserverBuilder mergedObserver() => sut.Observers.Single(x => x.Name == "Obs1");
+
+   [Observation]
+   public void the_container_criteria_should_contain_conditions_from_both_modules()
+   {
+      var criteria = mergedObserver().ContainerCriteria;
+      criteria.Count.ShouldBeEqualTo(2);
+      criteria.OfType<MatchTagCondition>().Select(x => x.Tag).ShouldContain("Liver");
+      criteria.OfType<MatchTagCondition>().Select(x => x.Tag).ShouldContain("Kidney");
+   }
+
+   [Observation]
+   public void the_container_criteria_operator_should_be_from_module_2()
+   {
+      mergedObserver().ContainerCriteria.Operator.ShouldBeEqualTo(CriteriaOperator.Or);
+   }
+
+   [Observation]
+   public void the_formula_should_be_from_module_2()
+   {
+      mergedObserver().Formula.DowncastTo<ExplicitFormula>().FormulaString.ShouldBeEqualTo("obs2");
+   }
+
+   [Observation]
+   public void the_dimension_should_be_from_module_2()
+   {
+      mergedObserver().Dimension.ShouldBeEqualTo(Constants.Dimension.NO_DIMENSION);
+   }
+
+   [Observation]
+   public void the_description_and_icon_should_be_from_module_2()
+   {
+      mergedObserver().Description.ShouldBeEqualTo("Observer from module 2");
+      mergedObserver().Icon.ShouldBeEqualTo("Icon_O2");
+   }
+
+   [Observation]
+   public void the_molecule_list_should_be_extended()
+   {
+      var moleculeList = mergedObserver().MoleculeList;
+      moleculeList.MoleculeNames.ShouldContain("MolA");
+      moleculeList.MoleculeNames.ShouldContain("MolB");
+   }
+}
+
+internal class When_extending_a_molecule_containing_an_active_transport_with_different_properties : concern_for_SimulationBuilder
+{
+   protected override void Context()
+   {
+      base.Context();
+
+      var molecule1 = new MoleculeBuilder().WithName("A_mol").WithDimension(_modelHelper.AmountPerTimeDimension);
+      molecule1.DefaultStartFormula = new ExplicitFormula("0");
+      var transporter1 = new TransporterMoleculeContainer().WithName("PGP");
+      transporter1.TransportName = "Transport_A";
+      var transport1 = new TransportBuilder().WithName("PGP Transport");
+      transport1.Formula = new ExplicitFormula("k1");
+      transport1.SourceCriteria = Create.Criteria(x => x.With("SourceA"));
+      transport1.TargetCriteria = Create.Criteria(x => x.With("TargetA"));
+      transport1.CreateProcessRateParameter = false;
+      transport1.AddParameter(_modelHelper.NewConstantParameter("shared_param", 1));
+      transport1.AddParameter(_modelHelper.NewConstantParameter("t1_only_param", 10));
+      transporter1.AddActiveTransportRealization(transport1);
+      molecule1.AddTransporterMoleculeContainer(transporter1);
+      var module1 = new Module { new MoleculeBuildingBlock { molecule1 } };
+
+      var molecule2 = new MoleculeBuilder().WithName("A_mol").WithDimension(_modelHelper.AmountPerTimeDimension);
+      molecule2.DefaultStartFormula = new ExplicitFormula("0");
+      var transporter2 = new TransporterMoleculeContainer().WithName("PGP");
+      transporter2.TransportName = "Transport_B";
+      var transport2 = new TransportBuilder().WithName("PGP Transport");
+      transport2.Formula = new ExplicitFormula("k2");
+      transport2.SourceCriteria = Create.Criteria(x => x.With("SourceB"));
+      transport2.TargetCriteria = Create.Criteria(x => x.With("TargetB"));
+      transport2.CreateProcessRateParameter = true;
+      transport2.ProcessRateParameterPersistable = true;
+      transport2.AddParameter(_modelHelper.NewConstantParameter("shared_param", 2));
+      transport2.AddParameter(_modelHelper.NewConstantParameter("t2_only_param", 20));
+      transporter2.AddActiveTransportRealization(transport2);
+      molecule2.AddTransporterMoleculeContainer(transporter2);
+      var module2 = new Module { new MoleculeBuildingBlock { molecule2 } };
+      module2.MergeBehavior = MergeBehavior.Extend;
+
+      _simulationConfiguration.AddModuleConfiguration(new ModuleConfiguration(module1));
+      _simulationConfiguration.AddModuleConfiguration(new ModuleConfiguration(module2));
+      sut = new SimulationBuilderForSpecs(_simulationConfiguration);
+   }
+
+   private TransporterMoleculeContainer mergedTransporter() =>
+      sut.Molecules.Single(x => x.Name == "A_mol").TransporterMoleculeContainerCollection.Single(x => x.Name == "PGP");
+
+   private TransportBuilder mergedTransport() =>
+      mergedTransporter().ActiveTransportRealizations.Single(x => x.Name == "PGP Transport");
+
+   [Observation]
+   public void the_kinetic_should_be_from_module_2()
+   {
+      mergedTransport().Formula.DowncastTo<ExplicitFormula>().FormulaString.ShouldBeEqualTo("k2");
+   }
+
+   [Observation]
+   public void the_source_criteria_should_contain_conditions_from_both_modules()
+   {
+      var sourceCriteria = mergedTransport().SourceCriteria;
+      sourceCriteria.Count.ShouldBeEqualTo(2);
+      sourceCriteria.OfType<MatchTagCondition>().Select(x => x.Tag).ShouldContain("SourceA");
+      sourceCriteria.OfType<MatchTagCondition>().Select(x => x.Tag).ShouldContain("SourceB");
+   }
+
+   [Observation]
+   public void the_target_criteria_should_contain_conditions_from_both_modules()
+   {
+      var targetCriteria = mergedTransport().TargetCriteria;
+      targetCriteria.Count.ShouldBeEqualTo(2);
+      targetCriteria.OfType<MatchTagCondition>().Select(x => x.Tag).ShouldContain("TargetA");
+      targetCriteria.OfType<MatchTagCondition>().Select(x => x.Tag).ShouldContain("TargetB");
+   }
+
+   [Observation]
+   public void the_process_rate_parameter_flags_should_be_from_module_2()
+   {
+      mergedTransport().CreateProcessRateParameter.ShouldBeTrue();
+      mergedTransport().ProcessRateParameterPersistable.ShouldBeTrue();
+   }
+
+   [Observation]
+   public void the_transport_parameters_should_be_extended()
+   {
+      var transport = mergedTransport();
+      transport.GetSingleChildByName<IParameter>("shared_param").Value.ShouldBeEqualTo(2);
+      transport.GetSingleChildByName<IParameter>("t1_only_param").Value.ShouldBeEqualTo(10);
+      transport.GetSingleChildByName<IParameter>("t2_only_param").Value.ShouldBeEqualTo(20);
+   }
+
+   [Observation]
+   public void the_transport_name_should_be_from_module_2()
+   {
+      mergedTransporter().TransportName.ShouldBeEqualTo("Transport_B");
+   }
+}
