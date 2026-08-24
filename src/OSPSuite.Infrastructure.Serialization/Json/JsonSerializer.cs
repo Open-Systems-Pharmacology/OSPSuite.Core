@@ -21,6 +21,13 @@ namespace OSPSuite.Infrastructure.Serialization.Json
       //Defines a static field as the free license only allows for a limited number of schema generation per hour
       private static readonly ConcurrentDictionary<Type, JSchema> _schemas = new ConcurrentDictionary<Type, JSchema>();
 
+      private static readonly IReadOnlyDictionary<string, double> _specialFloatingPointValues = new Dictionary<string, double>
+      {
+         ["NaN"] = double.NaN,
+         ["Infinity"] = double.PositiveInfinity,
+         ["-Infinity"] = double.NegativeInfinity,
+      };
+
       public async Task Serialize(object objectToSerialize, string fileName)
       {
          var data = Serialize(objectToSerialize);
@@ -101,10 +108,32 @@ namespace OSPSuite.Infrastructure.Serialization.Json
 
       protected virtual object ValidatedObject(JToken jToken, JSchema schema, Type snapshotType)
       {
+         normalizeSpecialFloatingPointValues(jToken);
+
          if (jToken.IsValid(schema, out IList<string> errorMessages))
             return jToken.ToObject(snapshotType);
 
          throw new SnapshotFileMismatchException(snapshotType.Name, errorMessages);
+      }
+
+      //NaN, Infinity and -Infinity are not valid JSON numbers, so Newtonsoft writes them as quoted
+      //strings on serialization. The generated schema however expects Number for float properties and
+      //would reject those strings, making a snapshot we wrote ourselves un-loadable. Convert them back
+      //to numeric tokens before schema validation so they round-trip (deserialization already reads them).
+      private static void normalizeSpecialFloatingPointValues(JToken jToken)
+      {
+         if (!(jToken is JContainer container))
+            return;
+
+         var specialValues = container.DescendantsAndSelf()
+            .OfType<JValue>()
+            .Where(x => x.Type == JTokenType.String && _specialFloatingPointValues.ContainsKey((string)x.Value))
+            .ToList();
+
+         foreach (var value in specialValues)
+         {
+            value.Replace(new JValue(_specialFloatingPointValues[(string)value.Value]));
+         }
       }
 
       private JSchema validateSnapshot(Type snapshotType) => _schemas.GetOrAdd(snapshotType, createSchemaForType);
