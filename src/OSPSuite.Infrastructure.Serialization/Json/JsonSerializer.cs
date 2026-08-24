@@ -116,10 +116,8 @@ namespace OSPSuite.Infrastructure.Serialization.Json
          throw new SnapshotFileMismatchException(snapshotType.Name, errorMessages);
       }
 
-      //NaN, Infinity and -Infinity are not valid JSON numbers, so Newtonsoft writes them as quoted
-      //strings on serialization. The generated schema however expects Number for float properties and
-      //would reject those strings, making a snapshot we wrote ourselves un-loadable. Convert them back
-      //to numeric tokens before schema validation so they round-trip (deserialization already reads them).
+      //Newtonsoft writes NaN/Infinity/-Infinity as quoted strings. Convert them back to numeric
+      //tokens before validation so snapshots round-trip.
       private static void normalizeSpecialFloatingPointValues(JToken jToken)
       {
          if (!(jToken is JContainer container))
