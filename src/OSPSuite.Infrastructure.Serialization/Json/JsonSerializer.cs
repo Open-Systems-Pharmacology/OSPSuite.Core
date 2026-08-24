@@ -11,6 +11,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using OSPSuite.Assets.Extensions;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Infrastructure.Serialization.Json
 {
@@ -20,6 +21,13 @@ namespace OSPSuite.Infrastructure.Serialization.Json
 
       //Defines a static field as the free license only allows for a limited number of schema generation per hour
       private static readonly ConcurrentDictionary<Type, JSchema> _schemas = new ConcurrentDictionary<Type, JSchema>();
+
+      private static readonly IReadOnlyDictionary<string, double> _specialFloatingPointValues = new Dictionary<string, double>
+      {
+         ["NaN"] = double.NaN,
+         ["Infinity"] = double.PositiveInfinity,
+         ["-Infinity"] = double.NegativeInfinity,
+      };
 
       public async Task Serialize(object objectToSerialize, string fileName)
       {
@@ -101,11 +109,36 @@ namespace OSPSuite.Infrastructure.Serialization.Json
 
       protected virtual object ValidatedObject(JToken jToken, JSchema schema, Type snapshotType)
       {
+         normalizeSpecialFloatingPointValues(jToken, schema);
+
          if (jToken.IsValid(schema, out IList<string> errorMessages))
             return jToken.ToObject(snapshotType);
 
          throw new SnapshotFileMismatchException(snapshotType.Name, errorMessages);
       }
+
+      //Newtonsoft writes NaN/Infinity/-Infinity as quoted strings, which the generated schema rejects
+      //where it expects a Number. Convert those back to numeric tokens so snapshots round-trip.
+      private static void normalizeSpecialFloatingPointValues(JToken jToken, JSchema schema)
+      {
+         if (jToken.IsValid(schema, out IList<ValidationError> errors))
+            return;
+
+         allErrors(errors)
+            .Where(expectsNumberButGotSpecialFloatingPointString)
+            .Select(error => jToken.SelectToken(error.Path))
+            .OfType<JValue>()
+            .Each(value => value.Replace(new JValue(_specialFloatingPointValues[(string)value.Value])));
+      }
+
+      private static IEnumerable<ValidationError> allErrors(IEnumerable<ValidationError> errors) =>
+         errors.SelectMany(error => new[] { error }.Concat(allErrors(error.ChildErrors)));
+
+      private static bool expectsNumberButGotSpecialFloatingPointString(ValidationError error) =>
+         error.ErrorType == ErrorType.Type
+         && (error.Schema.Type.GetValueOrDefault() & JSchemaType.Number) == JSchemaType.Number
+         && error.Value is string value
+         && _specialFloatingPointValues.ContainsKey(value);
 
       private JSchema validateSnapshot(Type snapshotType) => _schemas.GetOrAdd(snapshotType, createSchemaForType);
 
