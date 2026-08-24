@@ -118,8 +118,7 @@ namespace OSPSuite.Infrastructure.Serialization.Json
       }
 
       //Newtonsoft writes NaN/Infinity/-Infinity as quoted strings, which the generated schema rejects
-      //where it expects a Number. Convert those back to numeric tokens so snapshots round-trip. Driven
-      //by the schema so string fields that happen to hold one of these literals are left untouched.
+      //where it expects a Number. Convert those back to numeric tokens so snapshots round-trip.
       private static void normalizeSpecialFloatingPointValues(JToken jToken, JSchema schema)
       {
          if (jToken.IsValid(schema, out IList<ValidationError> errors))
