@@ -874,6 +874,96 @@ internal class When_extending_an_application_containing_a_transport_that_turns_o
    }
 }
 
+internal class When_extending_a_reaction_without_specifying_container_criteria : concern_for_SimulationBuilder
+{
+   protected override void Context()
+   {
+      base.Context();
+
+      var reaction1 = new ReactionBuilder().WithName("R1")
+         .WithKinetic(new ExplicitFormula("k1"))
+         .WithDimension(_modelHelper.AmountPerTimeDimension);
+      reaction1.ContainerCriteria = Create.Criteria(x => x.With("Liver"));
+      var module1 = new Module { new ReactionBuildingBlock { reaction1 } };
+
+      var reaction2 = new ReactionBuilder().WithName("R1")
+         .WithKinetic(new ExplicitFormula("k2"))
+         .WithDimension(_modelHelper.AmountPerTimeDimension);
+      var module2 = new Module { new ReactionBuildingBlock { reaction2 } };
+      module2.MergeBehavior = MergeBehavior.Extend;
+
+      _simulationConfiguration.AddModuleConfiguration(new ModuleConfiguration(module1));
+      _simulationConfiguration.AddModuleConfiguration(new ModuleConfiguration(module2));
+      sut = new SimulationBuilderForSpecs(_simulationConfiguration);
+   }
+
+   private ReactionBuilder mergedReaction() => sut.Reactions.Single(x => x.Name == "R1");
+
+   [Observation]
+   public void the_kinetic_should_be_from_module_2()
+   {
+      mergedReaction().Formula.DowncastTo<ExplicitFormula>().FormulaString.ShouldBeEqualTo("k2");
+   }
+
+   [Observation]
+   public void the_container_criteria_of_module_1_should_be_preserved()
+   {
+      var containerCriteria = mergedReaction().ContainerCriteria;
+      containerCriteria.Count.ShouldBeEqualTo(1);
+      containerCriteria.OfType<MatchTagCondition>().Single().Tag.ShouldBeEqualTo("Liver");
+   }
+}
+
+internal class When_extending_a_reaction_with_additional_container_criteria : concern_for_SimulationBuilder
+{
+   private ReactionBuilder _reaction2;
+
+   protected override void Context()
+   {
+      base.Context();
+
+      var reaction1 = new ReactionBuilder().WithName("R1")
+         .WithKinetic(new ExplicitFormula("k1"))
+         .WithDimension(_modelHelper.AmountPerTimeDimension);
+      reaction1.ContainerCriteria = Create.Criteria(x => x.With("Liver"));
+      var module1 = new Module { new ReactionBuildingBlock { reaction1 } };
+
+      _reaction2 = new ReactionBuilder().WithName("R1")
+         .WithKinetic(new ExplicitFormula("k2"))
+         .WithDimension(_modelHelper.AmountPerTimeDimension);
+      _reaction2.ContainerCriteria = Create.Criteria(x => x.With("Kidney").With(CriteriaOperator.Or));
+      var module2 = new Module { new ReactionBuildingBlock { _reaction2 } };
+      module2.MergeBehavior = MergeBehavior.Extend;
+
+      _simulationConfiguration.AddModuleConfiguration(new ModuleConfiguration(module1));
+      _simulationConfiguration.AddModuleConfiguration(new ModuleConfiguration(module2));
+      sut = new SimulationBuilderForSpecs(_simulationConfiguration);
+   }
+
+   private ReactionBuilder mergedReaction() => sut.Reactions.Single(x => x.Name == "R1");
+
+   [Observation]
+   public void the_container_criteria_should_contain_conditions_from_both_modules()
+   {
+      var containerCriteria = mergedReaction().ContainerCriteria;
+      containerCriteria.Count.ShouldBeEqualTo(2);
+      containerCriteria.OfType<MatchTagCondition>().Select(x => x.Tag).ShouldContain("Liver");
+      containerCriteria.OfType<MatchTagCondition>().Select(x => x.Tag).ShouldContain("Kidney");
+   }
+
+   [Observation]
+   public void the_operator_should_be_from_module_2()
+   {
+      mergedReaction().ContainerCriteria.Operator.ShouldBeEqualTo(CriteriaOperator.Or);
+   }
+
+   [Observation]
+   public void the_building_block_of_module_2_should_not_be_modified()
+   {
+      _reaction2.ContainerCriteria.Count.ShouldBeEqualTo(1);
+   }
+}
+
 internal class When_extending_an_observer_with_different_properties : concern_for_SimulationBuilder
 {
    protected override void Context()

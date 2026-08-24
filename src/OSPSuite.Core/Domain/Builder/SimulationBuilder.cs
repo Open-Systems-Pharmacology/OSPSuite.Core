@@ -252,8 +252,7 @@ namespace OSPSuite.Core.Domain.Builder
          targetReaction.Description = string.IsNullOrEmpty(incoming.Description) ? targetReaction.Description : incoming.Description;
          targetReaction.Dimension = incoming.Dimension ?? targetReaction.Dimension;
 
-         if (incoming.ContainerCriteria != null)
-            targetReaction.ContainerCriteria = incoming.ContainerCriteria;
+         mergeDescriptorCriteria(targetReaction.ContainerCriteria, incoming.ContainerCriteria);
       }
 
       private static void upsertPartners(ReactionBuilder target, ReactionBuilder incoming, bool isEduct)
