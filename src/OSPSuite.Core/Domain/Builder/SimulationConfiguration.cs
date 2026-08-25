@@ -17,6 +17,11 @@ namespace OSPSuite.Core.Domain.Builder
 
       public SimModelExportMode SimModelExportMode { get; set; } = SimModelExportMode.Full;
       public bool ShouldValidate { get; set; } = true;
+      /// <summary>
+      ///    Indicates whether model construction reports progress (default is <c>true</c>). Set to <c>false</c> for each
+      ///    configuration constructed in parallel — every construction otherwise publishes its own progress stream into
+      ///    the shared event publisher (see <see cref="IModelConstructor.CreateModelFrom" />).
+      /// </summary>
       public bool ShowProgress { get; set; } = true;
       public bool PerformCircularReferenceCheck { get; set; } = true;
       public bool CreateAllProcessRateParameters { get; set; }

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Domain.Services
 {
@@ -39,10 +40,11 @@ namespace OSPSuite.Core.Domain.Services
       /// <typeparam name="TResult">Data produced by the worker function</typeparam>
       /// <param name="data">List of data to consume by the workers</param>
       /// <param name="func">
-      ///    A function running on each worker on each piece of data. Needs to throw exceptions if the <paramref name="func"/> is not successful
+      ///    A function running on each worker on each piece of data. Needs to throw exceptions if the <paramref name="func"/> is not successful.
+      ///    Exceptions are captured per item and returned as failed results — the batch continues.
       /// </param>
       /// <param name="cancellationToken">Cancellation token to cancel the threads</param>
-      /// <param name="numberOfCoresToUse">Number of cores to use. Use null to take all cores</param>
+      /// <param name="numberOfCoresToUse">Maximum number of items processed concurrently. Must be at least 1, or -1 to use all available cores</param>
       /// <returns>Dictionary binding a result for each input data after running the action on it</returns>
       Task<IDictionary<TData, ConcurrencyManagerResult<TResult>>> RunAsync<TData, TResult>(
          IReadOnlyList<TData> data,
@@ -56,11 +58,12 @@ namespace OSPSuite.Core.Domain.Services
       /// <typeparam name="TData">Data type to consume by the worker function</typeparam>
       /// <param name="data">List of data to consume by the workers</param>
       /// <param name="action">
-      ///    An action running on each worker on each piece of data. Needs to throw exceptions if the <paramref name="action"/>is not successful
+      ///    An action running on each worker on each piece of data. Unlike the overload returning results, exceptions
+      ///    thrown by the action are not isolated per item: they abort the batch and surface as an <see cref="AggregateException"/>.
+      ///    Catch inside the action to keep the batch running on a per-item failure.
       /// </param>
       /// <param name="cancellationToken">Cancellation token to cancel the threads</param>
-      /// <param name="numberOfCoresToUse">Number of cores to use. Use null to take all cores</param>
-      /// <returns>Dictionary binding a result for each input data after running the action on it</returns>
+      /// <param name="numberOfCoresToUse">Maximum number of items processed concurrently. Must be at least 1, or -1 to use all available cores</param>
       Task RunAsync<TData>(
          IReadOnlyList<TData> data,
          Action<TData, CancellationToken> action,
@@ -105,7 +108,7 @@ namespace OSPSuite.Core.Domain.Services
                {
                   results.TryAdd(
                      datum,
-                     new ConcurrencyManagerResult<TResult>(datum.Id, e.Message)
+                     new ConcurrencyManagerResult<TResult>(datum.Id, e.FullMessage())
                   );
                }
             }), cancellationToken);

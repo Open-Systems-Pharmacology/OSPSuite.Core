@@ -838,4 +838,29 @@ namespace OSPSuite.Core
          _results.Each(result => structuralFingerprintOf(result.Model).ShouldBeEqualTo(_expectedModelFingerprint));
       }
    }
+
+   internal class When_resolving_the_services_involved_in_parallel_model_construction : ContextForIntegration<IModelConstructor>
+   {
+      //parallel model construction relies on every resolution returning a fresh instance. The model validators hold
+      //per-run state and would corrupt validation results silently if they were ever registered as singleton.
+      [Observation]
+      public void the_model_constructor_should_be_created_per_resolution() =>
+         ReferenceEquals(IoC.Resolve<IModelConstructor>(), IoC.Resolve<IModelConstructor>()).ShouldBeFalse();
+
+      [Observation]
+      public void the_model_validators_should_be_created_per_resolution()
+      {
+         shouldResolveTransient<ValidatorForForFormula>();
+         shouldResolveTransient<ValidatorForQuantities>();
+         shouldResolveTransient<ValidatorForReactionsAndTransports>();
+         shouldResolveTransient<ValidatorForObserversAndEvents>();
+         shouldResolveTransient<SpatialStructureValidator>();
+      }
+
+      [Observation]
+      public void the_entity_validator_should_be_created_per_resolution() => shouldResolveTransient<EntityValidator>();
+
+      private static void shouldResolveTransient<T>() =>
+         ReferenceEquals(IoC.Resolve<T>(), IoC.Resolve<T>()).ShouldBeFalse();
+   }
 }
