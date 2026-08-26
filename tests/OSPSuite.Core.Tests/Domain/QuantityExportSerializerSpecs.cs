@@ -22,6 +22,9 @@ namespace OSPSuite.Core.Domain
    
    public class When_serializing_a_quantity_export : concern_for_QuantityExportSerializer
    {
+      private const int QUANTITY_ID = 13;
+      private const int FORMULA_ID = 2;
+
       private QuantityExport _quantityExport;
       private XElement _resultXML;
 
@@ -30,8 +33,8 @@ namespace OSPSuite.Core.Domain
          base.Context();
          _quantityExport = new QuantityExport();
          _quantityExport.EntityId = "quantity";
-         _quantityExport.Id = 13;
-         _quantityExport.FormulaId = 2;
+         _quantityExport.Id = QUANTITY_ID;
+         _quantityExport.FormulaId = FORMULA_ID;
          _quantityExport.Name = "TestValue";
          _quantityExport.Path = @"Test\Plasma\";
          _quantityExport.Unit = "mol";

@@ -22,6 +22,16 @@ namespace OSPSuite.Core.Domain
 
    public class When_serializing_the_solver_settings : Concern_for_SolverSettingsExportSerializer
    {
+      private const int ABS_TOL_ID = 1;
+      private const int REL_TOL_ID = 2;
+      private const int H0_ID = 3;
+      private const int H_MAX_ID = 4;
+      private const int H_MIN_ID = 5;
+      private const int MX_STEP_ID = 6;
+      private const int USE_JACOBIAN_ID = 7;
+      private const int CHECK_FOR_NEGATIVE_VALUES_ID = 8;
+      private const int SOLVER_OPTION_ID = 22;
+
       private SolverSettingsExport _solverSettingsExport;
       private XElement _xmlResultNode;
 
@@ -29,16 +39,16 @@ namespace OSPSuite.Core.Domain
       {
          base.Context();
          _solverSettingsExport = new SolverSettingsExport();
-         _solverSettingsExport.AbsTol = 1;
-         _solverSettingsExport.RelTol = 2;
-         _solverSettingsExport.H0 = 3;
-         _solverSettingsExport.HMax = 4;
-         _solverSettingsExport.HMin = 5;
-         _solverSettingsExport.MxStep = 6;
+         _solverSettingsExport.AbsTol = ABS_TOL_ID;
+         _solverSettingsExport.RelTol = REL_TOL_ID;
+         _solverSettingsExport.H0 = H0_ID;
+         _solverSettingsExport.HMax = H_MAX_ID;
+         _solverSettingsExport.HMin = H_MIN_ID;
+         _solverSettingsExport.MxStep = MX_STEP_ID;
          _solverSettingsExport.Name = "CVODE";
-         _solverSettingsExport.UseJacobian = 7;
-         _solverSettingsExport.CheckForNegativeValues = 8;
-         _solverSettingsExport.SolverOptions = new Collection<SolverOptionExport> {new SolverOptionExport("Option",22)};
+         _solverSettingsExport.UseJacobian = USE_JACOBIAN_ID;
+         _solverSettingsExport.CheckForNegativeValues = CHECK_FOR_NEGATIVE_VALUES_ID;
+         _solverSettingsExport.SolverOptions = new Collection<SolverOptionExport> {new SolverOptionExport("Option", SOLVER_OPTION_ID)};
 
       }
       protected override void Because()

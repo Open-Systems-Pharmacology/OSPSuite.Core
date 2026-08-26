@@ -25,6 +25,10 @@ namespace OSPSuite.Core.Domain
 
    public class When_serializing_a_table_formula_with_offset_export : concern_for_TableFormulaWithOffsetExportSerializer
    {
+      private const int TABLE_OBJECT_ID = 123;
+      private const int OFFSET_OBJECT_ID = 456;
+      private const int FORMULA_ID = 789;
+
       private TableFormulaWithOffsetExport _tableFormulaWithOffsetExport;
       private XElement _xmlResultElement;
 
@@ -32,9 +36,9 @@ namespace OSPSuite.Core.Domain
       {
          base.Context();
          _tableFormulaWithOffsetExport = new TableFormulaWithOffsetExport();
-         _tableFormulaWithOffsetExport.TableObjectId = 123;
-         _tableFormulaWithOffsetExport.OffsetObjectId = 456;
-         _tableFormulaWithOffsetExport.Id = 789;
+         _tableFormulaWithOffsetExport.TableObjectId = TABLE_OBJECT_ID;
+         _tableFormulaWithOffsetExport.OffsetObjectId = OFFSET_OBJECT_ID;
+         _tableFormulaWithOffsetExport.Id = FORMULA_ID;
 
       }
       protected override void Because()

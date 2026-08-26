@@ -21,6 +21,9 @@ namespace OSPSuite.Core.Domain
 
    public class When_serializing_an_observer_export : concern_for_ObserverExportSerializer
    {
+      private const int OBSERVER_ID = 3;
+      private const int FORMULA_ID = 2;
+
       private QuantityExport _observerExport;
       private XElement _xmlResultNode;
 
@@ -29,8 +32,8 @@ namespace OSPSuite.Core.Domain
          base.Context();
          _observerExport = new QuantityExport();
          _observerExport.EntityId = "Bla";
-         _observerExport.Id = 3;
-         _observerExport.FormulaId = 2;
+         _observerExport.Id = OBSERVER_ID;
+         _observerExport.FormulaId = FORMULA_ID;
          _observerExport.Name = "look";
          _observerExport.Path =@"Hier\gibt\es\was\zu\sehen";
          _observerExport.Unit = "mm";

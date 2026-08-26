@@ -22,6 +22,8 @@ namespace OSPSuite.Core.Domain
 
    public class When_serializing_a_explicit_formula_export : concern_for_ExplicitFormulaExportSerilalizer
    {
+      private const int FORMULA_ID = 12;
+
       private ExplicitFormulaExport _explicitFormulaExport;
       private XElement _xmlResultElement;
 
@@ -30,7 +32,7 @@ namespace OSPSuite.Core.Domain
          base.Context();
          _explicitFormulaExport = new ExplicitFormulaExport();
          _explicitFormulaExport.Equation = "PA/VB * 2";
-         _explicitFormulaExport.Id = 12;
+         _explicitFormulaExport.Id = FORMULA_ID;
          _explicitFormulaExport.ReferenceList.Add("VB", 1);
          _explicitFormulaExport.ReferenceList.Add("VC", 1);
          _explicitFormulaExport.ReferenceList.Add("PA", 2);
