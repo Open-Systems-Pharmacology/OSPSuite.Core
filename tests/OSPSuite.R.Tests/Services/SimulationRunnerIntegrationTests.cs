@@ -37,7 +37,7 @@ namespace OSPSuite.R.Services
       [Observation]
       public void should_create_the_solver_settings_with_check_for_negative_values()
       {
-         _simulation.Settings.Solver.CheckForNegativeValues.ShouldNotBeNull();
+         _simulation.Settings.Solver.CheckForNegativeValues.ShouldBeTrue();
       }
    }
 

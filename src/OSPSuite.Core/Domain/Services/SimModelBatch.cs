@@ -28,8 +28,6 @@ namespace OSPSuite.Core.Domain.Services
       /// </summary>
       public bool KeepXMLNodeInSimModelSimulation { get; set; }
 
-      public bool CheckForNegativeValues { get; set; }
-
       public bool AutoReduceTolerances { get; set; }
 
       public bool TreatConstantMoleculesAsParameters { get; set; } = true;

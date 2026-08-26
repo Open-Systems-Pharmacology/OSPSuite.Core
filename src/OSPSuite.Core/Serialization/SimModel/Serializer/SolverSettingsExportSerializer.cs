@@ -26,6 +26,7 @@ namespace OSPSuite.Core.Serialization.SimModel.Serializer
          addAsElement(node, objectToSerialize, x => x.MxStep);
          addAsElement(node, objectToSerialize, x => x.RelTol);
          addAsElement(node, objectToSerialize, x => x.UseJacobian);
+         addAsElement(node, objectToSerialize, x => x.CheckForNegativeValues);
          return node;
       }
 
