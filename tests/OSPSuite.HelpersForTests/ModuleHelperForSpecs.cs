@@ -570,6 +570,9 @@ namespace OSPSuite.Helpers
          var module = _objectBaseFactory.Create<Module>().WithName("Module3");
          var spatialStructure = CreateSpatialStructure("SPATIAL STRUCTURE MODULE 3");
 
+         //an empty global molecule properties container that will replace the ones defined in the previous modules
+         spatialStructure.GlobalMoleculeDependentProperties = _spatialStructureFactory.CreateGlobalMoleculeDependentProperties();
+
          var tumor = createContainerWithName(Tumor);
          var tumorPlasma = createContainerWithName(Plasma, ContainerMode.Physical);
          tumorPlasma.Add(NewConstantParameter(Volume, 20));

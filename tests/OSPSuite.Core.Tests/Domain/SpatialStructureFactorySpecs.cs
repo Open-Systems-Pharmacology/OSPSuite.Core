@@ -39,11 +39,9 @@ namespace OSPSuite.Core.Domain
       }
 
       [Observation]
-      public void should_set_the_global_molecules_container_right()
+      public void should_not_create_the_global_molecules_container()
       {
-         _result.GlobalMoleculeDependentProperties.ShouldNotBeNull();
-         _result.GlobalMoleculeDependentProperties.Name.ShouldBeEqualTo(Constants.MOLECULE_PROPERTIES);
-         _result.GlobalMoleculeDependentProperties.Mode.ShouldBeEqualTo(ContainerMode.Logical);
+         _result.GlobalMoleculeDependentProperties.ShouldBeNull();
       }
 
       [Observation]
@@ -52,6 +50,24 @@ namespace OSPSuite.Core.Domain
          _result.NeighborhoodsContainer.ShouldNotBeNull();
          _result.NeighborhoodsContainer.Name.ShouldBeEqualTo(Constants.NEIGHBORHOODS);
          _result.NeighborhoodsContainer.Mode.ShouldBeEqualTo(ContainerMode.Logical);
+      }
+   }
+
+   public class When_creating_the_global_molecule_dependent_properties_container : concern_for_SpatialStructureFactory
+   {
+      private IContainer _result;
+
+      protected override void Because()
+      {
+         _result = sut.CreateGlobalMoleculeDependentProperties();
+      }
+
+      [Observation]
+      public void should_return_a_logical_molecule_container_named_molecule_properties()
+      {
+         _result.Name.ShouldBeEqualTo(Constants.MOLECULE_PROPERTIES);
+         _result.Mode.ShouldBeEqualTo(ContainerMode.Logical);
+         _result.ContainerType.ShouldBeEqualTo(ContainerType.Molecule);
       }
    }
 }
