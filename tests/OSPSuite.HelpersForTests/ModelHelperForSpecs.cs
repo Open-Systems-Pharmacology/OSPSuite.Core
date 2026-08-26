@@ -856,6 +856,7 @@ namespace OSPSuite.Helpers
       private SpatialStructure getSpatialStructure()
       {
          var spatialStructure = _spatialStructureFactory.Create().WithName("SPATIAL STRUCTURE");
+         spatialStructure.GlobalMoleculeDependentProperties = _spatialStructureFactory.CreateGlobalMoleculeDependentProperties();
 
          var organism = _objectBaseFactory.Create<IContainer>()
             .WithName(Constants.ORGANISM)

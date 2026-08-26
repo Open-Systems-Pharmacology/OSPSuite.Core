@@ -5,6 +5,12 @@ namespace OSPSuite.Core.Domain.Builder
    public interface ISpatialStructureFactory
    {
       SpatialStructure Create();
+
+      /// <summary>
+      ///    Creates the container holding the global molecule dependent properties of a spatial structure.
+      ///    It is not part of the spatial structure created by <see cref="Create" /> and needs to be added explicitly
+      /// </summary>
+      IContainer CreateGlobalMoleculeDependentProperties();
    }
 
    public class SpatialStructureFactory : ISpatialStructureFactory
@@ -24,13 +30,6 @@ namespace OSPSuite.Core.Domain.Builder
             .WithMode(ContainerMode.Logical);
          spatialStructure.NeighborhoodsContainer = neighborhoods;
 
-         var moleculeProperties = CreateGlobalMoleculeDependentProperties()
-            .WithName(Constants.MOLECULE_PROPERTIES)
-            .WithMode(ContainerMode.Logical)
-            .WithContainerType(ContainerType.Molecule);
-
-         spatialStructure.GlobalMoleculeDependentProperties = moleculeProperties;
-
          var eventContainer = _objectBaseFactory.Create<IContainer>()
             .WithName(Constants.EVENTS)
             .WithMode(ContainerMode.Logical);
@@ -45,9 +44,12 @@ namespace OSPSuite.Core.Domain.Builder
          return _objectBaseFactory.Create<IContainer>();
       }
 
-      protected virtual IContainer CreateGlobalMoleculeDependentProperties()
+      public IContainer CreateGlobalMoleculeDependentProperties()
       {
-         return _objectBaseFactory.Create<IContainer>();
+         return _objectBaseFactory.Create<IContainer>()
+            .WithName(Constants.MOLECULE_PROPERTIES)
+            .WithMode(ContainerMode.Logical)
+            .WithContainerType(ContainerType.Molecule);
       }
 
       protected virtual SpatialStructure CreateSpatialStructure()
