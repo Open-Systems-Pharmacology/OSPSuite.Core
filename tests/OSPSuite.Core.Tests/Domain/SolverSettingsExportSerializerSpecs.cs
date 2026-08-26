@@ -37,6 +37,7 @@ namespace OSPSuite.Core.Domain
          _solverSettingsExport.MxStep = 6;
          _solverSettingsExport.Name = "CVODE";
          _solverSettingsExport.UseJacobian = 7;
+         _solverSettingsExport.CheckForNegativeValues = 8;
          _solverSettingsExport.SolverOptions = new Collection<SolverOptionExport> {new SolverOptionExport("Option",22)};
 
       }
@@ -58,6 +59,13 @@ namespace OSPSuite.Core.Domain
          _xmlResultNode.Element(XName.Get("UseJacobian", SimModelSchemaConstants.Namespace)).Attribute(SimModelSchemaConstants.Id).Value.ShouldBeEqualTo(_solverSettingsExport.UseJacobian.ToString());
          
       }
+
+      [Observation]
+      public void should_add_the_check_for_negative_values_node_referencing_the_solver_parameter()
+      {
+         _xmlResultNode.Element(XName.Get("CheckForNegativeValues", SimModelSchemaConstants.Namespace)).Attribute(SimModelSchemaConstants.Id).Value.ShouldBeEqualTo(_solverSettingsExport.CheckForNegativeValues.ToString());
+      }
+
       [Observation]
       public void should_add_the_solver_options_node()
       {

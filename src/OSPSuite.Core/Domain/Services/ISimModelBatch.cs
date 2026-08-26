@@ -54,8 +54,6 @@ namespace OSPSuite.Core.Domain.Services
       //Because per default XML is NOT cached, we need to set the KeepXML-option to true BEFORE loading a simulation.
       bool KeepXMLNodeInSimModelSimulation { get; set; }
 
-      bool CheckForNegativeValues { get; set; }
-
       bool AutoReduceTolerances { get; set; }
    }
 }

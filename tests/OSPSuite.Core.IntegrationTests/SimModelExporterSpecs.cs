@@ -1,9 +1,12 @@
 using System.IO;
+using System.Linq;
 using System.Xml;
+using System.Xml.Linq;
 using NUnit.Framework;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain;
+using OSPSuite.Core.Serialization.SimModel;
 using OSPSuite.Core.Serialization.SimModel.Serializer;
 using OSPSuite.Core.Serialization.SimModel.Services;
 using OSPSuite.Helpers;
@@ -71,6 +74,42 @@ namespace OSPSuite.Core
             node.Attributes.GetNamedItem("negativeValuesAllowed").Value.ShouldBeEqualTo("0");
          }
       }
+   }
+
+   public class When_exporting_a_simulation_for_which_the_negative_values_check_was_switched_off : concern_for_SimModelExporter
+   {
+      private IModelCoreSimulation _simulation;
+      private string _xmlString;
+
+      protected override void Context()
+      {
+         base.Context();
+         _simulation = IoC.Resolve<SimulationHelperForSpecs>().CreateSimulation();
+         _simulation.Settings.Solver.CheckForNegativeValues = false;
+      }
+
+      protected override void Because()
+      {
+         _xmlString = sut.ExportSimModelXml(_simulation, SimModelExportMode.Full);
+      }
+
+      [Observation]
+      public void should_export_the_setting_as_a_solver_node_referencing_the_solver_parameter()
+      {
+         var doc = XDocument.Parse(_xmlString);
+         var solverNode = doc.Descendants(simModelName(SimModelSchemaConstants.Solver)).Single();
+         var parameterId = solverNode.Element(simModelName(Constants.Parameters.CHECK_FOR_NEGATIVE_VALUES)).Attribute(SimModelSchemaConstants.Id).Value;
+
+         var parameterNode = doc.Descendants(simModelName(SimModelSchemaConstants.Parameter))
+            .Single(x => x.Attribute(SimModelSchemaConstants.Id).Value == parameterId);
+         var formulaId = parameterNode.Attribute(SimModelSchemaConstants.FormulaId).Value;
+
+         var formulaNode = doc.Descendants(simModelName(SimModelSchemaConstants.ExplicitFormula))
+            .Single(x => x.Attribute(SimModelSchemaConstants.Id).Value == formulaId);
+         formulaNode.Element(simModelName(SimModelSchemaConstants.Equation)).Value.ShouldBeEqualTo("0");
+      }
+
+      private static XName simModelName(string name) => XName.Get(name, SimModelSchemaConstants.Namespace);
    }
 
    public class When_serializing_a_simulation_to_a_file : concern_for_SimModelExporter
