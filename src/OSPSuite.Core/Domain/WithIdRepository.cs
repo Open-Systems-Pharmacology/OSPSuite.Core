@@ -16,12 +16,13 @@ namespace OSPSuite.Core.Domain
 
    /// <summary>
    ///    Registered as a singleton and accessed from concurrent operations (e.g. building blocks being lazy-loaded while
-   ///    simulations are mapped or constructed in parallel). All access to the underlying cache is synchronized.
+   ///    simulations are mapped or constructed in parallel). All access to the underlying cache is synchronized, and the
+   ///    cache itself is private so that derived types cannot bypass that synchronization.
    /// </summary>
    public class WithIdRepository : IWithIdRepository
    {
       private readonly object _locker = new object();
-      protected readonly ICache<string, IWithId> _entities = new Cache<string, IWithId>(x => x.Id, x => null);
+      private readonly ICache<string, IWithId> _entities = new Cache<string, IWithId>(x => x.Id, x => null);
 
       public IEnumerable<IWithId> All()
       {
