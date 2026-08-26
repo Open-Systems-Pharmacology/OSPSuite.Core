@@ -12,6 +12,14 @@ namespace OSPSuite.Core.Domain.Services
 {
    public interface IModelConstructor
    {
+      /// <summary>
+      ///    Creates the model defined by <paramref name="simulationConfiguration" /> and returns the creation result.
+      ///    Safe for concurrent calls — one shared instance may construct models in parallel — provided each call receives
+      ///    its own <see cref="SimulationConfiguration" /> whose building blocks are not shared mutably with another
+      ///    concurrent call. Parallel callers should set <see cref="SimulationConfiguration.ShowProgress" /> to
+      ///    <c>false</c> per call and report aggregate progress themselves; otherwise every call publishes its own
+      ///    progress stream into the shared event publisher.
+      /// </summary>
       CreationResult CreateModelFrom(SimulationConfiguration simulationConfiguration, string modelName);
    }
 

@@ -1,3 +1,5 @@
+using System.Linq;
+using System.Threading.Tasks;
 using FakeItEasy;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
@@ -151,6 +153,44 @@ namespace OSPSuite.Core.Domain
       }
    }
 
+   public class When_registering_many_objects_concurrently_from_multiple_threads : concern_for_WithIdRepository
+   {
+      private IWithId[] _allObjects;
+
+      protected override void Context()
+      {
+         base.Context();
+         _allObjects = Enumerable.Range(0, 10000).Select(i => (IWithId) new ObjectWithIdForSpecs {Id = $"id-{i}"}).ToArray();
+      }
+
+      protected override void Because()
+      {
+         Parallel.ForEach(_allObjects, x => sut.Register(x));
+      }
+
+      [Observation]
+      public void should_have_registered_all_objects() => sut.All().Count().ShouldBeEqualTo(_allObjects.Length);
+   }
+
+   public class When_registering_the_same_object_concurrently_from_multiple_threads : concern_for_WithIdRepository
+   {
+      private IWithId _withId;
+
+      protected override void Context()
+      {
+         base.Context();
+         _withId = new ObjectWithIdForSpecs {Id = "shared-id"};
+      }
+
+      protected override void Because()
+      {
+         Parallel.For(0, 1000, _ => sut.Register(_withId));
+      }
+
+      [Observation]
+      public void should_have_registered_the_object_exactly_once() => sut.All().Count().ShouldBeEqualTo(1);
+   }
+
    public class When_unregistering_an_object : concern_for_WithIdRepository
    {
       private IEntity _entity;
@@ -174,5 +214,10 @@ namespace OSPSuite.Core.Domain
       {
          sut.ContainsObjectWithId(_entity.Id).ShouldBeFalse();
       }
+   }
+
+   internal class ObjectWithIdForSpecs : IWithId
+   {
+      public string Id { get; set; }
    }
 }

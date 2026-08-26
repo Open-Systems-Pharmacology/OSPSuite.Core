@@ -29,6 +29,11 @@ namespace OSPSuite.Core.Domain.Services
    /// <summary>
    ///    Base class for Validation tasks in ModelCore
    /// </summary>
+   /// <remarks>
+   ///    This class is not thread-safe: instances hold per-run state. Always create one instance per validation run via
+   ///    <see cref="IModelValidatorFactory" /> (transient resolution). Never register implementations as singleton — a shared
+   ///    instance used from parallel model constructions corrupts validation results silently.
+   /// </remarks>
    internal abstract class ModelValidator : IModelValidator, IVisitor
    {
       private readonly IObjectTypeResolver _objectTypeResolver;
