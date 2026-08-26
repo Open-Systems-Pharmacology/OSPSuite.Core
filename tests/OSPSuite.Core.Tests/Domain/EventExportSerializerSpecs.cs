@@ -22,6 +22,11 @@ namespace OSPSuite.Core.Domain
    
    public class When_serializing_a_Event_Export : concern_for_EventExportSerializer
    {
+      private const int CONDITION_FORMULA_ID = 1;
+      private const int NEW_FORMULA_ID = 2;
+      private const int OBJECT_ID = 3;
+      private const int EVENT_ID = 4;
+
       private XElement _xmlResult;
       private EventExport _eventExport;
       private AssignmentExport _assignmentExport;
@@ -31,13 +36,13 @@ namespace OSPSuite.Core.Domain
          base.Context();
          _eventExport = new EventExport();
          _eventExport.EntityId = "Bla";
-         _eventExport.ConditionFormulaId = 1;
+         _eventExport.ConditionFormulaId = CONDITION_FORMULA_ID;
          _assignmentExport = new AssignmentExport();
-         _assignmentExport.NewFormulaId = 2;
-         _assignmentExport.ObjectId = 3;
+         _assignmentExport.NewFormulaId = NEW_FORMULA_ID;
+         _assignmentExport.ObjectId = OBJECT_ID;
          _assignmentExport.UseAsValue = true;
          _eventExport.AssignmentList.Add(_assignmentExport);
-         _eventExport.Id = 4;
+         _eventExport.Id = EVENT_ID;
       }
       protected override void Because()
       {
@@ -47,7 +52,7 @@ namespace OSPSuite.Core.Domain
       public void should_Create_a_Event_Node()
       {
          _xmlResult.Name.LocalName.ShouldBeEqualTo(SimModelSchemaConstants.Event);
-         Convert.ToInt32(_xmlResult.Attribute(SimModelSchemaConstants.Id).Value).ShouldBeEqualTo(4);
+         Convert.ToInt32(_xmlResult.Attribute(SimModelSchemaConstants.Id).Value).ShouldBeEqualTo(EVENT_ID);
          _xmlResult.Attribute("entityId").Value.ShouldBeEqualTo(_eventExport.EntityId);
       }
       [Observation]
@@ -71,6 +76,9 @@ namespace OSPSuite.Core.Domain
    
    public class When_Serializing_a_assigment_export : concern_for_AssigmentExportSerializer
    {
+      private const int NEW_FORMULA_ID = 2;
+      private const int OBJECT_ID = 3;
+
       private AssignmentExport _assignmentExport;
       private XElement _xmlResultElement;
 
@@ -78,8 +86,8 @@ namespace OSPSuite.Core.Domain
       {
          base.Context();
          _assignmentExport = new AssignmentExport();
-         _assignmentExport.NewFormulaId = 2;
-         _assignmentExport.ObjectId = 3;
+         _assignmentExport.NewFormulaId = NEW_FORMULA_ID;
+         _assignmentExport.ObjectId = OBJECT_ID;
          _assignmentExport.UseAsValue = true;
       }
       protected override void Because()

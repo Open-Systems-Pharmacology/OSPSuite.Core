@@ -78,6 +78,8 @@ namespace OSPSuite.Core
 
    public class When_exporting_a_simulation_for_which_the_negative_values_check_was_switched_off : concern_for_SimModelExporter
    {
+      private const string NEGATIVE_VALUES_CHECK_DISABLED = "0";
+
       private IModelCoreSimulation _simulation;
       private string _xmlString;
 
@@ -106,7 +108,7 @@ namespace OSPSuite.Core
 
          var formulaNode = doc.Descendants(simModelName(SimModelSchemaConstants.ExplicitFormula))
             .Single(x => x.Attribute(SimModelSchemaConstants.Id).Value == formulaId);
-         formulaNode.Element(simModelName(SimModelSchemaConstants.Equation)).Value.ShouldBeEqualTo("0");
+         formulaNode.Element(simModelName(SimModelSchemaConstants.Equation)).Value.ShouldBeEqualTo(NEGATIVE_VALUES_CHECK_DISABLED);
       }
 
       private static XName simModelName(string name) => XName.Get(name, SimModelSchemaConstants.Namespace);

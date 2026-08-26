@@ -24,6 +24,10 @@ namespace OSPSuite.Core.Domain
    
    public class When_serializing_a_variable_export : concern_for_VariableExportSerializer
    {
+      private const int VARIABLE_ID = 13;
+      private const int FORMULA_ID = 2;
+      private const double SCALE_FACTOR = 1;
+
       private VariableExport _variableExport;
       private XElement _resultXML;
 
@@ -33,12 +37,12 @@ namespace OSPSuite.Core.Domain
          _variableExport = new VariableExport();
 
          _variableExport.EntityId = "quantity";
-         _variableExport.Id = 13;
-         _variableExport.FormulaId = 2;
+         _variableExport.Id = VARIABLE_ID;
+         _variableExport.FormulaId = FORMULA_ID;
          _variableExport.Name = "TestValue";
          _variableExport.Path = @"Test\Plasma\";
          _variableExport.Unit = "mol";
-         _variableExport.ScaleFactor = 1;
+         _variableExport.ScaleFactor = SCALE_FACTOR;
          _variableExport.RHSIds = new List<int> {1, 3};
       }
 
