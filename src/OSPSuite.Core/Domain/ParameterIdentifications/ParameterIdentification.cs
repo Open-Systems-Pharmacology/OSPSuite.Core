@@ -15,7 +15,15 @@ namespace OSPSuite.Core.Domain.ParameterIdentifications
       public virtual ParameterIdentificationConfiguration Configuration { get; } = new ParameterIdentificationConfiguration();
       public virtual OutputMappings OutputMappings { get; set; } = new OutputMappings();
 
-      public bool IsLoaded { get; set; }
+      //read without synchronization by lazy loading to skip objects that are already loaded, while the object is
+      //populated and the flag set under a lock. Volatile publishes those writes to a reader that sees the flag set.
+      private volatile bool _isLoaded;
+
+      public bool IsLoaded
+      {
+         get => _isLoaded;
+         set => _isLoaded = value;
+      }
       private readonly List<ISimulationAnalysis> _allSimulationAnalyses = new List<ISimulationAnalysis>();
 
       /// <summary>

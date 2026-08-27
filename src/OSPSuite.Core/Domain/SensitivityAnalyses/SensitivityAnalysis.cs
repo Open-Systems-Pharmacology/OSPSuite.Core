@@ -15,7 +15,15 @@ namespace OSPSuite.Core.Domain.SensitivityAnalyses
 
       public SensitivityAnalysisRunResult Results { get; set; }
 
-      public bool IsLoaded { get; set; }
+      //read without synchronization by lazy loading to skip objects that are already loaded, while the object is
+      //populated and the flag set under a lock. Volatile publishes those writes to a reader that sees the flag set.
+      private volatile bool _isLoaded;
+
+      public bool IsLoaded
+      {
+         get => _isLoaded;
+         set => _isLoaded = value;
+      }
 
       /// <summary>
       ///    Indicates if a sensitivity analysis was changed and hence needs to be saved
