@@ -42,7 +42,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="OSPSuite.Utility" Version="5.0.0.11" />
+    <PackageReference Include="OSPSuite.Utility" Version="5.0.0.12" />
   </ItemGroup>
   
   <ItemGroup>
