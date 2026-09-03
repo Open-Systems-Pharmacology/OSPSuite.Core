@@ -5,6 +5,7 @@ using OSPSuite.Utility.Exceptions;
 using OSPSuite.Utility.Extensions;
 using Northwoods.Go;
 using OSPSuite.Core.Diagram;
+using OSPSuite.Presentation.Diagram.Elements;
 
 namespace OSPSuite.UI.Diagram.Elements
 {

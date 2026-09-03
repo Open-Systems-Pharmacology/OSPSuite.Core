@@ -4,7 +4,6 @@ using OSPSuite.Core.Serialization.Diagram;
 using OSPSuite.Presentation.Services;
 using OSPSuite.Presentation.Views;
 using OSPSuite.UI.Binders;
-using OSPSuite.UI.Diagram.Managers;
 using OSPSuite.UI.Diagram.Services;
 using OSPSuite.UI.Services;
 using OSPSuite.UI.Views;
@@ -26,16 +25,15 @@ namespace OSPSuite.UI
             scan.ExcludeType<ExceptionView>();
             scan.ExcludeType<ToolTipCreator>();
             scan.ExcludeType<DiagramModelToXmlMapper>();
+            scan.ExcludeType<CompositeDiagramModelToXmlMapper>();
 
-            //Open type
-            scan.ExcludeType(typeof(ReactionDiagramManager<>));
          });
 
          //Register singleton objects
          container.Register<IExceptionView, ExceptionView>(LifeStyle.Singleton);
          container.Register<ISkinManager, SkinManager>(LifeStyle.Singleton);
          container.Register<IImageListRetriever, ImageListRetriever>(LifeStyle.Singleton);
-         container.Register<IDiagramModelToXmlMapper, DiagramModelToXmlMapper>(LifeStyle.Singleton);
+         container.Register<IDiagramModelToXmlMapper, CompositeDiagramModelToXmlMapper>(LifeStyle.Singleton);
          container.Register<IRichEditDocumentServer, RichEditDocumentServer>();
 
          //Register open types

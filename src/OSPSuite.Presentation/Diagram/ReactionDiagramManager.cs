@@ -1,18 +1,17 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using OSPSuite.Core.Diagram;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Builder;
-using OSPSuite.Presentation.Diagram;
+using OSPSuite.Presentation.Diagram.Elements;
 using OSPSuite.Presentation.Extensions;
-using OSPSuite.UI.Diagram.Elements;
 using OSPSuite.Utility.Extensions;
 
-namespace OSPSuite.UI.Diagram.Managers
+namespace OSPSuite.Presentation.Diagram
 {
-   public class ReactionDiagramManager<T> : BaseDiagramManager<MultiPortContainerNode, SimpleNeighborhoodNode, T>, IReactionDiagramManager<T>
+   public class ReactionDiagramManager<T> : BaseDiagramManager<ContainerNode, NeighborhoodNode, T>, IReactionDiagramManager<T>
       where T : class, IWithDiagramFor<T>, IEnumerable<ReactionBuilder>
    {
       public ReactionDiagramManager()
@@ -38,7 +37,6 @@ namespace OSPSuite.UI.Diagram.Managers
             }
          }
 
-         // remove all unused reactionNodes 
          foreach (var reactionBuilderId in unusedReactionIds)
          {
             diagramModel.RemoveNode(reactionBuilderId);
@@ -47,7 +45,6 @@ namespace OSPSuite.UI.Diagram.Managers
          DiagramModel.ClearUndoStack();
       }
 
-      // removes all eventHandler (which are references to this presenter)
       protected override void DecoupleModel()
       {
          foreach (var reactionBuilder in PkModel)
@@ -72,9 +69,7 @@ namespace OSPSuite.UI.Diagram.Managers
       public void AddMolecule(ReactionBuilder reactionBuilder, string moleculeName)
       {
          var reactionNode = ReactionNodeFor(reactionBuilder);
-         // insert new Modifier node above reaction
          CurrentInsertLocation = reactionNode.Location.Plus(new PointF(10F, -30F));
-         // create new MoleculeNode at CurrentInsertLocation, if not already available
          var newMoleculeNode = getMoleculeNode(moleculeName, reactionNode.Location);
          newMoleculeNode.ToFront();
 
@@ -88,10 +83,8 @@ namespace OSPSuite.UI.Diagram.Managers
 
       public void RenameMolecule(ReactionBuilder reactionBuilder, string oldMoleculeName, string newMoleculeName)
       {
-         // try to keep same location of renamed molecule
          var reactionNode = ReactionNodeFor(reactionBuilder);
 
-         //molecule does not exist with the given name: nothing to rename here (might have been renamed already)
          var oldMoleculeNode = getMoleculeNode(oldMoleculeName, reactionNode.Location, create: false);
          if (oldMoleculeNode == null)
             return;
@@ -124,7 +117,6 @@ namespace OSPSuite.UI.Diagram.Managers
          return base.RemoveObjectBase(objectBase, recursive);
       }
 
-      // signature is necessary for use as argument in RegisterUpdateMethod
       public void UpdateReactionBuilder(IObjectBase reactionAsObjectBase, IBaseNode reactionNodeAsBaseNode)
       {
          var reactionBuilder = reactionAsObjectBase.DowncastTo<ReactionBuilder>();
@@ -196,8 +188,9 @@ namespace OSPSuite.UI.Diagram.Managers
 
       public void RemoveMoleculeNode(IMoleculeNode moleculeNode)
       {
+         var linkedReactionNodes = moleculeNode.GetLinkedNodes<ReactionNode>().ToList();
          DiagramModel.RemoveNode(moleculeNode.Id);
-         foreach (var reactionNode in moleculeNode.GetLinkedNodes<ReactionNode>())
+         foreach (var reactionNode in linkedReactionNodes)
          {
             UpdateReactionBuilder(PkModel.First(node => node.Id == reactionNode.Id), reactionNode);
          }

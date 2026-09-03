@@ -441,7 +441,7 @@ namespace OSPSuite.Presentation.Presenters.Diagram
          _view.Model = DiagramModel;
       }
 
-      protected IDiagramModel CreateDiagramModel()
+      protected virtual IDiagramModel CreateDiagramModel()
       {
          return _diagramModelFactory.Create();
       }

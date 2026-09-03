@@ -1,4 +1,4 @@
-namespace OSPSuite.UI.Diagram.Elements
+namespace OSPSuite.Core.Diagram
 {
    public enum ReactionLinkType
    {
