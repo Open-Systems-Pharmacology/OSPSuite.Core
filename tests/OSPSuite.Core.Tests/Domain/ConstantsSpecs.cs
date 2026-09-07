@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 
@@ -12,6 +13,12 @@ namespace OSPSuite.Core.Domain
          var posXlsx = Constants.Filter.EXCEL_SAVE_FILE_FILTER.IndexOf($"{Constants.Filter.XLSX_EXTENSION})", StringComparison.Ordinal);
          var posXls = Constants.Filter.EXCEL_SAVE_FILE_FILTER.IndexOf($"{Constants.Filter.XLS_EXTENSION})", StringComparison.Ordinal);
          posXlsx.ShouldBeSmallerThan(posXls);
+      }
+
+      [Observation]
+      public void all_boolean_parameters_should_include_use_bile_salt_micellization()
+      {
+         Constants.Parameters.AllBooleanParameters.Contains(Constants.Parameters.USE_BILE_SALT_MICELLIZATION).ShouldBeTrue();
       }
    }
 }
