@@ -249,6 +249,7 @@ namespace OSPSuite.Core.Domain
          public const string USE_HINTZ_JOHNSON = "Use Hintz-Johnson";
          public const string USE_HYDRODYNAMIC_MODEL = "Use Hydrodynamic Model";
          public const string USE_BIDIRECTIONAL_SURFACE_INTEGRATION_FACTOR = "Use bidirectional surface integration factor";
+         public const string USE_BILE_SALT_MICELLIZATION = "Use bile salt micellization";
 
          public static readonly IReadOnlyCollection<string> AllBooleanParameters = new List<string>
          {
@@ -265,7 +266,8 @@ namespace OSPSuite.Core.Domain
             USE_EFFECTIVE_DIFFUSION,
             USE_HINTZ_JOHNSON,
             USE_HYDRODYNAMIC_MODEL,
-            USE_BIDIRECTIONAL_SURFACE_INTEGRATION_FACTOR
+            USE_BIDIRECTIONAL_SURFACE_INTEGRATION_FACTOR,
+            USE_BILE_SALT_MICELLIZATION
          };
 
          public static readonly IReadOnlyCollection<string> AllCategorialParameters = new List<string>(AllBooleanParameters)
