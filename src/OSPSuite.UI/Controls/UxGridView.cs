@@ -113,8 +113,18 @@ namespace OSPSuite.UI.Controls
 
          KeyDown += onProcessGridKey;
          PopupMenuShowing += OnPopupMenuShowing;
+         ShowFilterPopupCheckedListBox += closeColumnFilterPopupOnEnterKey;
          OptionsSelection.MultiSelect = true;
          OptionsSelection.MultiSelectMode = GridMultiSelectMode.CellSelect;
+      }
+
+      /// <summary>
+      ///    Without this, Enter toggles the check state of the focused entry instead of closing the popup, discarding an entry
+      ///    checked with Space
+      /// </summary>
+      private void closeColumnFilterPopupOnEnterKey(object sender, FilterPopupCheckedListBoxEventArgs e)
+      {
+         e.CheckedComboBox.CloseUpKey = new KeyShortcut(Keys.Enter);
       }
 
       private void onRowCellStyle(object sender, RowCellStyleEventArgs e)
