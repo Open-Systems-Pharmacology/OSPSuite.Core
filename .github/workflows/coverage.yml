@@ -1,4 +1,4 @@
-name: Code Coverage V13
+name: Code Coverage V13.1
 
 on:
   schedule:
@@ -22,7 +22,7 @@ jobs:
           nuget sources add -username Open-Systems-Pharmacology -password ${{ secrets.GITHUB_TOKEN }} -name OSP-GitHub-Packages -source "https://nuget.pkg.github.com/Open-Systems-Pharmacology/index.json"
 
       - name: Build
-        run: dotnet build OSPSuite.Core.sln -p:Version=13.0.999 -p:ExcludeDesigner=true
+        run: dotnet build OSPSuite.Core.sln -p:Version=13.1.999 -p:ExcludeDesigner=true
         
       - name: Cover and report
         uses: Open-Systems-Pharmacology/Workflows/.github/actions/dotCover@main

@@ -1,10 +1,10 @@
-name: Build and Publish V13
-run-name: Version 13.0.${{ github.run_number }} (${{ github.event.head_commit.message }})
+name: Build and Publish V13.1
+run-name: Version 13.1.${{ github.run_number }} (${{ github.event.head_commit.message }})
 
 on:
   push:
     branches:
-    - develop
+    - V13.1
 
 permissions:
   packages: write
@@ -24,7 +24,7 @@ jobs:
 
       - name: define env variables
         run: |
-          echo "APP_VERSION=13.0.${{ github.run_number }}" | Out-File -FilePath $env:GITHUB_ENV -Append
+          echo "APP_VERSION=13.1.${{ github.run_number }}" | Out-File -FilePath $env:GITHUB_ENV -Append
 
       - name: Build
         env:
