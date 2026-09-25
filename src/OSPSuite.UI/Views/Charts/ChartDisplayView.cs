@@ -291,38 +291,13 @@ namespace OSPSuite.UI.Views.Charts
          if (topLeftCoord == null || bottomRightCoord == null)
             return;
 
-         xyDiagram.AxisX.VisualRange.Auto = false;
-         xyDiagram.AxisX.VisualRange.SetMinMaxValues(
-            Math.Min(topLeftCoord.NumericalArgument, bottomRightCoord.NumericalArgument),
-            Math.Max(topLeftCoord.NumericalArgument, bottomRightCoord.NumericalArgument));
-
-         setAxisVisualRange(AxisTypes.Y, topLeftCoord?.NumericalValue, bottomRightCoord?.NumericalValue);
-         zoomAxis(AxisTypes.Y2, rectangle);
-         zoomAxis(AxisTypes.Y3, rectangle);
+         // The range must be stored in the chart axes, otherwise the zoom is lost the next time the axes are refreshed
+         var (xMin, xMax) = orderedRange(topLeftCoord.NumericalArgument, bottomRightCoord.NumericalArgument);
+         var (yMin, yMax) = orderedRange(topLeftCoord.NumericalValue, bottomRightCoord.NumericalValue);
+         _presenter.SetVisibleRange(xMin, xMax, yMin, yMax);
       }
 
-      private void zoomAxis(AxisTypes axisType, Rectangle rectangle)
-      {
-         var axis = getAxisFromType(axisType);
-         if (axis == null) return;
-
-         var topLeftCoord = xyDiagram.PointToDiagram(rectangle.Location).GetAxisValue(axis);
-         var bottomRightCoord = xyDiagram.PointToDiagram(new Point(rectangle.Right, rectangle.Bottom)).GetAxisValue(axis);
-
-         if (topLeftCoord == null || bottomRightCoord == null)
-            return;
-
-         setAxisVisualRange(axisType, topLeftCoord.NumericalValue, bottomRightCoord.NumericalValue);
-      }
-
-      private void setAxisVisualRange(AxisTypes axisType, double? minValue, double? maxValue)
-      {
-         var axis = getAxisFromType(axisType);
-         if (axis == null || minValue == null || maxValue == null) return;
-
-         axis.VisualRange.Auto = false;
-         axis.VisualRange.SetMinMaxValues(Math.Min(minValue.Value, maxValue.Value), Math.Max(minValue.Value, maxValue.Value));
-      }
+      private (float min, float max) orderedRange(double value1, double value2) => (Convert.ToSingle(Math.Min(value1, value2)), Convert.ToSingle(Math.Max(value1, value2)));
 
       private Color diagramBackColor
       {

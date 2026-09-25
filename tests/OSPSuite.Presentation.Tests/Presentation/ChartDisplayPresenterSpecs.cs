@@ -514,6 +514,28 @@ namespace OSPSuite.Presentation.Presentation
       }
    }
 
+   public class When_setting_the_visible_range_of_the_displayed_chart : concern_for_ChartDisplayPresenter
+   {
+      protected override void Because()
+      {
+         sut.SetVisibleRange(1, 2, 3, 4);
+      }
+
+      [Observation]
+      public void should_store_the_range_in_the_x_axis()
+      {
+         _curveChart.XAxis.Min.ShouldBeEqualTo(1);
+         _curveChart.XAxis.Max.ShouldBeEqualTo(2);
+      }
+
+      [Observation]
+      public void should_store_the_range_in_the_y_axis()
+      {
+         _curveChart.YAxis.Min.ShouldBeEqualTo(3);
+         _curveChart.YAxis.Max.ShouldBeEqualTo(4);
+      }
+   }
+
    public class When_setting_the_automatic_update_of_the_displayed_chart_to_its_current_value : concern_for_ChartDisplayPresenter
    {
       protected override void Because()
