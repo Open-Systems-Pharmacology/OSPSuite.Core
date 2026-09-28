@@ -1,4 +1,6 @@
-﻿using System.Data;
+﻿using System;
+using System.Data;
+using System.IO;
 using System.Linq;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
@@ -7,6 +9,7 @@ using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.PKAnalyses;
 using OSPSuite.Core.Domain.Populations;
 using OSPSuite.R.Domain;
+using OSPSuite.Utility;
 
 namespace OSPSuite.R.Services
 {
@@ -97,6 +100,47 @@ namespace OSPSuite.R.Services
       {
          base.Cleanup();
          _pkParameterTask.RemoveAllUserDefinedPKParameters();
+      }
+   }
+
+   public class When_converting_the_pk_analysis_to_a_csv_string : concern_for_PKAnalysisTask
+   {
+      private PopulationSimulationPKAnalyses _pkAnalysis;
+      private string _csvFile;
+      private string _csv;
+
+      public override void GlobalContext()
+      {
+         base.GlobalContext();
+         var result = _simulationRunner.Run(new SimulationRunArgs { Simulation = _simulation });
+         _pkAnalysis = sut.CalculateFor(new CalculatePKAnalysisArgs { Simulation = _simulation, SimulationResults = result });
+         _csvFile = FileHelper.GenerateTemporaryFileName();
+         sut.ExportPKAnalysesToCSV(_pkAnalysis, _simulation, _csvFile);
+      }
+
+      protected override void Because()
+      {
+         _csv = sut.PKAnalysesToCSV(_pkAnalysis, _simulation);
+      }
+
+      [Observation]
+      public void should_return_the_same_content_as_the_exported_csv_file()
+      {
+         _csv.ShouldBeEqualTo(File.ReadAllText(_csvFile));
+      }
+
+      [Observation]
+      public void should_return_the_quoted_header_followed_by_one_line_for_each_pk_parameter_value()
+      {
+         var allLines = _csv.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
+         allLines[0].ShouldBeEqualTo("\"IndividualId\",\"QuantityPath\",\"Parameter\",\"Value\",\"Unit\"");
+         allLines.Length.ShouldBeEqualTo(_pkAnalysis.All().Sum(x => x.Count) + 1);
+      }
+
+      public override void GlobalCleanup()
+      {
+         base.GlobalCleanup();
+         FileHelper.DeleteFile(_csvFile);
       }
    }
 
