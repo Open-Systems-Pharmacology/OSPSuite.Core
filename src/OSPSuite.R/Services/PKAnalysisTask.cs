@@ -22,6 +22,7 @@ namespace OSPSuite.R.Services
    public interface IPKAnalysisTask
    {
       void ExportPKAnalysesToCSV(PopulationSimulationPKAnalyses pkAnalyses, IModelCoreSimulation simulation, string fileName);
+      string PKAnalysesToCSV(PopulationSimulationPKAnalyses pkAnalyses, IModelCoreSimulation simulation);
       DataTable ConvertToDataTable(PopulationSimulationPKAnalyses pkAnalyses, IModelCoreSimulation simulation);
       PopulationSimulationPKAnalyses ImportPKAnalysesFromCSV(string fileName, IModelCoreSimulation simulation);
       PopulationSimulationPKAnalyses CalculateFor(CalculatePKAnalysisArgs calculatePKAnalysisArgs);
@@ -50,6 +51,12 @@ namespace OSPSuite.R.Services
       {
          var dataTable = ConvertToDataTable(pkAnalyses, simulation);
          dataTable.ExportToCSV(fileName);
+      }
+
+      public string PKAnalysesToCSV(PopulationSimulationPKAnalyses pkAnalyses, IModelCoreSimulation simulation)
+      {
+         var dataTable = ConvertToDataTable(pkAnalyses, simulation);
+         return dataTable.ToCSV();
       }
 
       public PopulationSimulationPKAnalyses ImportPKAnalysesFromCSV(string fileName, IModelCoreSimulation simulation)
