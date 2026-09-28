@@ -123,27 +123,19 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
       {
          identificationParameterDTO.IdentificationParameter.Name = newName;
 
-         if(renameResult(oldName, newName))
+         if(renameResults(oldName, newName))
             _eventPublisher.PublishEvent(new ParameterIdentificationResultsUpdatedEvent(_parameterIdentification));
 
          identificationParameterDTO.IdentificationParameter.Name = newName;
          SelectIdentificationParameter(identificationParameterDTO);
       }
 
-      private bool renameResult(string oldName, string newName)
+      private bool renameResults(string oldName, string newName)
       {
-         var renameResult = false;
-         if (_parameterIdentification.Results.Any())
-         {
-            var resultParameter = _parameterIdentification.Results[0].BestResult.Values.SingleOrDefault(x => x.Name == oldName);
-            //Parameter might not be in the result if it was added after the run
-            if (resultParameter != null)
-            {
-               resultParameter.Name = newName;
-               renameResult = true;
-            }
-         }
-         return renameResult;
+         //Parameter might not be in the results if it was added after the run
+         var resultParameters = _parameterIdentification.Results.SelectMany(x => x.BestResult.Values).Where(x => x.Name == oldName).ToList();
+         resultParameters.Each(x => x.Name = newName);
+         return resultParameters.Any();
       }
 
       private void updateView()
