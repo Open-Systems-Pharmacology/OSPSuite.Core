@@ -180,6 +180,36 @@ namespace OSPSuite.Presentation.Presentation
       }
    }
 
+   public class When_the_identification_parameter_presenter_is_renaming_a_parameter_used_in_a_jacobian_matrix : concern_for_ParameterIdentificationIdentificationParametersPresenter
+   {
+      private JacobianMatrix _jacobianMatrix;
+
+      protected override void Context()
+      {
+         base.Context();
+         _identificationParameter.Name = "oldName";
+         _jacobianMatrix = new JacobianMatrix(new[] { "oldName", "P2" });
+
+         var bestResult = new OptimizationRunResult();
+         bestResult.AddValue(new OptimizedParameterValue("oldName", 3, 4, 0, 10, Scalings.Linear));
+         bestResult.AddValue(new OptimizedParameterValue("P2", 4, 4, 0, 10, Scalings.Linear));
+         _parameterIdentification.AddResult(new ParameterIdentificationRunResult { Index = 1, BestResult = bestResult, JacobianMatrix = _jacobianMatrix });
+
+         sut.EditParameterIdentification(_parameterIdentification);
+      }
+
+      protected override void Because()
+      {
+         sut.ChangeName(_identificationParameterDTO, "oldName", "newName");
+      }
+
+      [Observation]
+      public void should_rename_the_parameter_in_the_jacobian_matrix()
+      {
+         _jacobianMatrix.ParameterNames.ShouldOnlyContainInOrder("newName", "P2");
+      }
+   }
+
    public class When_the_user_is_deleting_an_identification_parameter : concern_for_ParameterIdentificationIdentificationParametersPresenter
    {
       private IdentificationParameter _identificationParameter2;

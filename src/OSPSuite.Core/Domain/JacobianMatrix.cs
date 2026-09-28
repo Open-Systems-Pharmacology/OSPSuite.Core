@@ -46,6 +46,16 @@ namespace OSPSuite.Core.Domain
          return ParameterNames.IndexOf(parameterName);
       }
 
+      public void RenameParameter(string oldName, string newName)
+      {
+         var columnIndex = ColumnIndexFor(oldName);
+         if (columnIndex < 0)
+            return;
+
+         ParameterNames[columnIndex] = newName;
+         _partialDerivatives.Each(x => x.RenameParameter(oldName, newName));
+      }
+
       public void AddPartialDerivatives(PartialDerivatives partialDerivatives)
       {
          _partialDerivatives.Add(partialDerivatives);

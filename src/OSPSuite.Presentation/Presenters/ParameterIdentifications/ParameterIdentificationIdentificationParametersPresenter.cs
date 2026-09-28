@@ -135,6 +135,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
          //Parameter might not be in the results if it was added after the run
          var resultParameters = _parameterIdentification.Results.SelectMany(x => x.BestResult.Values).Where(x => x.Name == oldName).ToList();
          resultParameters.Each(x => x.Name = newName);
+         _parameterIdentification.Results.Each(x => x.JacobianMatrix?.RenameParameter(oldName, newName));
          return resultParameters.Any();
       }
 

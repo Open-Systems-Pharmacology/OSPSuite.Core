@@ -30,6 +30,15 @@ namespace OSPSuite.Core.Domain
          _partialDerivatives.Add(derivatives);
       }
 
+      public void RenameParameter(string oldName, string newName)
+      {
+         var index = ParameterNames.IndexOf(oldName);
+         if (index < 0)
+            return;
+
+         ParameterNames[index] = newName;
+      }
+
       public double[] PartialDerivativeAt(int index0)
       {
          if (_partialDerivatives.Count <= index0)
