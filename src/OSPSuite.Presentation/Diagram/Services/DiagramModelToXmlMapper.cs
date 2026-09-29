@@ -8,6 +8,7 @@ using OSPSuite.Core.Diagram;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Serialization.Diagram;
 using OSPSuite.Presentation.Diagram.Elements;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Presentation.Diagram.Services
 {
@@ -53,12 +54,12 @@ namespace OSPSuite.Presentation.Diagram.Services
          var root = xmlDoc.CreateElement(ElementName);
          xmlDoc.AppendChild(root);
 
-         foreach (var node in nodes)
+         nodes.Each(node =>
          {
             var element = elementFor(xmlDoc, node);
             if (element != null)
                root.AppendChild(element);
-         }
+         });
 
          return xmlDoc;
       }
@@ -97,7 +98,8 @@ namespace OSPSuite.Presentation.Diagram.Services
       public void Deserialize(IDiagramModel diagramModel, XmlDocument xmlDoc)
       {
          var root = xmlDoc.DocumentElement;
-         if (root == null) return;
+         if (root == null)
+            return;
 
          try
          {
@@ -171,7 +173,8 @@ namespace OSPSuite.Presentation.Diagram.Services
       private static PointF parsePoint(string value)
       {
          var parts = (value ?? string.Empty).Split(new[] {' '}, StringSplitOptions.RemoveEmptyEntries);
-         if (parts.Length != 2) return PointF.Empty;
+         if (parts.Length != 2)
+            return PointF.Empty;
          return new PointF(parseFloat(parts[0]), parseFloat(parts[1]));
       }
    }

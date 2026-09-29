@@ -26,6 +26,7 @@ namespace OSPSuite.UI.Views.Diagram
       private const float LABEL_OFFSET = 2F;
       private const float EXPORT_MARGIN = 10F;
       private const int CONNECTOR_BORDER_SIZE = 1;
+      private const int NO_CONNECTION_POINT_INDEX = -1;
       private static readonly PointCollection _moleculeConnectionPoints = createMoleculeConnectionPoints();
       private static readonly DiagramDoubleCollection _dashPattern = new DiagramDoubleCollection(new double[] {3, 3});
 
@@ -118,7 +119,8 @@ namespace OSPSuite.UI.Views.Diagram
 
       private void detachModel()
       {
-         if (_model == null) return;
+         if (_model == null)
+            return;
          _model.Changed -= onModelChanged;
          _model = null;
       }
@@ -134,7 +136,8 @@ namespace OSPSuite.UI.Views.Diagram
 
       private void onModelChanged()
       {
-         if (_syncing || IsDisposed) return;
+         if (_syncing || IsDisposed)
+            return;
 
          if (!IsHandleCreated)
          {
@@ -142,7 +145,8 @@ namespace OSPSuite.UI.Views.Diagram
             return;
          }
 
-         if (_syncPending) return;
+         if (_syncPending)
+            return;
          _syncPending = true;
          BeginInvoke(new Action(() =>
          {
@@ -153,7 +157,8 @@ namespace OSPSuite.UI.Views.Diagram
 
       private void synchronize()
       {
-         if (_model == null || _syncing) return;
+         if (_model == null || _syncing)
+            return;
 
          _syncing = true;
          try
@@ -178,12 +183,12 @@ namespace OSPSuite.UI.Views.Diagram
 
       private void removeStaleShapes(IReadOnlyList<ElementBaseNode> nodes)
       {
-         foreach (var stale in _shapes.Where(x => !nodes.Contains(x.Key)).ToList())
+         _shapes.Where(x => !nodes.Contains(x.Key)).ToList().Each(stale =>
          {
             _connectors.Where(x => x.Value.BeginItem == stale.Value || x.Value.EndItem == stale.Value).ToList().Each(removeConnector);
             _diagramControl.Items.Remove(stale.Value);
             _shapes.Remove(stale.Key);
-         }
+         });
       }
 
       private void removeStaleConnectors(IReadOnlyList<BaseLink> links)
@@ -263,13 +268,14 @@ namespace OSPSuite.UI.Views.Diagram
          if (node is ReactionNode && link is ReactionLink reactionLink)
             return ReactionConnectionPoints.IndexFor(reactionLink.Type);
 
-         return -1;
+         return NO_CONNECTION_POINT_INDEX;
       }
 
       private void updateZOrder(IEnumerable<ElementBaseNode> nodes)
       {
          var orderedItems = _connectors.Values.Cast<DiagramItem>().Concat(nodes.Select(node => _shapes[node])).ToList();
-         if (_diagramControl.Items.SequenceEqual(orderedItems)) return;
+         if (_diagramControl.Items.SequenceEqual(orderedItems))
+            return;
          orderedItems.Each(item => _diagramControl.BringItemsToFront(new[] {item}));
       }
 
@@ -284,7 +290,8 @@ namespace OSPSuite.UI.Views.Diagram
 
       private void onCustomDrawItem(CustomDrawItemEventArgs e)
       {
-         if (!(e.Item.Tag is ElementBaseNode node)) return;
+         if (!(e.Item.Tag is ElementBaseNode node))
+            return;
 
          e.DefaultDraw(CustomDrawItemMode.All);
          var reactionNode = node as ReactionNode;
@@ -323,7 +330,8 @@ namespace OSPSuite.UI.Views.Diagram
 
       private void drawLabel(Graphics graphics, ElementBaseNode node, SizeF size, bool labelBelow)
       {
-         if (!hasLabel(node)) return;
+         if (!hasLabel(node))
+            return;
 
          using (var font = labelFont(node))
          using (var brush = new SolidBrush(node.LabelColor))
@@ -346,7 +354,8 @@ namespace OSPSuite.UI.Views.Diagram
 
       private RectangleF labelBounds(Graphics graphics, ElementBaseNode node, DiagramShape shape)
       {
-         if (!hasLabel(node)) return shape.Bounds;
+         if (!hasLabel(node))
+            return shape.Bounds;
 
          using (var font = labelFont(node))
          {
@@ -370,10 +379,12 @@ namespace OSPSuite.UI.Views.Diagram
 
       private void onGetActiveObjectInfo(ToolTipControllerGetActiveObjectInfoEventArgs e)
       {
-         if (e.SelectedControl != _diagramControl) return;
+         if (e.SelectedControl != _diagramControl)
+            return;
 
          var node = itemAt(e.ControlMousePosition)?.Tag as ElementBaseNode;
-         if (node == null) return;
+         if (node == null)
+            return;
 
          var lines = new List<string> {node.Description};
          if (node is MoleculeNode && node.CanLink)
@@ -388,10 +399,12 @@ namespace OSPSuite.UI.Views.Diagram
 
       private void onItemsMoving(DiagramItemsMovingEventArgs e)
       {
-         if (_syncing || e.Stage != DiagramActionStage.Finished) return;
+         if (_syncing || e.Stage != DiagramActionStage.Finished)
+            return;
 
          var movedNodes = e.Items.Where(x => x.Item.Tag is ElementBaseNode).ToList();
-         if (!movedNodes.Any()) return;
+         if (!movedNodes.Any())
+            return;
 
          _syncing = true;
          try
@@ -415,7 +428,8 @@ namespace OSPSuite.UI.Views.Diagram
       private void onItemsDeleting(DiagramItemsDeletingEventArgs e)
       {
          e.Cancel = true;
-         if (_syncing || _readOnly) return;
+         if (_syncing || _readOnly)
+            return;
 
          var tags = e.Items.Select(item => item.Tag).ToList();
          OnSelectionDeleting(tags.OfType<IBaseNode>().ToList(), tags.OfType<IBaseLink>().ToList());
@@ -423,7 +437,8 @@ namespace OSPSuite.UI.Views.Diagram
 
       private void onItemsChanged(DiagramItemsChangedEventArgs e)
       {
-         if (_syncing || e.Action != ItemsChangedAction.Added || e.Item.Tag != null) return;
+         if (_syncing || e.Action != ItemsChangedAction.Added || e.Item.Tag != null)
+            return;
 
          if (e.Item is DiagramConnector connector)
             finalizeUserConnector(connector);
@@ -433,26 +448,30 @@ namespace OSPSuite.UI.Views.Diagram
 
       private void onConnectionChanged(DiagramConnectionChangedEventArgs e)
       {
-         if (_syncing || e.Connector.Tag != null) return;
+         if (_syncing || e.Connector.Tag != null)
+            return;
          finalizeUserConnector(e.Connector);
       }
 
       private void finalizeUserConnector(DiagramConnector connector)
       {
-         if (connector.BeginItem == null || connector.EndItem == null) return;
+         if (connector.BeginItem == null || connector.EndItem == null)
+            return;
          defer(() => createLinkFrom(connector));
       }
 
       private void createLinkFrom(DiagramConnector connector)
       {
-         if (!_diagramControl.Items.Contains(connector)) return;
+         if (!_diagramControl.Items.Contains(connector))
+            return;
 
          var fromNode = nodeOf(connector.BeginItem);
          var toNode = nodeOf(connector.EndItem);
          var fromPort = portFor(fromNode, connector.BeginItem as DiagramShape, connector.BeginItemPointIndex, connector.BeginPoint);
          var toPort = portFor(toNode, connector.EndItem as DiagramShape, connector.EndItemPointIndex, connector.EndPoint);
          _diagramControl.Items.Remove(connector);
-         if (_readOnly || fromNode == null || toNode == null) return;
+         if (_readOnly || fromNode == null || toNode == null)
+            return;
 
          OnLinkCreated(fromNode, toNode, fromPort, toPort);
       }
@@ -461,7 +480,8 @@ namespace OSPSuite.UI.Views.Diagram
 
       private static object portFor(ElementBaseNode node, DiagramShape shape, int pointIndex, PointFloat point)
       {
-         if (!(node is ReactionNode reactionNode)) return null;
+         if (!(node is ReactionNode reactionNode))
+            return null;
          return ReactionConnectionPoints.LinkTypeFor(pointIndex) ?? nearestLinkType(reactionNode, shape, point);
       }
 
@@ -476,13 +496,13 @@ namespace OSPSuite.UI.Views.Diagram
 
       private void finalizeForeignItems()
       {
-         foreach (var item in _diagramControl.Items.Where(item => item.Tag == null).ToList())
+         _diagramControl.Items.Where(item => item.Tag == null).ToList().Each(item =>
          {
             if (item is DiagramConnector connector && connector.BeginItem != null && connector.EndItem != null)
                createLinkFrom(connector);
             else
                _diagramControl.Items.Remove(item);
-         }
+         });
       }
 
       private void defer(Action action)
@@ -495,17 +515,20 @@ namespace OSPSuite.UI.Views.Diagram
 
       private void onQueryConnectionPoints(DiagramQueryConnectionPointsEventArgs e)
       {
-         if (_syncing || _queryingConnectionPoints) return;
+         if (_syncing || _queryingConnectionPoints)
+            return;
 
          _queryingConnectionPoints = true;
          try
          {
             var node = e.HoveredItem?.Tag as ElementBaseNode;
-            if (node == null) return;
+            if (node == null)
+               return;
 
             var oppositeNode = nodeOf(e.ConnectorPointType == ConnectorPointType.End ? e.Connector?.BeginItem : e.Connector?.EndItem);
             var allowed = !_readOnly && node.CanLink && (oppositeNode == null || (oppositeNode.CanLink && !sameKind(node, oppositeNode)));
-            if (allowed) return;
+            if (allowed)
+               return;
 
             e.ItemConnectionBorderState = ConnectionElementState.Disabled;
             e.ItemConnectionPointStates.Each(point => point.State = ConnectionElementState.Disabled);
@@ -518,7 +541,8 @@ namespace OSPSuite.UI.Views.Diagram
 
       private void onConnectionChanging(DiagramConnectionChangingEventArgs e)
       {
-         if (_syncing || e.Connector.Tag != null) return;
+         if (_syncing || e.Connector.Tag != null)
+            return;
 
          if (_readOnly)
          {
@@ -527,7 +551,8 @@ namespace OSPSuite.UI.Views.Diagram
          }
 
          var newNode = e.NewItem?.Tag as ElementBaseNode;
-         if (newNode == null) return;
+         if (newNode == null)
+            return;
 
          var oppositeIsBegin = e.ConnectorPointType == ConnectorPointType.End;
          var oppositeNode = nodeOf(oppositeIsBegin ? e.Connector.BeginItem : e.Connector.EndItem);
@@ -537,9 +562,12 @@ namespace OSPSuite.UI.Views.Diagram
 
       private static bool isValidConnection(ElementBaseNode node, int pointIndex, ElementBaseNode oppositeNode, int oppositePointIndex)
       {
-         if (!node.CanLink) return false;
-         if (oppositeNode == null) return true;
-         if (!oppositeNode.CanLink || sameKind(node, oppositeNode)) return false;
+         if (!node.CanLink)
+            return false;
+         if (oppositeNode == null)
+            return true;
+         if (!oppositeNode.CanLink || sameKind(node, oppositeNode))
+            return false;
 
          var linkType = ReactionConnectionPoints.LinkTypeFor(node is ReactionNode ? pointIndex : oppositePointIndex);
          return !linkType.HasValue || !linkExists(node, oppositeNode, linkType.Value);
@@ -554,7 +582,8 @@ namespace OSPSuite.UI.Views.Diagram
 
       private void onMouseMove(MouseEventArgs e)
       {
-         if (_readOnly || _switchingTool || e.Button != MouseButtons.None) return;
+         if (_readOnly || _switchingTool || e.Button != MouseButtons.None)
+            return;
          setConnectorToolActive(isOverPort(e.Location));
       }
 
@@ -562,7 +591,8 @@ namespace OSPSuite.UI.Views.Diagram
 
       private void setConnectorToolActive(bool active)
       {
-         if (_switchingTool || _connectorToolActive == active) return;
+         if (_switchingTool || _connectorToolActive == active)
+            return;
 
          _switchingTool = true;
          try
@@ -615,10 +645,12 @@ namespace OSPSuite.UI.Views.Diagram
             return;
          }
 
-         if (e.Button != MouseButtons.Right) return;
+         if (e.Button != MouseButtons.Right)
+            return;
 
          var item = itemAt(e.Location);
-         if (item is DiagramConnector) return;
+         if (item is DiagramConnector)
+            return;
 
          var documentPoint = _diagramControl.PointToDocument(new PointFloat(e.Location));
          _presenter.ShowContextMenu(item?.Tag as IBaseNode, e.Location, new PointF(documentPoint.X, documentPoint.Y));
@@ -681,7 +713,8 @@ namespace OSPSuite.UI.Views.Diagram
       public void CenterAt<T>(T node)
       {
          var item = itemFor(node);
-         if (item == null) return;
+         if (item == null)
+            return;
 
          var bounds = item.Bounds;
          _diagramControl.ScrollToPoint(new PointFloat(bounds.X + bounds.Width / 2, bounds.Y + bounds.Height / 2), HorzAlignment.Center, VertAlignment.Center);

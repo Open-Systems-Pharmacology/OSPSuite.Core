@@ -31,8 +31,10 @@ namespace OSPSuite.Presentation.Diagram.Elements
 
       public IBaseNode GetOtherNode(IBaseNode node)
       {
-         if (node == FromNode) return ToNode;
-         if (node == ToNode) return FromNode;
+         if (node == FromNode)
+            return ToNode;
+         if (node == ToNode)
+            return FromNode;
          return null;
       }
 

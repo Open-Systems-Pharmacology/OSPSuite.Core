@@ -1,6 +1,7 @@
 using System.Drawing;
 using System.Linq;
 using OSPSuite.Core.Diagram;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Presentation.Diagram.Elements
 {
@@ -19,10 +20,7 @@ namespace OSPSuite.Presentation.Diagram.Elements
       {
          base.SetColorFrom(diagramColors);
          SetFillColorFrom(diagramColors, diagramColors.MoleculeNode);
-         foreach (var link in Links.OfType<IWithColor>())
-         {
-            link.SetColorFrom(diagramColors);
-         }
+         Links.OfType<IWithColor>().Each(link => link.SetColorFrom(diagramColors));
       }
 
       protected override ElementBaseNode CreateInstance() => new MoleculeNode();

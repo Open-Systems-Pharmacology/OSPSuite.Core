@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Linq;
 using OSPSuite.Core.Diagram;
 using OSPSuite.Presentation.Extensions;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Presentation.Diagram.Elements
 {
@@ -85,7 +86,9 @@ namespace OSPSuite.Presentation.Diagram.Elements
 
       private void addLink(IBaseLink link)
       {
-         if (_links.Contains(link)) return;
+         if (_links.Contains(link))
+            return;
+
          _links.Add(link);
          NotifyChanged();
       }
@@ -116,16 +119,15 @@ namespace OSPSuite.Presentation.Diagram.Elements
 
       public virtual void ShowParents()
       {
-         foreach (var parent in ParentNodes)
-         {
-            parent.Hidden = false;
-         }
+         ParentNodes.Each(parent => parent.Hidden = false);
       }
 
       public void ToFront()
       {
          var children = parentChildren();
-         if (children == null) return;
+         if (children == null)
+            return;
+
          children.MoveToFront(this);
          NotifyChanged();
       }
@@ -133,7 +135,9 @@ namespace OSPSuite.Presentation.Diagram.Elements
       public void ToBack()
       {
          var children = parentChildren();
-         if (children == null) return;
+         if (children == null)
+            return;
+
          children.MoveToBack(this);
          NotifyChanged();
       }
@@ -155,7 +159,8 @@ namespace OSPSuite.Presentation.Diagram.Elements
 
       public virtual void CopyLayoutInfoFrom(IBaseNode node, PointF parentLocation)
       {
-         if (node == null) return;
+         if (node == null)
+            return;
 
          var location = node.Location;
          if (Parent != null && node.GetParent() != null)
@@ -184,7 +189,9 @@ namespace OSPSuite.Presentation.Diagram.Elements
 
       protected void SetField<T>(ref T field, T value)
       {
-         if (EqualityComparer<T>.Default.Equals(field, value)) return;
+         if (EqualityComparer<T>.Default.Equals(field, value))
+            return;
+
          field = value;
          NotifyChanged();
       }

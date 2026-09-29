@@ -5,6 +5,7 @@ using System.Linq;
 using OSPSuite.Core.Diagram;
 using OSPSuite.Presentation.Extensions;
 using OSPSuite.Utility.Collections;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Presentation.Diagram.Elements
 {
@@ -40,9 +41,11 @@ namespace OSPSuite.Presentation.Diagram.Elements
 
       public void EndUpdate()
       {
-         if (_updateDepth == 0) return;
+         if (_updateDepth == 0)
+            return;
          _updateDepth--;
-         if (_updateDepth > 0 || !_changedDuringUpdate) return;
+         if (_updateDepth > 0 || !_changedDuringUpdate)
+            return;
          _changedDuringUpdate = false;
          Changed();
       }
@@ -53,11 +56,9 @@ namespace OSPSuite.Presentation.Diagram.Elements
          set
          {
             var delta = value.Minus(Location);
-            if (delta.IsEmpty) return;
-            foreach (var node in Children)
-            {
-               node.Location = node.Location.Plus(delta);
-            }
+            if (delta.IsEmpty)
+               return;
+            Children.Each(node => node.Location = node.Location.Plus(delta));
          }
       }
 
@@ -104,10 +105,7 @@ namespace OSPSuite.Presentation.Diagram.Elements
       public IEnumerable<T> GetAllChildren<T>() where T : class
       {
          var children = GetDirectChildren<T>().ToList();
-         foreach (var containerNode in Children.OfType<IContainerNode>())
-         {
-            children.AddRange(containerNode.GetAllChildren<T>());
-         }
+         Children.OfType<IContainerNode>().Each(containerNode => children.AddRange(containerNode.GetAllChildren<T>()));
 
          return children.Distinct().ToList();
       }
@@ -119,7 +117,8 @@ namespace OSPSuite.Presentation.Diagram.Elements
 
       public void AddChildNode(IBaseNode node)
       {
-         if (!(node is DiagramNode diagramNode)) return;
+         if (!(node is DiagramNode diagramNode))
+            return;
          Children.Add(node);
          Attach(diagramNode, this);
          NotifyChanged();
@@ -127,7 +126,8 @@ namespace OSPSuite.Presentation.Diagram.Elements
 
       public void RemoveChildNode(IBaseNode node)
       {
-         if (!Children.Remove(node)) return;
+         if (!Children.Remove(node))
+            return;
          if (node is DiagramNode diagramNode)
          {
             Detach(diagramNode);
@@ -142,22 +142,18 @@ namespace OSPSuite.Presentation.Diagram.Elements
          node.Parent = parent;
          node.Model = this;
          AddNodeId(node);
-         if (!(node is ContainerNode containerNode)) return;
-         foreach (var child in containerNode.Children.OfType<DiagramNode>())
-         {
-            Attach(child, containerNode);
-         }
+         if (!(node is ContainerNode containerNode))
+            return;
+         containerNode.Children.OfType<DiagramNode>().Each(child => Attach(child, containerNode));
       }
 
       internal void Detach(DiagramNode node)
       {
          node.Model = null;
          RemoveNodeId(node);
-         if (!(node is ContainerNode containerNode)) return;
-         foreach (var child in containerNode.Children.OfType<DiagramNode>())
-         {
-            Detach(child);
-         }
+         if (!(node is ContainerNode containerNode))
+            return;
+         containerNode.Children.OfType<DiagramNode>().Each(Detach);
       }
 
       public bool ContainsChildNode(IBaseNode node, bool recursive)
@@ -170,37 +166,28 @@ namespace OSPSuite.Presentation.Diagram.Elements
 
       public void SetHiddenRecursive(bool hidden)
       {
-         foreach (var node in Children)
+         Children.Each(node =>
          {
             if (node is IContainerBase topContainer)
                topContainer.SetHiddenRecursive(hidden);
             else
                node.Hidden = hidden;
-         }
+         });
       }
 
       public void PostLayoutStep()
       {
-         foreach (var node in GetDirectChildren<INeighborhoodNode>())
-         {
-            node.AdjustPosition();
-         }
+         GetDirectChildren<INeighborhoodNode>().Each(node => node.AdjustPosition());
       }
 
       public void Collapse(int level)
       {
-         foreach (var topContainer in GetDirectChildren<IContainerBase>())
-         {
-            topContainer.Collapse(level - 1);
-         }
+         GetDirectChildren<IContainerBase>().Each(topContainer => topContainer.Collapse(level - 1));
       }
 
       public void Expand(int level)
       {
-         foreach (var topContainer in GetDirectChildren<IContainerBase>())
-         {
-            topContainer.Expand(level - 1);
-         }
+         GetDirectChildren<IContainerBase>().Each(topContainer => topContainer.Expand(level - 1));
       }
 
       public IBaseNode GetNode(string id) => id == null ? null : _nodes[id];
@@ -225,14 +212,12 @@ namespace OSPSuite.Presentation.Diagram.Elements
       public void RemoveNode(string id)
       {
          var node = GetNode(id);
-         if (node == null) return;
+         if (node == null)
+            return;
 
          if (node is DiagramNode diagramNode)
          {
-            foreach (var link in diagramNode.Links.ToList())
-            {
-               link.Unlink();
-            }
+            diagramNode.Links.ToList().Each(link => link.Unlink());
          }
 
          node.GetParent()?.RemoveChildNode(node);
@@ -242,7 +227,8 @@ namespace OSPSuite.Presentation.Diagram.Elements
       public void RenameNode(string id, string name)
       {
          var node = GetNode(id);
-         if (node == null) return;
+         if (node == null)
+            return;
          node.Name = name;
       }
 
@@ -277,11 +263,11 @@ namespace OSPSuite.Presentation.Diagram.Elements
 
       public void Clear()
       {
-         foreach (var node in Children.OfType<DiagramNode>())
+         Children.OfType<DiagramNode>().Each(node =>
          {
             Detach(node);
             node.Parent = null;
-         }
+         });
 
          Children.Clear();
          _nodes.Clear();
@@ -291,18 +277,12 @@ namespace OSPSuite.Presentation.Diagram.Elements
 
       public void SetDefaultExpansion()
       {
-         foreach (var container in GetAllChildren<IContainerNode>())
-         {
-            container.IsExpandedByDefault = container.IsExpanded;
-         }
+         GetAllChildren<IContainerNode>().Each(container => container.IsExpandedByDefault = container.IsExpanded);
       }
 
       public void ShowDefaultExpansion()
       {
-         foreach (var container in GetAllChildren<IContainerNode>())
-         {
-            container.IsExpanded = container.IsExpandedByDefault;
-         }
+         GetAllChildren<IContainerNode>().Each(container => container.IsExpanded = container.IsExpandedByDefault);
       }
 
       public void RefreshSize()
@@ -332,10 +312,7 @@ namespace OSPSuite.Presentation.Diagram.Elements
 
       private static void copyChildren(IContainerBase source, IContainerBase target, IDictionary<IBaseNode, IBaseNode> copiedNodes)
       {
-         foreach (var node in source.GetDirectChildren<IBaseNode>())
-         {
-            copyNode(node, target, copiedNodes);
-         }
+         source.GetDirectChildren<IBaseNode>().Each(node => copyNode(node, target, copiedNodes));
       }
 
       private static void copyNode(IBaseNode node, IContainerBase target, IDictionary<IBaseNode, IBaseNode> copiedNodes)
@@ -380,7 +357,8 @@ namespace OSPSuite.Presentation.Diagram.Elements
 
       public bool FinishTransaction(string layoutrecursivedone)
       {
-         if (_undoStack.Count == 0) return false;
+         if (_undoStack.Count == 0)
+            return false;
          if (snapshotEquals(_undoStack.Peek(), snapshot()))
             _undoStack.Pop();
 
@@ -389,15 +367,13 @@ namespace OSPSuite.Presentation.Diagram.Elements
 
       public void Undo()
       {
-         if (_undoStack.Count == 0) return;
+         if (_undoStack.Count == 0)
+            return;
          var layoutInfos = _undoStack.Pop();
          try
          {
             BeginUpdate();
-            foreach (var layoutInfo in layoutInfos.Where(x => _nodes.Contains(x.Key.Id)))
-            {
-               layoutInfo.Value.ApplyTo(layoutInfo.Key);
-            }
+            layoutInfos.Where(x => _nodes.Contains(x.Key.Id)).Each(layoutInfo => layoutInfo.Value.ApplyTo(layoutInfo.Key));
          }
          finally
          {
@@ -461,7 +437,8 @@ namespace OSPSuite.Presentation.Diagram.Elements
 
          public bool Equals(LayoutInfo other)
          {
-            if (other == null) return false;
+            if (other == null)
+               return false;
             return _location == other._location && _size == other._size && _hidden == other._hidden && _isVisible == other._isVisible &&
                    _locationFixed == other._locationFixed && _nodeSize == other._nodeSize && _isExpanded == other._isExpanded && _displayEductsRight == other._displayEductsRight;
          }

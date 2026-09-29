@@ -18,13 +18,15 @@ namespace OSPSuite.Presentation.Diagram.Elements
 
    public class NeighborhoodNode : ElementBaseNode, INeighborhoodNode
    {
+      private const float NODE_BASE_SIZE = 15F;
+
       private NeighborLink _firstNeighborLink;
       private NeighborLink _secondNeighborLink;
 
       public NeighborhoodNode()
       {
          UserFlags = NodeLayoutType.NEIGHBORHOOD_NODE;
-         NodeBaseSize = new SizeF(15F, 15F);
+         NodeBaseSize = new SizeF(NODE_BASE_SIZE, NODE_BASE_SIZE);
          NodeSize = NodeSize.Middle;
          CanLink = false;
       }
@@ -60,14 +62,17 @@ namespace OSPSuite.Presentation.Diagram.Elements
 
       public IContainerNode GetOtherContainerNode(IContainerNode node)
       {
-         if (node == FirstNeighbor) return SecondNeighbor;
-         if (node == SecondNeighbor) return FirstNeighbor;
+         if (node == FirstNeighbor)
+            return SecondNeighbor;
+         if (node == SecondNeighbor)
+            return FirstNeighbor;
          return null;
       }
 
       public void AdjustPosition()
       {
-         if (FirstNeighbor == null || SecondNeighbor == null) return;
+         if (FirstNeighbor == null || SecondNeighbor == null)
+            return;
          var first = FirstNeighbor.Center;
          var second = SecondNeighbor.Center;
          Location = new PointF((first.X + second.X) / 2, (first.Y + second.Y) / 2);

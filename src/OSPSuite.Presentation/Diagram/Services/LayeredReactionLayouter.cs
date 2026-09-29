@@ -16,6 +16,9 @@ namespace OSPSuite.Presentation.Diagram.Services
       private const float LABEL_OFFSET = 2F;
       private const float PORT_OFFSET = 0.25F;
       private const int ITERATIONS = 4;
+      private const int UNVISITED = 0;
+      private const int VISITING = 1;
+      private const int VISITED = 2;
 
       private readonly Func<ElementBaseNode, SizeF> _labelSizeFor;
 
@@ -31,7 +34,8 @@ namespace OSPSuite.Presentation.Diagram.Services
       public void Layout(IContainerBase containerBase)
       {
          var nodes = containerBase.GetDirectChildren<ElementBaseNode>().Where(node => !node.LocationFixed).ToList();
-         if (!nodes.Any()) return;
+         if (!nodes.Any())
+            return;
 
          var vertices = nodes
             .OrderBy(node => node.Location.Y).ThenBy(node => node.Location.X).ThenBy(node => node.Name)
@@ -39,11 +43,11 @@ namespace OSPSuite.Presentation.Diagram.Services
             .ToList();
 
          var verticesByNode = vertices.ToDictionary(vertex => vertex.Node);
-         foreach (var link in containerBase.GetDirectChildren<ReactionLink>())
+         containerBase.GetDirectChildren<ReactionLink>().Each(link =>
          {
             if (verticesByNode.TryGetValue(link.FromNode as ElementBaseNode ?? new ElementBaseNode(), out var from) && verticesByNode.TryGetValue(link.ToNode as ElementBaseNode ?? new ElementBaseNode(), out var to))
                Edge.Connect(from, to, link.Type);
-         }
+         });
 
          removeCycles(vertices);
          var layers = assignLayers(vertices);
@@ -54,26 +58,23 @@ namespace OSPSuite.Presentation.Diagram.Services
 
       private static void removeCycles(IReadOnlyList<Vertex> vertices)
       {
-         var state = vertices.ToDictionary(vertex => vertex, vertex => 0);
+         var state = vertices.ToDictionary(vertex => vertex, vertex => UNVISITED);
 
          void visit(Vertex vertex)
          {
-            state[vertex] = 1;
-            foreach (var edge in vertex.Edges.Where(e => e.From == vertex))
+            state[vertex] = VISITING;
+            vertex.Edges.Where(e => e.From == vertex).Each(edge =>
             {
-               if (state[edge.To] == 1)
+               if (state[edge.To] == VISITING)
                   edge.Reversed = true;
-               else if (state[edge.To] == 0)
+               else if (state[edge.To] == UNVISITED)
                   visit(edge.To);
-            }
+            });
 
-            state[vertex] = 2;
+            state[vertex] = VISITED;
          }
 
-         foreach (var vertex in vertices.Where(vertex => state[vertex] == 0))
-         {
-            visit(vertex);
-         }
+         vertices.Where(vertex => state[vertex] == UNVISITED).Each(visit);
       }
 
       private static List<List<Vertex>> assignLayers(IReadOnlyList<Vertex> vertices)
@@ -82,7 +83,8 @@ namespace OSPSuite.Presentation.Diagram.Services
 
          int layerFor(Vertex vertex)
          {
-            if (layerOf.TryGetValue(vertex, out var layer)) return layer;
+            if (layerOf.TryGetValue(vertex, out var layer))
+               return layer;
             layerOf[vertex] = 0;
             var predecessors = vertex.Edges.Where(edge => edge.Target == vertex).Select(edge => edge.Source).ToList();
             layer = predecessors.Any() ? predecessors.Max(layerFor) + 1 : 0;
@@ -94,21 +96,19 @@ namespace OSPSuite.Presentation.Diagram.Services
          pullSourcesTowardsSuccessors(vertices);
 
          var layers = Enumerable.Range(0, vertices.Max(vertex => vertex.Layer) + 1).Select(i => new List<Vertex>()).ToList();
-         foreach (var vertex in vertices)
+         vertices.Each(vertex =>
          {
             vertex.Order = layers[vertex.Layer].Count;
             layers[vertex.Layer].Add(vertex);
-         }
+         });
 
          return layers;
       }
 
       private static void pullSourcesTowardsSuccessors(IReadOnlyList<Vertex> vertices)
       {
-         foreach (var vertex in vertices.Where(vertex => vertex.Edges.Any() && vertex.Edges.All(edge => edge.Source == vertex)))
-         {
-            vertex.Layer = vertex.Edges.Min(edge => edge.Target.Layer) - 1;
-         }
+         vertices.Where(vertex => vertex.Edges.Any() && vertex.Edges.All(edge => edge.Source == vertex))
+            .Each(vertex => vertex.Layer = vertex.Edges.Min(edge => edge.Target.Layer) - 1);
       }
 
       private static void orderLayers(List<List<Vertex>> layers)
@@ -177,11 +177,11 @@ namespace OSPSuite.Presentation.Diagram.Services
       private static void placeWithMinimumSeparation(List<Vertex> layer, IReadOnlyDictionary<Vertex, float> desired)
       {
          var previous = float.NegativeInfinity;
-         foreach (var vertex in layer)
+         layer.Each(vertex =>
          {
             vertex.Row = Math.Max(desired[vertex], previous + 1);
             previous = vertex.Row;
-         }
+         });
 
          var shift = layer.Average(vertex => vertex.Row - desired[vertex]);
          layer.Each(vertex => vertex.Row -= shift);
@@ -199,17 +199,17 @@ namespace OSPSuite.Presentation.Diagram.Services
          var pitch = vertices.Max(vertex => vertex.VisualSize.Height) + ROW_SPACING;
          var x = 0F;
 
-         foreach (var layer in layers)
+         layers.Each(layer =>
          {
             var layerWidth = layer.Max(vertex => vertex.VisualSize.Width);
-            foreach (var vertex in layer)
+            layer.Each(vertex =>
             {
                var centerX = x + (vertex.IsReaction ? layerWidth : vertex.Node.Size.Width) / 2;
                vertex.Node.Location = new PointF(centerX, vertex.Row * pitch);
-            }
+            });
 
             x += layerWidth + LAYER_SPACING;
-         }
+         });
 
          var offset = new PointF(origin.X - vertices.Min(vertex => vertex.Node.Bounds.Left), origin.Y - vertices.Min(vertex => vertex.Node.Bounds.Top));
          vertices.Each(vertex => vertex.Node.Location = new PointF(vertex.Node.Location.X + offset.X, vertex.Node.Location.Y + offset.Y));

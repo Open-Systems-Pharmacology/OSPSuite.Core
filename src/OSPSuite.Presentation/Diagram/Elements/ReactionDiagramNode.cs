@@ -5,9 +5,11 @@ namespace OSPSuite.Presentation.Diagram.Elements
 {
    public class ReactionDiagramNode : ElementBaseNode
    {
+      private const float SMALL_LABEL_FONT_SIZE = 7F;
+
       public override bool LabelVisible => true;
 
-      public override float LabelFontSize => NodeSize == NodeSize.Small ? 7 : base.LabelFontSize;
+      public override float LabelFontSize => NodeSize == NodeSize.Small ? SMALL_LABEL_FONT_SIZE : base.LabelFontSize;
 
       public override Color LabelColor => NodeSize == NodeSize.Small ? Color.Black : base.LabelColor;
    }

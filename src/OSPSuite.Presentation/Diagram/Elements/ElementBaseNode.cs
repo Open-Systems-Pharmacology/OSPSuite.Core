@@ -6,6 +6,14 @@ namespace OSPSuite.Presentation.Diagram.Elements
 {
    public class ElementBaseNode : DiagramNode, IElementBaseNode
    {
+      private const float UNFIXED_BORDER_WIDTH = 1F;
+      private const float FIXED_BORDER_WIDTH = 2F;
+      private const float NODE_SIZE_PERCENT_BASE = 100F;
+      private const float LARGE_LABEL_FONT_SIZE = 10F;
+      private const float DEFAULT_LABEL_FONT_SIZE = 8F;
+      private const int MAX_ALPHA = 255;
+      private const int FALLBACK_ALPHA = 128;
+
       private NodeSize _nodeSize = NodeSize.Middle;
       private SizeF _nodeBaseSize = new SizeF(20, 20);
       private bool _canLink = true;
@@ -13,7 +21,7 @@ namespace OSPSuite.Presentation.Diagram.Elements
       public Color FillColor { get; protected set; }
       public Color PortColor { get; protected set; }
       public Color BorderColor { get; protected set; }
-      public float BorderWidth { get; protected set; } = 1F;
+      public float BorderWidth { get; protected set; } = UNFIXED_BORDER_WIDTH;
 
       public SizeF NodeBaseSize
       {
@@ -41,7 +49,7 @@ namespace OSPSuite.Presentation.Diagram.Elements
          set => Location = value;
       }
 
-      private float scale => (int) NodeSize / 100F;
+      private float scale => (int) NodeSize / NODE_SIZE_PERCENT_BASE;
 
       public override SizeF Size
       {
@@ -61,7 +69,7 @@ namespace OSPSuite.Presentation.Diagram.Elements
 
       public virtual bool LabelVisible => NodeSize != NodeSize.Small;
 
-      public virtual float LabelFontSize => NodeSize == NodeSize.Large ? 10 : 8;
+      public virtual float LabelFontSize => NodeSize == NodeSize.Large ? LARGE_LABEL_FONT_SIZE : DEFAULT_LABEL_FONT_SIZE;
 
       public virtual Color LabelColor => NodeSize == NodeSize.Middle ? SuiteColors.Gray : Color.Black;
 
@@ -70,19 +78,19 @@ namespace OSPSuite.Presentation.Diagram.Elements
          switch (NodeSize)
          {
             case NodeSize.Small:
-               return Convert.ToInt16(nodeSizeOpacity * nodeSizeOpacity * 255);
+               return Convert.ToInt16(nodeSizeOpacity * nodeSizeOpacity * MAX_ALPHA);
             case NodeSize.Middle:
-               return Convert.ToInt16(nodeSizeOpacity * 255);
+               return Convert.ToInt16(nodeSizeOpacity * MAX_ALPHA);
             case NodeSize.Large:
-               return 255;
+               return MAX_ALPHA;
             default:
-               return 128;
+               return FALLBACK_ALPHA;
          }
       }
 
       public override void SetColorFrom(IDiagramColors diagramColors)
       {
-         BorderWidth = LocationFixed ? 2F : 1F;
+         BorderWidth = LocationFixed ? FIXED_BORDER_WIDTH : UNFIXED_BORDER_WIDTH;
          BorderColor = LocationFixed ? diagramColors.BorderFixed : diagramColors.BorderUnfixed;
          NotifyChanged();
       }
@@ -96,7 +104,8 @@ namespace OSPSuite.Presentation.Diagram.Elements
 
       public override void CopyLayoutInfoFrom(IBaseNode node, PointF parentLocation)
       {
-         if (!(node is IElementBaseNode elementNode)) return;
+         if (!(node is IElementBaseNode elementNode))
+            return;
          base.CopyLayoutInfoFrom(node, parentLocation);
          NodeSize = elementNode.NodeSize;
       }

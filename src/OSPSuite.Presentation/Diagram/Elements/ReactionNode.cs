@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using OSPSuite.Core.Diagram;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Presentation.Diagram.Elements
 {
@@ -30,10 +31,7 @@ namespace OSPSuite.Presentation.Diagram.Elements
 
       public void ClearLinks()
       {
-         foreach (var reactionLink in ReactionLinks)
-         {
-            reactionLink.Unlink();
-         }
+         ReactionLinks.Each(reactionLink => reactionLink.Unlink());
       }
 
       public override void SetColorFrom(IDiagramColors diagramColors)
@@ -46,10 +44,7 @@ namespace OSPSuite.Presentation.Diagram.Elements
          ProductPortColor = Color.FromArgb(alpha, diagramColors.ReactionPortProduct);
          ModifierPortColor = Color.FromArgb(alpha, diagramColors.ReactionPortModifier);
 
-         foreach (var reactionLink in ReactionLinks)
-         {
-            reactionLink.SetColorFrom(diagramColors);
-         }
+         ReactionLinks.Each(reactionLink => reactionLink.SetColorFrom(diagramColors));
       }
 
       public override void CopyLayoutInfoFrom(IBaseNode baseNode, PointF parentLocation)

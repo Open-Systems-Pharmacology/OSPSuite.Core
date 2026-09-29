@@ -3,11 +3,15 @@ using System.Drawing;
 using System.Linq;
 using OSPSuite.Core.Diagram;
 using OSPSuite.Presentation.Extensions;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Presentation.Diagram.Elements
 {
    public class ContainerNode : DiagramNode, IContainerNode
    {
+      private const float FIXED_BORDER_WIDTH = 2F;
+      private const float UNFIXED_BORDER_WIDTH = 1F;
+
       private bool _isExpanded = true;
       private bool _isLogical;
       private SizeF _size = new SizeF(100, 60);
@@ -16,7 +20,7 @@ namespace OSPSuite.Presentation.Diagram.Elements
 
       public Color BackgroundColor { get; private set; }
       public Color BorderColor { get; private set; }
-      public float BorderWidth { get; private set; } = 1F;
+      public float BorderWidth { get; private set; } = UNFIXED_BORDER_WIDTH;
       public bool IsExpandedByDefault { get; set; }
 
       public ContainerNode()
@@ -54,12 +58,10 @@ namespace OSPSuite.Presentation.Diagram.Elements
          {
             var delta = value.Minus(base.Location);
             base.Location = value;
-            if (delta.IsEmpty) return;
+            if (delta.IsEmpty)
+               return;
 
-            foreach (var child in Children)
-            {
-               child.Location = child.Location.Plus(delta);
-            }
+            Children.Each(child => child.Location = child.Location.Plus(delta));
          }
       }
 
@@ -99,45 +101,27 @@ namespace OSPSuite.Presentation.Diagram.Elements
          if (!hidden) ShowParents();
 
          Hidden = hidden;
-         foreach (var child in GetAllChildren<IBaseNode>())
-         {
-            child.Hidden = hidden;
-         }
+         GetAllChildren<IBaseNode>().Each(child => child.Hidden = hidden);
       }
 
       public void ShowChildrenAndLinkedNodes()
       {
-         foreach (var childNode in GetDirectChildren<IBaseNode>())
-         {
-            childNode.Hidden = false;
-         }
+         GetDirectChildren<IBaseNode>().Each(childNode => childNode.Hidden = false);
 
-         foreach (var neighborNode in GetLinkedNodes<IBaseNode>(true))
-         {
-            neighborNode.Hidden = false;
-         }
+         GetLinkedNodes<IBaseNode>(true).Each(neighborNode => neighborNode.Hidden = false);
       }
 
       public void PostLayoutStep()
       {
-         foreach (var node in GetDirectChildren<INeighborhoodNode>())
-         {
-            node.AdjustPosition();
-         }
+         GetDirectChildren<INeighborhoodNode>().Each(node => node.AdjustPosition());
 
-         foreach (var neighborhoodNode in GetLinkedNodes<INeighborhoodNode>(true))
-         {
-            neighborhoodNode.AdjustPosition();
-         }
+         GetLinkedNodes<INeighborhoodNode>(true).Each(neighborhoodNode => neighborhoodNode.AdjustPosition());
       }
 
       public void Collapse(int level)
       {
          if (level > 0)
-            foreach (var childContainer in GetDirectChildren<IContainerNode>())
-            {
-               childContainer.Collapse(level - 1);
-            }
+            GetDirectChildren<IContainerNode>().Each(childContainer => childContainer.Collapse(level - 1));
 
          if (level >= 0) IsExpanded = false;
       }
@@ -147,10 +131,7 @@ namespace OSPSuite.Presentation.Diagram.Elements
          if (level >= 0) IsExpanded = true;
 
          if (level > 0)
-            foreach (var childContainer in GetDirectChildren<IContainerNode>())
-            {
-               childContainer.Expand(level - 1);
-            }
+            GetDirectChildren<IContainerNode>().Each(childContainer => childContainer.Expand(level - 1));
       }
 
       public IEnumerable<T> GetLinkedNodes<T>(bool recursive) where T : class, IBaseNode
@@ -175,10 +156,7 @@ namespace OSPSuite.Presentation.Diagram.Elements
       public IEnumerable<T> GetAllChildren<T>() where T : class
       {
          var children = GetDirectChildren<T>().ToList();
-         foreach (var childContainer in Children.OfType<IContainerNode>())
-         {
-            children.AddRange(childContainer.GetAllChildren<T>());
-         }
+         Children.OfType<IContainerNode>().Each(childContainer => children.AddRange(childContainer.GetAllChildren<T>()));
 
          return children.Distinct().ToList();
       }
@@ -190,7 +168,8 @@ namespace OSPSuite.Presentation.Diagram.Elements
 
       public void AddChildNode(IBaseNode node)
       {
-         if (!(node is DiagramNode diagramNode)) return;
+         if (!(node is DiagramNode diagramNode))
+            return;
          Children.Add(node);
          diagramNode.Parent = this;
          Model?.Attach(diagramNode, this);
@@ -199,7 +178,8 @@ namespace OSPSuite.Presentation.Diagram.Elements
 
       public void RemoveChildNode(IBaseNode node)
       {
-         if (!Children.Remove(node)) return;
+         if (!Children.Remove(node))
+            return;
          if (node is DiagramNode diagramNode)
          {
             Model?.Detach(diagramNode);
@@ -211,21 +191,23 @@ namespace OSPSuite.Presentation.Diagram.Elements
 
       public bool ContainsChildNode(IBaseNode node, bool recursive)
       {
-         if (node == this) return true;
+         if (node == this)
+            return true;
          return recursive ? GetAllChildren<IBaseNode>().Contains(node) : Children.Contains(node);
       }
 
       public override void SetColorFrom(IDiagramColors diagramColors)
       {
          BackgroundColor = IsLogical ? diagramColors.ContainerLogical : diagramColors.ContainerPhysical;
-         BorderWidth = LocationFixed ? 2F : 1F;
+         BorderWidth = LocationFixed ? FIXED_BORDER_WIDTH : UNFIXED_BORDER_WIDTH;
          BorderColor = LocationFixed ? diagramColors.BorderFixed : diagramColors.BorderUnfixed;
          NotifyChanged();
       }
 
       public override void CopyLayoutInfoFrom(IBaseNode node, PointF parentLocation)
       {
-         if (!(node is IContainerNode containerNode)) return;
+         if (!(node is IContainerNode containerNode))
+            return;
          base.CopyLayoutInfoFrom(node, parentLocation);
          IsExpanded = containerNode.IsExpanded;
          Size = containerNode.Size;

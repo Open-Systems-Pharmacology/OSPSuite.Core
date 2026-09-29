@@ -13,7 +13,9 @@ namespace OSPSuite.Presentation.Diagram.Elements
 
       public void Add(IBaseNode node)
       {
-         if (_nodes.Contains(node)) return;
+         if (_nodes.Contains(node))
+            return;
+
          _nodes.Add(node);
       }
 
