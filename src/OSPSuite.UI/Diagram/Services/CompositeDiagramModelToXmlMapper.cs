@@ -7,6 +7,7 @@ using ReactionDiagramModelToXmlMapper = OSPSuite.Presentation.Diagram.Services.D
 
 namespace OSPSuite.UI.Diagram.Services
 {
+   //transitional: removed together with GoDiagram once every diagram uses the UI-free model
    public class CompositeDiagramModelToXmlMapper : IDiagramModelToXmlMapper, IContainerBaseXmlSerializer
    {
       private readonly DiagramModelToXmlMapper _goDiagramMapper = new DiagramModelToXmlMapper();

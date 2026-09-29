@@ -28,6 +28,7 @@ namespace OSPSuite.UI.Diagram.Elements
 
       public void DoForceLayout(IContainerBase containerBase, IList<IHasLayoutInfo> freeNodes, int levelDepth)
       {
+         //transitional: removed together with GoDiagram once every diagram uses the UI-free model
          var reactionDiagramModel = reactionDiagramModelFor(containerBase);
          if (reactionDiagramModel != null)
          {

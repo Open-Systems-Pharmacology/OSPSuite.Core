@@ -13,6 +13,7 @@ using GoContainerNode = OSPSuite.UI.Diagram.Elements.SimpleContainerNode;
 
 namespace OSPSuite.UI.Diagram
 {
+   //transitional: removed together with GoDiagram once every diagram uses the UI-free model
    public abstract class concern_for_CompositeDiagramModelToXmlMapper : ContextSpecification<CompositeDiagramModelToXmlMapper>
    {
       protected const string REACTION_DIAGRAM_XML = @"<DiagramModel IsLayouted=""True"">

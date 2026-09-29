@@ -21,6 +21,7 @@ namespace OSPSuite.UI.Diagram.Services
 
       public void LayoutReactionDiagram(IContainerBase containerBase)
       {
+         //transitional: removed together with GoDiagram once every diagram uses the UI-free model
          var reactionDiagramModel = reactionDiagramModelFor(containerBase);
          if (reactionDiagramModel != null)
          {
