@@ -9,8 +9,9 @@ namespace OSPSuite.Presentation.Diagram.Elements
       private const float UNFIXED_BORDER_WIDTH = 1F;
       private const float FIXED_BORDER_WIDTH = 2F;
       private const float NODE_SIZE_PERCENT_BASE = 100F;
-      private const float LARGE_LABEL_FONT_SIZE = 10F;
-      private const float DEFAULT_LABEL_FONT_SIZE = 8F;
+      protected const float LARGE_LABEL_FONT_SIZE = 10F;
+      protected const float DEFAULT_LABEL_FONT_SIZE = 8F;
+      protected const float SMALL_LABEL_FONT_SIZE = 7F;
       private const int MAX_ALPHA = 255;
       private const int FALLBACK_ALPHA = 128;
 

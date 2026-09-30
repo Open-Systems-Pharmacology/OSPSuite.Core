@@ -5,7 +5,6 @@ namespace OSPSuite.Presentation.Diagram.Elements
 {
    public class ReactionDiagramNode : ElementBaseNode
    {
-      private const float SMALL_LABEL_FONT_SIZE = 7F;
 
       public override bool LabelVisible => true;
 

@@ -121,8 +121,7 @@ namespace OSPSuite.Presentation.Diagram.Services
             if (root.HasAttribute(LOCATION_X) && root.HasAttribute(LOCATION_Y))
                diagramModel.Location = new PointF(parseFloat(root.GetAttribute(LOCATION_X)), parseFloat(root.GetAttribute(LOCATION_Y)));
 
-            if (root.HasAttribute(IS_LAYOUTED))
-               diagramModel.IsLayouted = bool.Parse(root.GetAttribute(IS_LAYOUTED));
+            diagramModel.IsLayouted = boolAttribute(root, IS_LAYOUTED, diagramModel.IsLayouted);
          }
          finally
          {
