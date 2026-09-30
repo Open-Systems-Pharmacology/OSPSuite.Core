@@ -3,6 +3,7 @@ using OSPSuite.Core.Chart;
 using OSPSuite.Core.Chart.ParameterIdentifications;
 using OSPSuite.Core.Commands;
 using OSPSuite.Core.Domain.ParameterIdentifications;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
 {
@@ -14,10 +15,29 @@ namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
    public class ParameterIdentificationAnalysisCreator : ParameterAnalysableAnalysisCreator, IParameterIdentificationAnalysisCreator
    {
       private readonly IChartFactory _chartFactory;
+      private readonly ICloneManagerForModel _cloneManager;
 
-      public ParameterIdentificationAnalysisCreator(IChartFactory chartFactory, IOSPSuiteExecutionContext context,IContainerTask containerTask,  IIdGenerator idGenerator , IObjectIdResetter objectIdResetter) : base(containerTask, context, objectIdResetter, idGenerator)
+      public ParameterIdentificationAnalysisCreator(IChartFactory chartFactory, IOSPSuiteExecutionContext context,IContainerTask containerTask,  IIdGenerator idGenerator , IObjectIdResetter objectIdResetter, ICloneManagerForModel cloneManager) : base(containerTask, context, objectIdResetter, idGenerator)
       {
          _chartFactory = chartFactory;
+         _cloneManager = cloneManager;
+      }
+
+      public override ISimulationAnalysis CreateAnalysisBasedOn(ISimulationAnalysis simulationAnalysis)
+      {
+         if (curvesReferenceRunResults(simulationAnalysis))
+            return _cloneManager.Clone(simulationAnalysis.DowncastTo<AnalysisChart>());
+
+         return base.CreateAnalysisBasedOn(simulationAnalysis);
+      }
+
+      /// <summary>
+      ///    Curves of an analysis chart without local repositories reference the columns of the parameter identification
+      ///    run results. Those results are not available when deserializing the chart on its own, so the curves would be lost.
+      /// </summary>
+      private static bool curvesReferenceRunResults(ISimulationAnalysis simulationAnalysis)
+      {
+         return simulationAnalysis is AnalysisChart && !(simulationAnalysis is AnalysisChartWithLocalRepositories);
       }
 
       public ISimulationAnalysis CreateAnalysisFor(ParameterIdentification parameterIdentification, ParameterIdentificationAnalysisType parameterIdentificationAnalysisType)

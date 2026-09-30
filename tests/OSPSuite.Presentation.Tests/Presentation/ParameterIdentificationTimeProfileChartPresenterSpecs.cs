@@ -233,6 +233,57 @@ namespace OSPSuite.Presentation.Presentation
       }
    }
 
+   public class When_initializing_a_cloned_time_profile_chart_that_already_contains_the_simulation_curves : concern_for_ParameterIdentificationTimeProfileChartPresenter
+   {
+      private static readonly Color CLONED_COLOR = Color.Magenta;
+      private DataRepository _simulationResult;
+      private DataColumn _outputColumn;
+      private DataColumn _firstObservedData1;
+
+      protected override void Context()
+      {
+         base.Context();
+         _simulationResult = DomainHelperForSpecs.IndividualSimulationDataRepositoryFor("SimulationResult");
+         _outputColumn = _simulationResult.AllButBaseGrid().First();
+         _firstObservedData1 = _observedData1.ObservationColumns().First();
+
+         A.CallTo(() => _outputMapping1.FullOutputPath).Returns(_outputColumn.QuantityInfo.PathAsString);
+         A.CallTo(() => _outputMapping2.FullOutputPath).Returns(_outputColumn.QuantityInfo.PathAsString);
+         _optimizationRunResult.AddResult(_simulationResult);
+         _parameterIdentification.Configuration.RunMode = new MultipleParameterIdentificationRunMode();
+
+         //a clone carries the simulation curve of the source chart with its color and style
+         var clonedCurve = new Curve { Name = "Cloned" };
+         var dimensionFactory = A.Fake<IDimensionFactory>();
+         clonedCurve.SetxData(_outputColumn.BaseGrid, dimensionFactory);
+         clonedCurve.SetyData(_outputColumn, dimensionFactory);
+         clonedCurve.Color = CLONED_COLOR;
+         clonedCurve.LineStyle = LineStyles.Dash;
+         _timeProfileAnalysis.AddCurve(clonedCurve, useAxisDefault: false);
+         _parameterIdentification.AddAnalysis(_timeProfileAnalysis);
+      }
+
+      protected override void Because()
+      {
+         sut.InitializeAnalysis(_timeProfileAnalysis, _parameterIdentification);
+      }
+
+      [Observation]
+      public void should_keep_the_color_and_style_of_the_cloned_simulation_curve()
+      {
+         var outputCurve = _timeProfileAnalysis.FindCurveWithSameData(_outputColumn.BaseGrid, _outputColumn);
+         outputCurve.Color.ShouldBeEqualTo(CLONED_COLOR);
+         outputCurve.LineStyle.ShouldBeEqualTo(LineStyles.Dash);
+      }
+
+      [Observation]
+      public void should_use_the_color_of_the_cloned_simulation_curve_for_the_observed_data()
+      {
+         var observedDataCurve = _timeProfileAnalysis.FindCurveWithSameData(_firstObservedData1.BaseGrid, _firstObservedData1);
+         observedDataCurve.Color.ShouldBeEqualTo(CLONED_COLOR);
+      }
+   }
+
    public class When_initializing_the_time_profile_analysis_for_a_parameter_identification : concern_for_ParameterIdentificationTimeProfileChartPresenter
    {
       private IProject _project;

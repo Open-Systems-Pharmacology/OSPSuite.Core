@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using FakeItEasy;
+using OSPSuite.Assets;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Chart;
@@ -24,7 +25,7 @@ namespace OSPSuite.Presentation.Presentation
 {
    public abstract class concern_for_ParameterIdentificationPredictedVsObservedChartPresenter : ContextSpecification<ParameterIdentificationPredictedVsObservedChartPresenter>
    {
-      private IParameterIdentificationSingleRunAnalysisView _view;
+      protected IParameterIdentificationSingleRunAnalysisView _view;
       protected IChartEditorAndDisplayPresenter _chartEditorAndDisplayPresenter;
       protected IChartEditorPresenter _chartEditorPresenter;
       private ICurveNamer _curveNamer;
@@ -203,6 +204,58 @@ namespace OSPSuite.Presentation.Presentation
             A<Func<DataColumn, string>>._,
             false,
             true)).MustHaveHappened();
+      }
+   }
+
+   public class When_initializing_a_cloned_predicted_vs_observed_chart : concern_for_ParameterIdentificationPredictedVsObservedChartPresenter
+   {
+      private const float FOLD_VALUE = 2;
+      private PredictedVsObservedChartService _predictedVsObservedChartService;
+      private ParameterIdentificationPredictedVsObservedChart _sourceChart;
+      private ParameterIdentificationPredictedVsObservedChart _clonedChart;
+
+      protected override void Context()
+      {
+         base.Context();
+         A.CallTo(() => _parameterIdentification.AllObservedData).Returns(new[] { _observationData });
+         A.CallTo(() => _parameterIdentification.AllObservationColumnsFor(_noDimensionColumnForSimulation.QuantityInfo.PathAsString)).Returns(new List<DataColumn> { _observationData.FirstDataColumn() });
+         _predictedVsObservedChartService = new PredictedVsObservedChartService(DimensionFactoryForSpecs.Factory, A.Fake<IDisplayUnitRetriever>());
+
+         //the source chart with a saved deviation line, as displayed by its own presenter
+         _sourceChart = new ParameterIdentificationPredictedVsObservedChart().WithAxes().WithId("SOURCE_ID");
+         _sourceChart.AddToDeviationFoldValue(FOLD_VALUE);
+         new ParameterIdentificationPredictedVsObservedChartPresenter(_view, _chartPresenterContext, _predictedVsObservedChartService).InitializeAnalysis(_sourceChart, _parameterIdentification);
+
+         var objectBaseFactory = new ObjectBaseFactory(A.Fake<OSPSuite.Utility.Container.IContainer>(), A.Fake<IDimensionFactory>(), A.Fake<IIdGenerator>(), A.Fake<ICreationMetaDataFactory>());
+         _clonedChart = new CloneManagerForModel(objectBaseFactory, new DataRepositoryTask(), A.Fake<IModelFinalizer>()).Clone(_sourceChart);
+
+         sut = new ParameterIdentificationPredictedVsObservedChartPresenter(_view, _chartPresenterContext, _predictedVsObservedChartService);
+      }
+
+      protected override void Because()
+      {
+         sut.InitializeAnalysis(_clonedChart, _parameterIdentification);
+      }
+
+      private int numberOfCurvesNamed(string columnName) => _clonedChart.Curves.Count(x => string.Equals(x.yData.Name, columnName));
+
+      [Observation]
+      public void should_add_the_identity_curve_once()
+      {
+         numberOfCurvesNamed(_predictedVsObservedChartService.Identity).ShouldBeEqualTo(1);
+      }
+
+      [Observation]
+      public void should_add_each_saved_deviation_line_once()
+      {
+         numberOfCurvesNamed(Captions.Chart.DeviationLines.DeviationLineNameUpper(FOLD_VALUE)).ShouldBeEqualTo(1);
+         numberOfCurvesNamed(Captions.Chart.DeviationLines.DeviationLineNameLower(FOLD_VALUE)).ShouldBeEqualTo(1);
+      }
+
+      [Observation]
+      public void should_keep_a_single_curve_for_the_simulation_output()
+      {
+         _clonedChart.Curves.Count(x => Equals(x.yData, _noDimensionColumnForSimulation)).ShouldBeEqualTo(1);
       }
    }
 
