@@ -1,10 +1,11 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using OSPSuite.Assets;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
-using OSPSuite.Core.Domain;
 using OSPSuite.Core.Import;
+using OSPSuite.Infrastructure.Import.Core;
 using OSPSuite.Utility;
 using OSPSuite.Utility.Exceptions;
 using OSPSuite.Utility.Extensions;
@@ -320,7 +321,65 @@ namespace OSPSuite.R.Services
          var configuration = sut.CreateConfigurationFor(fileFullName, "TestSheet_1_withMW");
          sut.SetAllLoadedSheet(configuration, "TestSheet_1_withMW");
          sut.IgnoreSheetNamesAtImport = false;
-         The.Action(() => sut.ImportExcelFromConfiguration(configuration, fileFullName)).ShouldThrowAn<InvalidArgumentException>();
+         The.Action(() => sut.ImportExcelFromConfiguration(configuration, fileFullName)).ShouldThrowAn<ImporterParsingException>();
+      }
+   }
+
+   public class When_importing_data_where_the_unit_column_is_empty : concern_for_DataImporter
+   {
+      private ImporterParsingException _exception;
+
+      protected override void Because()
+      {
+         try
+         {
+            sut.ImportExcelFromConfiguration(getFileFullName("importerConfiguration_unitsFromColumns.xml"), getFileFullName("MissingTimeUnit.xlsx"));
+         }
+         catch (ImporterParsingException e)
+         {
+            _exception = e;
+         }
+      }
+
+      [Observation]
+      public void should_throw_a_parsing_exception()
+      {
+         _exception.ShouldNotBeNull();
+      }
+
+      [Observation]
+      public void should_report_that_the_empty_unit_is_not_supported_by_the_mapping()
+      {
+         _exception.Message.ShouldBeEqualTo(Error.ParseErrorMessage(Error.InvalidDimensionException("", "Time")));
+      }
+   }
+
+   public class When_importing_data_where_the_unit_column_is_empty_for_some_rows : concern_for_DataImporter
+   {
+      private ImporterParsingException _exception;
+
+      protected override void Because()
+      {
+         try
+         {
+            sut.ImportCsvFromConfiguration(getFileFullName("importerConfiguration_unitsFromColumns.xml"), getFileFullName("PartiallyMissingTimeUnit.csv"), ';');
+         }
+         catch (ImporterParsingException e)
+         {
+            _exception = e;
+         }
+      }
+
+      [Observation]
+      public void should_throw_a_parsing_exception()
+      {
+         _exception.ShouldNotBeNull();
+      }
+
+      [Observation]
+      public void should_report_that_the_empty_unit_is_not_supported_by_the_mapping()
+      {
+         _exception.Message.ShouldBeEqualTo(Error.ParseErrorMessage(Error.InvalidDimensionException("", "Time")));
       }
    }
 }

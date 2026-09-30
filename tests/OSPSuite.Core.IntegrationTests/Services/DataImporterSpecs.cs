@@ -16,7 +16,6 @@ using OSPSuite.Infrastructure.Import.Core;
 using OSPSuite.Infrastructure.Import.Services;
 using OSPSuite.Presentation.Core;
 using OSPSuite.Utility.Container;
-using OSPSuite.Utility.Exceptions;
 using ImporterConfiguration = OSPSuite.Core.Import.ImporterConfiguration;
 
 namespace OSPSuite.Presentation.Services
@@ -431,12 +430,12 @@ namespace OSPSuite.Presentation.Services
       }
 
       [Observation]
-      public void should_throw_exception()
+      public void should_notify_the_user_that_the_error_and_measurement_dimensions_differ()
       {
-         The.Action(() =>
-            sut.ImportFromConfiguration(_importerConfiguration, _metaDataCategories, _columnInfos, _dataImporterSettings,
-               getFileFullName(
-                  "IntegrationSample1.xlsx"))).ShouldThrowAn<OSPSuiteException>();
+         sut.ImportFromConfiguration(_importerConfiguration, _metaDataCategories, _columnInfos, _dataImporterSettings,
+            getFileFullName(
+               "IntegrationSample1.xlsx")).Count.ShouldBeEqualTo(0);
+         A.CallTo(() => _dialogCreator.MessageBoxError(Error.ParseErrorMessage(Error.InvalidErrorDimension))).MustHaveHappened();
       }
    }
 

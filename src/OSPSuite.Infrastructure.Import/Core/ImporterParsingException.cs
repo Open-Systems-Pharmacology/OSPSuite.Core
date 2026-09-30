@@ -7,7 +7,12 @@ namespace OSPSuite.Infrastructure.Import.Core
       public ParseErrors FaultyDataSet { get; private set; }
 
       public ImporterParsingException(ParseErrors faultyDataSets)
-         : base(Error.SimpleParseErrorMessage)
+         : this(faultyDataSets, Error.SimpleParseErrorMessage)
+      {
+      }
+
+      public ImporterParsingException(ParseErrors faultyDataSets, string message)
+         : base(message)
       {
          FaultyDataSet = faultyDataSets;
       }

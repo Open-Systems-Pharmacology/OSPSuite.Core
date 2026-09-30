@@ -352,8 +352,9 @@ namespace OSPSuite.Infrastructure.Import.Services
          }
 
          var errors = dataSource.AddSheets(sheets, columnInfos, configuration.FilterString);
+         errors.Add(dataSource.ValidateDataSourceUnits(columnInfos));
          if (errors.Any())
-            throw new ImporterParsingException(errors);
+            throw new ImporterParsingException(errors, Error.ParseErrorMessage(errors.DistinctMessages().ToString("\n")));
          return (DataSourceToDataSets(dataSource, metaDataCategories, dataImporterSettings, configuration.Id), missingSheets);
       }
    }

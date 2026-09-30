@@ -1,0 +1,4 @@
+Study Id;Subject Id;Organ;Compartment;Species;Gender;Dose;Molecule;Molecular Weight;Time;Time unit;Measurement;Measurement unit;Error;LLOQ;Route;Group Id
+Mendes_2014;;PeripheralVenousBlood;Plasma;Human;;100 [mg] PTU;PTU;170.32;0.5;h;0.486;ng/ml;;;po;fasted
+Mendes_2014;;PeripheralVenousBlood;Plasma;Human;;100 [mg] PTU;PTU;170.32;0.6;;211.426;ng/ml;;;po;fasted
+Mendes_2014;;PeripheralVenousBlood;Plasma;Human;;100 [mg] PTU;PTU;170.32;0.7;h;470.269;ng/ml;;;po;fasted
