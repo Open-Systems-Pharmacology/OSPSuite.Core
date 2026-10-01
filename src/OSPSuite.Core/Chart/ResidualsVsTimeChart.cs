@@ -30,7 +30,6 @@ namespace OSPSuite.Core.Chart
       {
          var clonedRepository = base.CloneRepository(sourceRepository, sourceChart, cloneManager);
          //scatter repositories are found by an id starting with the chart id (see ResidualsVsTimeChartService.GetOrCreateScatterDataRepositoryInChart)
-         //Id is already the id of the clone here. A clone made with CloneAndKeepId gets its id only afterwards and would not find its repositories
          var sourceIdPrefix = $"{sourceChart.Id}-";
          if (sourceRepository.Id.StartsWith(sourceIdPrefix, StringComparison.Ordinal))
             clonedRepository.Id = $"{Id}-{sourceRepository.Id.Substring(sourceIdPrefix.Length)}";

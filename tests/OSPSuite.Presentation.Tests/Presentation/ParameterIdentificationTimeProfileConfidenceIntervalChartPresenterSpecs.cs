@@ -81,7 +81,6 @@ namespace OSPSuite.Presentation.Presentation
          var confidenceIntervalRepository = new ConfidenceIntervalDataRepositoryCreator().CreateFor("Confidence Interval", new[] { 1d, 2d, 3d }, outputMapping, runResult);
          A.CallTo(() => _timeProfileConfidenceIntervalCalculator.CalculateConfidenceIntervalFor(_parameterIdentification, _parameterIdentificationRunResult)).Returns(new[] { confidenceIntervalRepository });
 
-         //the source chart as displayed by its own presenter, then customized by the user
          _sourceChart = new ParameterIdentificationTimeProfileConfidenceIntervalChart().WithAxes().WithId(SOURCE_ID);
          new ParameterIdentificationTimeProfileConfidenceIntervalChartPresenter(_view, _chartPresenterContext, _timeProfileConfidenceIntervalCalculator).InitializeAnalysis(_sourceChart, _parameterIdentification);
          _sourceChart.Curves.Single().Color = CLONED_COLOR;

@@ -32,7 +32,6 @@ namespace OSPSuite.Core.Domain
          var objectBaseFactory = new ObjectBaseFactory(A.Fake<Utility.Container.IContainer>(), dimensionFactory, idGenerator, A.Fake<ICreationMetaDataFactory>());
          _cloneManager = new CloneManagerForModel(objectBaseFactory, new DataRepositoryTask(), A.Fake<IModelFinalizer>());
 
-         //interval repository as created for the confidence, prediction and VPC interval charts
          var outputMapping = A.Fake<OutputMapping>();
          A.CallTo(() => outputMapping.FullOutputPath).Returns("Sim|Comp|Liver|Cell|Concentration");
          outputMapping.Scaling = Scalings.Log;

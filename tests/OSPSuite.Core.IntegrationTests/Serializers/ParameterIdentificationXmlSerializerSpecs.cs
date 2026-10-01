@@ -60,10 +60,6 @@ namespace OSPSuite.Core.Serializers
          }
       }
 
-      /// <summary>
-      ///    Deserializes the <paramref name="element" /> in a new context, as the applications do when loading an object. The
-      ///    observed data is available in the context, like the observed data of a project.
-      /// </summary>
       protected T Deserialize<T>(XElement element)
       {
          var withIdRepository = new WithIdRepository();
@@ -83,9 +79,6 @@ namespace OSPSuite.Core.Serializers
          }
       }
 
-      /// <summary>
-      ///    Residual vs time chart as displayed by the residual presenter
-      /// </summary>
       protected ParameterIdentificationResidualVsTimeChart ResidualVsTimeChart()
       {
          var chart = new ParameterIdentificationResidualVsTimeChart().WithId(_idGenerator.NewId()).WithName("Residuals vs. Time");
@@ -94,10 +87,6 @@ namespace OSPSuite.Core.Serializers
          return chart;
       }
 
-      /// <summary>
-      ///    Adds the scatter repository and curve of the residuals to the <paramref name="chart" /> unless the chart already
-      ///    has them, as the residual presenter does when displaying the chart
-      /// </summary>
       protected void ShowResidualsIn(AnalysisChartWithLocalRepositories chart)
       {
          var residualsVsTimeChartService = new ResidualsVsTimeChartService(IoC.Resolve<IDimensionFactory>());
@@ -108,9 +97,6 @@ namespace OSPSuite.Core.Serializers
 
       protected string ScatterRepositoryIdFor(ISimulationAnalysis chart) => $"{chart.Id}-{OUTPUT_PATH}-{_observedData.Id}-{RUN_INDEX}";
 
-      /// <summary>
-      ///    Confidence interval chart as displayed by the confidence interval presenter, with a curve for the observed data
-      /// </summary>
       protected ParameterIdentificationTimeProfileConfidenceIntervalChart ConfidenceIntervalChart()
       {
          var chart = new ParameterIdentificationTimeProfileConfidenceIntervalChart().WithId(_idGenerator.NewId()).WithName("Time Profile Confidence Interval");
@@ -161,7 +147,6 @@ namespace OSPSuite.Core.Serializers
          _savedParameterIdentification = Serialize(_parameterIdentification);
       }
 
-      //as the parameter identification presenter does when the user clones a chart
       private void addChartAndItsClone(AnalysisChartWithLocalRepositories chart)
       {
          _analysisCreator.AddSimulationAnalysisTo(_parameterIdentification, chart);

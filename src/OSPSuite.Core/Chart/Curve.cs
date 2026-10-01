@@ -49,10 +49,6 @@ namespace OSPSuite.Core.Chart
          yDimension = yDimensionFor(dimensionFactory);
       }
 
-      /// <summary>
-      ///    Replaces the plotted columns with columns having the same dimensions as the current ones (e.g. clones of those
-      ///    columns). The dimensions of the curve are kept as is.
-      /// </summary>
       internal void ReplaceData(DataColumn xColumn, DataColumn yColumn)
       {
          xData = xColumn;

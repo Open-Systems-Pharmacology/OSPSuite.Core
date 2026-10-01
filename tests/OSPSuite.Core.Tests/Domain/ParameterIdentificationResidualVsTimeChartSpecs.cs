@@ -43,9 +43,6 @@ namespace OSPSuite.Core.Domain
          sut = new ParameterIdentificationResidualVsTimeChart().WithAxes().WithId(SOURCE_ID);
       }
 
-      /// <summary>
-      ///    Fills the source chart the way the residual presenter does when the chart is displayed
-      /// </summary>
       protected DataRepository AddScatterAndZeroMarkerCurvesToSource()
       {
          var scatterRepository = _residualsVsTimeChartService.GetOrCreateScatterDataRepositoryInChart(sut, _outputResiduals, RUN_INDEX);
@@ -235,7 +232,6 @@ namespace OSPSuite.Core.Domain
       protected override void Context()
       {
          base.Context();
-         //a previous clone made by serialization kept the repository ids of the chart it was cloned from
          _repositoryOfAnotherChart = _residualsVsTimeChartService.CreateScatterDataRepository($"ANOTHER_CHART_ID-{OUTPUT_PATH}-{_observedData.Id}-{RUN_INDEX}", "Simulation Results", _outputResiduals);
          AddScatterCurveFor(_repositoryOfAnotherChart);
       }
@@ -267,7 +263,6 @@ namespace OSPSuite.Core.Domain
       protected override void Context()
       {
          base.Context();
-         //repository of a chart whose id happens to start with the id of the source chart
          var repositoryOfAnotherChart = _residualsVsTimeChartService.CreateScatterDataRepository($"{SOURCE_ID}2-{OUTPUT_PATH}-{_observedData.Id}-{RUN_INDEX}", "Simulation Results", _outputResiduals);
          AddScatterCurveFor(repositoryOfAnotherChart);
       }

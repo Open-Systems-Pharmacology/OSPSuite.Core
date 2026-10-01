@@ -248,7 +248,6 @@ namespace OSPSuite.Presentation.Presentation
          A.CallTo(() => _parameterIdentification.AllObservedData).Returns(new[] { _observation1 });
          _parameterIdentificationRunResult.Index = 1;
 
-         //the source chart as displayed by its own presenter, then customized by the user
          _sourceChart = new ParameterIdentificationResidualVsTimeChart().WithAxes().WithId(SOURCE_ID);
          new ParameterIdentificationResidualVsTimeChartPresenter(_view, _chartPresenterContext, _residualsVsTimeChartService).InitializeAnalysis(_sourceChart, _parameterIdentification);
          var sourceScatterCurve = _sourceChart.Curves.Single(isScatterCurve);

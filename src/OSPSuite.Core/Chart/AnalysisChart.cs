@@ -84,7 +84,6 @@ public abstract class AnalysisChartWithLocalRepositories : AnalysisChart
          AddRepository(clonedRepository);
       });
 
-      //curves copied by the base class still plot the columns of the source repositories. Columns of shared repositories (e.g. observed data) are kept
       Curves.Each(curve => curve.ReplaceData(clonedColumns[curve.xData.Id] ?? curve.xData, clonedColumns[curve.yData.Id] ?? curve.yData));
    }
 

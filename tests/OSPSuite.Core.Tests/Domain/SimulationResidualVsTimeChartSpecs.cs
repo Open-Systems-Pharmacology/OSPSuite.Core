@@ -33,7 +33,6 @@ namespace OSPSuite.Core.Domain
          _observedData = DomainHelperForSpecs.ObservedData("OBS");
          var outputResiduals = new OutputResiduals(OUTPUT_PATH, _observedData, new[] { new Residual(1f, 0.5f, 1), new Residual(2f, -0.5f, 1) });
 
-         //filled the way the simulation residual presenter does when the chart is displayed
          sut = new SimulationResidualVsTimeChart().WithAxes().WithId("SOURCE_ID");
          var residualsVsTimeChartService = new ResidualsVsTimeChartService(dimensionFactory);
          _scatterRepository = residualsVsTimeChartService.GetOrCreateScatterDataRepositoryInChart(sut, outputResiduals);
