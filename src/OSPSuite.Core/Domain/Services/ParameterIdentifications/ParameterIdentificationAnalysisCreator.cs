@@ -3,6 +3,7 @@ using OSPSuite.Core.Chart;
 using OSPSuite.Core.Chart.ParameterIdentifications;
 using OSPSuite.Core.Commands;
 using OSPSuite.Core.Domain.ParameterIdentifications;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
 {
@@ -14,10 +15,31 @@ namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
    public class ParameterIdentificationAnalysisCreator : ParameterAnalysableAnalysisCreator, IParameterIdentificationAnalysisCreator
    {
       private readonly IChartFactory _chartFactory;
+      private readonly ICloneManagerForModel _cloneManager;
 
-      public ParameterIdentificationAnalysisCreator(IChartFactory chartFactory, IOSPSuiteExecutionContext context,IContainerTask containerTask,  IIdGenerator idGenerator , IObjectIdResetter objectIdResetter) : base(containerTask, context, objectIdResetter, idGenerator)
+      public ParameterIdentificationAnalysisCreator(IChartFactory chartFactory, IOSPSuiteExecutionContext context,IContainerTask containerTask,  IIdGenerator idGenerator , IObjectIdResetter objectIdResetter, ICloneManagerForModel cloneManager) : base(containerTask, context, objectIdResetter, idGenerator)
       {
          _chartFactory = chartFactory;
+         _cloneManager = cloneManager;
+      }
+
+      public override ISimulationAnalysis CreateAnalysisBasedOn(ISimulationAnalysis simulationAnalysis)
+      {
+         if (curvesReferenceRunResults(simulationAnalysis))
+            return _cloneManager.Clone(simulationAnalysis.DowncastTo<AnalysisChart>());
+
+         return base.CreateAnalysisBasedOn(simulationAnalysis);
+      }
+
+      /// <summary>
+      ///    Time profile and predicted vs observed charts plot the simulation results of the parameter identification runs,
+      ///    which are not part of the chart. Serializing such a chart only writes references to those results, and they cannot be
+      ///    resolved when the chart is deserialized on its own, so its simulation curves would be lost.
+      ///    Charts with local repositories carry their own data and are cloned by serialization.
+      /// </summary>
+      private static bool curvesReferenceRunResults(ISimulationAnalysis simulationAnalysis)
+      {
+         return simulationAnalysis is AnalysisChart && !(simulationAnalysis is AnalysisChartWithLocalRepositories);
       }
 
       public ISimulationAnalysis CreateAnalysisFor(ParameterIdentification parameterIdentification, ParameterIdentificationAnalysisType parameterIdentificationAnalysisType)

@@ -348,10 +348,17 @@ namespace OSPSuite.Core.Chart
          // Clears axes and curves. Even in a new chart two axes will be present.
          Clear();
          sourceCurveChart.Axes.Each(x => AddAxis(x.Clone()));
-         sourceCurveChart.Curves.Each(x => AddCurve(x.Clone(), useAxisDefault: false));
+         sourceCurveChart.Curves.Where(ShouldCloneCurve).Each(x => AddCurve(x.Clone(), useAxisDefault: false));
 
          DefaultYAxisScaling = sourceCurveChart.DefaultYAxisScaling;
          AutoUpdateEnabled = sourceCurveChart.AutoUpdateEnabled;
       }
+
+      /// <summary>
+      ///    Returns <c>false</c> for a curve plotting data that the chart presenter recreates each time the chart is displayed.
+      ///    Such a curve is not copied when updating the chart from another chart, just as it is not restored when loading the
+      ///    chart.
+      /// </summary>
+      protected virtual bool ShouldCloneCurve(Curve curve) => true;
    }
 }

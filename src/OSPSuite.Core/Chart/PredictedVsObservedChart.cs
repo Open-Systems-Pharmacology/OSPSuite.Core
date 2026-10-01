@@ -51,6 +51,9 @@ namespace OSPSuite.Core.Chart
          sourceChart.DeviationFoldValues.Each(AddToDeviationFoldValue);
       }
 
+      //identity and deviation lines are recreated by the presenter from the DeviationFoldValues each time the chart is displayed
+      protected override bool ShouldCloneCurve(Curve curve) => !curve.yData.IsDeviation();
+
       public bool HasDeviationCurveFor(float foldValue)
       {
          return _deviationRepositoryCache[foldValue] != null;
