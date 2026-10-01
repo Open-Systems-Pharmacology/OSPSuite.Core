@@ -24,14 +24,6 @@ namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
 
       public override ISimulationAnalysis CreateAnalysisBasedOn(ISimulationAnalysis simulationAnalysis)
       {
-         //Charts are copied with the clone manager rather than by serialization, for two reasons:
-         //1. Time profile and predicted vs observed charts plot the simulation results of the parameter identification runs,
-         //   which are not part of the chart. Serializing such a chart only writes references to those results, and they cannot
-         //   be resolved when the chart is deserialized on its own, so its simulation curves would be lost.
-         //2. Charts with local repositories (residuals vs time, confidence, prediction and VPC intervals) need copies of their
-         //   repositories with new ids. A copy made by serialization keeps the repository and column ids of the source chart:
-         //   the residual curves of the copy are shown twice, and the parameter identification cannot be loaded again
-         //   because the same ids are found in both charts.
          if (simulationAnalysis is AnalysisChart analysisChart)
             return _cloneManager.Clone(analysisChart);
 
