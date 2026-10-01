@@ -9,6 +9,9 @@ using OSPSuite.Core.Diagram;
 using OSPSuite.Core.Serialization.Diagram;
 using OSPSuite.Presentation.Diagram.Elements;
 using OSPSuite.UI.Diagram.Elements;
+using DiagramModel = OSPSuite.UI.Diagram.Elements.DiagramModel;
+using ReactionNode = OSPSuite.UI.Diagram.Elements.ReactionNode;
+using MoleculeNode = OSPSuite.UI.Diagram.Elements.MoleculeNode;
 
 namespace OSPSuite.UI.Diagram.Services
 {

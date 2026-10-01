@@ -1,6 +1,7 @@
 using System.Drawing;
 using OSPSuite.Utility.Extensions;
 using OSPSuite.Core.Diagram;
+using OSPSuite.Presentation.Diagram.Elements;
 
 namespace OSPSuite.UI.Diagram.Elements
 {

@@ -1,4 +1,4 @@
-namespace OSPSuite.UI.Diagram.Elements
+namespace OSPSuite.Presentation.Diagram.Elements
 {
    public class NodeLayoutType
    {
