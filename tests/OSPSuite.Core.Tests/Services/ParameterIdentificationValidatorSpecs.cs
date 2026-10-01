@@ -319,4 +319,71 @@ namespace OSPSuite.Core.Services
          _result.ValidationState.ShouldBeEqualTo(ValidationState.Invalid);
       }
    }
+
+   public class When_validating_a_parameter_identification_with_the_same_observed_data_mapped_more_than_once_to_the_same_output : concern_for_ParameterIdentificationValidator
+   {
+      private ParameterIdentification _parameterIdentification;
+
+      protected override void Context()
+      {
+         base.Context();
+         _parameterIdentification = new ParameterIdentification();
+         _parameterIdentification.AddIdentificationParameter(DomainHelperForSpecs.IdentificationParameter());
+         var outputMapping = A.Fake<OutputMapping>();
+         ConfigureOutputMapping(outputMapping);
+         _parameterIdentification.AddOutputMapping(outputMapping);
+
+         var outputMapping2 = A.Fake<OutputMapping>();
+         ConfigureOutputMapping(outputMapping2);
+         outputMapping2.WeightedObservedData = new WeightedObservedData(outputMapping.WeightedObservedData.ObservedData);
+         A.CallTo(() => outputMapping2.Output).Returns(outputMapping.Output);
+         _parameterIdentification.AddOutputMapping(outputMapping2);
+
+         _parameterIdentification.Configuration.AlgorithmProperties = new OptimizationAlgorithmProperties("XX");
+      }
+
+      protected override void Because()
+      {
+         _result = sut.Validate(_parameterIdentification);
+      }
+
+      [Observation]
+      public void should_be_invalid()
+      {
+         _result.ValidationState.ShouldBeEqualTo(ValidationState.Invalid);
+      }
+   }
+
+   public class When_validating_a_parameter_identification_with_the_same_observed_data_mapped_to_different_outputs : concern_for_ParameterIdentificationValidator
+   {
+      private ParameterIdentification _parameterIdentification;
+
+      protected override void Context()
+      {
+         base.Context();
+         _parameterIdentification = new ParameterIdentification();
+         _parameterIdentification.AddIdentificationParameter(DomainHelperForSpecs.IdentificationParameter());
+         var outputMapping = A.Fake<OutputMapping>();
+         ConfigureOutputMapping(outputMapping);
+         _parameterIdentification.AddOutputMapping(outputMapping);
+
+         var outputMapping2 = A.Fake<OutputMapping>();
+         ConfigureOutputMapping(outputMapping2);
+         outputMapping2.WeightedObservedData = new WeightedObservedData(outputMapping.WeightedObservedData.ObservedData);
+         _parameterIdentification.AddOutputMapping(outputMapping2);
+
+         _parameterIdentification.Configuration.AlgorithmProperties = new OptimizationAlgorithmProperties("XX");
+      }
+
+      protected override void Because()
+      {
+         _result = sut.Validate(_parameterIdentification);
+      }
+
+      [Observation]
+      public void should_be_valid()
+      {
+         _result.ValidationState.ShouldBeEqualTo(ValidationState.Valid);
+      }
+   }
 }

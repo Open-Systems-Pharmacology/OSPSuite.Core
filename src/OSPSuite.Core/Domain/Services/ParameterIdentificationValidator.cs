@@ -44,7 +44,18 @@ namespace OSPSuite.Core.Domain.Services
 
          parameterIdentification.OutputMappings.All.DistinctBy(mapping => mapping.Output).Each(mapping => validateScalingForSharedOutputMappings(mapping, parameterIdentification, validationResult));
 
+         allDuplicatedOutputMappingsIn(parameterIdentification).Each(mapping => validationResult.AddMessage(NotificationType.Error, parameterIdentification, Error.ObservedDataMappedMoreThanOnceToTheSameOutput(mapping.WeightedObservedData.Name, mapping.FullOutputPath)));
+
          return validationResult;
+      }
+
+      private static IEnumerable<OutputMapping> allDuplicatedOutputMappingsIn(ParameterIdentification parameterIdentification)
+      {
+         return parameterIdentification.AllOutputMappings
+            .Where(x => x.WeightedObservedData != null)
+            .GroupBy(x => new { x.Output, x.WeightedObservedData.ObservedData })
+            .Where(group => group.Count() > 1)
+            .Select(group => group.First());
       }
 
       private static IEnumerable<IdentificationParameter> allIdentificationParametersWithUndefinedLinkedParametersIn(ParameterIdentification parameterIdentification)

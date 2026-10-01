@@ -149,6 +149,32 @@ namespace OSPSuite.Presentation.Presentation
       }
    }
 
+   public class When_adding_the_same_repository_more_than_once_to_the_chart_editor_presenter : concern_for_ChartEditorPresenter
+   {
+      private DataRepository _dataRepository;
+      private List<DataColumn> _dataColumnsAdded;
+
+      protected override void Context()
+      {
+         base.Context();
+         _dataRepository = new DataRepository { _standardColumn };
+
+         A.CallTo(() => _dataBrowserPresenter.AddDataColumns(A<IReadOnlyList<DataColumn>>._))
+            .Invokes(x => _dataColumnsAdded = x.GetArgument<IReadOnlyList<DataColumn>>(0).ToList());
+      }
+
+      protected override void Because()
+      {
+         sut.AddDataRepositories(new[] { _dataRepository, _dataRepository });
+      }
+
+      [Observation]
+      public void should_add_each_column_only_once()
+      {
+         _dataColumnsAdded.Count(x => x == _standardColumn).ShouldBeEqualTo(1);
+      }
+   }
+
    internal class When_adding_a_new_curve_for_column_id_not_in_chart_and_default_settings_are_specified : concern_for_ChartEditorPresenter
    {
       private CurveOptions _defaultCurveOptions;

@@ -1485,6 +1485,11 @@ namespace OSPSuite.Assets
          return $"The output named '{outputName}' has been mapped more than once with different scalings";
       }
 
+      public static string ObservedDataMappedMoreThanOnceToTheSameOutput(string observedDataName, string outputPath)
+      {
+         return $"Observed data '{observedDataName}' has been mapped more than once to the output '{outputPath}'";
+      }
+
       public static string NumberOfCoreToUseShouldBeInferiorAsTheNumberOfProcessor(int processorCount)
       {
          return $"Number of processor to use should greater than 0 and less than or equal to  the number of processor on the machine ({processorCount} processors)";
