@@ -879,4 +879,46 @@ namespace OSPSuite.UI.Diagram
          allItems().OfType<DiagramConnector>().Where(x => x.EndItem?.Tag == _plasma).Count().ShouldBeEqualTo(1);
       }
    }
+
+   public class When_setting_a_spatial_structure_diagram_model_with_an_explicitly_hidden_container : concern_for_DevExpressDiagramView
+   {
+      private DiagramModel _spatialModel;
+      private ContainerNode _organism;
+      private ContainerNode _plasma;
+      private ContainerNode _kidney;
+      private NeighborhoodNode _neighborhood;
+
+      protected override void Context()
+      {
+         base.Context();
+         _spatialModel = new DiagramModel();
+         _organism = container("Organism", _spatialModel, 100, 100, 500, 300);
+         _plasma = container("Plasma", _organism, 140, 160, 100, 50);
+         _kidney = container("Kidney", _organism, 400, 130, 150, 80);
+         _kidney.Hidden = true;
+         _neighborhood = _spatialModel.CreateNode<NeighborhoodNode>("pls_kidney", PointF.Empty, _organism);
+         _neighborhood.Initialize(_plasma, _kidney);
+      }
+
+      private ContainerNode container(string name, IContainerBase parent, float x, float y, float width, float height)
+      {
+         var node = _spatialModel.CreateNode<ContainerNode>(name, new PointF(x, y), parent);
+         node.Name = name;
+         node.Size = new SizeF(width, height);
+         return node;
+      }
+
+      protected override void Because()
+      {
+         sut.Model = _spatialModel;
+      }
+
+      [Observation]
+      public void should_not_draw_a_connector_to_the_parent_of_a_container_hidden_in_its_own_right()
+      {
+         var items = sut.DiagramControl.Items.Concat(sut.DiagramControl.Items.OfType<DiagramContainer>().SelectMany(x => x.Items)).ToList();
+         var endItems = items.OfType<DiagramConnector>().Select(connector => connector.EndItem).ToList();
+         endItems.Any(item => ReferenceEquals(item?.Tag, _organism)).ShouldBeFalse();
+      }
+   }
 }

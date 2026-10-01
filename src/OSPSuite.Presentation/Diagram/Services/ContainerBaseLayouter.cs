@@ -27,13 +27,18 @@ namespace OSPSuite.Presentation.Diagram.Services
          {
             diagramModel.BeginUpdate();
             var visibleNodes = containerBase.GetAllChildren<IBaseNode>().Where(node => node.Visible).ToList();
-            freeNodes.Each(freeNode => moveUntilFree(freeNode, visibleNodes.Where(node => !ReferenceEquals(node, freeNode)).ToList()));
+            freeNodes.Each(freeNode => moveUntilFree(freeNode, visibleNodes.Where(node => !isPartOf(node, freeNode)).ToList()));
          }
          finally
          {
             diagramModel.EndUpdate();
             diagramModel.FinishTransaction("PlaceFreeNodes");
          }
+      }
+
+      private static bool isPartOf(IBaseNode node, IHasLayoutInfo freeNode)
+      {
+         return ReferenceEquals(node, freeNode) || (freeNode as IContainerNode)?.ContainsChildNode(node, recursive: true) == true;
       }
 
       private static void moveUntilFree(IHasLayoutInfo freeNode, IReadOnlyList<IBaseNode> otherNodes)

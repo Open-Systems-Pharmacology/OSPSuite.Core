@@ -101,4 +101,28 @@ namespace OSPSuite.Presentation.Diagram
          _existingNode.Location.ShouldBeEqualTo(new PointF(50, 50));
       }
    }
+
+   public class When_placing_a_free_container_that_has_children : concern_for_ContainerBaseLayouter
+   {
+      private ContainerNode _freeContainer;
+      private MoleculeNode _child;
+
+      protected override void Context()
+      {
+         base.Context();
+         _freeContainer = _model.CreateNode<ContainerNode>("c1", new PointF(300, 300), _model);
+         _child = _model.CreateNode<MoleculeNode>("B", new PointF(300, 300), _freeContainer);
+      }
+
+      protected override void Because()
+      {
+         sut.DoForceLayout(_model, new List<IHasLayoutInfo> {_freeContainer}, 0);
+      }
+
+      [Observation]
+      public void should_not_move_the_container_away_from_its_own_children()
+      {
+         _child.Location.ShouldBeEqualTo(new PointF(300, 300));
+      }
+   }
 }

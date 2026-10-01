@@ -272,7 +272,13 @@ namespace OSPSuite.UI.Views.Diagram
       {
          var current = node;
          while (current != null && !current.Visible)
+         {
+            if (current.Hidden || !current.IsVisible)
+               return null;
+
             current = current.GetParent() as IBaseNode;
+         }
+
          return current;
       }
 
