@@ -31,12 +31,6 @@ namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
          return base.CreateAnalysisBasedOn(simulationAnalysis);
       }
 
-      /// <summary>
-      ///    Time profile and predicted vs observed charts plot the simulation results of the parameter identification runs,
-      ///    which are not part of the chart. Serializing such a chart only writes references to those results, and they cannot be
-      ///    resolved when the chart is deserialized on its own, so its simulation curves would be lost.
-      ///    Charts with local repositories carry their own data and are cloned by serialization.
-      /// </summary>
       private static bool curvesReferenceRunResults(ISimulationAnalysis simulationAnalysis)
       {
          return simulationAnalysis is AnalysisChart && !(simulationAnalysis is AnalysisChartWithLocalRepositories);

@@ -354,11 +354,6 @@ namespace OSPSuite.Core.Chart
          AutoUpdateEnabled = sourceCurveChart.AutoUpdateEnabled;
       }
 
-      /// <summary>
-      ///    Returns <c>false</c> for a curve plotting data that the chart presenter recreates each time the chart is displayed.
-      ///    Such a curve is not copied when updating the chart from another chart, just as it is not restored when loading the
-      ///    chart.
-      /// </summary>
       protected virtual bool ShouldCloneCurve(Curve curve) => true;
    }
 }
