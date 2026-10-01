@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using OSPSuite.Core.Diagram;
+using OSPSuite.Core.Domain;
 using OSPSuite.Presentation.Extensions;
 using OSPSuite.Utility.Extensions;
 
@@ -169,7 +170,7 @@ namespace OSPSuite.Presentation.Diagram.Elements
       public void AddChildNode(IBaseNode node)
       {
          if (!(node is DiagramNode diagramNode))
-            return;
+            throw new InvalidTypeException(node, typeof(DiagramNode));
          Children.Add(node);
          diagramNode.Parent = this;
          Model?.Attach(diagramNode, this);

@@ -343,7 +343,7 @@ namespace OSPSuite.UI.Views.Diagram
 
       private static bool hasLabel(ElementBaseNode node) => node.LabelVisible && !string.IsNullOrEmpty(node.Name);
 
-      private Font labelFont(ElementBaseNode node) => new Font(Font.FontFamily, node.LabelFontSize);
+      private static Font labelFont(ElementBaseNode node) => new Font(SystemFonts.DefaultFont.FontFamily, node.LabelFontSize);
 
       private static PointF labelLocation(SizeF size, SizeF textSize, bool labelBelow)
       {
@@ -365,16 +365,27 @@ namespace OSPSuite.UI.Views.Diagram
          }
       }
 
-      private RectangleF drawingBounds()
+      private RectangleF drawingBounds() => drawingBounds(_shapes.ToList());
+
+      private RectangleF drawingBounds(IReadOnlyList<KeyValuePair<IBaseNode, DiagramShape>> shapes)
       {
          using (var bitmap = new Bitmap(1, 1))
          using (var graphics = Graphics.FromImage(bitmap))
          {
-            var labels = _shapes.Select(x => labelBounds(graphics, (ElementBaseNode) x.Key, x.Value));
-            var bounds = _diagramControl.Items.Select(item => item.Bounds).Concat(labels).Aggregate(RectangleF.Union);
+            var labels = shapes.Select(x => labelBounds(graphics, (ElementBaseNode) x.Key, x.Value));
+            var bounds = shapes.Select(x => (RectangleF) x.Value.Bounds).Concat(labels).Aggregate(RectangleF.Union);
             bounds.Inflate(EXPORT_MARGIN, EXPORT_MARGIN);
             return bounds;
          }
+      }
+
+      private IReadOnlyList<KeyValuePair<IBaseNode, DiagramShape>> shapesToExport(IContainerBase containerBase)
+      {
+         if (containerBase == null || containerBase is IDiagramModel)
+            return _shapes.ToList();
+
+         var exported = containerBase.GetAllChildren<IBaseNode>().ToList();
+         return _shapes.Where(x => exported.Contains(x.Key)).ToList();
       }
 
       private void onGetActiveObjectInfo(ToolTipControllerGetActiveObjectInfoEventArgs e)
@@ -759,7 +770,7 @@ namespace OSPSuite.UI.Views.Diagram
          if (_shapes.Count == 0)
             return new Bitmap(1, 1);
 
-         var exportBounds = containerBase is IDiagramModel ? drawingBounds() : containerBase.Bounds;
+         var exportBounds = drawingBounds(shapesToExport(containerBase));
          using (var stream = new MemoryStream())
          {
             _diagramControl.ExportToImage(stream, DiagramImageExportFormat.PNG, exportBounds, null, null);
