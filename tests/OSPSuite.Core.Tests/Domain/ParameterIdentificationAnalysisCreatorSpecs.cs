@@ -20,6 +20,7 @@ namespace OSPSuite.Core.Domain
       protected const string CLONED_ID = "CLONED_ID";
       protected static readonly Color CALCULATION_COLOR = Color.Magenta;
       protected IOSPSuiteExecutionContext _executionContext;
+      protected IObjectIdResetter _objectIdResetter;
       protected DataColumn _calculationColumn;
       private IIdGenerator _idGenerator;
       private IDimensionFactory _dimensionFactory;
@@ -27,6 +28,7 @@ namespace OSPSuite.Core.Domain
       protected override void Context()
       {
          _executionContext = A.Fake<IOSPSuiteExecutionContext>();
+         _objectIdResetter = A.Fake<IObjectIdResetter>();
          _idGenerator = A.Fake<IIdGenerator>();
          A.CallTo(() => _idGenerator.NewId()).Returns(CLONED_ID);
          _dimensionFactory = A.Fake<IDimensionFactory>();
@@ -34,7 +36,7 @@ namespace OSPSuite.Core.Domain
          var objectBaseFactory = new ObjectBaseFactory(A.Fake<Utility.Container.IContainer>(), _dimensionFactory, _idGenerator, A.Fake<ICreationMetaDataFactory>());
          var cloneManager = new CloneManagerForModel(objectBaseFactory, new DataRepositoryTask(), A.Fake<IModelFinalizer>());
 
-         sut = new ParameterIdentificationAnalysisCreator(A.Fake<IChartFactory>(), _executionContext, A.Fake<IContainerTask>(), _idGenerator, A.Fake<IObjectIdResetter>(), cloneManager);
+         sut = new ParameterIdentificationAnalysisCreator(A.Fake<IChartFactory>(), _executionContext, A.Fake<IContainerTask>(), _idGenerator, _objectIdResetter, cloneManager);
 
          //column of a run result: only available through the parameter identification, not in the serialization context
          var baseGrid = new BaseGrid("Time", DomainHelperForSpecs.TimeDimensionForSpecs());
@@ -47,13 +49,18 @@ namespace OSPSuite.Core.Domain
       protected T SourceChartWithCalculationCurve<T>() where T : AnalysisChart, new()
       {
          var chart = new T().WithId("SOURCE_ID").WithName("Source");
-         var curve = new Curve { Name = "Calculation" };
-         curve.SetxData(_calculationColumn.BaseGrid, _dimensionFactory);
-         curve.SetyData(_calculationColumn, _dimensionFactory);
+         AddCurveTo(chart, _calculationColumn);
+         return chart;
+      }
+
+      protected void AddCurveTo(CurveChart chart, DataColumn column)
+      {
+         var curve = new Curve { Name = column.Name };
+         curve.SetxData(column.BaseGrid, _dimensionFactory);
+         curve.SetyData(column, _dimensionFactory);
          curve.Color = CALCULATION_COLOR;
          curve.LineStyle = LineStyles.Dash;
          chart.AddCurve(curve, useAxisDefault: false);
-         return chart;
       }
    }
 
@@ -125,18 +132,21 @@ namespace OSPSuite.Core.Domain
 
    public class When_creating_an_analysis_based_on_a_parameter_identification_chart_with_local_repositories : concern_for_ParameterIdentificationAnalysisCreator
    {
+      private const string REPOSITORY_ID_SUFFIX = "-OutputPath-OBS-1";
       private ParameterIdentificationResidualVsTimeChart _sourceChart;
-      private ParameterIdentificationResidualVsTimeChart _deserializedChart;
+      private DataRepository _sourceRepository;
       private ISimulationAnalysis _result;
 
       protected override void Context()
       {
          base.Context();
-         _sourceChart = new ParameterIdentificationResidualVsTimeChart();
-         _deserializedChart = new ParameterIdentificationResidualVsTimeChart();
-         var serializedBytes = new byte[] { 1 };
-         A.CallTo(() => _executionContext.Serialize<ISimulationAnalysis>(_sourceChart)).Returns(serializedBytes);
-         A.CallTo(() => _executionContext.Deserialize<ISimulationAnalysis>(serializedBytes)).Returns(_deserializedChart);
+         _sourceChart = new ParameterIdentificationResidualVsTimeChart().WithId("SOURCE_ID");
+         _sourceRepository = new DataRepository($"{_sourceChart.Id}{REPOSITORY_ID_SUFFIX}");
+         var baseGrid = new BaseGrid("Time", DomainHelperForSpecs.TimeDimensionForSpecs());
+         var residuals = new DataColumn("Values", DomainHelperForSpecs.NoDimension(), baseGrid) { DataInfo = { Origin = ColumnOrigins.CalculationAuxiliary } };
+         _sourceRepository.Add(residuals);
+         _sourceChart.AddRepository(_sourceRepository);
+         AddCurveTo(_sourceChart, residuals);
       }
 
       protected override void Because()
@@ -145,9 +155,60 @@ namespace OSPSuite.Core.Domain
       }
 
       [Observation]
-      public void should_clone_the_chart_through_serialization()
+      public void should_not_clone_the_chart_through_serialization()
       {
-         _result.ShouldBeEqualTo(_deserializedChart);
+         A.CallTo(() => _executionContext.Serialize(A<ISimulationAnalysis>._)).MustNotHaveHappened();
+      }
+
+      [Observation]
+      public void should_return_a_chart_with_its_own_repositories()
+      {
+         var clonedRepository = _result.DowncastTo<ParameterIdentificationResidualVsTimeChart>().DataRepositories.Single();
+         clonedRepository.ShouldNotBeEqualTo(_sourceRepository);
+         clonedRepository.Id.ShouldBeEqualTo($"{CLONED_ID}{REPOSITORY_ID_SUFFIX}");
+      }
+
+      [Observation]
+      public void should_keep_the_curves_with_their_color_on_the_copied_repositories()
+      {
+         var clonedChart = _result.DowncastTo<ParameterIdentificationResidualVsTimeChart>();
+         var clonedCurve = clonedChart.Curves.Single();
+         clonedCurve.yData.Repository.ShouldBeEqualTo(clonedChart.DataRepositories.Single());
+         clonedCurve.Color.ShouldBeEqualTo(CALCULATION_COLOR);
+      }
+   }
+
+   public class When_creating_an_analysis_based_on_a_parameter_identification_residual_histogram : concern_for_ParameterIdentificationAnalysisCreator
+   {
+      private ParameterIdentificationResidualHistogram _sourceHistogram;
+      private ParameterIdentificationResidualHistogram _deserializedHistogram;
+      private ISimulationAnalysis _result;
+
+      protected override void Context()
+      {
+         base.Context();
+         _sourceHistogram = new ParameterIdentificationResidualHistogram();
+         _deserializedHistogram = new ParameterIdentificationResidualHistogram();
+         var serializedBytes = new byte[] { 1 };
+         A.CallTo(() => _executionContext.Serialize<ISimulationAnalysis>(_sourceHistogram)).Returns(serializedBytes);
+         A.CallTo(() => _executionContext.Deserialize<ISimulationAnalysis>(serializedBytes)).Returns(_deserializedHistogram);
+      }
+
+      protected override void Because()
+      {
+         _result = sut.CreateAnalysisBasedOn(_sourceHistogram);
+      }
+
+      [Observation]
+      public void should_clone_the_analysis_through_serialization()
+      {
+         _result.ShouldBeEqualTo(_deserializedHistogram);
+      }
+
+      [Observation]
+      public void should_reset_the_ids_of_the_deserialized_analysis()
+      {
+         A.CallTo(() => _objectIdResetter.ResetIdFor(_deserializedHistogram)).MustHaveHappened();
       }
    }
 }

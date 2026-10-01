@@ -40,7 +40,7 @@ namespace OSPSuite.Presentation.Presentation
       protected ResidualsVsTimeChartService _residualsVsTimeChartService;
       private IChartEditorLayoutTask _chartEditorLayoutTask;
       protected IProjectRetriever _projectRetriever;
-      private ChartPresenterContext _chartPresenterContext;
+      protected ChartPresenterContext _chartPresenterContext;
       private ICurveNamer _curveNamer;
 
       protected IChartEditorPresenter ChartEditorPresenter { get; private set; }
@@ -223,6 +223,93 @@ namespace OSPSuite.Presentation.Presentation
          var residualCurve = _residualVsTimeChart.Curves.FirstOrDefault(c => !string.Equals(c.Name, ResidualsVsTimeChart.ZERO));
          residualCurve.ShouldNotBeNull();
          residualCurve.Color.ShouldBeEqualTo(CANONICAL_COLOR);
+      }
+   }
+
+   public class When_initializing_a_cloned_residual_vs_time_chart : concern_for_ParameterIdentificationResidualVsTimeChartPresenter
+   {
+      private const string SOURCE_ID = "SOURCE_ID";
+      private const string CLONED_ID = "CLONED_ID";
+      private const string CUSTOM_CAPTION = "Custom residuals";
+      private static readonly Color CLONED_COLOR = Color.Magenta;
+      private ParameterIdentificationResidualVsTimeChart _sourceChart;
+      private ParameterIdentificationResidualVsTimeChart _clonedChart;
+      private DataRepository _observation1;
+
+      protected override void Context()
+      {
+         base.Context();
+         var outputMapping1 = A.Fake<OutputMapping>();
+         _observation1 = DomainHelperForSpecs.ObservedData("OBS1");
+         A.CallTo(() => outputMapping1.WeightedObservedData.ObservedData).Returns(_observation1);
+         A.CallTo(() => outputMapping1.FullOutputPath).Returns("OutputPath1");
+         _residualResults.AddOutputResiduals(new OutputResiduals("OutputPath1", outputMapping1.WeightedObservedData, new[] { new Residual(11f, 12f, 1), new Residual(21f, 22f, 1) }));
+         A.CallTo(() => _parameterIdentification.AllOutputMappings).Returns(new[] { outputMapping1 });
+         A.CallTo(() => _parameterIdentification.AllObservedData).Returns(new[] { _observation1 });
+         _parameterIdentificationRunResult.Index = 1;
+
+         //the source chart as displayed by its own presenter, then customized by the user
+         _sourceChart = new ParameterIdentificationResidualVsTimeChart().WithAxes().WithId(SOURCE_ID);
+         new ParameterIdentificationResidualVsTimeChartPresenter(_view, _chartPresenterContext, _residualsVsTimeChartService).InitializeAnalysis(_sourceChart, _parameterIdentification);
+         var sourceScatterCurve = _sourceChart.Curves.Single(isScatterCurve);
+         sourceScatterCurve.Color = CLONED_COLOR;
+         sourceScatterCurve.Symbol = Symbols.Diamond;
+         _sourceChart.YAxis.Caption = CUSTOM_CAPTION;
+
+         var idGenerator = A.Fake<IIdGenerator>();
+         A.CallTo(() => idGenerator.NewId()).Returns(CLONED_ID);
+         var objectBaseFactory = new ObjectBaseFactory(A.Fake<OSPSuite.Utility.Container.IContainer>(), _dimensionFactory, idGenerator, A.Fake<ICreationMetaDataFactory>());
+         _clonedChart = new CloneManagerForModel(objectBaseFactory, new DataRepositoryTask(), A.Fake<IModelFinalizer>()).Clone(_sourceChart);
+      }
+
+      protected override void Because()
+      {
+         sut.InitializeAnalysis(_clonedChart, _parameterIdentification);
+      }
+
+      private static bool isScatterCurve(Curve curve) => !isZeroMarkerCurve(curve);
+
+      private static bool isZeroMarkerCurve(Curve curve) => string.Equals(curve.yData.Name, ResidualsVsTimeChart.ZERO);
+
+      [Observation]
+      public void should_not_add_duplicate_scatter_curves()
+      {
+         _clonedChart.Curves.Count(isScatterCurve).ShouldBeEqualTo(1);
+      }
+
+      [Observation]
+      public void should_add_a_single_zero_marker_curve()
+      {
+         _clonedChart.Curves.Count(isZeroMarkerCurve).ShouldBeEqualTo(1);
+      }
+
+      [Observation]
+      public void should_keep_the_color_and_symbol_of_the_cloned_scatter_curve()
+      {
+         var scatterCurve = _clonedChart.Curves.Single(isScatterCurve);
+         scatterCurve.Color.ShouldBeEqualTo(CLONED_COLOR);
+         scatterCurve.Symbol.ShouldBeEqualTo(Symbols.Diamond);
+      }
+
+      [Observation]
+      public void should_plot_the_scatter_curve_from_the_repository_of_the_clone()
+      {
+         var clonedRepository = _clonedChart.DataRepositories.Single();
+         clonedRepository.Id.ShouldBeEqualTo($"{CLONED_ID}-OutputPath1-{_observation1.Id}-1");
+         _clonedChart.Curves.Single(isScatterCurve).yData.Repository.ShouldBeEqualTo(clonedRepository);
+      }
+
+      [Observation]
+      public void should_not_reconfigure_the_axes()
+      {
+         _clonedChart.YAxis.Caption.ShouldBeEqualTo(CUSTOM_CAPTION);
+      }
+
+      [Observation]
+      public void should_leave_the_source_chart_unchanged()
+      {
+         _sourceChart.Curves.Count.ShouldBeEqualTo(2);
+         _sourceChart.Curves.Single(isScatterCurve).yData.Repository.ShouldBeEqualTo(_sourceChart.DataRepositories.Single());
       }
    }
 

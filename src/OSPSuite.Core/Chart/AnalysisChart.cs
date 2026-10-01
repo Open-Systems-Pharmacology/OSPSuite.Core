@@ -3,6 +3,8 @@ using System.Drawing;
 using System.Linq;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
+using OSPSuite.Core.Domain.Services;
+using OSPSuite.Utility.Collections;
 using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Chart;
@@ -64,5 +66,36 @@ public abstract class AnalysisChartWithLocalRepositories : AnalysisChart
    public virtual void AddRepositories(IEnumerable<DataRepository> dataRepositories)
    {
       dataRepositories.Each(AddRepository);
+   }
+
+   public override void UpdatePropertiesFrom(IUpdatable source, ICloneManager cloneManager)
+   {
+      base.UpdatePropertiesFrom(source, cloneManager);
+      var sourceChart = source as AnalysisChartWithLocalRepositories;
+      if (sourceChart == null)
+         return;
+
+      ClearDataRepositories();
+      var clonedColumns = new Cache<string, DataColumn>(onMissingKey: x => null);
+      sourceChart.DataRepositories.Each(sourceRepository =>
+      {
+         var clonedRepository = CloneRepository(sourceRepository, sourceChart, cloneManager);
+         sourceRepository.Each(sourceColumn => clonedColumns.Add(sourceColumn.Id, clonedColumnFor(sourceColumn, clonedRepository)));
+         AddRepository(clonedRepository);
+      });
+
+      //curves copied by the base class still plot the columns of the source repositories. Columns of shared repositories (e.g. observed data) are kept
+      Curves.Each(curve => curve.ReplaceData(clonedColumns[curve.xData.Id] ?? curve.xData, clonedColumns[curve.yData.Id] ?? curve.yData));
+   }
+
+   protected virtual DataRepository CloneRepository(DataRepository sourceRepository, AnalysisChartWithLocalRepositories sourceChart, ICloneManager cloneManager)
+   {
+      return cloneManager.Clone(sourceRepository);
+   }
+
+   //the repository clone keeps name and origin of each column, which identify a column within a local repository
+   private static DataColumn clonedColumnFor(DataColumn sourceColumn, DataRepository clonedRepository)
+   {
+      return clonedRepository.Single(x => string.Equals(x.Name, sourceColumn.Name) && x.DataInfo.Origin == sourceColumn.DataInfo.Origin);
    }
 }
