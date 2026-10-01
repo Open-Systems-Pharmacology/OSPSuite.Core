@@ -18,15 +18,13 @@ namespace OSPSuite.Presentation.Diagram.Elements
 
    public class NeighborhoodNode : ElementBaseNode, INeighborhoodNode
    {
-      private const float NODE_BASE_SIZE = 15F;
-
       private NeighborLink _firstNeighborLink;
       private NeighborLink _secondNeighborLink;
 
       public NeighborhoodNode()
       {
          UserFlags = NodeLayoutType.NEIGHBORHOOD_NODE;
-         NodeBaseSize = new SizeF(NODE_BASE_SIZE, NODE_BASE_SIZE);
+         NodeBaseSize = new SizeF(15F, 15F);
          NodeSize = NodeSize.Middle;
          CanLink = false;
       }
@@ -71,7 +69,7 @@ namespace OSPSuite.Presentation.Diagram.Elements
 
       public void AdjustPosition()
       {
-         if (FirstNeighbor == null || SecondNeighbor == null)
+         if (!canAdjustPosition())
             return;
          var first = FirstNeighbor.Center;
          var second = SecondNeighbor.Center;
@@ -80,8 +78,12 @@ namespace OSPSuite.Presentation.Diagram.Elements
 
       public void AdjustPositionForContainerInMove(IContainerNode node, SizeF offset)
       {
+         if (!canAdjustPosition())
+            return;
          Location = Location.Plus(new PointF(offset.Width / 2, offset.Height / 2));
       }
+
+      private bool canAdjustPosition() => !LocationFixed && FirstNeighbor != null && SecondNeighbor != null && !FirstNeighbor.Hidden && !SecondNeighbor.Hidden;
 
       public override void SetColorFrom(IDiagramColors diagramColors)
       {

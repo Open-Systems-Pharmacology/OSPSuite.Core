@@ -44,36 +44,35 @@ namespace OSPSuite.Presentation.Diagram.Elements
       {
          if (_updateDepth == 0)
             return;
+
          _updateDepth--;
          if (_updateDepth > 0 || !_changedDuringUpdate)
             return;
+
          _changedDuringUpdate = false;
          Changed();
       }
 
+      private PointF? _origin;
+
       public PointF Location
       {
-         get => Bounds.Location;
-         set
-         {
-            var delta = value.Minus(Location);
-            if (delta.IsEmpty)
-               return;
-            Children.Each(node => node.Location = node.Location.Plus(delta));
-         }
+         get => _origin ?? Bounds.Location;
+         set => _origin = value;
       }
 
       public PointF Center
       {
          get
          {
-            var bounds = Bounds;
-            return new PointF(bounds.X + bounds.Width / 2, bounds.Y + bounds.Height / 2);
+            var location = Location;
+            var size = Size;
+            return new PointF(location.X + size.Width / 2, location.Y + size.Height / 2);
          }
          set
          {
-            var bounds = Bounds;
-            Location = new PointF(value.X - bounds.Width / 2, value.Y - bounds.Height / 2);
+            var size = Size;
+            Location = new PointF(value.X - size.Width / 2, value.Y - size.Height / 2);
          }
       }
 
@@ -120,6 +119,7 @@ namespace OSPSuite.Presentation.Diagram.Elements
       {
          if (!(node is DiagramNode diagramNode))
             throw new InvalidTypeException(node, typeof(DiagramNode));
+
          Children.Add(node);
          Attach(diagramNode, this);
          NotifyChanged();
@@ -129,6 +129,7 @@ namespace OSPSuite.Presentation.Diagram.Elements
       {
          if (!Children.Remove(node))
             return;
+
          if (node is DiagramNode diagramNode)
          {
             Detach(diagramNode);
@@ -145,6 +146,7 @@ namespace OSPSuite.Presentation.Diagram.Elements
          AddNodeId(node);
          if (!(node is ContainerNode containerNode))
             return;
+
          containerNode.Children.OfType<DiagramNode>().Each(child => Attach(child, containerNode));
       }
 
@@ -154,6 +156,7 @@ namespace OSPSuite.Presentation.Diagram.Elements
          RemoveNodeId(node);
          if (!(node is ContainerNode containerNode))
             return;
+
          containerNode.Children.OfType<DiagramNode>().Each(Detach);
       }
 
@@ -230,6 +233,7 @@ namespace OSPSuite.Presentation.Diagram.Elements
          var node = GetNode(id);
          if (node == null)
             return;
+
          node.Name = name;
       }
 
@@ -272,6 +276,7 @@ namespace OSPSuite.Presentation.Diagram.Elements
 
          Children.Clear();
          _nodes.Clear();
+         _origin = null;
          ClearUndoStack();
          NotifyChanged();
       }
@@ -360,6 +365,7 @@ namespace OSPSuite.Presentation.Diagram.Elements
       {
          if (_undoStack.Count == 0)
             return false;
+
          if (snapshotEquals(_undoStack.Peek(), snapshot()))
             _undoStack.Pop();
 
@@ -370,6 +376,7 @@ namespace OSPSuite.Presentation.Diagram.Elements
       {
          if (_undoStack.Count == 0)
             return;
+
          var layoutInfos = _undoStack.Pop();
          try
          {
@@ -415,7 +422,7 @@ namespace OSPSuite.Presentation.Diagram.Elements
                _isVisible = node.IsVisible,
                _locationFixed = node.LocationFixed,
                _nodeSize = (node as IElementBaseNode)?.NodeSize,
-               _isExpanded = (node as IContainerNode)?.IsExpanded,
+               _isExpanded = (node as IContainerNode)?.IsExpanded ?? (node as JournalPageNode)?.IsExpanded,
                _displayEductsRight = (node as ReactionNode)?.DisplayEductsRight
             };
          }
@@ -433,6 +440,7 @@ namespace OSPSuite.Presentation.Diagram.Elements
                if (_isExpanded.HasValue) containerNode.IsExpanded = _isExpanded.Value;
             }
 
+            if (node is JournalPageNode journalPageNode && _isExpanded.HasValue) journalPageNode.IsExpanded = _isExpanded.Value;
             if (node is ReactionNode reactionNode && _displayEductsRight.HasValue) reactionNode.DisplayEductsRight = _displayEductsRight.Value;
          }
 
@@ -440,6 +448,7 @@ namespace OSPSuite.Presentation.Diagram.Elements
          {
             if (other == null)
                return false;
+
             return _location == other._location && _size == other._size && _hidden == other._hidden && _isVisible == other._isVisible &&
                    _locationFixed == other._locationFixed && _nodeSize == other._nodeSize && _isExpanded == other._isExpanded && _displayEductsRight == other._displayEductsRight;
          }

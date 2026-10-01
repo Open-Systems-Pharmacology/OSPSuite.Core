@@ -1,4 +1,5 @@
 using System.Drawing;
+using System.Globalization;
 using System.Linq;
 using System.Xml;
 using OSPSuite.BDDHelper;
@@ -251,8 +252,8 @@ namespace OSPSuite.UI.Diagram
       {
          var xmlDoc = sut.ContainerToXmlDocument(_container);
          xmlDoc.DocumentElement.Name.ShouldBeEqualTo("DiagramModel");
-         xmlDoc.DocumentElement.GetAttribute("LocationX").ShouldBeEqualTo("5");
-         xmlDoc.DocumentElement.GetAttribute("LocationY").ShouldBeEqualTo("7");
+         xmlDoc.DocumentElement.GetAttribute("LocationX").ShouldBeEqualTo(_container.Location.X.ToString(CultureInfo.InvariantCulture));
+         xmlDoc.DocumentElement.GetAttribute("LocationY").ShouldBeEqualTo(_container.Location.Y.ToString(CultureInfo.InvariantCulture));
          childElementNames(xmlDoc).ShouldOnlyContain("ReactionNode");
       }
    }

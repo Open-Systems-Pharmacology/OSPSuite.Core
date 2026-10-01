@@ -127,7 +127,7 @@ namespace OSPSuite.UI.Diagram
          optionsView.ShowPageBreaks.ShouldBeFalse();
          optionsView.ShowRulers.ShouldBeFalse();
          optionsView.ShowPanAndZoomPanel.ShouldBeFalse();
-         optionsView.CanvasSizeMode.ShouldBeEqualTo(CanvasSizeMode.AutoSize);
+         optionsView.CanvasSizeMode.ShouldBeEqualTo(CanvasSizeMode.Fill);
          optionsView.PropertiesPanelVisibility.ShouldBeEqualTo(PropertiesPanelVisibility.Closed);
          optionsView.ToolboxVisibility.ShouldBeEqualTo(ToolboxVisibility.Closed);
          sut.DiagramControl.OptionsBehavior.ShowQuickShapes.ShouldBeFalse();
@@ -797,6 +797,86 @@ namespace OSPSuite.UI.Diagram
       {
          sut.DiagramControl.Items.Contains(_foreignShape).ShouldBeFalse();
          shapes.Count.ShouldBeEqualTo(4);
+      }
+   }
+
+   public class When_setting_a_spatial_structure_diagram_model : concern_for_DevExpressDiagramView
+   {
+      private DiagramModel _spatialModel;
+      private ContainerNode _organism;
+      private ContainerNode _liver;
+      private ContainerNode _plasma;
+      private ContainerNode _kidney;
+      private NeighborhoodNode _neighborhood;
+
+      protected override void Context()
+      {
+         base.Context();
+         _spatialModel = new DiagramModel();
+         _organism = container("Organism", _spatialModel, 100, 100, 500, 300);
+         _liver = container("Liver", _organism, 120, 130, 200, 150);
+         _liver.IsExpanded = false;
+         _plasma = container("Plasma", _liver, 140, 160, 100, 50);
+         _kidney = container("Kidney", _organism, 400, 130, 150, 80);
+         _neighborhood = _spatialModel.CreateNode<NeighborhoodNode>("pls_kidney", PointF.Empty, _organism);
+         _neighborhood.Initialize(_plasma, _kidney);
+      }
+
+      private ContainerNode container(string name, IContainerBase parent, float x, float y, float width, float height)
+      {
+         var node = _spatialModel.CreateNode<ContainerNode>(name, new PointF(x, y), parent);
+         node.Name = name;
+         node.Size = new SizeF(width, height);
+         return node;
+      }
+
+      protected override void Because()
+      {
+         sut.Model = _spatialModel;
+      }
+
+      private DiagramContainer containerFor(ContainerNode node) => allItems().OfType<DiagramContainer>().Single(x => x.Tag == node);
+
+      private IEnumerable<DiagramItem> allItems() => sut.DiagramControl.Items.Concat(sut.DiagramControl.Items.OfType<DiagramContainer>().SelectMany(descendantsOf));
+
+      private static IEnumerable<DiagramItem> descendantsOf(DiagramContainer container) => container.Items.Concat(container.Items.OfType<DiagramContainer>().SelectMany(descendantsOf));
+
+      [Observation]
+      public void should_nest_the_container_items_like_the_model_and_position_children_relative_to_their_parent()
+      {
+         var organism = containerFor(_organism);
+         var liver = containerFor(_liver);
+         organism.Items.ShouldContain(liver);
+         organism.Position.ShouldBeEqualTo(new PointFloat(_organism.Location));
+         liver.Position.ShouldBeEqualTo(new PointFloat(_liver.Location.X - _organism.Location.X, _liver.Location.Y - _organism.Location.Y));
+         organism.Size.ShouldBeEqualTo(_organism.Size);
+      }
+
+      [Observation]
+      public void should_not_create_items_for_the_children_of_a_collapsed_container_and_shrink_it_to_its_label()
+      {
+         allItems().Any(item => item.Tag == _plasma).ShouldBeFalse();
+         containerFor(_liver).Items.Count.ShouldBeEqualTo(0);
+         (containerFor(_liver).Size.Height < 30).ShouldBeTrue();
+      }
+
+      [Observation]
+      public void should_glue_links_into_a_collapsed_container_to_the_container_itself()
+      {
+         var neighborhoodShape = allItems().OfType<DiagramShape>().Single(x => x.Tag == _neighborhood);
+         var connectors = allItems().OfType<DiagramConnector>().Where(x => x.BeginItem == neighborhoodShape).ToList();
+         connectors.Count.ShouldBeEqualTo(2);
+         connectors.Select(x => x.EndItem).ShouldOnlyContain(containerFor(_liver), containerFor(_kidney));
+      }
+
+      [Observation]
+      public void should_show_the_children_again_when_the_container_is_expanded_in_the_model()
+      {
+         _liver.IsExpanded = true;
+         sut.Refresh();
+         containerFor(_liver).Items.Single().Tag.ShouldBeEqualTo(_plasma);
+         containerFor(_liver).Size.ShouldBeEqualTo(_liver.Size);
+         allItems().OfType<DiagramConnector>().Where(x => x.EndItem?.Tag == _plasma).Count().ShouldBeEqualTo(1);
       }
    }
 }

@@ -360,12 +360,19 @@ namespace OSPSuite.Presentation.Diagram
       }
 
       [Observation]
-      public void should_translate_all_nodes()
+      public void should_report_the_location_as_origin_without_moving_the_nodes()
       {
-         _node1.Location.ShouldBeEqualTo(new PointF(60, -10));
-         _node2.Location.ShouldBeEqualTo(new PointF(160, 90));
+         _node1.Location.ShouldBeEqualTo(new PointF(10, 10));
+         _node2.Location.ShouldBeEqualTo(new PointF(110, 110));
          sut.Location.ShouldBeEqualTo(new PointF(50, -20));
          sut.Size.ShouldBeEqualTo(new SizeF(120, 120));
+      }
+
+      [Observation]
+      public void should_forget_the_origin_when_cleared()
+      {
+         sut.Clear();
+         sut.Location.ShouldBeEqualTo(PointF.Empty);
       }
    }
 
@@ -377,11 +384,12 @@ namespace OSPSuite.Presentation.Diagram
       }
 
       [Observation]
-      public void should_translate_all_nodes()
+      public void should_move_the_origin_without_moving_the_nodes()
       {
-         _node1.Location.ShouldBeEqualTo(new PointF(-50, -50));
-         _node2.Location.ShouldBeEqualTo(new PointF(50, 50));
+         _node1.Location.ShouldBeEqualTo(new PointF(10, 10));
+         _node2.Location.ShouldBeEqualTo(new PointF(110, 110));
          sut.Center.ShouldBeEqualTo(new PointF(0, 0));
+         sut.Location.ShouldBeEqualTo(new PointF(-60, -60));
       }
    }
 
@@ -682,7 +690,7 @@ namespace OSPSuite.Presentation.Diagram
          ReferenceEquals(copiedContainer, _containerNode).ShouldBeFalse();
          copiedContainer.GetParent().ShouldBeEqualTo(_copy);
          copiedContainer.IsLogical.ShouldBeTrue();
-         copiedContainer.Location.ShouldBeEqualTo(new PointF(10, 10));
+         copiedContainer.Location.ShouldBeEqualTo(_containerNode.Location);
          _copy.GetDirectChildren<IBaseNode>().ShouldOnlyContain(copiedContainer);
       }
 
@@ -894,6 +902,31 @@ namespace OSPSuite.Presentation.Diagram
       {
          _containerNode.IsExpanded.ShouldBeTrue();
          _nestedContainerNode.IsExpanded.ShouldBeFalse();
+      }
+   }
+
+   public class When_undoing_the_expansion_of_a_journal_page : concern_for_DiagramModel
+   {
+      private JournalPageNode _journalPageNode;
+
+      protected override void Context()
+      {
+         base.Context();
+         _journalPageNode = sut.CreateNode<JournalPageNode>("page", new PointF(10, 10), sut);
+      }
+
+      protected override void Because()
+      {
+         sut.StartTransaction();
+         _journalPageNode.IsExpanded = false;
+         sut.FinishTransaction("Collapse");
+         sut.Undo();
+      }
+
+      [Observation]
+      public void should_restore_the_expanded_state()
+      {
+         _journalPageNode.IsExpanded.ShouldBeTrue();
       }
    }
 }

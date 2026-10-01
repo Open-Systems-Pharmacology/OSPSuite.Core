@@ -135,20 +135,8 @@ namespace OSPSuite.UI.Diagram.Services
 
          AddElementBaseNodeBindingFor(new ObserverNode());
 
-         addExpandableElementBaseNodeBindingFor(new JournalPageNode());
-
-         AddElementBaseNodeBindingFor(new RelatedItemNode());
-
          // Links do not need to be serialized, because they have no individual properties,
          // so the automatic creation is sufficient.
-      }
-
-      private void addExpandableElementBaseNodeBindingFor<T>(T node)
-      {
-         var bt = new GoXmlBindingTransformer(node);
-         bt.AddBinding("IsExpanded");
-         AddElementBaseNodeBindings(bt);
-         Transformers.Add(bt);
       }
 
       public void AddElementBaseNodeBindingFor<T>(T node)

@@ -1,8 +1,11 @@
 ﻿using OSPSuite.Core;
 using OSPSuite.Core.Diagram;
+using OSPSuite.Core.Journal;
+using OSPSuite.Core.Serialization.Diagram;
 using OSPSuite.Presentation.Charts;
 using OSPSuite.Presentation.Core;
 using OSPSuite.Presentation.Diagram.Elements;
+using OSPSuite.Presentation.Diagram.Services;
 using OSPSuite.Presentation.Mappers;
 using OSPSuite.Presentation.Presenters;
 using OSPSuite.Presentation.Presenters.Commands;
@@ -80,7 +83,12 @@ namespace OSPSuite.Presentation
 
          //Special registration
          container.Register<ChartEditorAndDisplaySettings, ChartEditorAndDisplaySettings>();
-         container.Register<IReactionDiagramModelFactory, ReactionDiagramModelFactory>();
+         container.Register<IDiagramModel, DiagramModel>();
+         container.Register<IJournalDiagramManagerFactory, JournalDiagramManagerFactory>();
+         container.Register<IDiagramToolTipCreator, DiagramToolTipCreator>();
+         container.Register<IDiagramModelToXmlMapper, DiagramModelToXmlMapper>(LifeStyle.Singleton);
+         container.Register<IContainerBaseLayouter, ContainerBaseLayouter>();
+         container.Register<IDiagramLayoutTask, DiagramLayoutTask>();
          container.Register<ChartEditorSettings, ChartEditorSettings>();
          container.Register<ChartPresenterContext, ChartPresenterContext>();
       }
