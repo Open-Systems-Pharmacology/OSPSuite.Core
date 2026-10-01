@@ -394,4 +394,29 @@ namespace OSPSuite.Presentation.Presentation
          _outputMappingDTO2.Output.ShouldBeEqualTo(_output2);
       }
    }
+
+   public class When_the_user_is_selecting_the_same_output_for_two_mappings_without_observed_data : concern_for_ParameterIdentificationOutputMappingPresenter
+   {
+      protected override void Context()
+      {
+         base.Context();
+         _parameterIdentification.AddOutputMapping(_outputMapping1);
+         _parameterIdentification.AddOutputMapping(_outputMapping2);
+         sut.EditParameterIdentification(_parameterIdentification);
+
+         //mimic binding behavior. Object is set and then method is called
+         _outputMappingDTO2.Output = _output1;
+      }
+
+      protected override void Because()
+      {
+         sut.OutputSelectionChanged(_outputMappingDTO2, _output1, _output2);
+      }
+
+      [Observation]
+      public void should_keep_the_selected_output()
+      {
+         _outputMappingDTO2.Output.ShouldBeEqualTo(_output1);
+      }
+   }
 }

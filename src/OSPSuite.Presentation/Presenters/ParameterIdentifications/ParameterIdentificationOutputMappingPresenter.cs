@@ -185,7 +185,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
          return allIds.Max() + 1;
       }
 
-      private bool observedDataAlreadySelectedForSameOutput(SimulationQuantitySelectionDTO outputDTO, DataRepository observedData) => _allOutputMappingDTOs.Count(x => isSameOutput(x.Output, outputDTO) && Equals(x.ObservedData, observedData)) > 1;
+      private bool observedDataAlreadySelectedForSameOutput(SimulationQuantitySelectionDTO outputDTO, DataRepository observedData) => observedData != null && _allOutputMappingDTOs.Count(x => isSameOutput(x.Output, outputDTO) && Equals(x.ObservedData, observedData)) > 1;
 
       private static bool isSameOutput(SimulationQuantitySelectionDTO output, SimulationQuantitySelectionDTO otherOutput) => Equals(output?.Simulation, otherOutput?.Simulation) && Equals(output?.QuantityPath, otherOutput?.QuantityPath);
 
