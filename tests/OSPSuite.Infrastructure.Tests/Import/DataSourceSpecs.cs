@@ -1113,4 +1113,68 @@ namespace OSPSuite.Infrastructure.Import
          sut.ValidateDataSourceUnits(_columnInfos).Any().ShouldBeTrue();
       }
    }
+
+   public class When_validating_an_error_whose_measurement_is_not_mapped : concern_for_DataSource
+   {
+      protected override void Context()
+      {
+         base.Context();
+         var parsedData = new Dictionary<ExtendedColumn, IList<SimulationPoint>>()
+         {
+            {
+               new ExtendedColumn()
+               {
+                  Column = new Column()
+                  {
+                     Name = "Time",
+                     Unit = new UnitDescription("s"),
+                     Dimension = _fakedTimeDimension
+                  },
+                  ColumnInfo = _columnInfos["Time"]
+               },
+               new List<SimulationPoint>()
+               {
+                  new SimulationPoint()
+                  {
+                     Unit = "s",
+                     Measurement = 0,
+                     Lloq = double.NaN
+                  }
+               }
+            },
+            {
+               new ExtendedColumn()
+               {
+                  Column = new Column()
+                  {
+                     Name = "Error",
+                     Unit = new UnitDescription("pmol/l"),
+                     Dimension = _fakedErrorDimension
+                  },
+                  ColumnInfo = _columnInfos["Error"]
+               },
+               new List<SimulationPoint>()
+               {
+                  new SimulationPoint()
+                  {
+                     Unit = "pmol/l",
+                     Measurement = 10,
+                     Lloq = double.NaN
+                  }
+               }
+            }
+         };
+         var dataSet = new DataSet();
+         dataSet.AddData(new List<ParsedDataSet>()
+            { { new ParsedDataSet(new List<string>(), A.Fake<DataSheet>(), new List<UnformattedRow>(), parsedData) } });
+         sut.DataSets.Clear();
+         sut.DataSets.Add("sheet1", dataSet);
+      }
+
+      [Observation]
+      public void should_not_report_any_error()
+      {
+         sut.ValidateDataSourceUnits(_columnInfos).Any().ShouldBeFalse();
+      }
+   }
 }

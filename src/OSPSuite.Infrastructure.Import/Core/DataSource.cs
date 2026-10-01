@@ -18,6 +18,8 @@ namespace OSPSuite.Infrastructure.Import.Core
 
       public IEnumerable<ParseErrorDescription> ErrorsFor(IDataSet key) => _errors[key];
 
+      public IReadOnlyList<string> DistinctMessages() => _errors.SelectMany(x => x).Select(x => x.Message).Distinct().ToList();
+
       public void Add(IDataSet key, ParseErrorDescription x)
       {
          Add(key, new List<ParseErrorDescription>() { x });
@@ -170,7 +172,7 @@ namespace OSPSuite.Infrastructure.Import.Core
                      var measurementColumn = set.Data.FirstOrDefault(x => x.Key.ColumnInfo.Name == column.Name);
                      var errorColumn = set.Data.FirstOrDefault(x => x.Key.ColumnInfo.Name == relatedColumn.Name);
 
-                     if (errorColumn.Key == null || errorColumn.Key.ErrorDeviation == Constants.STD_DEV_GEOMETRIC)
+                     if (!errorCanBeValidatedAgainstMeasurement(measurementColumn.Key, errorColumn.Key))
                         continue;
 
                      if (errorColumn.Value != null && measurementColumn.Value.Count != errorColumn.Value.Count)
@@ -197,6 +199,10 @@ namespace OSPSuite.Infrastructure.Import.Core
 
          return errors;
       }
+
+      //a configuration used without the importer view is not forced to map the measurement related to the error
+      private static bool errorCanBeValidatedAgainstMeasurement(ExtendedColumn measurementColumn, ExtendedColumn errorColumn) =>
+         measurementColumn != null && errorColumn != null && errorColumn.ErrorDeviation != Constants.STD_DEV_GEOMETRIC;
 
       private void validateManuallySetErrorDimension(IDimension errorDimension, IDimension measurementDimension, ParseErrors errors,
          IDataSet dataSet)
