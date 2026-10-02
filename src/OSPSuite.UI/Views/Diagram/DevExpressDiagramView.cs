@@ -356,7 +356,7 @@ namespace OSPSuite.UI.Views.Diagram
          placeInParent(item, node);
          var container = (DiagramContainer) item;
          container.Position = new PointFloat(relativeTo(node, node.Location));
-         container.Size = node.Size;
+         container.Size = node.DrawnBounds.Size;
          container.Appearance.BackColor = node.BackgroundColor;
          container.Appearance.BorderColor = node.BorderColor;
          container.Appearance.BorderSize = (int) node.BorderWidth;
@@ -543,11 +543,6 @@ namespace OSPSuite.UI.Views.Diagram
          return new SizeF(handle.Width + text.Width + CONTAINER_LABEL_OFFSET, Math.Max(handle.Height, text.Height + CONTAINER_LABEL_OFFSET));
       }
 
-      private RectangleF boundsOf(IBaseNode node)
-      {
-         return node.Bounds;
-      }
-
       private static void drawInnerEllipse(Graphics graphics, ElementBaseNode node, SizeF size)
       {
          using (var brush = new SolidBrush(node.PortColor))
@@ -601,10 +596,10 @@ namespace OSPSuite.UI.Views.Diagram
          switch (node)
          {
             case ContainerNode containerNode when !containerNode.IsExpanded:
-               return boundsOf(containerNode);
+               return containerNode.DrawnBounds;
             case ContainerNode containerNode:
                var labelSize = graphics.MeasureString(containerNode.Name ?? string.Empty, Font);
-               return RectangleF.Union(node.Bounds, new RectangleF(containerHandleBounds(containerNode).Right, node.Location.Y, labelSize.Width, labelSize.Height));
+               return RectangleF.Union(containerNode.DrawnBounds, new RectangleF(containerHandleBounds(containerNode).Right, node.Location.Y, labelSize.Width, labelSize.Height));
             case ElementBaseNode elementNode when hasLabel(elementNode):
                using (var font = labelFont(elementNode))
                {
@@ -670,7 +665,6 @@ namespace OSPSuite.UI.Views.Diagram
             return;
 
          var movedNodes = movedItems.Select(x => (IBaseNode) x.Item.Tag).ToList();
-         var movedDependents = false;
          _syncing = true;
          try
          {
@@ -683,7 +677,6 @@ namespace OSPSuite.UI.Views.Diagram
                var delta = new PointF(node.Location.X - before.X, node.Location.Y - before.Y);
                var dependents = NodesMovingWith(node).Where(dependent => !movedNodes.Contains(dependent)).ToList();
                dependents.Each(dependent => dependent.Location = new PointF(dependent.Location.X + delta.X, dependent.Location.Y + delta.Y));
-               movedDependents = movedDependents || dependents.Any();
             });
             _model.FinishTransaction("Move");
          }
@@ -692,8 +685,7 @@ namespace OSPSuite.UI.Views.Diagram
             _syncing = false;
          }
 
-         if (movedDependents || movedNodes.OfType<ContainerNode>().Any())
-            defer(synchronize);
+         defer(synchronize);
 
          _presenter.SelectionMoved(this, EventArgs.Empty);
       }
@@ -1086,7 +1078,7 @@ namespace OSPSuite.UI.Views.Diagram
          if (item == null)
             return;
 
-         var bounds = node is IBaseNode baseNode ? boundsOf(baseNode) : item.Bounds;
+         var bounds = node is DiagramNode diagramNode ? diagramNode.DrawnBounds : item.Bounds;
          var centre = new PointF(bounds.X + bounds.Width / 2, bounds.Y + bounds.Height / 2);
 
          var content = _model?.Bounds ?? RectangleF.Empty;

@@ -90,11 +90,11 @@ namespace OSPSuite.Presentation.Diagram.Elements
 
       public RectangleF CalculateBounds()
       {
-         var nodes = Children.ToList();
+         var nodes = Children.Cast<DiagramNode>().ToList();
          if (!nodes.Any())
             return RectangleF.Empty;
 
-         return nodes.Select(node => node.Bounds).Aggregate(RectangleF.Union);
+         return nodes.Select(node => node.DrawnBounds).Aggregate(RectangleF.Union);
       }
 
       public IEnumerable<T> GetDirectChildren<T>() where T : class

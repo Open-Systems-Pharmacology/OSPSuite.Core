@@ -183,4 +183,38 @@ namespace OSPSuite.Presentation.Diagram
          sut.Size.ShouldBeEqualTo(frameOf(new RectangleF(_liver.Location, new SizeF(30, 16))).Size);
       }
    }
+
+   public class When_copying_a_collapsed_container_node : concern_for_ContainerNode
+   {
+      private ContainerNode _copy;
+      private ContainerNode _target;
+
+      protected override void Context()
+      {
+         base.Context();
+         _target = new ContainerNode();
+         sut.IsExpanded = false;
+         sut.CollapsedSize = new SizeF(30, 16);
+      }
+
+      protected override void Because()
+      {
+         _copy = (ContainerNode) sut.Copy();
+         _target.CopyLayoutInfoFrom(sut, sut.Location);
+      }
+
+      [Observation]
+      public void should_keep_the_size_the_copy_expands_to()
+      {
+         _copy.IsExpanded = true;
+         _copy.Size.ShouldBeEqualTo(new SizeF(100, 60));
+      }
+
+      [Observation]
+      public void should_keep_the_size_a_layout_copy_expands_to()
+      {
+         _target.IsExpanded = true;
+         _target.Size.ShouldBeEqualTo(new SizeF(100, 60));
+      }
+   }
 }

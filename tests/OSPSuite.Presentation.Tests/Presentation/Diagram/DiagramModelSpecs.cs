@@ -929,4 +929,35 @@ namespace OSPSuite.Presentation.Diagram
          _journalPageNode.IsExpanded.ShouldBeTrue();
       }
    }
+
+   public class When_undoing_a_move_while_a_container_is_collapsed : concern_for_DiagramModel
+   {
+      private ContainerNode _liver;
+      private MoleculeNode _moleculeNode;
+
+      protected override void Context()
+      {
+         base.Context();
+         _liver = createContainer("liver");
+         _liver.Size = new SizeF(100, 60);
+         _liver.IsExpanded = false;
+         _liver.CollapsedSize = new SizeF(30, 16);
+         _moleculeNode = createMolecule("m", new PointF(0, 0));
+      }
+
+      protected override void Because()
+      {
+         sut.StartTransaction();
+         _moleculeNode.Location = new PointF(50, 50);
+         sut.FinishTransaction("Move");
+         sut.Undo();
+      }
+
+      [Observation]
+      public void should_keep_the_size_the_collapsed_container_expands_to()
+      {
+         _liver.IsExpanded = true;
+         _liver.Size.ShouldBeEqualTo(new SizeF(100, 60));
+      }
+   }
 }

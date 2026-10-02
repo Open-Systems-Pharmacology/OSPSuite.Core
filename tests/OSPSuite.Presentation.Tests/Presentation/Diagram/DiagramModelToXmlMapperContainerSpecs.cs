@@ -336,4 +336,26 @@ namespace OSPSuite.Presentation.Diagram
          _template.GetNode<NeighborhoodNode>("pls_int").Location.ShouldBeEqualTo(new PointF(295, 260));
       }
    }
+
+   public class When_round_tripping_a_collapsed_container_that_has_been_drawn : concern_for_DiagramModelToXmlMapper_with_containers
+   {
+      private DiagramModel _copy;
+
+      protected override void Context()
+      {
+         base.Context();
+         _plasma.CollapsedSize = new SizeF(46, 18);
+      }
+
+      protected override void Because()
+      {
+         _copy = sut.XmlDocumentToDiagramModel(sut.DiagramModelToXmlDocument(_model)) as DiagramModel;
+      }
+
+      [Observation]
+      public void should_write_the_size_the_container_expands_to_rather_than_the_size_it_is_drawn_at()
+      {
+         _copy.GetNode<ContainerNode>("plasma").Size.ShouldBeEqualTo(new SizeF(150, 60));
+      }
+   }
 }

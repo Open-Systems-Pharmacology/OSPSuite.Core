@@ -94,7 +94,7 @@ namespace OSPSuite.Presentation.Diagram.Elements
 
       public override SizeF Size
       {
-         get => ChildFrame?.Size ?? (IsExpanded ? _size : CollapsedSize);
+         get => ChildFrame?.Size ?? _size;
          set => SetField(ref _size, value);
       }
 
@@ -108,6 +108,8 @@ namespace OSPSuite.Presentation.Diagram.Elements
          }
       }
 
+      public override RectangleF DrawnBounds => IsExpanded ? Bounds : new RectangleF(Location, CollapsedSize);
+
       public void SetBoundsWithoutMovingChildren(RectangleF bounds)
       {
          base.Location = bounds.Location;
@@ -116,20 +118,20 @@ namespace OSPSuite.Presentation.Diagram.Elements
 
       public RectangleF CalculateBounds()
       {
-         var visibleChildren = Children.Where(node => node.IsVisible).ToList();
+         var visibleChildren = Children.Cast<DiagramNode>().Where(node => node.IsVisible).ToList();
          if (!visibleChildren.Any())
             return Bounds;
 
-         return visibleChildren.Select(node => node.Bounds).Aggregate(RectangleF.Union);
+         return visibleChildren.Select(node => node.DrawnBounds).Aggregate(RectangleF.Union);
       }
 
       public RectangleF CalculateFrame()
       {
-         var visibleChildren = Children.Where(node => node.IsVisible).ToList();
+         var visibleChildren = Children.Cast<DiagramNode>().Where(node => node.IsVisible).ToList();
          if (!visibleChildren.Any())
             return new RectangleF(base.Location, _size);
 
-         var bounds = visibleChildren.Select(node => node.Bounds).Aggregate(RectangleF.Union);
+         var bounds = visibleChildren.Select(node => node.DrawnBounds).Aggregate(RectangleF.Union);
          return new RectangleF(bounds.X - LEFT_MARGIN, bounds.Y - TOP_MARGIN, bounds.Width + LEFT_MARGIN + RIGHT_MARGIN, bounds.Height + TOP_MARGIN + BOTTOM_MARGIN);
       }
 
