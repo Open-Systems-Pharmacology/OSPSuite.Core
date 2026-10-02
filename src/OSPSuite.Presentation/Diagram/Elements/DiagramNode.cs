@@ -76,6 +76,8 @@ namespace OSPSuite.Presentation.Diagram.Elements
       public abstract SizeF Size { get; set; }
       public abstract RectangleF Bounds { get; set; }
 
+      public virtual RectangleF DrawnBounds => Bounds;
+
       public IReadOnlyList<IBaseLink> Links => _links;
 
       public IContainerBase GetParent() => Parent;

@@ -10,17 +10,23 @@ namespace OSPSuite.Presentation.Diagram.Elements
 {
    public class ContainerNode : DiagramNode, IContainerNode
    {
-      private const float FIXED_BORDER_WIDTH = 2F;
+      public const float LEFT_MARGIN = 15F;
+      public const float TOP_MARGIN = 20F;
+      public const float RIGHT_MARGIN = 15F;
+      public const float BOTTOM_MARGIN = 10F;
       private const float UNFIXED_BORDER_WIDTH = 1F;
+      private const float FIXED_BORDER_WIDTH = 2F;
 
       private bool _isExpanded = true;
       private bool _isLogical;
       private SizeF _size = new SizeF(100, 60);
+      private SizeF? _collapsedSize;
 
       internal NodeCollection Children { get; } = new NodeCollection();
 
       public Color BackgroundColor { get; private set; }
       public Color BorderColor { get; private set; }
+      public Color HandleColor { get; private set; }
       public float BorderWidth { get; private set; } = UNFIXED_BORDER_WIDTH;
       public bool IsExpandedByDefault { get; set; }
 
@@ -38,7 +44,19 @@ namespace OSPSuite.Presentation.Diagram.Elements
       public bool IsExpanded
       {
          get => _isExpanded;
-         set => SetField(ref _isExpanded, value);
+         set
+         {
+            if (!value)
+               base.Location = Location;
+
+            SetField(ref _isExpanded, value);
+         }
+      }
+
+      public SizeF CollapsedSize
+      {
+         get => _collapsedSize ?? _size;
+         set => SetField(ref _collapsedSize, value);
       }
 
       public override bool Hidden
@@ -54,10 +72,10 @@ namespace OSPSuite.Presentation.Diagram.Elements
 
       public override PointF Location
       {
-         get => base.Location;
+         get => ChildFrame?.Location ?? base.Location;
          set
          {
-            var delta = value.Minus(base.Location);
+            var delta = value.Minus(Location);
             base.Location = value;
             if (delta.IsEmpty)
                return;
@@ -65,6 +83,8 @@ namespace OSPSuite.Presentation.Diagram.Elements
             Children.Each(child => child.Location = child.Location.Plus(delta));
          }
       }
+
+      private RectangleF? ChildFrame => IsExpanded && Children.Any(node => node.IsVisible) ? CalculateFrame() : (RectangleF?) null;
 
       public override PointF Center
       {
@@ -74,7 +94,7 @@ namespace OSPSuite.Presentation.Diagram.Elements
 
       public override SizeF Size
       {
-         get => _size;
+         get => ChildFrame?.Size ?? _size;
          set => SetField(ref _size, value);
       }
 
@@ -88,13 +108,31 @@ namespace OSPSuite.Presentation.Diagram.Elements
          }
       }
 
+      public override RectangleF DrawnBounds => IsExpanded ? Bounds : new RectangleF(Location, CollapsedSize);
+
+      public void SetBoundsWithoutMovingChildren(RectangleF bounds)
+      {
+         base.Location = bounds.Location;
+         Size = bounds.Size;
+      }
+
       public RectangleF CalculateBounds()
       {
-         var visibleChildren = Children.Where(node => node.IsVisible).ToList();
+         var visibleChildren = Children.Cast<DiagramNode>().Where(node => node.IsVisible).ToList();
          if (!visibleChildren.Any())
             return Bounds;
 
-         return visibleChildren.Select(node => node.Bounds).Aggregate(RectangleF.Union);
+         return visibleChildren.Select(node => node.DrawnBounds).Aggregate(RectangleF.Union);
+      }
+
+      public RectangleF CalculateFrame()
+      {
+         var visibleChildren = Children.Cast<DiagramNode>().Where(node => node.IsVisible).ToList();
+         if (!visibleChildren.Any())
+            return new RectangleF(base.Location, _size);
+
+         var bounds = visibleChildren.Select(node => node.DrawnBounds).Aggregate(RectangleF.Union);
+         return new RectangleF(bounds.X - LEFT_MARGIN, bounds.Y - TOP_MARGIN, bounds.Width + LEFT_MARGIN + RIGHT_MARGIN, bounds.Height + TOP_MARGIN + BOTTOM_MARGIN);
       }
 
       public void SetHiddenRecursive(bool hidden)
@@ -108,14 +146,12 @@ namespace OSPSuite.Presentation.Diagram.Elements
       public void ShowChildrenAndLinkedNodes()
       {
          GetDirectChildren<IBaseNode>().Each(childNode => childNode.Hidden = false);
-
          GetLinkedNodes<IBaseNode>(true).Each(neighborNode => neighborNode.Hidden = false);
       }
 
       public void PostLayoutStep()
       {
          GetDirectChildren<INeighborhoodNode>().Each(node => node.AdjustPosition());
-
          GetLinkedNodes<INeighborhoodNode>(true).Each(neighborhoodNode => neighborhoodNode.AdjustPosition());
       }
 
@@ -171,6 +207,7 @@ namespace OSPSuite.Presentation.Diagram.Elements
       {
          if (!(node is DiagramNode diagramNode))
             throw new InvalidTypeException(node, typeof(DiagramNode));
+
          Children.Add(node);
          diagramNode.Parent = this;
          Model?.Attach(diagramNode, this);
@@ -181,6 +218,7 @@ namespace OSPSuite.Presentation.Diagram.Elements
       {
          if (!Children.Remove(node))
             return;
+
          if (node is DiagramNode diagramNode)
          {
             Model?.Detach(diagramNode);
@@ -194,6 +232,7 @@ namespace OSPSuite.Presentation.Diagram.Elements
       {
          if (node == this)
             return true;
+
          return recursive ? GetAllChildren<IBaseNode>().Contains(node) : Children.Contains(node);
       }
 
@@ -202,6 +241,7 @@ namespace OSPSuite.Presentation.Diagram.Elements
          BackgroundColor = IsLogical ? diagramColors.ContainerLogical : diagramColors.ContainerPhysical;
          BorderWidth = LocationFixed ? FIXED_BORDER_WIDTH : UNFIXED_BORDER_WIDTH;
          BorderColor = LocationFixed ? diagramColors.BorderFixed : diagramColors.BorderUnfixed;
+         HandleColor = diagramColors.ContainerHandle;
          NotifyChanged();
       }
 
@@ -209,6 +249,7 @@ namespace OSPSuite.Presentation.Diagram.Elements
       {
          if (!(node is IContainerNode containerNode))
             return;
+
          base.CopyLayoutInfoFrom(node, parentLocation);
          IsExpanded = containerNode.IsExpanded;
          Size = containerNode.Size;

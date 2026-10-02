@@ -274,19 +274,19 @@ namespace OSPSuite.Presentation.Diagram
       protected override void Because()
       {
          _model = sut.XmlDocumentToDiagramModel(load(@"<DiagramModel IsLayouted=""False"">
-  <SimpleContainerNode Id=""c"" Name=""C"" Location=""0 0"" Size=""10 10"" IsExpanded=""true"">
+  <ObserverNode Id=""o"" Name=""O"" Location=""0 0"" Size=""10 10"" NodeSize=""Middle"">
     <MoleculeNode Id=""nested"" Name=""N"" Location=""1 1"" NodeSize=""Middle"" />
-  </SimpleContainerNode>
+  </ObserverNode>
   <MoleculeNode Id=""mol-guid-a"" Name=""A"" Location=""20 40"" NodeSize=""Large"" />
 </DiagramModel>"));
       }
 
       [Observation]
-      public void should_only_read_the_known_reaction_diagram_nodes()
+      public void should_only_read_the_known_nodes()
       {
          _model.GetAllChildren<IBaseNode>().Count().ShouldBeEqualTo(1);
          _model.GetNode("mol-guid-a").ShouldNotBeNull();
-         _model.GetNode("c").ShouldBeNull();
+         _model.GetNode("o").ShouldBeNull();
          _model.GetNode("nested").ShouldBeNull();
          _model.IsLayouted.ShouldBeFalse();
       }
@@ -368,10 +368,10 @@ namespace OSPSuite.Presentation.Diagram
       }
 
       [Observation]
-      public void should_translate_the_model_to_the_serialized_location()
+      public void should_report_the_serialized_location_without_moving_the_nodes()
       {
          _model.Location.ShouldBeEqualTo(new PointF(10, 20));
-         _model.GetNode<MoleculeNode>("a").Location.ShouldBeEqualTo(new PointF(21.25F, 31.25F));
+         _model.GetNode<MoleculeNode>("a").Location.ShouldBeEqualTo(new PointF(20, 40));
       }
    }
 }

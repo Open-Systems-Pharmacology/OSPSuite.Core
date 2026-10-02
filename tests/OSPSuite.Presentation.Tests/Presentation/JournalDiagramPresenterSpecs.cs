@@ -355,4 +355,50 @@ namespace OSPSuite.Presentation.Presentation
          A.CallTo(() => _journalTask.SaveJournalDiagram(_journalDiagram)).MustHaveHappened();
       }
    }
+
+   public class When_deleting_a_parent_link_of_a_journal_page : concern_for_JournalDiagramPresenter
+   {
+      private JournalPage _parentPage;
+      private JournalPage _childPage;
+      private IJournalPageLink _link;
+
+      protected override void Context()
+      {
+         base.Context();
+         _parentPage = new JournalPage().WithId("parentPage");
+         _childPage = new JournalPage().WithId("childPage");
+         _childPage.ParentId = _parentPage.Id;
+         _journal.AddJournalPage(_parentPage);
+         _journal.AddJournalPage(_childPage);
+
+         _link = A.Fake<IJournalPageLink>();
+         A.CallTo(() => _link.GetFromNode()).Returns(A.Fake<IJournalPageNode>().WithId(_parentPage.Id));
+         A.CallTo(() => _link.GetToNode()).Returns(A.Fake<IJournalPageNode>().WithId(_childPage.Id));
+
+         A.CallTo(() => _view.GetSelection()).Returns(new List<IBaseObject> {_link});
+      }
+
+      protected override void Because()
+      {
+         sut.DeleteSelection();
+      }
+
+      [Observation]
+      public void should_remove_the_parent_of_the_child_page()
+      {
+         A.CallTo(() => _journalPageTask.DeleteParentFrom(_childPage)).MustHaveHappened();
+      }
+
+      [Observation]
+      public void should_not_touch_the_parent_of_the_parent_page()
+      {
+         A.CallTo(() => _journalPageTask.DeleteParentFrom(_parentPage)).MustNotHaveHappened();
+      }
+
+      [Observation]
+      public void should_unlink_the_deleted_link()
+      {
+         A.CallTo(() => _link.Unlink()).MustHaveHappened();
+      }
+   }
 }

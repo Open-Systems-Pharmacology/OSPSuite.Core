@@ -153,11 +153,9 @@ namespace OSPSuite.Presentation.Presenters.Journal
 
       private void deleteLinks(IEnumerable<IJournalPageLink> journalPageLinks)
       {
-         journalPageLinks.Each(baseObject =>
+         journalPageLinks.Each(baseLink =>
          {
-            var baseLink = baseObject;
-            var child = baseLink.GetFromNode();
-            removeParentLink(child);
+            removeParentLink(baseLink.GetToNode());
             baseLink.Unlink();
          });
       }
