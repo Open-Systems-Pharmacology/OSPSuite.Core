@@ -362,4 +362,61 @@ namespace OSPSuite.Presentation.Presentation
          _unmappedRaised.ShouldBeFalse();
       }
    }
+
+   public class When_the_user_is_selecting_an_output_equivalent_to_another_output_already_mapped_to_the_same_observed_data : concern_for_ParameterIdentificationOutputMappingPresenter
+   {
+      private SimulationQuantitySelectionDTO _equivalentOutput1;
+
+      protected override void Context()
+      {
+         base.Context();
+         _outputMapping1.WeightedObservedData = _weightedObservedData1;
+         _outputMapping2.WeightedObservedData = _weightedObservedData1;
+         _parameterIdentification.AddOutputMapping(_outputMapping1);
+         _parameterIdentification.AddOutputMapping(_outputMapping2);
+         sut.EditParameterIdentification(_parameterIdentification);
+
+         A.CallTo(() => _output1.QuantityPath).Returns("AA");
+         _equivalentOutput1 = A.Fake<SimulationQuantitySelectionDTO>();
+         A.CallTo(() => _equivalentOutput1.Simulation).Returns(_simulation1);
+         A.CallTo(() => _equivalentOutput1.QuantityPath).Returns("AA");
+
+         _outputMappingDTO1.ObservedData = _observedData1;
+         _outputMappingDTO2.ObservedData = _observedData1;
+         //mimic binding behavior. Object is set and then method is called
+         _outputMappingDTO2.Output = _equivalentOutput1;
+      }
+
+      [Observation]
+      public void should_reset_the_output_and_throw_an_exception()
+      {
+         The.Action(() => sut.OutputSelectionChanged(_outputMappingDTO2, _equivalentOutput1, _output2)).ShouldThrowAn<CannotSelectTheObservedDataMoreThanOnceException>();
+         _outputMappingDTO2.Output.ShouldBeEqualTo(_output2);
+      }
+   }
+
+   public class When_the_user_is_selecting_the_same_output_for_two_mappings_without_observed_data : concern_for_ParameterIdentificationOutputMappingPresenter
+   {
+      protected override void Context()
+      {
+         base.Context();
+         _parameterIdentification.AddOutputMapping(_outputMapping1);
+         _parameterIdentification.AddOutputMapping(_outputMapping2);
+         sut.EditParameterIdentification(_parameterIdentification);
+
+         //mimic binding behavior. Object is set and then method is called
+         _outputMappingDTO2.Output = _output1;
+      }
+
+      protected override void Because()
+      {
+         sut.OutputSelectionChanged(_outputMappingDTO2, _output1, _output2);
+      }
+
+      [Observation]
+      public void should_keep_the_selected_output()
+      {
+         _outputMappingDTO2.Output.ShouldBeEqualTo(_output1);
+      }
+   }
 }

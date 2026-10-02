@@ -538,7 +538,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
       public void AddDataRepositories(IEnumerable<DataRepository> dataRepositories)
       {
-         var allColumnsToAdd = dataRepositories.SelectMany(x => x.Columns)
+         var allColumnsToAdd = dataRepositories.Distinct().SelectMany(x => x.Columns)
             .Where(c => !columnIsForInternalUseOnly(c))
             .Where(c => !hasColumn(c))
             .ToList();
