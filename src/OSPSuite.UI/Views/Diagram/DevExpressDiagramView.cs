@@ -237,6 +237,7 @@ namespace OSPSuite.UI.Views.Diagram
             _diagramControl.BeginUpdate();
             var nodes = _model.GetAllChildren<DiagramNode>().Where(isShown).OrderBy(depthOf).ToList();
             removeStaleItems(nodes);
+            nodes.OfType<ContainerNode>().Where(node => !node.IsExpanded).Each(node => node.CollapsedSize = collapsedSizeFor(node));
             nodes.Each(updateItem);
 
             var links = _model.GetAllChildren<BaseLink>()
@@ -355,7 +356,7 @@ namespace OSPSuite.UI.Views.Diagram
          placeInParent(item, node);
          var container = (DiagramContainer) item;
          container.Position = new PointFloat(relativeTo(node, node.Location));
-         container.Size = node.IsExpanded ? node.Size : collapsedSizeFor(node);
+         container.Size = node.Size;
          container.Appearance.BackColor = node.BackgroundColor;
          container.Appearance.BorderColor = node.BorderColor;
          container.Appearance.BorderSize = (int) node.BorderWidth;
@@ -544,7 +545,7 @@ namespace OSPSuite.UI.Views.Diagram
 
       private RectangleF boundsOf(IBaseNode node)
       {
-         return node is ContainerNode containerNode && !containerNode.IsExpanded ? new RectangleF(node.Location, collapsedSizeFor(containerNode)) : node.Bounds;
+         return node.Bounds;
       }
 
       private static void drawInnerEllipse(Graphics graphics, ElementBaseNode node, SizeF size)
@@ -636,7 +637,7 @@ namespace OSPSuite.UI.Views.Diagram
             return allNodes;
 
          var exported = containerBase.GetAllChildren<IBaseNode>().ToList();
-         return allNodes.Where(exported.Contains).ToList();
+         return allNodes.Where(node => Equals(node, containerBase) || exported.Contains(node)).ToList();
       }
 
       private void onGetActiveObjectInfo(ToolTipControllerGetActiveObjectInfoEventArgs e)

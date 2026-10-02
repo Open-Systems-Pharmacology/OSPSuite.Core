@@ -78,17 +78,19 @@ namespace OSPSuite.Presentation.Diagram
 
    public class When_retrieving_the_bounds_of_a_collapsed_container_node : concern_for_ContainerNode
    {
+      private ContainerNode _liver;
+
       protected override void Context()
       {
          base.Context();
-         createContainer("liver", sut, 400, 900);
+         _liver = createContainer("liver", sut, 400, 900);
          sut.IsExpanded = false;
       }
 
       [Observation]
-      public void should_use_its_own_location_and_size()
+      public void should_collapse_onto_the_frame_of_its_children()
       {
-         sut.Location.ShouldBeEqualTo(new PointF(100, 100));
+         sut.Location.ShouldBeEqualTo(frameOf(_liver.Bounds).Location);
          sut.Size.ShouldBeEqualTo(new SizeF(100, 60));
       }
    }
@@ -136,6 +138,49 @@ namespace OSPSuite.Presentation.Diagram
          _liver.Bounds.Contains(_plasma.Bounds).ShouldBeTrue();
          sut.Bounds.Contains(_liver.Bounds).ShouldBeTrue();
          sut.Bounds.Contains(_plasma.Bounds).ShouldBeTrue();
+      }
+   }
+
+   public class When_collapsing_a_container_node_after_a_child_has_moved : concern_for_ContainerNode
+   {
+      private ContainerNode _liver;
+
+      protected override void Context()
+      {
+         base.Context();
+         _liver = createContainer("liver", sut, 400, 900);
+         _liver.Location = new PointF(1100, 1400);
+      }
+
+      protected override void Because()
+      {
+         sut.IsExpanded = false;
+      }
+
+      [Observation]
+      public void should_collapse_where_its_children_now_are()
+      {
+         sut.Location.ShouldBeEqualTo(frameOf(_liver.Bounds).Location);
+      }
+   }
+
+   public class When_retrieving_the_bounds_of_a_container_with_a_collapsed_child : concern_for_ContainerNode
+   {
+      private ContainerNode _liver;
+
+      protected override void Context()
+      {
+         base.Context();
+         _liver = createContainer("liver", sut, 400, 900);
+         createContainer("plasma", _liver, 420, 920);
+         _liver.IsExpanded = false;
+         _liver.CollapsedSize = new SizeF(30, 16);
+      }
+
+      [Observation]
+      public void should_fit_the_extent_the_collapsed_child_is_drawn_at()
+      {
+         sut.Size.ShouldBeEqualTo(frameOf(new RectangleF(_liver.Location, new SizeF(30, 16))).Size);
       }
    }
 }

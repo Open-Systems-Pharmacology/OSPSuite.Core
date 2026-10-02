@@ -921,4 +921,32 @@ namespace OSPSuite.UI.Diagram
          endItems.Any(item => ReferenceEquals(item?.Tag, _organism)).ShouldBeFalse();
       }
    }
+
+   public class When_exporting_a_container_without_rendered_children : concern_for_DevExpressDiagramView
+   {
+      private DiagramModel _spatialModel;
+      private ContainerNode _organism;
+      private Bitmap _bitmap;
+
+      protected override void Context()
+      {
+         base.Context();
+         _spatialModel = new DiagramModel();
+         _organism = _spatialModel.CreateNode<ContainerNode>("organism", new PointF(100, 100), _spatialModel);
+         _organism.Name = "Organism";
+         sut.Model = _spatialModel;
+         sut.Refresh();
+      }
+
+      protected override void Because()
+      {
+         _bitmap = sut.GetBitmap(_organism);
+      }
+
+      [Observation]
+      public void should_export_the_container_itself_instead_of_throwing()
+      {
+         _bitmap.ShouldNotBeNull();
+      }
+   }
 }

@@ -283,12 +283,12 @@ namespace OSPSuite.Presentation.Diagram
       {
          var plasma = _xmlDoc.SelectSingleNode("//SimpleContainerNode[@Id='plasma']") as XmlElement;
          plasma.GetAttribute("IsExpanded").ShouldBeEqualTo("false");
-         plasma.GetAttribute("GoSubGraph.SavedBounds").ShouldBeEqualTo("20 30 150 60");
-         plasma.GetAttribute("Location").ShouldBeEqualTo("100 200");
+         plasma.GetAttribute("GoSubGraph.SavedBounds").ShouldBeEqualTo("15 20 150 60");
+         plasma.GetAttribute("Location").ShouldBeEqualTo("105 210");
 
          var moleculeProperties = plasma.ChildNodes.OfType<XmlElement>().Single();
          moleculeProperties.GetAttribute("GoSubGraph.SavedBounds").ShouldBeEqualTo("15 20 120 30");
-         moleculeProperties.GetAttribute("Location").ShouldBeEqualTo("100 200");
+         moleculeProperties.GetAttribute("Location").ShouldBeEqualTo("105 210");
       }
 
       [Observation]
@@ -320,8 +320,8 @@ namespace OSPSuite.Presentation.Diagram
       [Observation]
       public void should_write_the_direct_children_with_their_expanded_bounds_and_the_container_location_on_the_root()
       {
-         _xmlDoc.DocumentElement.GetAttribute("LocationX").ShouldBeEqualTo("100");
-         _xmlDoc.DocumentElement.GetAttribute("LocationY").ShouldBeEqualTo("200");
+         _xmlDoc.DocumentElement.GetAttribute("LocationX").ShouldBeEqualTo("105");
+         _xmlDoc.DocumentElement.GetAttribute("LocationY").ShouldBeEqualTo("210");
          var plasma = elementWithId(_xmlDoc, "plasma");
          plasma.HasAttribute("GoSubGraph.SavedBounds").ShouldBeFalse();
          plasma.GetAttribute("Location").ShouldBeEqualTo("120 230");
@@ -330,7 +330,7 @@ namespace OSPSuite.Presentation.Diagram
       [Observation]
       public void should_read_the_template_back_with_the_container_location_and_unchanged_child_positions()
       {
-         _template.Location.ShouldBeEqualTo(new PointF(100, 200));
+         _template.Location.ShouldBeEqualTo(new PointF(105, 210));
          _template.GetNode<ContainerNode>("plasma").Location.ShouldBeEqualTo(new PointF(120, 230));
          _template.GetNode<ContainerNode>("interstitial").Location.ShouldBeEqualTo(new PointF(320, 230));
          _template.GetNode<NeighborhoodNode>("pls_int").Location.ShouldBeEqualTo(new PointF(295, 260));

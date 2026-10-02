@@ -20,6 +20,7 @@ namespace OSPSuite.Presentation.Diagram.Elements
       private bool _isExpanded = true;
       private bool _isLogical;
       private SizeF _size = new SizeF(100, 60);
+      private SizeF? _collapsedSize;
 
       internal NodeCollection Children { get; } = new NodeCollection();
 
@@ -43,7 +44,19 @@ namespace OSPSuite.Presentation.Diagram.Elements
       public bool IsExpanded
       {
          get => _isExpanded;
-         set => SetField(ref _isExpanded, value);
+         set
+         {
+            if (!value)
+               base.Location = Location;
+
+            SetField(ref _isExpanded, value);
+         }
+      }
+
+      public SizeF CollapsedSize
+      {
+         get => _collapsedSize ?? _size;
+         set => SetField(ref _collapsedSize, value);
       }
 
       public override bool Hidden
@@ -81,7 +94,7 @@ namespace OSPSuite.Presentation.Diagram.Elements
 
       public override SizeF Size
       {
-         get => ChildFrame?.Size ?? _size;
+         get => ChildFrame?.Size ?? (IsExpanded ? _size : CollapsedSize);
          set => SetField(ref _size, value);
       }
 
