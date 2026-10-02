@@ -1,4 +1,6 @@
-﻿using OSPSuite.Core.Domain.Data;
+﻿using System;
+using OSPSuite.Core.Domain.Data;
+using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Extensions;
 
@@ -23,5 +25,19 @@ namespace OSPSuite.Core.Chart
 
          return curve;
       }
+
+      protected override DataRepository CloneRepository(DataRepository sourceRepository, AnalysisChartWithLocalRepositories sourceChart, ICloneManager cloneManager)
+      {
+         var clonedRepository = base.CloneRepository(sourceRepository, sourceChart, cloneManager);
+         //scatter repositories are found by an id starting with the chart id (see ResidualsVsTimeChartService.GetOrCreateScatterDataRepositoryInChart)
+         var sourceIdPrefix = $"{sourceChart.Id}-";
+         if (sourceRepository.Id.StartsWith(sourceIdPrefix, StringComparison.Ordinal))
+            clonedRepository.Id = $"{Id}-{sourceRepository.Id.Substring(sourceIdPrefix.Length)}";
+
+         return clonedRepository;
+      }
+
+      //the zero marker is recreated by the presenter each time the chart is displayed
+      protected override bool ShouldCloneCurve(Curve curve) => !string.Equals(curve.yData.Name, ZERO);
    }
 }

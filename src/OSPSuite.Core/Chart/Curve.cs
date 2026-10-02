@@ -49,6 +49,12 @@ namespace OSPSuite.Core.Chart
          yDimension = yDimensionFor(dimensionFactory);
       }
 
+      internal void ReplaceData(DataColumn xColumn, DataColumn yColumn)
+      {
+         xData = xColumn;
+         yData = yColumn;
+      }
+
       private IDimension yDimensionFor(IDimensionFactory dimensionFactory)
       {
          if (yData.ContainsRelatedColumn(AuxiliaryType.GeometricMeanPop))
