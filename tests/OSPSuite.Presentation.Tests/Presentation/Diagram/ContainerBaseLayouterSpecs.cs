@@ -88,6 +88,59 @@ namespace OSPSuite.Presentation.Diagram
       }
    }
 
+   public class When_placing_a_free_node_overlapping_a_collapsed_container : concern_for_ContainerBaseLayouter
+   {
+      private ContainerNode _collapsedContainer;
+      private MoleculeNode _freeNode;
+
+      protected override void Context()
+      {
+         base.Context();
+         _collapsedContainer = _model.CreateNode<ContainerNode>("c1", new PointF(300, 300), _model);
+         _model.CreateNode<MoleculeNode>("B", new PointF(400, 400), _collapsedContainer);
+         _collapsedContainer.IsExpanded = false;
+         _collapsedContainer.CollapsedSize = new SizeF(30, 16);
+         _freeNode = _model.CreateNode<MoleculeNode>("C", new PointF(400, 400), _model);
+      }
+
+      protected override void Because()
+      {
+         sut.DoForceLayout(_model, new List<IHasLayoutInfo> {_freeNode}, 0);
+      }
+
+      [Observation]
+      public void should_only_avoid_the_extent_the_container_is_drawn_at()
+      {
+         _freeNode.Location.ShouldBeEqualTo(new PointF(400, 400));
+         _collapsedContainer.Bounds.IntersectsWith(_freeNode.Bounds).ShouldBeTrue();
+      }
+   }
+
+   public class When_placing_a_free_collapsed_container : concern_for_ContainerBaseLayouter
+   {
+      private ContainerNode _freeContainer;
+
+      protected override void Context()
+      {
+         base.Context();
+         _freeContainer = _model.CreateNode<ContainerNode>("c1", new PointF(0, 0), _model);
+         _freeContainer.IsExpanded = false;
+         _freeContainer.CollapsedSize = new SizeF(30, 16);
+      }
+
+      protected override void Because()
+      {
+         sut.DoForceLayout(_model, new List<IHasLayoutInfo> {_freeContainer}, 0);
+      }
+
+      [Observation]
+      public void should_only_move_the_extent_it_is_drawn_at_out_of_the_way()
+      {
+         _freeContainer.Location.ShouldBeEqualTo(new PointF(0, 0));
+         _freeContainer.Bounds.IntersectsWith(_existingNode.Bounds).ShouldBeTrue();
+      }
+   }
+
    public class When_placing_no_free_nodes : concern_for_ContainerBaseLayouter
    {
       protected override void Because()

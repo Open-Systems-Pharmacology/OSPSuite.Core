@@ -88,8 +88,8 @@ namespace OSPSuite.Presentation.Diagram.Elements
 
       public override PointF Center
       {
-         get => new PointF(Location.X + Size.Width / 2, Location.Y + Size.Height / 2);
-         set => Location = new PointF(value.X - Size.Width / 2, value.Y - Size.Height / 2);
+         get => DrawnBounds.Center();
+         set => Location = new PointF(value.X - DrawnBounds.Width / 2, value.Y - DrawnBounds.Height / 2);
       }
 
       public override SizeF Size

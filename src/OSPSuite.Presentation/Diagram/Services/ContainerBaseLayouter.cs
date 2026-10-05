@@ -26,8 +26,8 @@ namespace OSPSuite.Presentation.Diagram.Services
          try
          {
             diagramModel.BeginUpdate();
-            var visibleNodes = containerBase.GetAllChildren<IBaseNode>().Where(node => node.Visible).ToList();
-            freeNodes.Each(freeNode => moveUntilFree(freeNode, visibleNodes.Where(node => !isPartOf(node, freeNode)).ToList()));
+            var visibleNodes = containerBase.GetAllChildren<DiagramNode>().Where(node => node.Visible).ToList();
+            freeNodes.Cast<DiagramNode>().Each(freeNode => moveUntilFree(freeNode, visibleNodes.Where(node => !isPartOf(node, freeNode)).ToList()));
          }
          finally
          {
@@ -41,9 +41,9 @@ namespace OSPSuite.Presentation.Diagram.Services
          return ReferenceEquals(node, freeNode) || (freeNode as IContainerNode)?.ContainsChildNode(node, recursive: true) == true;
       }
 
-      private static void moveUntilFree(IHasLayoutInfo freeNode, IReadOnlyList<IBaseNode> otherNodes)
+      private static void moveUntilFree(DiagramNode freeNode, IReadOnlyList<DiagramNode> otherNodes)
       {
-         for (var i = 0; i < MAX_FREE_NODE_MOVES && otherNodes.Any(node => node.Bounds.IntersectsWith(freeNode.Bounds)); i++)
+         for (var i = 0; i < MAX_FREE_NODE_MOVES && otherNodes.Any(node => node.DrawnBounds.IntersectsWith(freeNode.DrawnBounds)); i++)
          {
             freeNode.Location = freeNode.Location.Plus(Assets.Diagram.Base.InsertLocationOffset);
          }

@@ -184,6 +184,56 @@ namespace OSPSuite.Presentation.Diagram
       }
    }
 
+   public class When_retrieving_the_center_of_a_collapsed_container_node : concern_for_ContainerNode
+   {
+      protected override void Context()
+      {
+         base.Context();
+         createContainer("liver", sut, 400, 900);
+         sut.IsExpanded = false;
+         sut.CollapsedSize = new SizeF(30, 16);
+      }
+
+      [Observation]
+      public void should_use_the_extent_it_is_drawn_at()
+      {
+         sut.Center.ShouldBeEqualTo(new PointF(sut.Location.X + 15, sut.Location.Y + 8));
+      }
+   }
+
+   public class When_moving_a_collapsed_container_node_by_its_center : concern_for_ContainerNode
+   {
+      private ContainerNode _liver;
+      private PointF _offset;
+
+      protected override void Context()
+      {
+         base.Context();
+         _liver = createContainer("liver", sut, 400, 900);
+         sut.IsExpanded = false;
+         sut.CollapsedSize = new SizeF(30, 16);
+         _offset = new PointF(_liver.Location.X - sut.Location.X, _liver.Location.Y - sut.Location.Y);
+      }
+
+      protected override void Because()
+      {
+         sut.Center = new PointF(1000, 2000);
+      }
+
+      [Observation]
+      public void should_place_the_extent_it_is_drawn_at_around_the_new_center()
+      {
+         sut.Location.ShouldBeEqualTo(new PointF(985, 1992));
+         sut.Center.ShouldBeEqualTo(new PointF(1000, 2000));
+      }
+
+      [Observation]
+      public void should_move_its_children_along()
+      {
+         _liver.Location.ShouldBeEqualTo(new PointF(985 + _offset.X, 1992 + _offset.Y));
+      }
+   }
+
    public class When_copying_a_collapsed_container_node : concern_for_ContainerNode
    {
       private ContainerNode _copy;
