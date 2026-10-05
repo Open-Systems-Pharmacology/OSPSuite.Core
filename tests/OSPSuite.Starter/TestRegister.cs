@@ -6,6 +6,7 @@ using OSPSuite.Core.Domain.Repositories;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Services;
 using OSPSuite.Helpers;
+using OSPSuite.Presentation.Mappers;
 using OSPSuite.Presentation.Nodes;
 using OSPSuite.Presentation.Presenters.Main;
 using OSPSuite.Presentation.Services;
@@ -66,6 +67,7 @@ namespace OSPSuite.Starter
          container.Register<ITreeNodeFactory, TreeNodeFactory>();
          container.Register<IDisplayNameProvider, DisplayNameProvider>();
          container.Register<IPathToPathElementsMapper, PathToPathElementsMapper>();
+         container.Register<IDiffItemToDiffItemDTOMapper, DiffItemToDiffItemDTOMapper>();
          container.Register<IDataColumnToPathElementsMapper, DataColumnToPathElementsMapper>();
          container.Register<IQuantityPathToQuantityDisplayPathMapper, QuantityPathToQuantityDisplayPathMapper>();
 

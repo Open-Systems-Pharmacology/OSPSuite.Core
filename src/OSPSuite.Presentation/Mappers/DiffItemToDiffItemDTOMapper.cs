@@ -35,7 +35,7 @@ namespace OSPSuite.Presentation.Mappers
          _pathAndValueEntityToPathElementsMapper = pathAndValueEntityToPathElementsMapper;
       }
 
-      public DiffItemDTO MapFrom(DiffItem diffItem)
+      public virtual DiffItemDTO MapFrom(DiffItem diffItem)
       {
          _diffItemDTO = new DiffItemDTO { Description = diffItem.Description };
          try
