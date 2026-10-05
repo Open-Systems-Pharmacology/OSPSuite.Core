@@ -237,7 +237,7 @@ namespace OSPSuite.UI.Views.Diagram
             _diagramControl.BeginUpdate();
             var nodes = _model.GetAllChildren<DiagramNode>().Where(isShown).OrderBy(depthOf).ToList();
             removeStaleItems(nodes);
-            nodes.OfType<ContainerNode>().Where(node => !node.IsExpanded).Each(node => node.CollapsedSize = collapsedSizeFor(node));
+            nodes.OfType<ContainerNode>().Each(node => node.CollapsedSize = collapsedSizeFor(node));
             nodes.Each(updateItem);
 
             var links = _model.GetAllChildren<BaseLink>()
