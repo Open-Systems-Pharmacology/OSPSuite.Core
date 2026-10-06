@@ -108,6 +108,39 @@ namespace OSPSuite.Infrastructure.Serialization
       }
    }
 
+   public class When_deserializing_a_snapshot_with_dollar_types_while_the_global_json_settings_enable_type_names : concern_for_JsonSerializer
+   {
+      private ExtendedProperty _result;
+
+      protected override void Context()
+      {
+         base.Context();
+         TypeNamedInJson.Instantiated = false;
+      }
+
+      protected override void Because()
+      {
+         var originalDefaultSettings = Newtonsoft.Json.JsonConvert.DefaultSettings;
+         Newtonsoft.Json.JsonConvert.DefaultSettings = () => new Newtonsoft.Json.JsonSerializerSettings { TypeNameHandling = Newtonsoft.Json.TypeNameHandling.Auto };
+         try
+         {
+            var typeName = typeof(TypeNamedInJson).AssemblyQualifiedName;
+            _result = sut.DeserializeFromString<ExtendedProperty>($"{{\"$type\":\"{typeName}\",\"Name\":\"Prop\",\"Value\":{{\"$type\":\"{typeName}\"}}}}").Result;
+         }
+         finally
+         {
+            Newtonsoft.Json.JsonConvert.DefaultSettings = originalDefaultSettings;
+         }
+      }
+
+      [Observation]
+      public void should_instantiate_neither_the_root_nor_the_nested_named_type()
+      {
+         TypeNamedInJson.Instantiated.ShouldBeFalse();
+         _result.Name.ShouldBeEqualTo("Prop");
+      }
+   }
+
    internal class TypeNamedInJson
    {
       public static bool Instantiated;
