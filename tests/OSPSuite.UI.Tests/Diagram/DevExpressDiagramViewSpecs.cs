@@ -950,13 +950,11 @@ namespace OSPSuite.UI.Diagram
       }
    }
 
-   public class When_collapsing_a_container_that_was_shown_expanded : concern_for_DevExpressDiagramView
+   public class When_synchronizing_a_diagram_model_with_an_expanded_container : concern_for_DevExpressDiagramView
    {
       private DiagramModel _spatialModel;
       private ContainerNode _organism;
       private ContainerNode _liver;
-      private ContainerNode _kidney;
-      private NeighborhoodNode _neighborhood;
 
       protected override void Context()
       {
@@ -964,11 +962,6 @@ namespace OSPSuite.UI.Diagram
          _spatialModel = new DiagramModel();
          _organism = container("Organism", _spatialModel, 100, 100, 500, 300);
          _liver = container("Liver", _organism, 120, 130, 200, 150);
-         _kidney = container("Kidney", _organism, 400, 130, 150, 80);
-         _neighborhood = _spatialModel.CreateNode<NeighborhoodNode>("liver_kidney", PointF.Empty, _organism);
-         _neighborhood.Initialize(_liver, _kidney);
-         sut.CreateControl();
-         sut.Model = _spatialModel;
       }
 
       private ContainerNode container(string name, IContainerBase parent, float x, float y, float width, float height)
@@ -981,15 +974,15 @@ namespace OSPSuite.UI.Diagram
 
       protected override void Because()
       {
-         _liver.IsExpanded = false;
-         _liver.PostLayoutStep();
-         sut.Refresh();
+         sut.Model = _spatialModel;
       }
 
       [Observation]
-      public void should_put_its_neighborhoods_between_the_collapsed_boxes_and_not_between_the_expanded_ones()
+      public void should_already_know_the_extent_it_will_be_drawn_at_once_it_is_collapsed()
       {
-         _neighborhood.Location.ShouldBeEqualTo(new PointF((_liver.Center.X + _kidney.Center.X) / 2, (_liver.Center.Y + _kidney.Center.Y) / 2));
+         _liver.IsExpanded.ShouldBeTrue();
+         _liver.CollapsedSize.ShouldNotBeEqualTo(_liver.Size);
+         (_liver.CollapsedSize.Height < _liver.Size.Height).ShouldBeTrue();
       }
    }
 
