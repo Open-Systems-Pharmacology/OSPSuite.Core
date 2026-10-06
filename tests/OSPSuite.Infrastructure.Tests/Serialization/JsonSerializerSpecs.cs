@@ -84,4 +84,34 @@ namespace OSPSuite.Infrastructure.Serialization
          _result.Values[0].ShouldBeEqualTo(1.5f);
       }
    }
+
+   public class When_deserializing_a_snapshot_whose_root_has_a_dollar_type_naming_another_class : concern_for_JsonSerializer
+   {
+      private DataColumn _result;
+
+      protected override void Context()
+      {
+         base.Context();
+         TypeNamedInJson.Instantiated = false;
+      }
+
+      protected override void Because()
+      {
+         _result = sut.DeserializeFromString<DataColumn>($"{{\"$type\":\"{typeof(TypeNamedInJson).AssemblyQualifiedName}\",\"Name\":\"SD\"}}").Result;
+      }
+
+      [Observation]
+      public void should_not_instantiate_the_named_type_and_deserialize_the_requested_snapshot()
+      {
+         TypeNamedInJson.Instantiated.ShouldBeFalse();
+         _result.Name.ShouldBeEqualTo("SD");
+      }
+   }
+
+   internal class TypeNamedInJson
+   {
+      public static bool Instantiated;
+
+      public TypeNamedInJson() => Instantiated = true;
+   }
 }

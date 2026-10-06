@@ -7,7 +7,6 @@ namespace OSPSuite.Infrastructure.Serialization.Json
    {
       public OSPSuiteJsonSerializerSettings()
       {
-         TypeNameHandling = TypeNameHandling.Auto;
          NullValueHandling = NullValueHandling.Ignore;
          ContractResolver = new WritablePropertiesOnlyResolver();
          Converters.Add(new StringEnumConverter());
