@@ -56,10 +56,9 @@ namespace OSPSuite.Core.Domain.Services
             {
                foreach (var container in allMoleculeContainersFor(containerDescriptor, molecule, context))
                {
-                  //make sure we remove the parameter if it exists already
-                  var existingParameter = container.Parameter(helpParameter.Name);
-                  if (existingParameter != null)
-                     container.RemoveChild(existingParameter);
+                  //a parameter that exists already (e.g. defined in the spatial structure) is not overwritten
+                  if (container.Parameter(helpParameter.Name) != null)
+                     continue;
 
                   var parameter = _parameterMapper.MapFrom(helpParameter, context.SimulationBuilder);
                   container.Add(parameter);
