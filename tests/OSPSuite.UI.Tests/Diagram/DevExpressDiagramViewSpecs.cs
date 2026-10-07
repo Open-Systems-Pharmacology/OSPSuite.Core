@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Windows.Forms;
 using DevExpress.Diagram.Core;
 using DevExpress.Utils;
 using DevExpress.XtraDiagram;
@@ -30,6 +31,8 @@ namespace OSPSuite.UI.Diagram
       public (IBaseNode fromNode, IBaseNode toNode, object fromPort, object toPort)? CreatedLink { get; private set; }
 
       public void MakeReadOnly() => SetReadOnly();
+
+      public void ClickNode(IBaseNode node, PointF documentPoint, Keys modifiers) => OnNodeClicked(node, documentPoint, modifiers);
 
       protected override void OnSelectionDeleting(IReadOnlyList<IBaseNode> nodes, IReadOnlyList<IBaseLink> links)
       {
@@ -983,6 +986,53 @@ namespace OSPSuite.UI.Diagram
          _liver.IsExpanded.ShouldBeTrue();
          _liver.CollapsedSize.ShouldNotBeEqualTo(_liver.Size);
          (_liver.CollapsedSize.Height < _liver.Size.Height).ShouldBeTrue();
+      }
+   }
+
+   public class When_collapsing_a_container_with_the_handle_shortcut : concern_for_DevExpressDiagramView
+   {
+      private DiagramModel _spatialModel;
+      private ContainerNode _organism;
+      private ContainerNode _liver;
+      private ContainerNode _kidney;
+      private NeighborhoodNode _neighborhood;
+
+      protected override void Context()
+      {
+         base.Context();
+         _spatialModel = new DiagramModel();
+         _organism = container("Organism", _spatialModel, 100, 100, 500, 300);
+         _liver = container("Liver", _organism, 120, 130, 200, 150);
+         _kidney = container("Kidney", _organism, 400, 130, 150, 80);
+         _neighborhood = _spatialModel.CreateNode<NeighborhoodNode>("liver_kidney", PointF.Empty, _organism);
+         _neighborhood.Initialize(_liver, _kidney);
+         _neighborhood.Location = new PointF(777, 333);
+         sut.Model = _spatialModel;
+      }
+
+      private ContainerNode container(string name, IContainerBase parent, float x, float y, float width, float height)
+      {
+         var node = _spatialModel.CreateNode<ContainerNode>(name, new PointF(x, y), parent);
+         node.Name = name;
+         node.Size = new SizeF(width, height);
+         return node;
+      }
+
+      protected override void Because()
+      {
+         sut.ClickNode(_liver, new PointF(_liver.Location.X + 1, _liver.Location.Y + 1), Keys.Shift);
+      }
+
+      [Observation]
+      public void should_collapse_it()
+      {
+         _liver.IsExpanded.ShouldBeFalse();
+      }
+
+      [Observation]
+      public void should_leave_the_neighborhoods_where_they_were()
+      {
+         _neighborhood.Location.ShouldBeEqualTo(new PointF(777, 333));
       }
    }
 

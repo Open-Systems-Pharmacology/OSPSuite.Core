@@ -951,22 +951,14 @@ namespace OSPSuite.UI.Views.Diagram
       {
          if (modifiers.HasFlag(Keys.Shift))
          {
-            ChangeLayout(() =>
-            {
-               node.IsExpanded = !node.IsExpanded;
-               node.PostLayoutStep();
-            }, node.IsExpanded ? "Collapse" : "Expand");
+            ChangeLayout(() => node.IsExpanded = !node.IsExpanded, node.IsExpanded ? "Collapse" : "Expand");
             return;
          }
 
          if (modifiers.HasFlag(Keys.Control))
          {
             if (node.IsExpanded)
-               ChangeLayout(() =>
-               {
-                  node.Collapse(MAX_COLLAPSE_DEPTH);
-                  node.PostLayoutStep();
-               }, "Collapse");
+               ChangeLayout(() => node.Collapse(MAX_COLLAPSE_DEPTH), "Collapse");
             return;
          }
 
