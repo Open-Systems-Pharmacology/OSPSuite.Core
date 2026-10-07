@@ -62,7 +62,7 @@ namespace OSPSuite.Infrastructure.Serialization.Json
       private object[] deserializeAsArrayFromString(string json, Type objectType)
       {
          var schema = validateSnapshot(objectType);
-         var deserializedSnapshot = JsonConvert.DeserializeObject(json, _settings);
+         var deserializedSnapshot = parse(json);
 
          switch (deserializedSnapshot)
          {
@@ -73,6 +73,14 @@ namespace OSPSuite.Infrastructure.Serialization.Json
                return array.Select(x => ValidatedObject(x, schema, objectType)).ToArray();
             default:
                return null;
+         }
+      }
+
+      private object parse(string json)
+      {
+         using (var reader = new JsonTextReader(new StringReader(json)))
+         {
+            return createSerializer().Deserialize(reader);
          }
       }
 
@@ -112,10 +120,14 @@ namespace OSPSuite.Infrastructure.Serialization.Json
          normalizeSpecialFloatingPointValues(jToken, schema);
 
          if (jToken.IsValid(schema, out IList<string> errorMessages))
-            return jToken.ToObject(snapshotType);
+            return ToObject(jToken, snapshotType);
 
          throw new SnapshotFileMismatchException(snapshotType.Name, errorMessages);
       }
+
+      protected object ToObject(JToken jToken, Type objectType) => jToken.ToObject(objectType, createSerializer());
+
+      private Newtonsoft.Json.JsonSerializer createSerializer() => Newtonsoft.Json.JsonSerializer.Create(_settings);
 
       //Newtonsoft writes NaN/Infinity/-Infinity as quoted strings, which the generated schema rejects
       //where it expects a Number. Convert those back to numeric tokens so snapshots round-trip.

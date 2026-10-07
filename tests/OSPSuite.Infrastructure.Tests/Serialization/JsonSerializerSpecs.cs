@@ -84,4 +84,67 @@ namespace OSPSuite.Infrastructure.Serialization
          _result.Values[0].ShouldBeEqualTo(1.5f);
       }
    }
+
+   public class When_deserializing_a_snapshot_whose_root_has_a_dollar_type_naming_another_class : concern_for_JsonSerializer
+   {
+      private DataColumn _result;
+
+      protected override void Context()
+      {
+         base.Context();
+         TypeNamedInJson.Instantiated = false;
+      }
+
+      protected override void Because()
+      {
+         _result = sut.DeserializeFromString<DataColumn>($"{{\"$type\":\"{typeof(TypeNamedInJson).AssemblyQualifiedName}\",\"Name\":\"SD\"}}").Result;
+      }
+
+      [Observation]
+      public void should_not_instantiate_the_named_type_and_deserialize_the_requested_snapshot()
+      {
+         TypeNamedInJson.Instantiated.ShouldBeFalse();
+         _result.Name.ShouldBeEqualTo("SD");
+      }
+   }
+
+   public class When_deserializing_a_snapshot_with_dollar_types_while_the_global_json_settings_enable_type_names : concern_for_JsonSerializer
+   {
+      private ExtendedProperty _result;
+
+      protected override void Context()
+      {
+         base.Context();
+         TypeNamedInJson.Instantiated = false;
+      }
+
+      protected override void Because()
+      {
+         var originalDefaultSettings = Newtonsoft.Json.JsonConvert.DefaultSettings;
+         Newtonsoft.Json.JsonConvert.DefaultSettings = () => new Newtonsoft.Json.JsonSerializerSettings { TypeNameHandling = Newtonsoft.Json.TypeNameHandling.Auto };
+         try
+         {
+            var typeName = typeof(TypeNamedInJson).AssemblyQualifiedName;
+            _result = sut.DeserializeFromString<ExtendedProperty>($"{{\"$type\":\"{typeName}\",\"Name\":\"Prop\",\"Value\":{{\"$type\":\"{typeName}\"}}}}").Result;
+         }
+         finally
+         {
+            Newtonsoft.Json.JsonConvert.DefaultSettings = originalDefaultSettings;
+         }
+      }
+
+      [Observation]
+      public void should_instantiate_neither_the_root_nor_the_nested_named_type()
+      {
+         TypeNamedInJson.Instantiated.ShouldBeFalse();
+         _result.Name.ShouldBeEqualTo("Prop");
+      }
+   }
+
+   internal class TypeNamedInJson
+   {
+      public static bool Instantiated;
+
+      public TypeNamedInJson() => Instantiated = true;
+   }
 }
