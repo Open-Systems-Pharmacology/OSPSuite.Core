@@ -67,31 +67,6 @@ namespace OSPSuite.Core.Services
       }
    }
 
-   public class When_restricting_timegrid_indices_and_some_observed_times_are_negative : concern_for_TimeGridRestrictor
-   {
-      private IReadOnlyList<int> _indices;
-
-      protected override void Context()
-      {
-         base.Context();
-         _observedData = DomainHelperForSpecs.ObservedData();
-         var col = _observedData.FirstDataColumn();
-         col.BaseGrid.Values = new[] { -2f, -1f, 0f, 1f };
-         col.Values = new[] { 10f, 10f, 10f, 10f };
-      }
-
-      protected override void Because()
-      {
-         _indices = sut.GetRelevantIndices(_observedData, RemoveLLOQModes.Never);
-      }
-
-      [Observation]
-      public void should_remove_indices_corresponding_to_negative_times()
-      {
-         _indices.ShouldOnlyContainInOrder(2, 3);
-      }
-   }
-
    public class When_restricting_timegrid_indices_with_RemoveLLOQModes_Always : concern_for_TimeGridRestrictor
    {
       private IReadOnlyList<int> _indices;

@@ -644,4 +644,35 @@ namespace OSPSuite.Core.Services
          }
       }
    }
+
+   public class When_calculating_the_residuals_with_observed_data_containing_times_before_the_simulation_start : concern_for_ResidualCalculator
+   {
+      private OutputResiduals _outputResiduals;
+
+      protected override void Context()
+      {
+         base.Context();
+         sut = new ResidualCalculatorForOnlyObservedData(_timeGridRestrictor, _dimensionFactory);
+         _outputMapping.Scaling = Scalings.Linear;
+
+         _simulationDataColumn.BaseGrid.Values = new[] {-1f, 1f, 2f, 3f, 4f};
+      }
+
+      protected override void UpdateObservedDataValues()
+      {
+         _observedDataColumn.BaseGrid.Values = new[] {-2f, -1f, 1f, 2f};
+         _observedDataColumn.Values = new[] {2f, 1.1f, 0.5f, 0.5f};
+      }
+
+      protected override void Because()
+      {
+         _outputResiduals = sut.Calculate(_simulationRunResultsList, _outputMappings).AllOutputResidualsFor(_fullOutputPath).First();
+      }
+
+      [Observation]
+      public void should_only_create_residuals_for_observed_data_time_points_within_the_simulated_time_range()
+      {
+         _outputResiduals.Residuals.Select(x => x.Time).ShouldOnlyContainInOrder(-1d, 1d, 2d);
+      }
+   }
 }

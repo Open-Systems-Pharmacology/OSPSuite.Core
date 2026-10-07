@@ -78,7 +78,7 @@ namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
 
       private static List<int> getIndices(DataRepository observedData, Func<int, bool> selector)
       {
-         return Enumerable.Range(0, observedData.BaseGrid.Count).Where(i => observedData.BaseGrid[i] >= 0 && selector(i)).ToList();
+         return Enumerable.Range(0, observedData.BaseGrid.Count).Where(selector).ToList();
       }
 
       private static bool valueAtIndexIsBelowLLOQ(DataColumn dataColumn, Scalings outputScaling, int i)
