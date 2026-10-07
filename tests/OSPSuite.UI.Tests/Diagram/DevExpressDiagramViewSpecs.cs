@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Windows.Forms;
 using DevExpress.Diagram.Core;
 using DevExpress.Utils;
 using DevExpress.XtraDiagram;
@@ -30,6 +31,8 @@ namespace OSPSuite.UI.Diagram
       public (IBaseNode fromNode, IBaseNode toNode, object fromPort, object toPort)? CreatedLink { get; private set; }
 
       public void MakeReadOnly() => SetReadOnly();
+
+      public void ClickNode(IBaseNode node, PointF documentPoint, Keys modifiers) => OnNodeClicked(node, documentPoint, modifiers);
 
       protected override void OnSelectionDeleting(IReadOnlyList<IBaseNode> nodes, IReadOnlyList<IBaseLink> links)
       {
@@ -127,7 +130,7 @@ namespace OSPSuite.UI.Diagram
          optionsView.ShowPageBreaks.ShouldBeFalse();
          optionsView.ShowRulers.ShouldBeFalse();
          optionsView.ShowPanAndZoomPanel.ShouldBeFalse();
-         optionsView.CanvasSizeMode.ShouldBeEqualTo(CanvasSizeMode.AutoSize);
+         optionsView.CanvasSizeMode.ShouldBeEqualTo(CanvasSizeMode.Fill);
          optionsView.PropertiesPanelVisibility.ShouldBeEqualTo(PropertiesPanelVisibility.Closed);
          optionsView.ToolboxVisibility.ShouldBeEqualTo(ToolboxVisibility.Closed);
          sut.DiagramControl.OptionsBehavior.ShowQuickShapes.ShouldBeFalse();
@@ -797,6 +800,338 @@ namespace OSPSuite.UI.Diagram
       {
          sut.DiagramControl.Items.Contains(_foreignShape).ShouldBeFalse();
          shapes.Count.ShouldBeEqualTo(4);
+      }
+   }
+
+   public class When_setting_a_spatial_structure_diagram_model : concern_for_DevExpressDiagramView
+   {
+      private DiagramModel _spatialModel;
+      private ContainerNode _organism;
+      private ContainerNode _liver;
+      private ContainerNode _plasma;
+      private ContainerNode _kidney;
+      private NeighborhoodNode _neighborhood;
+
+      protected override void Context()
+      {
+         base.Context();
+         _spatialModel = new DiagramModel();
+         _organism = container("Organism", _spatialModel, 100, 100, 500, 300);
+         _liver = container("Liver", _organism, 120, 130, 200, 150);
+         _liver.IsExpanded = false;
+         _plasma = container("Plasma", _liver, 140, 160, 100, 50);
+         _kidney = container("Kidney", _organism, 400, 130, 150, 80);
+         _neighborhood = _spatialModel.CreateNode<NeighborhoodNode>("pls_kidney", PointF.Empty, _organism);
+         _neighborhood.Initialize(_plasma, _kidney);
+      }
+
+      private ContainerNode container(string name, IContainerBase parent, float x, float y, float width, float height)
+      {
+         var node = _spatialModel.CreateNode<ContainerNode>(name, new PointF(x, y), parent);
+         node.Name = name;
+         node.Size = new SizeF(width, height);
+         return node;
+      }
+
+      protected override void Because()
+      {
+         sut.Model = _spatialModel;
+      }
+
+      private DiagramContainer containerFor(ContainerNode node) => allItems().OfType<DiagramContainer>().Single(x => x.Tag == node);
+
+      private IEnumerable<DiagramItem> allItems() => sut.DiagramControl.Items.Concat(sut.DiagramControl.Items.OfType<DiagramContainer>().SelectMany(descendantsOf));
+
+      private static IEnumerable<DiagramItem> descendantsOf(DiagramContainer container) => container.Items.Concat(container.Items.OfType<DiagramContainer>().SelectMany(descendantsOf));
+
+      [Observation]
+      public void should_nest_the_container_items_like_the_model_and_position_children_relative_to_their_parent()
+      {
+         var organism = containerFor(_organism);
+         var liver = containerFor(_liver);
+         organism.Items.ShouldContain(liver);
+         organism.Position.ShouldBeEqualTo(new PointFloat(_organism.Location));
+         liver.Position.ShouldBeEqualTo(new PointFloat(_liver.Location.X - _organism.Location.X, _liver.Location.Y - _organism.Location.Y));
+         organism.Size.ShouldBeEqualTo(_organism.Size);
+      }
+
+      [Observation]
+      public void should_not_create_items_for_the_children_of_a_collapsed_container_and_shrink_it_to_its_label()
+      {
+         allItems().Any(item => item.Tag == _plasma).ShouldBeFalse();
+         containerFor(_liver).Items.Count.ShouldBeEqualTo(0);
+         (containerFor(_liver).Size.Height < 30).ShouldBeTrue();
+      }
+
+      [Observation]
+      public void should_glue_links_into_a_collapsed_container_to_the_container_itself()
+      {
+         var neighborhoodShape = allItems().OfType<DiagramShape>().Single(x => x.Tag == _neighborhood);
+         var connectors = allItems().OfType<DiagramConnector>().Where(x => x.BeginItem == neighborhoodShape).ToList();
+         connectors.Count.ShouldBeEqualTo(2);
+         connectors.Select(x => x.EndItem).ShouldOnlyContain(containerFor(_liver), containerFor(_kidney));
+      }
+
+      [Observation]
+      public void should_show_the_children_again_when_the_container_is_expanded_in_the_model()
+      {
+         _liver.IsExpanded = true;
+         sut.Refresh();
+         containerFor(_liver).Items.Single().Tag.ShouldBeEqualTo(_plasma);
+         containerFor(_liver).Size.ShouldBeEqualTo(_liver.Size);
+         allItems().OfType<DiagramConnector>().Where(x => x.EndItem?.Tag == _plasma).Count().ShouldBeEqualTo(1);
+      }
+   }
+
+   public class When_setting_a_spatial_structure_diagram_model_with_an_explicitly_hidden_container : concern_for_DevExpressDiagramView
+   {
+      private DiagramModel _spatialModel;
+      private ContainerNode _organism;
+      private ContainerNode _plasma;
+      private ContainerNode _kidney;
+      private NeighborhoodNode _neighborhood;
+
+      protected override void Context()
+      {
+         base.Context();
+         _spatialModel = new DiagramModel();
+         _organism = container("Organism", _spatialModel, 100, 100, 500, 300);
+         _plasma = container("Plasma", _organism, 140, 160, 100, 50);
+         _kidney = container("Kidney", _organism, 400, 130, 150, 80);
+         _kidney.Hidden = true;
+         _neighborhood = _spatialModel.CreateNode<NeighborhoodNode>("pls_kidney", PointF.Empty, _organism);
+         _neighborhood.Initialize(_plasma, _kidney);
+      }
+
+      private ContainerNode container(string name, IContainerBase parent, float x, float y, float width, float height)
+      {
+         var node = _spatialModel.CreateNode<ContainerNode>(name, new PointF(x, y), parent);
+         node.Name = name;
+         node.Size = new SizeF(width, height);
+         return node;
+      }
+
+      protected override void Because()
+      {
+         sut.Model = _spatialModel;
+      }
+
+      [Observation]
+      public void should_not_draw_a_connector_to_the_parent_of_a_container_hidden_in_its_own_right()
+      {
+         var items = sut.DiagramControl.Items.Concat(sut.DiagramControl.Items.OfType<DiagramContainer>().SelectMany(x => x.Items)).ToList();
+         var endItems = items.OfType<DiagramConnector>().Select(connector => connector.EndItem).ToList();
+         endItems.Any(item => ReferenceEquals(item?.Tag, _organism)).ShouldBeFalse();
+      }
+   }
+
+   public class When_exporting_a_container_without_rendered_children : concern_for_DevExpressDiagramView
+   {
+      private DiagramModel _spatialModel;
+      private ContainerNode _organism;
+      private Bitmap _bitmap;
+
+      protected override void Context()
+      {
+         base.Context();
+         _spatialModel = new DiagramModel();
+         _organism = _spatialModel.CreateNode<ContainerNode>("organism", new PointF(100, 100), _spatialModel);
+         _organism.Name = "Organism";
+         sut.Model = _spatialModel;
+         sut.Refresh();
+      }
+
+      protected override void Because()
+      {
+         _bitmap = sut.GetBitmap(_organism);
+      }
+
+      [Observation]
+      public void should_export_the_container_itself_instead_of_throwing()
+      {
+         _bitmap.ShouldNotBeNull();
+      }
+   }
+
+   public class When_synchronizing_a_diagram_model_with_an_expanded_container : concern_for_DevExpressDiagramView
+   {
+      private DiagramModel _spatialModel;
+      private ContainerNode _organism;
+      private ContainerNode _liver;
+
+      protected override void Context()
+      {
+         base.Context();
+         _spatialModel = new DiagramModel();
+         _organism = container("Organism", _spatialModel, 100, 100, 500, 300);
+         _liver = container("Liver", _organism, 120, 130, 200, 150);
+      }
+
+      private ContainerNode container(string name, IContainerBase parent, float x, float y, float width, float height)
+      {
+         var node = _spatialModel.CreateNode<ContainerNode>(name, new PointF(x, y), parent);
+         node.Name = name;
+         node.Size = new SizeF(width, height);
+         return node;
+      }
+
+      protected override void Because()
+      {
+         sut.Model = _spatialModel;
+      }
+
+      [Observation]
+      public void should_already_know_the_extent_it_will_be_drawn_at_once_it_is_collapsed()
+      {
+         _liver.IsExpanded.ShouldBeTrue();
+         _liver.CollapsedSize.ShouldNotBeEqualTo(_liver.Size);
+         (_liver.CollapsedSize.Height < _liver.Size.Height).ShouldBeTrue();
+      }
+   }
+
+   public class When_collapsing_a_container_with_the_handle_shortcut : concern_for_DevExpressDiagramView
+   {
+      private DiagramModel _spatialModel;
+      private ContainerNode _organism;
+      private ContainerNode _liver;
+      private ContainerNode _kidney;
+      private NeighborhoodNode _neighborhood;
+
+      protected override void Context()
+      {
+         base.Context();
+         _spatialModel = new DiagramModel();
+         _organism = container("Organism", _spatialModel, 100, 100, 500, 300);
+         _liver = container("Liver", _organism, 120, 130, 200, 150);
+         _kidney = container("Kidney", _organism, 400, 130, 150, 80);
+         _neighborhood = _spatialModel.CreateNode<NeighborhoodNode>("liver_kidney", PointF.Empty, _organism);
+         _neighborhood.Initialize(_liver, _kidney);
+         _neighborhood.Location = new PointF(777, 333);
+         sut.Model = _spatialModel;
+      }
+
+      private ContainerNode container(string name, IContainerBase parent, float x, float y, float width, float height)
+      {
+         var node = _spatialModel.CreateNode<ContainerNode>(name, new PointF(x, y), parent);
+         node.Name = name;
+         node.Size = new SizeF(width, height);
+         return node;
+      }
+
+      protected override void Because()
+      {
+         sut.ClickNode(_liver, new PointF(_liver.Location.X + 1, _liver.Location.Y + 1), Keys.Shift);
+      }
+
+      [Observation]
+      public void should_collapse_it()
+      {
+         _liver.IsExpanded.ShouldBeFalse();
+      }
+
+      [Observation]
+      public void should_leave_the_neighborhoods_where_they_were()
+      {
+         _neighborhood.Location.ShouldBeEqualTo(new PointF(777, 333));
+      }
+   }
+
+   public class When_measuring_a_collapsed_container_whose_neighborhood_was_placed_by_the_user : concern_for_DevExpressDiagramView
+   {
+      private DiagramModel _spatialModel;
+      private ContainerNode _organism;
+      private ContainerNode _liver;
+      private ContainerNode _kidney;
+      private NeighborhoodNode _neighborhood;
+      private SizeF _collapsedSizeAfterFirstSynchronization;
+
+      protected override void Context()
+      {
+         base.Context();
+         _spatialModel = new DiagramModel();
+         _organism = container("Organism", _spatialModel, 100, 100, 500, 300);
+         _liver = container("Liver", _organism, 120, 130, 200, 150);
+         _liver.IsExpanded = false;
+         _kidney = container("Kidney", _organism, 400, 130, 150, 80);
+         _neighborhood = _spatialModel.CreateNode<NeighborhoodNode>("liver_kidney", PointF.Empty, _organism);
+         _neighborhood.Initialize(_liver, _kidney);
+         _neighborhood.Location = new PointF(777, 333);
+      }
+
+      private ContainerNode container(string name, IContainerBase parent, float x, float y, float width, float height)
+      {
+         var node = _spatialModel.CreateNode<ContainerNode>(name, new PointF(x, y), parent);
+         node.Name = name;
+         node.Size = new SizeF(width, height);
+         return node;
+      }
+
+      protected override void Because()
+      {
+         sut.Model = _spatialModel;
+         _collapsedSizeAfterFirstSynchronization = _liver.CollapsedSize;
+         _liver.Name = "Liver with a considerably longer name";
+         sut.Refresh();
+      }
+
+      [Observation]
+      public void should_measure_it_again_when_its_label_changes()
+      {
+         _liver.CollapsedSize.ShouldNotBeEqualTo(_collapsedSizeAfterFirstSynchronization);
+      }
+
+      [Observation]
+      public void should_leave_the_neighborhood_where_it_was()
+      {
+         _neighborhood.Location.ShouldBeEqualTo(new PointF(777, 333));
+      }
+   }
+
+   public class When_measuring_a_collapsed_container_nested_in_a_collapsed_container : concern_for_DevExpressDiagramView
+   {
+      private DiagramModel _spatialModel;
+      private ContainerNode _organism;
+      private ContainerNode _liver;
+      private ContainerNode _plasma;
+      private SizeF _collapsedSizeAfterFirstSynchronization;
+
+      protected override void Context()
+      {
+         base.Context();
+         _spatialModel = new DiagramModel();
+         _organism = container("Organism", _spatialModel, 100, 100, 500, 300);
+         _liver = container("Liver", _organism, 120, 130, 200, 150);
+         _plasma = container("Plasma", _liver, 130, 140, 60, 40);
+         _liver.IsExpanded = false;
+         _plasma.IsExpanded = false;
+      }
+
+      private ContainerNode container(string name, IContainerBase parent, float x, float y, float width, float height)
+      {
+         var node = _spatialModel.CreateNode<ContainerNode>(name, new PointF(x, y), parent);
+         node.Name = name;
+         node.Size = new SizeF(width, height);
+         return node;
+      }
+
+      protected override void Because()
+      {
+         sut.Model = _spatialModel;
+         _collapsedSizeAfterFirstSynchronization = _plasma.CollapsedSize;
+         _plasma.Name = "Plasma with a considerably longer name";
+         sut.Refresh();
+      }
+
+      [Observation]
+      public void should_measure_the_nested_container_although_it_is_not_shown()
+      {
+         _plasma.CollapsedSize.ShouldNotBeEqualTo(_plasma.Size);
+      }
+
+      [Observation]
+      public void should_measure_the_nested_container_again_when_its_label_changes()
+      {
+         _plasma.CollapsedSize.ShouldNotBeEqualTo(_collapsedSizeAfterFirstSynchronization);
       }
    }
 }

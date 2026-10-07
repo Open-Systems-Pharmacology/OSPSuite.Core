@@ -8,6 +8,7 @@ namespace OSPSuite.Presentation.Diagram.Elements
       public IBaseNode FromNode { get; private set; }
       public IBaseNode ToNode { get; private set; }
       public bool IsVisible { get; set; } = true;
+      public virtual bool IsCurved => false;
       public Color Color { get; protected set; }
       public bool IsDashed { get; protected set; }
 
@@ -33,8 +34,10 @@ namespace OSPSuite.Presentation.Diagram.Elements
       {
          if (node == FromNode)
             return ToNode;
+
          if (node == ToNode)
             return FromNode;
+
          return null;
       }
 

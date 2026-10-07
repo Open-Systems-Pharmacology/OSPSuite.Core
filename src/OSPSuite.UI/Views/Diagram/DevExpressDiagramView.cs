@@ -24,15 +24,22 @@ namespace OSPSuite.UI.Views.Diagram
    {
       private const float PORT_SIZE = 8F;
       private const float LABEL_OFFSET = 2F;
+      private const float CONTAINER_LABEL_OFFSET = 3F;
+      private const float CONTAINER_HANDLE_SIZE = 8F;
+      private const int CLICK_TOLERANCE = 2;
       private const float EXPORT_MARGIN = 10F;
       private const int CONNECTOR_BORDER_SIZE = 1;
+      private const float ORIGIN_MARGIN = 10F;
+      private const int MOLECULE_CONNECTION_POINT_COUNT = 8;
       private const int NO_CONNECTION_POINT_INDEX = -1;
+      private const int MAX_COLLAPSE_DEPTH = 100;
+      private const float MIN_EFFECTIVE_ZOOM = 0.01F;
       private static readonly PointCollection _moleculeConnectionPoints = createMoleculeConnectionPoints();
       private static readonly DiagramDoubleCollection _dashPattern = new DiagramDoubleCollection(new double[] {3, 3});
 
       protected IBaseDiagramPresenter _presenter;
       private DiagramModel _model;
-      private readonly Dictionary<IBaseNode, DiagramShape> _shapes = new Dictionary<IBaseNode, DiagramShape>();
+      private readonly Dictionary<IBaseNode, DiagramItem> _items = new Dictionary<IBaseNode, DiagramItem>();
       private readonly Dictionary<IBaseLink, DiagramConnector> _connectors = new Dictionary<IBaseLink, DiagramConnector>();
       private bool _syncing;
       private bool _syncPending;
@@ -40,6 +47,9 @@ namespace OSPSuite.UI.Views.Diagram
       private bool _connectorToolActive;
       private bool _switchingTool;
       private bool _queryingConnectionPoints;
+      private bool _originPending;
+      private Point _mouseDownLocation;
+      private int _mouseDownClicks;
 
       public DevExpressDiagramView(IImageListRetriever imageListRetriever)
       {
@@ -56,7 +66,7 @@ namespace OSPSuite.UI.Views.Diagram
          optionsView.ShowPageBreaks = false;
          optionsView.ShowRulers = false;
          optionsView.ShowPanAndZoomPanel = false;
-         optionsView.CanvasSizeMode = CanvasSizeMode.AutoSize;
+         optionsView.CanvasSizeMode = CanvasSizeMode.Fill;
          optionsView.PropertiesPanelVisibility = PropertiesPanelVisibility.Closed;
          optionsView.ToolboxVisibility = ToolboxVisibility.Closed;
          optionsView.MinZoomFactor = Assets.Diagram.Base.MinLimitDocScale;
@@ -87,6 +97,7 @@ namespace OSPSuite.UI.Views.Diagram
          _diagramControl.QueryConnectionPoints += (o, e) => OnEvent(onQueryConnectionPoints, e);
          _diagramControl.ConnectionChanging += (o, e) => OnEvent(onConnectionChanging, e);
          _diagramControl.ConnectionChanged += (o, e) => OnEvent(onConnectionChanged, e);
+         _diagramControl.MouseDown += (o, e) => OnEvent(onMouseDown, e);
          _diagramControl.MouseUp += (o, e) => OnEvent(onMouseUp, e);
          _diagramControl.MouseMove += (o, e) => OnEvent(onMouseMove, e);
          _diagramControl.MouseLeave += (o, e) => OnEvent(activatePointerTool);
@@ -114,7 +125,67 @@ namespace OSPSuite.UI.Views.Diagram
             _model = diagramModel;
             _model.Changed += onModelChanged;
             synchronize();
+            _originPending = true;
+            tryScrollToOrigin();
          }
+      }
+
+      protected override void OnHandleCreated(EventArgs e)
+      {
+         base.OnHandleCreated(e);
+         tryScrollToOrigin();
+      }
+
+      protected override void OnSizeChanged(EventArgs e)
+      {
+         base.OnSizeChanged(e);
+         if (_originPending)
+         {
+            tryScrollToOrigin();
+            return;
+         }
+
+         clampToContent();
+      }
+
+      private void clampToContent()
+      {
+         if (!IsHandleCreated)
+            return;
+
+         var content = _model?.Bounds ?? RectangleF.Empty;
+         if (content.IsEmpty)
+            return;
+
+         var minX = content.X - ORIGIN_MARGIN;
+         var minY = content.Y - ORIGIN_MARGIN;
+         var visibleTopLeft = _diagramControl.PointToDocument(new PointFloat(0, 0));
+         if (visibleTopLeft.X >= minX && visibleTopLeft.Y >= minY)
+            return;
+
+         _diagramControl.ScrollToPoint(new PointFloat(Math.Max(minX, visibleTopLeft.X), Math.Max(minY, visibleTopLeft.Y)), HorzAlignment.Near, VertAlignment.Top);
+      }
+
+      private void tryScrollToOrigin()
+      {
+         if (!_originPending || !IsHandleCreated)
+            return;
+
+         var viewport = _diagramControl.ClientSize;
+         if (viewport.Width <= 0 || viewport.Height <= 0)
+            return;
+
+         _originPending = false;
+         BeginInvoke(new Action(scrollToDiagramOrigin));
+      }
+
+      private void scrollToDiagramOrigin()
+      {
+         var bounds = _model?.Bounds ?? RectangleF.Empty;
+         if (bounds.IsEmpty)
+            return;
+
+         _diagramControl.ScrollToPoint(new PointFloat(bounds.X - ORIGIN_MARGIN, bounds.Y - ORIGIN_MARGIN), HorzAlignment.Near, VertAlignment.Top);
       }
 
       private void detachModel()
@@ -164,13 +235,18 @@ namespace OSPSuite.UI.Views.Diagram
          try
          {
             _diagramControl.BeginUpdate();
-            var nodes = _model.GetAllChildren<ElementBaseNode>().Where(node => node.Visible).ToList();
-            removeStaleShapes(nodes);
-            nodes.Each(updateShape);
+            var nodes = _model.GetAllChildren<DiagramNode>().Where(isShown).OrderBy(depthOf).ToList();
+            removeStaleItems(nodes);
+            MeasureCollapsedContainers(_model);
+            nodes.Each(updateItem);
 
-            var links = _model.GetAllChildren<BaseLink>().Where(link => link.Visible && _shapes.ContainsKey(link.FromNode) && _shapes.ContainsKey(link.ToNode)).ToList();
-            removeStaleConnectors(links);
-            links.Each(updateConnector);
+            var links = _model.GetAllChildren<BaseLink>()
+               .Where(link => link.IsVisible)
+               .Select(link => (link, begin: shownItemFor(link.FromNode), end: shownItemFor(link.ToNode)))
+               .Where(x => x.begin != null && x.end != null && x.begin != x.end)
+               .ToList();
+            removeStaleConnectors(links.Select(x => x.link).ToList());
+            links.Each(x => updateConnector(x.link, x.begin, x.end));
 
             updateZOrder(nodes);
          }
@@ -181,15 +257,57 @@ namespace OSPSuite.UI.Views.Diagram
          }
       }
 
-      private void removeStaleShapes(IReadOnlyList<ElementBaseNode> nodes)
+      private static bool isShown(DiagramNode node)
       {
-         _shapes.Where(x => !nodes.Contains(x.Key)).ToList().Each(stale =>
+         if (!node.Visible)
+            return false;
+         if (!(node is NeighborhoodNode neighborhood))
+            return true;
+
+         var first = shownNodeFor(neighborhood.FirstNeighbor);
+         var second = shownNodeFor(neighborhood.SecondNeighbor);
+         return first == null || second == null || first != second;
+      }
+
+      private static IBaseNode shownNodeFor(IBaseNode node)
+      {
+         var current = node;
+         while (current != null && !current.Visible)
+         {
+            if (current.Hidden || !current.IsVisible)
+               return null;
+
+            current = current.GetParent() as IBaseNode;
+         }
+
+         return current;
+      }
+
+      private DiagramItem shownItemFor(IBaseNode node)
+      {
+         var shown = shownNodeFor(node);
+         return shown != null && _items.TryGetValue(shown, out var item) ? item : null;
+      }
+
+      private static int depthOf(IBaseNode node)
+      {
+         var depth = 0;
+         for (var parent = node.GetParent() as IBaseNode; parent != null; parent = parent.GetParent() as IBaseNode)
+            depth++;
+         return depth;
+      }
+
+      private void removeStaleItems(IReadOnlyList<DiagramNode> nodes)
+      {
+         _items.Where(x => !nodes.Contains(x.Key)).ToList().Each(stale =>
          {
             _connectors.Where(x => x.Value.BeginItem == stale.Value || x.Value.EndItem == stale.Value).ToList().Each(removeConnector);
-            _diagramControl.Items.Remove(stale.Value);
-            _shapes.Remove(stale.Key);
+            collectionOf(stale.Value).Remove(stale.Value);
+            _items.Remove(stale.Key);
          });
       }
+
+      private DiagramItemCollection collectionOf(DiagramItem item) => (item.ParentItem as DiagramContainer)?.Items ?? _diagramControl.Items;
 
       private void removeStaleConnectors(IReadOnlyList<BaseLink> links)
       {
@@ -202,28 +320,71 @@ namespace OSPSuite.UI.Views.Diagram
          _connectors.Remove(connector.Key);
       }
 
-      private void updateShape(ElementBaseNode node)
+      private void updateItem(DiagramNode node)
       {
-         if (!_shapes.TryGetValue(node, out var shape))
+         switch (node)
          {
-            shape = new DiagramShape
+            case ContainerNode containerNode:
+               updateContainer(containerNode);
+               break;
+            case ElementBaseNode elementNode:
+               updateShape(elementNode);
+               break;
+         }
+      }
+
+      private void updateContainer(ContainerNode node)
+      {
+         if (!_items.TryGetValue(node, out var item))
+         {
+            item = new DiagramContainer
             {
                Tag = node,
                CanResize = false,
                CanRotate = false,
                CanEdit = false,
-               CanSelect = true
+               CanSelect = true,
+               CanAddItems = false,
+               CanChangeParent = false,
+               ItemsCanChangeParent = false,
+               ClipItemsToBounds = false,
+               ShowHeader = false
             };
-            _shapes.Add(node, shape);
-            _diagramControl.Items.Add(shape);
+            _items.Add(node, item);
          }
 
-         var reactionNode = node as ReactionNode;
-         shape.Shape = reactionNode != null ? BasicShapes.Triangle : BasicShapes.Ellipse;
-         shape.ConnectionPoints = reactionNode != null ? ReactionConnectionPoints.For(reactionNode.DisplayEductsRight) : _moleculeConnectionPoints;
+         placeInParent(item, node);
+         var container = (DiagramContainer) item;
+         container.Position = new PointFloat(relativeTo(node, node.Location));
+         container.Size = node.DrawnBounds.Size;
+         container.Appearance.BackColor = node.BackgroundColor;
+         container.Appearance.BorderColor = node.BorderColor;
+         container.Appearance.BorderSize = (int) node.BorderWidth;
+      }
+
+      private void updateShape(ElementBaseNode node)
+      {
+         if (!_items.TryGetValue(node, out var item))
+         {
+            item = new DiagramShape
+            {
+               Tag = node,
+               CanResize = false,
+               CanRotate = false,
+               CanEdit = false,
+               CanSelect = true,
+               CanChangeParent = false
+            };
+            _items.Add(node, item);
+         }
+
+         placeInParent(item, node);
+         var shape = (DiagramShape) item;
+         shape.Shape = ShapeFor(node);
+         shape.ConnectionPoints = ConnectionPointsFor(node);
          shape.MinSize = SizeF.Empty;
          shape.Size = node.Size;
-         shape.Position = new PointFloat(node.Bounds.Location);
+         shape.Position = new PointFloat(relativeTo(node, node.Bounds.Location));
          shape.CanAttachConnectorBeginPoint = node.CanLink;
          shape.CanAttachConnectorEndPoint = node.CanLink;
          shape.Appearance.BackColor = node.FillColor;
@@ -231,13 +392,42 @@ namespace OSPSuite.UI.Views.Diagram
          shape.Appearance.BorderSize = (int) node.BorderWidth;
       }
 
-      private void updateConnector(BaseLink link)
+      protected virtual ShapeDescription ShapeFor(ElementBaseNode node) => node is ReactionNode ? BasicShapes.Triangle : BasicShapes.Ellipse;
+
+      protected virtual PointCollection ConnectionPointsFor(ElementBaseNode node)
       {
-         var beginShape = _shapes[link.FromNode];
-         var endShape = _shapes[link.ToNode];
+         return node is ReactionNode reactionNode ? ReactionConnectionPoints.For(reactionNode.DisplayEductsRight) : _moleculeConnectionPoints;
+      }
+
+      private void placeInParent(DiagramItem item, DiagramNode node)
+      {
+         var collection = parentContainerOf(node) is ContainerNode parent ? ((DiagramContainer) _items[parent]).Items : _diagramControl.Items;
+         if (collection.Contains(item))
+            return;
+
+         if (item.ParentItem != null)
+            collectionOf(item).Remove(item);
+         else
+            _diagramControl.Items.Remove(item);
+         collection.Add(item);
+      }
+
+      private ContainerNode parentContainerOf(IBaseNode node)
+      {
+         return node.GetParent() is ContainerNode parent && _items.ContainsKey(parent) ? parent : null;
+      }
+
+      private PointF relativeTo(IBaseNode node, PointF absoluteLocation)
+      {
+         var parent = parentContainerOf(node);
+         return parent == null ? absoluteLocation : new PointF(absoluteLocation.X - parent.Location.X, absoluteLocation.Y - parent.Location.Y);
+      }
+
+      private void updateConnector(BaseLink link, DiagramItem beginItem, DiagramItem endItem)
+      {
          if (!_connectors.TryGetValue(link, out var connector))
          {
-            connector = new DiagramConnector(beginShape, endShape)
+            connector = new DiagramConnector(beginItem, endItem)
             {
                Tag = link,
                Type = ConnectorType.Straight,
@@ -254,16 +444,17 @@ namespace OSPSuite.UI.Views.Diagram
             _diagramControl.Items.Add(connector);
          }
 
-         connector.BeginItem = beginShape;
-         connector.EndItem = endShape;
-         connector.BeginItemPointIndex = pointIndexFor(link, link.FromNode);
-         connector.EndItemPointIndex = pointIndexFor(link, link.ToNode);
+         connector.BeginItem = beginItem;
+         connector.EndItem = endItem;
+         connector.Type = link.IsCurved ? ConnectorType.Curved : ConnectorType.Straight;
+         connector.BeginItemPointIndex = PointIndexFor(link, link.FromNode);
+         connector.EndItemPointIndex = PointIndexFor(link, link.ToNode);
          connector.Appearance.BorderColor = link.Color;
          connector.Appearance.BorderSize = CONNECTOR_BORDER_SIZE;
          connector.Appearance.BorderDashPattern = link.IsDashed ? _dashPattern : DiagramDoubleCollection.EmptyCollection;
       }
 
-      private static int pointIndexFor(IBaseLink link, IBaseNode node)
+      protected virtual int PointIndexFor(IBaseLink link, IBaseNode node)
       {
          if (node is ReactionNode && link is ReactionLink reactionLink)
             return ReactionConnectionPoints.IndexFor(reactionLink.Type);
@@ -271,37 +462,90 @@ namespace OSPSuite.UI.Views.Diagram
          return NO_CONNECTION_POINT_INDEX;
       }
 
-      private void updateZOrder(IEnumerable<ElementBaseNode> nodes)
+      private void updateZOrder(IReadOnlyList<DiagramNode> nodes)
       {
-         var orderedItems = _connectors.Values.Cast<DiagramItem>().Concat(nodes.Select(node => _shapes[node])).ToList();
-         if (_diagramControl.Items.SequenceEqual(orderedItems))
+         var rootItems = _connectors.Values.Cast<DiagramItem>().Concat(nodes.Where(node => parentContainerOf(node) == null).Select(node => _items[node])).ToList();
+         reorder(_diagramControl.Items, rootItems);
+
+         nodes.OfType<ContainerNode>().Each(container =>
+         {
+            var childItems = container.GetDirectChildren<DiagramNode>().Where(_items.ContainsKey).Select(node => _items[node]).ToList();
+            reorder(((DiagramContainer) _items[container]).Items, childItems);
+         });
+      }
+
+      private void reorder(DiagramItemCollection collection, IReadOnlyList<DiagramItem> orderedItems)
+      {
+         if (collection.SequenceEqual(orderedItems))
             return;
          orderedItems.Each(item => _diagramControl.BringItemsToFront(new[] {item}));
       }
 
       private static PointCollection createMoleculeConnectionPoints()
       {
-         return new PointCollection(Enumerable.Range(0, 8).Select(i =>
+         return new PointCollection(Enumerable.Range(0, MOLECULE_CONNECTION_POINT_COUNT).Select(i =>
          {
-            var angle = i * Math.PI / 4;
+            var angle = i * 2 * Math.PI / MOLECULE_CONNECTION_POINT_COUNT;
             return new PointFloat((float) (0.5 + 0.5 * Math.Cos(angle)), (float) (0.5 + 0.5 * Math.Sin(angle)));
          }).ToList());
       }
 
       private void onCustomDrawItem(CustomDrawItemEventArgs e)
       {
+         if (e.Item.Tag is ContainerNode containerNode)
+         {
+            e.DefaultDraw(CustomDrawItemMode.All);
+            drawContainerLabel(e.Graphics, containerNode);
+            e.Handled = true;
+            return;
+         }
+
          if (!(e.Item.Tag is ElementBaseNode node))
             return;
 
          e.DefaultDraw(CustomDrawItemMode.All);
+         DrawNode(e.Graphics, node, e.Size);
+         e.Handled = true;
+      }
+
+      protected virtual void DrawNode(Graphics graphics, ElementBaseNode node, SizeF size)
+      {
          var reactionNode = node as ReactionNode;
          if (reactionNode != null)
-            drawReactionPorts(e.Graphics, reactionNode, e.Size);
+            drawReactionPorts(graphics, reactionNode, size);
          else
-            drawInnerEllipse(e.Graphics, node, e.Size);
+            drawInnerEllipse(graphics, node, size);
 
-         drawLabel(e.Graphics, node, e.Size, labelBelow: reactionNode != null);
-         e.Handled = true;
+         drawLabel(graphics, node, size, labelBelow: reactionNode != null);
+      }
+
+      private void drawContainerLabel(Graphics graphics, ContainerNode node)
+      {
+         using (var handleBrush = new SolidBrush(node.HandleColor))
+         using (var textBrush = new SolidBrush(ForeColor))
+         {
+            graphics.FillRectangle(handleBrush, CONTAINER_LABEL_OFFSET, CONTAINER_LABEL_OFFSET, CONTAINER_HANDLE_SIZE, CONTAINER_HANDLE_SIZE);
+            if (!string.IsNullOrEmpty(node.Name))
+               graphics.DrawString(node.Name, Font, textBrush, containerHandleBounds(node).Width, CONTAINER_LABEL_OFFSET / 2);
+         }
+      }
+
+      private static RectangleF containerHandleBounds(ContainerNode node)
+      {
+         var size = CONTAINER_HANDLE_SIZE + 2 * CONTAINER_LABEL_OFFSET;
+         return new RectangleF(node.Location.X, node.Location.Y, size, size);
+      }
+
+      public void MeasureCollapsedContainers(IDiagramModel diagramModel)
+      {
+         diagramModel.GetAllChildren<ContainerNode>().Each(node => node.CollapsedSize = collapsedSizeFor(node));
+      }
+
+      private SizeF collapsedSizeFor(ContainerNode node)
+      {
+         var handle = containerHandleBounds(node);
+         var text = TextRenderer.MeasureText(node.Name ?? string.Empty, Font);
+         return new SizeF(handle.Width + text.Width + CONTAINER_LABEL_OFFSET, Math.Max(handle.Height, text.Height + CONTAINER_LABEL_OFFSET));
       }
 
       private static void drawInnerEllipse(Graphics graphics, ElementBaseNode node, SizeF size)
@@ -352,40 +596,48 @@ namespace OSPSuite.UI.Views.Diagram
             : new PointF(size.Width + LABEL_OFFSET, (size.Height - textSize.Height) / 2);
       }
 
-      private RectangleF labelBounds(Graphics graphics, ElementBaseNode node, DiagramShape shape)
+      private RectangleF visualBounds(Graphics graphics, DiagramNode node)
       {
-         if (!hasLabel(node))
-            return shape.Bounds;
-
-         using (var font = labelFont(node))
+         switch (node)
          {
-            var textSize = graphics.MeasureString(node.Name, font);
-            var location = labelLocation(shape.Size, textSize, labelBelow: node is ReactionNode);
-            return new RectangleF(shape.X + location.X, shape.Y + location.Y, textSize.Width, textSize.Height);
+            case ContainerNode containerNode when !containerNode.IsExpanded:
+               return containerNode.DrawnBounds;
+            case ContainerNode containerNode:
+               var labelSize = graphics.MeasureString(containerNode.Name ?? string.Empty, Font);
+               return RectangleF.Union(containerNode.DrawnBounds, new RectangleF(containerHandleBounds(containerNode).Right, node.Location.Y, labelSize.Width, labelSize.Height));
+            case ElementBaseNode elementNode when hasLabel(elementNode):
+               using (var font = labelFont(elementNode))
+               {
+                  var textSize = graphics.MeasureString(node.Name, font);
+                  var location = labelLocation(node.Size, textSize, labelBelow: node is ReactionNode);
+                  return RectangleF.Union(node.Bounds, new RectangleF(node.Bounds.X + location.X, node.Bounds.Y + location.Y, textSize.Width, textSize.Height));
+               }
+            default:
+               return node.Bounds;
          }
       }
 
-      private RectangleF drawingBounds() => drawingBounds(_shapes.ToList());
+      private RectangleF drawingBounds() => drawingBounds(_items.Keys.OfType<DiagramNode>().ToList());
 
-      private RectangleF drawingBounds(IReadOnlyList<KeyValuePair<IBaseNode, DiagramShape>> shapes)
+      private RectangleF drawingBounds(IReadOnlyList<DiagramNode> nodes)
       {
          using (var bitmap = new Bitmap(1, 1))
          using (var graphics = Graphics.FromImage(bitmap))
          {
-            var labels = shapes.Select(x => labelBounds(graphics, (ElementBaseNode) x.Key, x.Value));
-            var bounds = shapes.Select(x => (RectangleF) x.Value.Bounds).Concat(labels).Aggregate(RectangleF.Union);
+            var bounds = nodes.Select(node => visualBounds(graphics, node)).Aggregate(RectangleF.Union);
             bounds.Inflate(EXPORT_MARGIN, EXPORT_MARGIN);
             return bounds;
          }
       }
 
-      private IReadOnlyList<KeyValuePair<IBaseNode, DiagramShape>> shapesToExport(IContainerBase containerBase)
+      private IReadOnlyList<DiagramNode> nodesToExport(IContainerBase containerBase)
       {
+         var allNodes = _items.Keys.OfType<DiagramNode>().ToList();
          if (containerBase == null || containerBase is IDiagramModel)
-            return _shapes.ToList();
+            return allNodes;
 
          var exported = containerBase.GetAllChildren<IBaseNode>().ToList();
-         return _shapes.Where(x => exported.Contains(x.Key)).ToList();
+         return allNodes.Where(node => Equals(node, containerBase) || exported.Contains(node)).ToList();
       }
 
       private void onGetActiveObjectInfo(ToolTipControllerGetActiveObjectInfoEventArgs e)
@@ -393,12 +645,12 @@ namespace OSPSuite.UI.Views.Diagram
          if (e.SelectedControl != _diagramControl)
             return;
 
-         var node = itemAt(e.ControlMousePosition)?.Tag as ElementBaseNode;
+         var node = itemAt(e.ControlMousePosition)?.Tag as IBaseNode;
          if (node == null)
             return;
 
          var lines = new List<string> {node.Description};
-         if (node is MoleculeNode && node.CanLink)
+         if (node is MoleculeNode moleculeNode && moleculeNode.CanLink)
             lines.Add(ToolTips.BuildingBlockReaction.HowToCreateReactionLink);
 
          var text = lines.Where(line => !string.IsNullOrEmpty(line)).ToString(Environment.NewLine);
@@ -413,18 +665,23 @@ namespace OSPSuite.UI.Views.Diagram
          if (_syncing || e.Stage != DiagramActionStage.Finished)
             return;
 
-         var movedNodes = e.Items.Where(x => x.Item.Tag is ElementBaseNode).ToList();
-         if (!movedNodes.Any())
+         var movedItems = e.Items.Where(x => x.Item.Tag is DiagramNode).OrderBy(x => depthOf((DiagramNode) x.Item.Tag)).ToList();
+         if (!movedItems.Any())
             return;
 
+         var movedNodes = movedItems.Select(x => (IBaseNode) x.Item.Tag).ToList();
          _syncing = true;
          try
          {
             _model.StartTransaction();
-            movedNodes.Each(x =>
+            movedItems.Each(x =>
             {
-               var node = (ElementBaseNode) x.Item.Tag;
-               node.Location = new PointF(x.NewDiagramPosition.X + node.Size.Width / 2, x.NewDiagramPosition.Y + node.Size.Height / 2);
+               var node = (DiagramNode) x.Item.Tag;
+               var before = node.Location;
+               moveNode(node, new PointF(x.NewDiagramPosition.X, x.NewDiagramPosition.Y), movedNodes);
+               var delta = new PointF(node.Location.X - before.X, node.Location.Y - before.Y);
+               var dependents = NodesMovingWith(node).Where(dependent => !movedNodes.Contains(dependent)).ToList();
+               dependents.Each(dependent => dependent.Location = new PointF(dependent.Location.X + delta.X, dependent.Location.Y + delta.Y));
             });
             _model.FinishTransaction("Move");
          }
@@ -433,7 +690,28 @@ namespace OSPSuite.UI.Views.Diagram
             _syncing = false;
          }
 
+         defer(synchronize);
+
          _presenter.SelectionMoved(this, EventArgs.Empty);
+      }
+
+      protected virtual IEnumerable<IBaseNode> NodesMovingWith(IBaseNode node) => Enumerable.Empty<IBaseNode>();
+
+      private static void moveNode(DiagramNode node, PointF topLeft, IReadOnlyList<IBaseNode> movedNodes)
+      {
+         switch (node)
+         {
+            case ContainerNode containerNode:
+               var offset = new SizeF(topLeft.X - containerNode.Location.X, topLeft.Y - containerNode.Location.Y);
+               containerNode.Location = topLeft;
+               containerNode.GetLinkedNodes<INeighborhoodNode>(true)
+                  .Where(neighborhoodNode => !movedNodes.Contains(neighborhoodNode) && !containerNode.ContainsChildNode(neighborhoodNode, true))
+                  .Each(neighborhoodNode => neighborhoodNode.AdjustPositionForContainerInMove(containerNode, offset));
+               break;
+            case ElementBaseNode elementNode:
+               elementNode.Location = new PointF(topLeft.X + elementNode.Size.Width / 2, topLeft.Y + elementNode.Size.Height / 2);
+               break;
+         }
       }
 
       private void onItemsDeleting(DiagramItemsDeletingEventArgs e)
@@ -454,7 +732,7 @@ namespace OSPSuite.UI.Views.Diagram
          if (e.Item is DiagramConnector connector)
             finalizeUserConnector(connector);
          else
-            defer(() => _diagramControl.Items.Remove(e.Item));
+            defer(() => collectionOf(e.Item).Remove(e.Item));
       }
 
       private void onConnectionChanged(DiagramConnectionChangedEventArgs e)
@@ -478,8 +756,8 @@ namespace OSPSuite.UI.Views.Diagram
 
          var fromNode = nodeOf(connector.BeginItem);
          var toNode = nodeOf(connector.EndItem);
-         var fromPort = portFor(fromNode, connector.BeginItem as DiagramShape, connector.BeginItemPointIndex, connector.BeginPoint);
-         var toPort = portFor(toNode, connector.EndItem as DiagramShape, connector.EndItemPointIndex, connector.EndPoint);
+         var fromPort = PortFor(fromNode, connector.BeginItemPointIndex, connector.BeginPoint);
+         var toPort = PortFor(toNode, connector.EndItemPointIndex, connector.EndPoint);
          _diagramControl.Items.Remove(connector);
          if (_readOnly || fromNode == null || toNode == null)
             return;
@@ -489,20 +767,26 @@ namespace OSPSuite.UI.Views.Diagram
 
       private static ElementBaseNode nodeOf(IDiagramItem item) => (item as DiagramItem)?.Tag as ElementBaseNode;
 
-      private static object portFor(ElementBaseNode node, DiagramShape shape, int pointIndex, PointFloat point)
+      protected virtual object PortFor(ElementBaseNode node, int pointIndex, PointFloat point)
       {
          if (!(node is ReactionNode reactionNode))
             return null;
-         return ReactionConnectionPoints.LinkTypeFor(pointIndex) ?? nearestLinkType(reactionNode, shape, point);
+         return ReactionConnectionPoints.LinkTypeFor(pointIndex) ?? nearestLinkType(reactionNode, point);
       }
 
-      private static ReactionLinkType nearestLinkType(ReactionNode node, DiagramShape shape, PointFloat point)
+      private static ReactionLinkType nearestLinkType(ReactionNode node, PointFloat point)
       {
          var connectionPoints = ReactionConnectionPoints.For(node.DisplayEductsRight);
          var nearestIndex = Enumerable.Range(0, connectionPoints.Count)
-            .OrderBy(i => distance(new PointF(point.X, point.Y), new PointF(shape.X + connectionPoints[i].X * shape.Width, shape.Y + connectionPoints[i].Y * shape.Height)))
+            .OrderBy(i => Distance(new PointF(point.X, point.Y), AbsolutePoint(node, connectionPoints[i])))
             .First();
          return ReactionConnectionPoints.LinkTypeFor(nearestIndex).Value;
+      }
+
+      protected static PointF AbsolutePoint(ElementBaseNode node, PointFloat relativePoint)
+      {
+         var bounds = node.Bounds;
+         return new PointF(bounds.X + relativePoint.X * bounds.Width, bounds.Y + relativePoint.Y * bounds.Height);
       }
 
       private void finalizeForeignItems()
@@ -537,8 +821,7 @@ namespace OSPSuite.UI.Views.Diagram
                return;
 
             var oppositeNode = nodeOf(e.ConnectorPointType == ConnectorPointType.End ? e.Connector?.BeginItem : e.Connector?.EndItem);
-            var allowed = !_readOnly && node.CanLink && (oppositeNode == null || (oppositeNode.CanLink && !sameKind(node, oppositeNode)));
-            if (allowed)
+            if (!_readOnly && CanConnect(node, oppositeNode))
                return;
 
             e.ItemConnectionBorderState = ConnectionElementState.Disabled;
@@ -568,10 +851,15 @@ namespace OSPSuite.UI.Views.Diagram
          var oppositeIsBegin = e.ConnectorPointType == ConnectorPointType.End;
          var oppositeNode = nodeOf(oppositeIsBegin ? e.Connector.BeginItem : e.Connector.EndItem);
          var oppositePointIndex = oppositeIsBegin ? e.Connector.BeginItemPointIndex : e.Connector.EndItemPointIndex;
-         e.Cancel = !isValidConnection(newNode, e.NewIndex, oppositeNode, oppositePointIndex);
+         e.Cancel = !IsValidConnection(newNode, e.NewIndex, oppositeNode, oppositePointIndex);
       }
 
-      private static bool isValidConnection(ElementBaseNode node, int pointIndex, ElementBaseNode oppositeNode, int oppositePointIndex)
+      protected virtual bool CanConnect(ElementBaseNode node, ElementBaseNode oppositeNode)
+      {
+         return node.CanLink && (oppositeNode == null || (oppositeNode.CanLink && !sameKind(node, oppositeNode)));
+      }
+
+      protected virtual bool IsValidConnection(ElementBaseNode node, int pointIndex, ElementBaseNode oppositeNode, int oppositePointIndex)
       {
          if (!node.CanLink)
             return false;
@@ -624,30 +912,86 @@ namespace OSPSuite.UI.Views.Diagram
       {
          var documentPoint = _diagramControl.PointToDocument(new PointFloat(controlPoint));
          var point = new PointF(documentPoint.X, documentPoint.Y);
-         return _shapes.Any(x => x.Key is ElementBaseNode node && node.CanLink && isOverPortOf(node, x.Value, point));
+         return _items.Keys.OfType<ElementBaseNode>().Any(node => node.CanLink && IsOverPortOf(node, point));
       }
 
-      private static bool isOverPortOf(ElementBaseNode node, DiagramShape shape, PointF point)
+      protected virtual bool IsOverPortOf(ElementBaseNode node, PointF point)
       {
          if (node is ReactionNode reactionNode)
-            return ReactionConnectionPoints.For(reactionNode.DisplayEductsRight)
-               .Any(relativePoint => distance(point, new PointF(shape.X + relativePoint.X * shape.Width, shape.Y + relativePoint.Y * shape.Height)) <= PORT_SIZE);
+            return ReactionConnectionPoints.For(reactionNode.DisplayEductsRight).Any(relativePoint => Distance(point, AbsolutePoint(node, relativePoint)) <= PORT_SIZE);
 
-         var center = new PointF(shape.X + shape.Width / 2, shape.Y + shape.Height / 2);
-         var radius = Math.Min(shape.Width, shape.Height) / 2;
-         var distanceToCenter = distance(point, center);
+         var bounds = node.Bounds;
+         var center = new PointF(bounds.X + bounds.Width / 2, bounds.Y + bounds.Height / 2);
+         var radius = Math.Min(bounds.Width, bounds.Height) / 2;
+         var distanceToCenter = Distance(point, center);
          return distanceToCenter <= radius + PORT_SIZE / 2 && distanceToCenter >= radius / 2;
       }
 
-      private static float distance(PointF first, PointF second)
+      protected static float Distance(PointF first, PointF second)
       {
          return (float) Math.Sqrt(Math.Pow(first.X - second.X, 2) + Math.Pow(first.Y - second.Y, 2));
+      }
+
+      private void onMouseDown(MouseEventArgs e)
+      {
+         _mouseDownLocation = e.Location;
+         _mouseDownClicks = e.Clicks;
+      }
+
+      private bool isClick(Point location) => Math.Abs(location.X - _mouseDownLocation.X) <= CLICK_TOLERANCE && Math.Abs(location.Y - _mouseDownLocation.Y) <= CLICK_TOLERANCE;
+
+      protected PointF ToDocumentPoint(Point controlPoint)
+      {
+         var documentPoint = _diagramControl.PointToDocument(new PointFloat(controlPoint));
+         return new PointF(documentPoint.X, documentPoint.Y);
+      }
+
+      protected virtual void OnNodeClicked(IBaseNode node, PointF documentPoint, Keys modifiers)
+      {
+         if (node is ContainerNode containerNode && containerHandleBounds(containerNode).Contains(documentPoint))
+            onHandleClicked(containerNode, modifiers);
+      }
+
+      private void onHandleClicked(ContainerNode node, Keys modifiers)
+      {
+         if (modifiers.HasFlag(Keys.Shift))
+         {
+            ChangeLayout(() => node.IsExpanded = !node.IsExpanded, node.IsExpanded ? "Collapse" : "Expand");
+            return;
+         }
+
+         if (modifiers.HasFlag(Keys.Control))
+         {
+            if (node.IsExpanded)
+               ChangeLayout(() => node.Collapse(MAX_COLLAPSE_DEPTH), "Collapse");
+            return;
+         }
+
+         if (node.IsExpanded)
+         {
+            _presenter.Unfocus(node);
+            return;
+         }
+
+         if (!node.IsExpandedByDefault)
+            _presenter.HideAll();
+         _presenter.Focus(node);
+      }
+
+      protected void ChangeLayout(Action change, string description)
+      {
+         _model.StartTransaction();
+         change();
+         _model.FinishTransaction(description);
       }
 
       private void onMouseUp(MouseEventArgs e)
       {
          if (e.Button == MouseButtons.Left)
          {
+            if (_mouseDownClicks == 1 && isClick(e.Location) && itemAt(e.Location)?.Tag is IBaseNode clickedNode)
+               OnNodeClicked(clickedNode, ToDocumentPoint(e.Location), ModifierKeys);
+
             defer(() =>
             {
                finalizeForeignItems();
@@ -663,8 +1007,12 @@ namespace OSPSuite.UI.Views.Diagram
          if (item is DiagramConnector)
             return;
 
-         var documentPoint = _diagramControl.PointToDocument(new PointFloat(e.Location));
-         _presenter.ShowContextMenu(item?.Tag as IBaseNode, e.Location, new PointF(documentPoint.X, documentPoint.Y));
+         ShowContextMenu(item?.Tag as IBaseNode, e.Location, ToDocumentPoint(e.Location));
+      }
+
+      protected virtual void ShowContextMenu(IBaseNode node, Point location, PointF documentPoint)
+      {
+         _presenter.ShowContextMenu(node, location, documentPoint);
       }
 
       private void onMouseDoubleClick(MouseEventArgs e)
@@ -702,8 +1050,8 @@ namespace OSPSuite.UI.Views.Diagram
       {
          switch (obj)
          {
-            case IBaseNode node when _shapes.TryGetValue(node, out var shape):
-               return shape;
+            case IBaseNode node when _items.TryGetValue(node, out var item):
+               return item;
             case IBaseLink link when _connectors.TryGetValue(link, out var connector):
                return connector;
             default:
@@ -727,8 +1075,25 @@ namespace OSPSuite.UI.Views.Diagram
          if (item == null)
             return;
 
-         var bounds = item.Bounds;
-         _diagramControl.ScrollToPoint(new PointFloat(bounds.X + bounds.Width / 2, bounds.Y + bounds.Height / 2), HorzAlignment.Center, VertAlignment.Center);
+         var bounds = node is DiagramNode diagramNode ? diagramNode.DrawnBounds : item.Bounds;
+         var centre = new PointF(bounds.X + bounds.Width / 2, bounds.Y + bounds.Height / 2);
+
+         var content = _model?.Bounds ?? RectangleF.Empty;
+         if (content.IsEmpty)
+         {
+            _diagramControl.ScrollToPoint(new PointFloat(centre), HorzAlignment.Center, VertAlignment.Center);
+            return;
+         }
+
+         var zoom = Math.Max(MIN_EFFECTIVE_ZOOM, (float) _diagramControl.OptionsView.ZoomFactor);
+         var halfWidth = _diagramControl.ClientSize.Width / zoom / 2;
+         var halfHeight = _diagramControl.ClientSize.Height / zoom / 2;
+
+         var topLeft = new PointFloat(
+            Math.Max(content.X - ORIGIN_MARGIN, centre.X - halfWidth),
+            Math.Max(content.Y - ORIGIN_MARGIN, centre.Y - halfHeight));
+
+         _diagramControl.ScrollToPoint(topLeft, HorzAlignment.Near, VertAlignment.Top);
       }
 
       public override void Refresh()
@@ -767,10 +1132,10 @@ namespace OSPSuite.UI.Views.Diagram
 
       public Bitmap GetBitmap(IContainerBase containerBase)
       {
-         if (_shapes.Count == 0)
+         if (_items.Count == 0)
             return new Bitmap(1, 1);
 
-         var exportBounds = drawingBounds(shapesToExport(containerBase));
+         var exportBounds = drawingBounds(nodesToExport(containerBase));
          using (var stream = new MemoryStream())
          {
             _diagramControl.ExportToImage(stream, DiagramImageExportFormat.PNG, exportBounds, null, null);

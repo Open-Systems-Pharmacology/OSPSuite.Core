@@ -77,6 +77,11 @@ namespace OSPSuite.UI.Views.Diagram
          }
       }
 
+      //GoDiagram computes the collapsed extent in ContainerNodeBase.ComputeCollapsedSize
+      public void MeasureCollapsedContainers(IDiagramModel diagramModel)
+      {
+      }
+
       public virtual void AttachPresenter(IBaseDiagramPresenter presenter)
       {
          _presenter = presenter;

@@ -16,13 +16,10 @@ namespace OSPSuite.Presentation.Diagram.Services
       private const float LABEL_OFFSET = 2F;
       private const float PORT_OFFSET = 0.25F;
       private const int ITERATIONS = 4;
-      private const int UNVISITED = 0;
-      private const int VISITING = 1;
-      private const int VISITED = 2;
 
       private readonly Func<ElementBaseNode, SizeF> _labelSizeFor;
 
-      public LayeredReactionLayouter() : this(measureLabel)
+      public LayeredReactionLayouter() : this(MeasureLabel)
       {
       }
 
@@ -58,23 +55,23 @@ namespace OSPSuite.Presentation.Diagram.Services
 
       private static void removeCycles(IReadOnlyList<Vertex> vertices)
       {
-         var state = vertices.ToDictionary(vertex => vertex, vertex => UNVISITED);
+         var state = vertices.ToDictionary(vertex => vertex, vertex => 0);
 
          void visit(Vertex vertex)
          {
-            state[vertex] = VISITING;
+            state[vertex] = 1;
             vertex.Edges.Where(e => e.From == vertex).Each(edge =>
             {
-               if (state[edge.To] == VISITING)
+               if (state[edge.To] == 1)
                   edge.Reversed = true;
-               else if (state[edge.To] == UNVISITED)
+               else if (state[edge.To] == 0)
                   visit(edge.To);
             });
 
-            state[vertex] = VISITED;
+            state[vertex] = 2;
          }
 
-         vertices.Where(vertex => state[vertex] == UNVISITED).Each(visit);
+         vertices.Where(vertex => state[vertex] == 0).Each(visit);
       }
 
       private static List<List<Vertex>> assignLayers(IReadOnlyList<Vertex> vertices)
@@ -85,6 +82,7 @@ namespace OSPSuite.Presentation.Diagram.Services
          {
             if (layerOf.TryGetValue(vertex, out var layer))
                return layer;
+
             layerOf[vertex] = 0;
             var predecessors = vertex.Edges.Where(edge => edge.Target == vertex).Select(edge => edge.Source).ToList();
             layer = predecessors.Any() ? predecessors.Max(layerFor) + 1 : 0;
@@ -226,7 +224,7 @@ namespace OSPSuite.Presentation.Diagram.Services
          return new SizeF(size.Width + LABEL_OFFSET + label.Width, Math.Max(size.Height, label.Height));
       }
 
-      private static SizeF measureLabel(ElementBaseNode node)
+      public static SizeF MeasureLabel(ElementBaseNode node)
       {
          using (var bitmap = new Bitmap(1, 1))
          using (var graphics = Graphics.FromImage(bitmap))

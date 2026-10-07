@@ -436,6 +436,7 @@ namespace OSPSuite.Presentation.Presenters.Diagram
          if (_model.DiagramModel == null)
             _model.DiagramModel = CreateDiagramModel();
 
+         _view.MeasureCollapsedContainers(DiagramModel);
          _model.InitializeDiagramManager(GetDiagramOptions());
          refreshGrid();
          _view.Model = DiagramModel;
