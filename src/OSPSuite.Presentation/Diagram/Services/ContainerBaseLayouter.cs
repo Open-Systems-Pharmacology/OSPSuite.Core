@@ -11,9 +11,7 @@ namespace OSPSuite.Presentation.Diagram.Services
    {
       private const int MAX_FREE_NODE_MOVES = 1000;
 
-      public IForceLayoutConfiguration ForceLayoutConfiguration { get; set; }
-
-      public void DoForceLayout(IContainerBase containerBase, IList<IHasLayoutInfo> freeNodes, int levelDepth)
+      public void PlaceFreeNodes(IContainerBase containerBase, IList<IHasLayoutInfo> freeNodes)
       {
          if (freeNodes == null || freeNodes.Count == 0)
             return;

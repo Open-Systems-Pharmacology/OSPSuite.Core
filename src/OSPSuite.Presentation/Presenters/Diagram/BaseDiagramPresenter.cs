@@ -37,7 +37,7 @@ namespace OSPSuite.Presentation.Presenters.Diagram
       void Unfocus(IContainerNode containerBaseNode);
       void Position0Selection();
 
-      void Layout(IContainerBase containerBase, int levelDepth, IList<IHasLayoutInfo> freeNodes);
+      void PlaceFreeNodes(IContainerBase containerBase, IList<IHasLayoutInfo> freeNodes);
 
       bool GridVisible { set; get; }
       void Zoom(float factor);
@@ -374,20 +374,16 @@ namespace OSPSuite.Presentation.Presenters.Diagram
          _view.Refresh();
       }
 
-      public void Layout(IContainerBase containerBase, int levelDepth, IList<IHasLayoutInfo> freeNodes)
+      public void PlaceFreeNodes(IContainerBase containerBase, IList<IHasLayoutInfo> freeNodes)
       {
          if (containerBase == null) containerBase = DiagramModel;
 
          if (containerBase == DiagramModel)
             FixLocationFirstVisibleTopContainer(); // to avoid moving container
 
-         _layouter.ForceLayoutConfiguration = LayoutConfiguration;
-         _layouter.DoForceLayout(containerBase, freeNodes, levelDepth);
-         DiagramModel.IsLayouted = true;
+         _layouter.PlaceFreeNodes(containerBase, freeNodes);
          _view.Refresh();
       }
-
-      public IForceLayoutConfiguration LayoutConfiguration { get; set; }
 
       public void Edit(object objectToEdit)
       {

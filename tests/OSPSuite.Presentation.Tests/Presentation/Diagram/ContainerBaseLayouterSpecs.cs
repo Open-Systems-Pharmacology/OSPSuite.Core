@@ -35,7 +35,7 @@ namespace OSPSuite.Presentation.Diagram
 
       protected override void Because()
       {
-         sut.DoForceLayout(_model, new List<IHasLayoutInfo> {_freeNode, _otherFreeNode}, 0);
+         sut.PlaceFreeNodes(_model, new List<IHasLayoutInfo> {_freeNode, _otherFreeNode});
       }
 
       [Observation]
@@ -78,7 +78,7 @@ namespace OSPSuite.Presentation.Diagram
 
       protected override void Because()
       {
-         sut.DoForceLayout(_model, new List<IHasLayoutInfo> {_freeNode}, 0);
+         sut.PlaceFreeNodes(_model, new List<IHasLayoutInfo> {_freeNode});
       }
 
       [Observation]
@@ -105,7 +105,7 @@ namespace OSPSuite.Presentation.Diagram
 
       protected override void Because()
       {
-         sut.DoForceLayout(_model, new List<IHasLayoutInfo> {_freeNode}, 0);
+         sut.PlaceFreeNodes(_model, new List<IHasLayoutInfo> {_freeNode});
       }
 
       [Observation]
@@ -130,7 +130,7 @@ namespace OSPSuite.Presentation.Diagram
 
       protected override void Because()
       {
-         sut.DoForceLayout(_model, new List<IHasLayoutInfo> {_freeContainer}, 0);
+         sut.PlaceFreeNodes(_model, new List<IHasLayoutInfo> {_freeContainer});
       }
 
       [Observation]
@@ -145,7 +145,7 @@ namespace OSPSuite.Presentation.Diagram
    {
       protected override void Because()
       {
-         sut.DoForceLayout(_model, null, 0);
+         sut.PlaceFreeNodes(_model, null);
       }
 
       [Observation]
@@ -169,7 +169,7 @@ namespace OSPSuite.Presentation.Diagram
 
       protected override void Because()
       {
-         sut.DoForceLayout(_model, new List<IHasLayoutInfo> {_freeContainer}, 0);
+         sut.PlaceFreeNodes(_model, new List<IHasLayoutInfo> {_freeContainer});
       }
 
       [Observation]
