@@ -1086,4 +1086,52 @@ namespace OSPSuite.UI.Diagram
          _neighborhood.Location.ShouldBeEqualTo(new PointF(777, 333));
       }
    }
+
+   public class When_measuring_a_collapsed_container_nested_in_a_collapsed_container : concern_for_DevExpressDiagramView
+   {
+      private DiagramModel _spatialModel;
+      private ContainerNode _organism;
+      private ContainerNode _liver;
+      private ContainerNode _plasma;
+      private SizeF _collapsedSizeAfterFirstSynchronization;
+
+      protected override void Context()
+      {
+         base.Context();
+         _spatialModel = new DiagramModel();
+         _organism = container("Organism", _spatialModel, 100, 100, 500, 300);
+         _liver = container("Liver", _organism, 120, 130, 200, 150);
+         _plasma = container("Plasma", _liver, 130, 140, 60, 40);
+         _liver.IsExpanded = false;
+         _plasma.IsExpanded = false;
+      }
+
+      private ContainerNode container(string name, IContainerBase parent, float x, float y, float width, float height)
+      {
+         var node = _spatialModel.CreateNode<ContainerNode>(name, new PointF(x, y), parent);
+         node.Name = name;
+         node.Size = new SizeF(width, height);
+         return node;
+      }
+
+      protected override void Because()
+      {
+         sut.Model = _spatialModel;
+         _collapsedSizeAfterFirstSynchronization = _plasma.CollapsedSize;
+         _plasma.Name = "Plasma with a considerably longer name";
+         sut.Refresh();
+      }
+
+      [Observation]
+      public void should_measure_the_nested_container_although_it_is_not_shown()
+      {
+         _plasma.CollapsedSize.ShouldNotBeEqualTo(_plasma.Size);
+      }
+
+      [Observation]
+      public void should_measure_the_nested_container_again_when_its_label_changes()
+      {
+         _plasma.CollapsedSize.ShouldNotBeEqualTo(_collapsedSizeAfterFirstSynchronization);
+      }
+   }
 }

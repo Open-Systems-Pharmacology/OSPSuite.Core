@@ -10,6 +10,8 @@ namespace OSPSuite.Presentation.Views.Diagram
       IDiagramModel Model { set; }
       IBaseDiagramPresenter Presenter { get; }
 
+      void MeasureCollapsedContainers(IDiagramModel diagramModel);
+
       void BeginUpdate();
       void EndUpdate();
 

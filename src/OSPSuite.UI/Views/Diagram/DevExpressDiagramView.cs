@@ -237,7 +237,7 @@ namespace OSPSuite.UI.Views.Diagram
             _diagramControl.BeginUpdate();
             var nodes = _model.GetAllChildren<DiagramNode>().Where(isShown).OrderBy(depthOf).ToList();
             removeStaleItems(nodes);
-            nodes.OfType<ContainerNode>().Each(node => node.CollapsedSize = collapsedSizeFor(node));
+            MeasureCollapsedContainers(_model);
             nodes.Each(updateItem);
 
             var links = _model.GetAllChildren<BaseLink>()
@@ -534,6 +534,11 @@ namespace OSPSuite.UI.Views.Diagram
       {
          var size = CONTAINER_HANDLE_SIZE + 2 * CONTAINER_LABEL_OFFSET;
          return new RectangleF(node.Location.X, node.Location.Y, size, size);
+      }
+
+      public void MeasureCollapsedContainers(IDiagramModel diagramModel)
+      {
+         diagramModel.GetAllChildren<ContainerNode>().Each(node => node.CollapsedSize = collapsedSizeFor(node));
       }
 
       private SizeF collapsedSizeFor(ContainerNode node)
