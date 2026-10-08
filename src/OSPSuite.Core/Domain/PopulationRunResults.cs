@@ -50,6 +50,10 @@ namespace OSPSuite.Core.Domain
    {
       private readonly ICache<int, IndividualRunInfo> _individualRunInfos;
 
+      //Add, AddFailure and AddWarnings are called concurrently by PopulationRunner (one task per core).
+      //Cache only locks its writes, so a read racing an insert can miss a key that is present.
+      private readonly object _locker = new object();
+
       public PopulationRunResults()
       {
          _individualRunInfos = new Cache<int, IndividualRunInfo>();
@@ -82,7 +86,10 @@ namespace OSPSuite.Core.Domain
       {
          Results.Add(individualResults);
          var runInfo = new IndividualRunInfo {Success = true};
-         _individualRunInfos[individualResults.IndividualId] = runInfo;
+         lock (_locker)
+         {
+            _individualRunInfos[individualResults.IndividualId] = runInfo;
+         }
       }
 
       /// <summary>
@@ -122,7 +129,10 @@ namespace OSPSuite.Core.Domain
             Success = false,
             ErrorMessage = message
          };
-         _individualRunInfos[individualId] = runInfo;
+         lock (_locker)
+         {
+            _individualRunInfos[individualId] = runInfo;
+         }
       }
 
       /// <summary>
@@ -132,10 +142,13 @@ namespace OSPSuite.Core.Domain
       /// <param name="warnings">Solver warnings</param>
       public void AddWarnings(int individualId, IEnumerable<SolverWarning> warnings)
       {
-         if (!_individualRunInfos.Contains(individualId))
-            return;
+         lock (_locker)
+         {
+            if (!_individualRunInfos.Contains(individualId))
+               return;
 
-         _individualRunInfos[individualId].AddWarnings(warnings);
+            _individualRunInfos[individualId].AddWarnings(warnings);
+         }
       }
 
       public IReadOnlyList<IndividualRunInfo> Warnings

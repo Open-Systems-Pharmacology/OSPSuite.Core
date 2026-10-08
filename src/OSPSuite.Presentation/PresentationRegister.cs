@@ -46,6 +46,7 @@ namespace OSPSuite.Presentation
 
             //Exclude these implementations that are specific to each application
             scan.ExcludeType<ExceptionManager>();
+            scan.ExcludeType<DiffItemToDiffItemDTOMapper>();
 
             //Exclude context menu registered separately
             scan.ExcludeNamespaceContainingType<IContextMenu>();
