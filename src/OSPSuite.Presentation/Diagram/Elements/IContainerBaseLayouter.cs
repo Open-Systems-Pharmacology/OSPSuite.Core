@@ -5,7 +5,6 @@ namespace OSPSuite.Presentation.Diagram.Elements
 {
    public interface IContainerBaseLayouter
    {
-      void DoForceLayout(IContainerBase containerBase, IList<IHasLayoutInfo> freeNodes, int levelDepth);
-      IForceLayoutConfiguration ForceLayoutConfiguration { get; set; }
+      void PlaceFreeNodes(IContainerBase containerBase, IList<IHasLayoutInfo> freeNodes);
    }
 }
