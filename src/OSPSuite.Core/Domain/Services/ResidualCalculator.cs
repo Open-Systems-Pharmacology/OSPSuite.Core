@@ -95,12 +95,13 @@ namespace OSPSuite.Core.Domain.Services
 
          lloq = convertToBaseUnit(mergedDimension, currentObservedDataUnit, lloq);
 
+         var simulationMinTime = simulationColumn.BaseGrid.Values.Min();
          var simulationMaxTime = simulationColumn.BaseGrid.Values.Max();
          foreach (var index in observedTimeIndices)
          {
             var observedTime = observedTimeColumn[index];
 
-            if (simulationMaxTime < observedTime)
+            if (observedTime < simulationMinTime || simulationMaxTime < observedTime)
                continue;
 
             var weight = outputMapping.Weight * outputMapping.WeightedObservedData.Weights[index];
