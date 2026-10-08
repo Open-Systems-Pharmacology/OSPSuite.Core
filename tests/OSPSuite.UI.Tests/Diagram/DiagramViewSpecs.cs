@@ -18,9 +18,9 @@ using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.UI.Diagram
 {
-   public class TestDevExpressDiagramView : DevExpressDiagramView
+   public class TestDiagramView : DiagramView
    {
-      public TestDevExpressDiagramView(IImageListRetriever imageListRetriever) : base(imageListRetriever)
+      public TestDiagramView(IImageListRetriever imageListRetriever) : base(imageListRetriever)
       {
       }
 
@@ -46,7 +46,7 @@ namespace OSPSuite.UI.Diagram
       }
    }
 
-   public abstract class concern_for_DevExpressDiagramView : ContextSpecification<TestDevExpressDiagramView>
+   public abstract class concern_for_DiagramView : ContextSpecification<TestDiagramView>
    {
       protected IBaseDiagramPresenter _presenter;
       protected DiagramModel _model;
@@ -63,7 +63,7 @@ namespace OSPSuite.UI.Diagram
          var imageListRetriever = A.Fake<IImageListRetriever>();
          A.CallTo(() => imageListRetriever.AllImages16x16).Returns(new SvgImageCollection());
          _presenter = A.Fake<IBaseDiagramPresenter>();
-         sut = new TestDevExpressDiagramView(imageListRetriever);
+         sut = new TestDiagramView(imageListRetriever);
          sut.AttachPresenter(_presenter);
          sut.InitializeResources();
 
@@ -108,7 +108,7 @@ namespace OSPSuite.UI.Diagram
       protected static PointFloat expectedPosition(IBaseNode node) => new PointFloat(node.Bounds.X, node.Bounds.Y);
    }
 
-   public class When_creating_the_dev_express_diagram_view : concern_for_DevExpressDiagramView
+   public class When_creating_the_diagram_view : concern_for_DiagramView
    {
       [Observation]
       public void should_expose_the_attached_presenter()
@@ -157,7 +157,7 @@ namespace OSPSuite.UI.Diagram
       }
    }
 
-   public class When_setting_a_model_that_is_not_a_ui_free_diagram_model : concern_for_DevExpressDiagramView
+   public class When_setting_a_model_that_is_not_a_ui_free_diagram_model : concern_for_DiagramView
    {
       [Observation]
       public void should_throw_an_invalid_type_exception()
@@ -166,7 +166,7 @@ namespace OSPSuite.UI.Diagram
       }
    }
 
-   public class When_setting_a_reaction_diagram_model : concern_for_DevExpressDiagramView
+   public class When_setting_a_reaction_diagram_model : concern_for_DiagramView
    {
       protected override void Because()
       {
@@ -286,7 +286,7 @@ namespace OSPSuite.UI.Diagram
       }
    }
 
-   public class When_rendering_the_diagram_model_to_a_bitmap : concern_for_DevExpressDiagramView
+   public class When_rendering_the_diagram_model_to_a_bitmap : concern_for_DiagramView
    {
       private Bitmap _bitmap;
 
@@ -311,7 +311,7 @@ namespace OSPSuite.UI.Diagram
       }
    }
 
-   public class When_rendering_an_empty_diagram_model_to_a_bitmap : concern_for_DevExpressDiagramView
+   public class When_rendering_an_empty_diagram_model_to_a_bitmap : concern_for_DiagramView
    {
       private Bitmap _bitmap;
 
@@ -333,7 +333,7 @@ namespace OSPSuite.UI.Diagram
       }
    }
 
-   public class When_selecting_nodes_and_links_in_the_view : concern_for_DevExpressDiagramView
+   public class When_selecting_nodes_and_links_in_the_view : concern_for_DiagramView
    {
       protected override void Context()
       {
@@ -383,7 +383,7 @@ namespace OSPSuite.UI.Diagram
       }
    }
 
-   public class When_the_location_of_a_node_changes_in_the_model : concern_for_DevExpressDiagramView
+   public class When_the_location_of_a_node_changes_in_the_model : concern_for_DiagramView
    {
       protected override void Context()
       {
@@ -410,7 +410,7 @@ namespace OSPSuite.UI.Diagram
       }
    }
 
-   public class When_the_size_of_a_node_changes_in_the_model : concern_for_DevExpressDiagramView
+   public class When_the_size_of_a_node_changes_in_the_model : concern_for_DiagramView
    {
       protected override void Context()
       {
@@ -433,7 +433,7 @@ namespace OSPSuite.UI.Diagram
       }
    }
 
-   public class When_the_educt_display_side_of_a_reaction_changes : concern_for_DevExpressDiagramView
+   public class When_the_educt_display_side_of_a_reaction_changes : concern_for_DiagramView
    {
       protected override void Context()
       {
@@ -462,7 +462,7 @@ namespace OSPSuite.UI.Diagram
       }
    }
 
-   public class When_a_node_is_hidden_in_the_model : concern_for_DevExpressDiagramView
+   public class When_a_node_is_hidden_in_the_model : concern_for_DiagramView
    {
       protected override void Context()
       {
@@ -494,7 +494,7 @@ namespace OSPSuite.UI.Diagram
       }
    }
 
-   public class When_a_node_is_removed_from_the_model : concern_for_DevExpressDiagramView
+   public class When_a_node_is_removed_from_the_model : concern_for_DiagramView
    {
       protected override void Context()
       {
@@ -516,7 +516,7 @@ namespace OSPSuite.UI.Diagram
       }
    }
 
-   public class When_a_node_is_added_to_the_model : concern_for_DevExpressDiagramView
+   public class When_a_node_is_added_to_the_model : concern_for_DiagramView
    {
       private MoleculeNode _newMolecule;
 
@@ -549,7 +549,7 @@ namespace OSPSuite.UI.Diagram
       }
    }
 
-   public class When_replacing_the_model_of_the_view : concern_for_DevExpressDiagramView
+   public class When_replacing_the_model_of_the_view : concern_for_DiagramView
    {
       private DiagramModel _otherModel;
       private MoleculeNode _otherMolecule;
@@ -582,7 +582,7 @@ namespace OSPSuite.UI.Diagram
       }
    }
 
-   public class When_toggling_the_grid_of_the_view : concern_for_DevExpressDiagramView
+   public class When_toggling_the_grid_of_the_view : concern_for_DiagramView
    {
       protected override void Because()
       {
@@ -606,7 +606,7 @@ namespace OSPSuite.UI.Diagram
       }
    }
 
-   public class When_setting_the_background_color_of_the_view : concern_for_DevExpressDiagramView
+   public class When_setting_the_background_color_of_the_view : concern_for_DiagramView
    {
       protected override void Because()
       {
@@ -620,7 +620,7 @@ namespace OSPSuite.UI.Diagram
       }
    }
 
-   public class When_zooming_the_view : concern_for_DevExpressDiagramView
+   public class When_zooming_the_view : concern_for_DiagramView
    {
       protected override void Context()
       {
@@ -646,7 +646,7 @@ namespace OSPSuite.UI.Diagram
       }
    }
 
-   public class When_making_the_view_read_only : concern_for_DevExpressDiagramView
+   public class When_making_the_view_read_only : concern_for_DiagramView
    {
       protected override void Because()
       {
@@ -663,7 +663,7 @@ namespace OSPSuite.UI.Diagram
       }
    }
 
-   public class When_the_user_deletes_the_selection_in_the_view : concern_for_DevExpressDiagramView
+   public class When_the_user_deletes_the_selection_in_the_view : concern_for_DiagramView
    {
       protected override void Context()
       {
@@ -693,7 +693,7 @@ namespace OSPSuite.UI.Diagram
       }
    }
 
-   public class When_the_user_deletes_the_selection_in_a_read_only_view : concern_for_DevExpressDiagramView
+   public class When_the_user_deletes_the_selection_in_a_read_only_view : concern_for_DiagramView
    {
       protected override void Context()
       {
@@ -716,7 +716,7 @@ namespace OSPSuite.UI.Diagram
       }
    }
 
-   public class When_the_user_connects_a_molecule_to_the_modifier_point_of_a_reaction : concern_for_DevExpressDiagramView
+   public class When_the_user_connects_a_molecule_to_the_modifier_point_of_a_reaction : concern_for_DiagramView
    {
       private DiagramConnector _userConnector;
 
@@ -754,7 +754,7 @@ namespace OSPSuite.UI.Diagram
       }
    }
 
-   public class When_the_user_connects_nodes_in_a_read_only_view : concern_for_DevExpressDiagramView
+   public class When_the_user_connects_nodes_in_a_read_only_view : concern_for_DiagramView
    {
       private DiagramConnector _userConnector;
 
@@ -779,7 +779,7 @@ namespace OSPSuite.UI.Diagram
       }
    }
 
-   public class When_a_foreign_item_is_added_to_the_diagram_control : concern_for_DevExpressDiagramView
+   public class When_a_foreign_item_is_added_to_the_diagram_control : concern_for_DiagramView
    {
       private DiagramShape _foreignShape;
 
@@ -803,7 +803,7 @@ namespace OSPSuite.UI.Diagram
       }
    }
 
-   public class When_setting_a_spatial_structure_diagram_model : concern_for_DevExpressDiagramView
+   public class When_setting_a_spatial_structure_diagram_model : concern_for_DiagramView
    {
       private DiagramModel _spatialModel;
       private ContainerNode _organism;
@@ -883,7 +883,7 @@ namespace OSPSuite.UI.Diagram
       }
    }
 
-   public class When_setting_a_spatial_structure_diagram_model_with_an_explicitly_hidden_container : concern_for_DevExpressDiagramView
+   public class When_setting_a_spatial_structure_diagram_model_with_an_explicitly_hidden_container : concern_for_DiagramView
    {
       private DiagramModel _spatialModel;
       private ContainerNode _organism;
@@ -925,7 +925,7 @@ namespace OSPSuite.UI.Diagram
       }
    }
 
-   public class When_exporting_a_container_without_rendered_children : concern_for_DevExpressDiagramView
+   public class When_exporting_a_container_without_rendered_children : concern_for_DiagramView
    {
       private DiagramModel _spatialModel;
       private ContainerNode _organism;
@@ -953,7 +953,7 @@ namespace OSPSuite.UI.Diagram
       }
    }
 
-   public class When_synchronizing_a_diagram_model_with_an_expanded_container : concern_for_DevExpressDiagramView
+   public class When_synchronizing_a_diagram_model_with_an_expanded_container : concern_for_DiagramView
    {
       private DiagramModel _spatialModel;
       private ContainerNode _organism;
@@ -989,7 +989,7 @@ namespace OSPSuite.UI.Diagram
       }
    }
 
-   public class When_collapsing_a_container_with_the_handle_shortcut : concern_for_DevExpressDiagramView
+   public class When_collapsing_a_container_with_the_handle_shortcut : concern_for_DiagramView
    {
       private DiagramModel _spatialModel;
       private ContainerNode _organism;
@@ -1036,7 +1036,7 @@ namespace OSPSuite.UI.Diagram
       }
    }
 
-   public class When_measuring_a_collapsed_container_whose_neighborhood_was_placed_by_the_user : concern_for_DevExpressDiagramView
+   public class When_measuring_a_collapsed_container_whose_neighborhood_was_placed_by_the_user : concern_for_DiagramView
    {
       private DiagramModel _spatialModel;
       private ContainerNode _organism;
@@ -1087,7 +1087,7 @@ namespace OSPSuite.UI.Diagram
       }
    }
 
-   public class When_measuring_a_collapsed_container_nested_in_a_collapsed_container : concern_for_DevExpressDiagramView
+   public class When_measuring_a_collapsed_container_nested_in_a_collapsed_container : concern_for_DiagramView
    {
       private DiagramModel _spatialModel;
       private ContainerNode _organism;
