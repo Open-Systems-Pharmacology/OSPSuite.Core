@@ -66,6 +66,31 @@ namespace OSPSuite.Core
       }
    }
 
+   internal class When_a_help_parameter_of_a_calculation_method_is_already_defined_in_the_spatial_structure : concern_for_ModelConstructor
+   {
+      protected override void Context()
+      {
+         base.Context();
+         var spatialStructure = _simulationConfiguration.ModuleConfigurations[0].Module.SpatialStructure;
+         var lungPlasma = spatialStructure.TopContainers.First(x => x.IsNamed(ORGANISM)).EntityAt<IContainer>(Lung, Plasma);
+         var moleculeProperties = new Container().WithName(MOLECULE_PROPERTIES).WithMode(ContainerMode.Logical);
+         moleculeProperties.Add(IoC.Resolve<ModelHelperForSpecs>().NewConstantParameter("HelpMe", 99));
+         lungPlasma.Add(moleculeProperties);
+      }
+
+      [Observation]
+      public void should_keep_the_parameter_defined_in_the_spatial_structure()
+      {
+         _model.ModelOrganCompartmentMolecule(Lung, Plasma, "A").Parameter("HelpMe").Value.ShouldBeEqualTo(99);
+      }
+
+      [Observation]
+      public void should_still_add_the_help_parameter_where_it_is_not_defined_in_the_spatial_structure()
+      {
+         _model.ModelOrganCompartmentMolecule(Bone, Plasma, "A").Parameter("HelpMe").Value.ShouldBeEqualTo(20);
+      }
+   }
+
    internal class When_running_the_case_study : concern_for_ModelConstructor
    {
       [Observation]
