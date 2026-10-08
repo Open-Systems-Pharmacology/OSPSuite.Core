@@ -36,9 +36,9 @@ namespace OSPSuite.UI.Diagram
       public override IDiagramManager<TestDiagramSubject> Create() => new TestDiagramManager();
    }
 
-   public class TestBaseDiagramPresenter : BaseDiagramPresenter<TestDevExpressDiagramView, IBaseDiagramPresenter, TestDiagramSubject>
+   public class TestBaseDiagramPresenter : BaseDiagramPresenter<TestDiagramView, IBaseDiagramPresenter, TestDiagramSubject>
    {
-      public TestBaseDiagramPresenter(TestDevExpressDiagramView view)
+      public TestBaseDiagramPresenter(TestDiagramView view)
          : base(view, A.Fake<IContainerBaseLayouter>(), A.Fake<IDialogCreator>(), A.Fake<IDiagramModelFactory>())
       {
       }
@@ -52,7 +52,7 @@ namespace OSPSuite.UI.Diagram
 
    public class When_editing_a_diagram_whose_containers_were_saved_collapsed : ContextSpecification<TestBaseDiagramPresenter>
    {
-      private TestDevExpressDiagramView _view;
+      private TestDiagramView _view;
       private TestDiagramSubject _subject;
       private DiagramModel _diagramModel;
       private ContainerNode _organism;
@@ -67,7 +67,7 @@ namespace OSPSuite.UI.Diagram
       {
          var imageListRetriever = A.Fake<IImageListRetriever>();
          A.CallTo(() => imageListRetriever.AllImages16x16).Returns(new SvgImageCollection());
-         _view = new TestDevExpressDiagramView(imageListRetriever);
+         _view = new TestDiagramView(imageListRetriever);
          sut = new TestBaseDiagramPresenter(_view);
          _view.AttachPresenter(sut);
          _view.InitializeResources();

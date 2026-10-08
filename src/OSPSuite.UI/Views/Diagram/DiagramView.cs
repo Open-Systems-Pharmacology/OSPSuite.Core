@@ -20,7 +20,7 @@ using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.UI.Views.Diagram
 {
-   public partial class DevExpressDiagramView : BaseUserControl, IBaseDiagramView, IViewWithPopup
+   public partial class DiagramView : BaseUserControl, IBaseDiagramView, IViewWithPopup
    {
       private const float PORT_SIZE = 8F;
       private const float LABEL_OFFSET = 2F;
@@ -51,7 +51,7 @@ namespace OSPSuite.UI.Views.Diagram
       private Point _mouseDownLocation;
       private int _mouseDownClicks;
 
-      public DevExpressDiagramView(IImageListRetriever imageListRetriever)
+      public DiagramView(IImageListRetriever imageListRetriever)
       {
          InitializeComponent();
          PopupBarManager.Images = imageListRetriever.AllImages16x16;

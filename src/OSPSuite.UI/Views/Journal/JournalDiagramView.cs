@@ -14,7 +14,7 @@ using OSPSuite.UI.Views.Diagram;
 
 namespace OSPSuite.UI.Views.Journal
 {
-   public class JournalDiagramView : DevExpressDiagramView, IJournalDiagramView
+   public class JournalDiagramView : DiagramView, IJournalDiagramView
    {
       private const float PORT_DOT_SIZE = 6F;
       private const float HANDLE_SIZE = 12F;

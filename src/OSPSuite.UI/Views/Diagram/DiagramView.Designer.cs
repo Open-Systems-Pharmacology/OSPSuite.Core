@@ -1,6 +1,6 @@
 namespace OSPSuite.UI.Views.Diagram
 {
-   partial class DevExpressDiagramView
+   partial class DiagramView
    {
       /// <summary>
       /// Required designer variable.
@@ -60,7 +60,7 @@ namespace OSPSuite.UI.Views.Diagram
          this._diagramControl.TabIndex = 8;
          this._diagramControl.ToolTipController = this._toolTipController;
          //
-         // DevExpressDiagramView
+         // DiagramView
          //
          this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
          this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -69,7 +69,7 @@ namespace OSPSuite.UI.Views.Diagram
          this.Controls.Add(this.barDockControlRight);
          this.Controls.Add(this.barDockControlBottom);
          this.Controls.Add(this.barDockControlTop);
-         this.Name = "DevExpressDiagramView";
+         this.Name = "DiagramView";
          this.Size = new System.Drawing.Size(436, 357);
          ((System.ComponentModel.ISupportInitialize)(this._diagramControl)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.PopupBarManager)).EndInit();
