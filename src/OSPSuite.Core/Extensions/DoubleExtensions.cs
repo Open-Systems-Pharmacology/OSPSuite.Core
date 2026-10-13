@@ -18,8 +18,10 @@ namespace OSPSuite.Core.Extensions
       {
          //in order to avoid lose of precision in convertion, we convert to string and load the string into a double
          //thus a number like 0.20 would be interpreted correctly
+         //the value is formatted using the invariant culture and therefore has to be parsed using the invariant culture as well.
+         //Otherwise the decimal separator would be interpreted as a group separator in cultures such as de-DE and 0.1 would become 1
          double value;
-         double.TryParse(floatValue.ToString(NumberFormatInfo.InvariantInfo), out value);
+         double.TryParse(floatValue.ToString(NumberFormatInfo.InvariantInfo), NumberStyles.Float, CultureInfo.InvariantCulture, out value);
          return value;
       }
 
