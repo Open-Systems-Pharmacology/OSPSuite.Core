@@ -1,5 +1,7 @@
-using OSPSuite.BDDHelper;
+﻿using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
+using System.Globalization;
+using System.Linq;
 using OSPSuite.Core.Extensions;
 
 namespace OSPSuite.Core.Domain
@@ -170,6 +172,40 @@ namespace OSPSuite.Core.Domain
         {
             _values1.EqualsByTolerance(_values2, _tolerance).ShouldBeTrue();
             _values2.EqualsByTolerance(_values1, _tolerance).ShouldBeTrue();
+        }
+    }
+
+    public class When_converting_a_float_to_double_using_a_culture_with_a_comma_as_decimal_separator : concern_for_DoubleExtensions
+    {
+        private CultureInfo _originalCulture;
+
+        protected override void Context()
+        {
+            base.Context();
+            _originalCulture = CultureInfo.CurrentCulture;
+            CultureInfo.CurrentCulture = new CultureInfo("de-DE");
+        }
+
+        public override void Cleanup()
+        {
+            base.Cleanup();
+            CultureInfo.CurrentCulture = _originalCulture;
+        }
+
+        //https://github.com/Open-Systems-Pharmacology/PK-Sim/issues/3392
+        [Observation]
+        public void should_not_interpret_the_decimal_separator_as_a_group_separator()
+        {
+            0.1f.ToDouble().ShouldBeEqualTo(0.1, 1e-10);
+            0.18f.ToDouble().ShouldBeEqualTo(0.18, 1e-10);
+            1.5f.ToDouble().ShouldBeEqualTo(1.5, 1e-10);
+        }
+
+        [Observation]
+        public void should_keep_distinct_values_distinct()
+        {
+            var values = new[] {0.1f, 0.2f, 0.3f, 1f}.Select(x => x.ToDouble()).ToList();
+            values.Distinct().Count().ShouldBeEqualTo(values.Count);
         }
     }
 }
