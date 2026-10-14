@@ -71,22 +71,7 @@ namespace OSPSuite.Presentation.Services
          return observedData;
       }
 
-      private void overwriteColumn(DataRepository observedData, DataColumn reloadedColumn)
-      {
-         var column = observedData.FirstOrDefault(x => x.Name == reloadedColumn.Name);
-         if (column != null)
-         {
-            column.Values = reloadedColumn.Values;
-            return;
-         }
-
-         observedData.Add(new DataColumn(reloadedColumn.Id, reloadedColumn.Name, reloadedColumn.Dimension, observedData.BaseGrid)
-         {
-            QuantityInfo = reloadedColumn.QuantityInfo,
-            DataInfo = reloadedColumn.DataInfo,
-            IsInternal = reloadedColumn.IsInternal,
-            Values = reloadedColumn.Values
-         });
-      }
+      private void overwriteColumn(DataRepository observedData, DataColumn reloadedColumn) =>
+         observedData.First(x => x.Name == reloadedColumn.Name).Values = reloadedColumn.Values;
    }
 }

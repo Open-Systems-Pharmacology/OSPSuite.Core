@@ -171,31 +171,6 @@ namespace OSPSuite.Presentation.Services
       }
    }
 
-   public class When_the_reloaded_observed_data_has_a_column_the_existing_observed_data_does_not_have : concern_for_ReloadObservedDataTask
-   {
-      private DataRepository _existingObservedData;
-
-      protected override void Context()
-      {
-         base.Context();
-         _existingObservedData = observedData("Existing");
-         A.CallTo(() => _project.AllObservedData).Returns(new[] { _existingObservedData });
-
-         var reloadedObservedData = observedData("Reloaded");
-         reloadedObservedData.Add(new DataColumn("Error", DomainHelperForSpecs.ConcentrationDimensionForSpecs(), reloadedObservedData.BaseGrid) { Values = new[] { 1f, 2f, 3f } });
-         reloadWillReturn(new[] { reloadedObservedData }, new ReloadDataSets(Enumerable.Empty<DataRepository>(), new[] { reloadedObservedData }, Enumerable.Empty<DataRepository>()));
-         reloadedObservedDataMatches(_existingObservedData, reloadedObservedData);
-      }
-
-      [Observation]
-      public void should_add_the_column_on_the_base_grid_of_the_existing_observed_data()
-      {
-         var column = _existingObservedData.First(x => x.Name == "Error");
-         column.BaseGrid.ShouldBeEqualTo(_existingObservedData.BaseGrid);
-         column.Values.ShouldOnlyContainInOrder(1f, 2f, 3f);
-      }
-   }
-
    public class When_reloading_observed_data_without_overwriting_any : concern_for_ReloadObservedDataTask
    {
       protected override void Context()
