@@ -442,6 +442,7 @@ namespace OSPSuite.Assets
          public static readonly string DataSetsWillBeOverwritten = "Datasets that will be overwritten";
          public static readonly string NewDataStetsWillBeImported = "New datasets that will be imported";
          public static readonly string ReloadData = "Reload Data";
+         public static readonly string ImporterConfigurationNotFoundInProject = "Importer configuration for this dataset was not found in this project.\n\nThe data cannot be reloaded.";
          public static readonly string SeparatorSelection = "Separator Selection";
          public static readonly string DecimalSeparator = "Decimal Separator";
          public static readonly string ColumnSeparator = "Column Separator";
