@@ -7,7 +7,8 @@ namespace OSPSuite.Core.Domain.Services
    public interface IObservedDataImporter
    {
       /// <summary>
-      ///    Imports observed data from a file selected by the user, using the <paramref name="configuration" />
+      ///    Imports observed data from a file selected by the user, using the <paramref name="configuration" />.
+      ///    Every returned data set has exactly the columns mapped by the <paramref name="configuration" />.
       /// </summary>
       IReadOnlyList<DataRepository> ImportFrom(ImporterConfiguration configuration);
 
