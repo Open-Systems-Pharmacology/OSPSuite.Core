@@ -98,4 +98,29 @@ namespace OSPSuite.Core.Domain
          _result.DosingIntervals.Select(x => x.DrugMassPerBodyWeight).ShouldOnlyContainInOrder(1.5d, 1d);
       }
    }
+
+   public class When_creating_the_pk_calculation_options_for_a_simulation_with_two_applications_at_the_same_start_time_only : concern_for_PKCalculationOptionsFactory
+   {
+      protected override void Context()
+      {
+         base.Context();
+         A.CallTo(() => _simulation.EndTime).Returns(1440);
+         AddApplication("IV", startTime: 0, drugMass: 10);
+         AddApplication("Oral", startTime: 0, drugMass: 5);
+      }
+
+      [Observation]
+      public void should_treat_the_simulation_as_single_dosing()
+      {
+         _result.SingleDosing.ShouldBeTrue();
+      }
+
+      [Observation]
+      public void should_create_one_dosing_interval_with_the_sum_of_the_drug_masses_applied_at_its_start_time()
+      {
+         _result.DosingIntervals.Select(x => x.StartValue).ShouldOnlyContainInOrder(0f);
+         _result.DosingIntervals.Select(x => x.EndValue).ShouldOnlyContainInOrder(1440f);
+         _result.DosingIntervals.Select(x => x.DrugMassPerBodyWeight).ShouldOnlyContainInOrder(1.5d);
+      }
+   }
 }
