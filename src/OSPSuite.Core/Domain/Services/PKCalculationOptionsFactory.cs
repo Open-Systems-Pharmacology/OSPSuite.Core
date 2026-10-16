@@ -23,8 +23,8 @@ namespace OSPSuite.Core.Domain.Services
          var allApplicationParameters = simulation.AllApplicationParametersOrderedByStartTimeFor(moleculeName);
 
          // all application start times starting before the end of the simulation
-         var applicationStartTimes = applicationsByStartTime(allApplicationParameters).Select(x => x.Key).ToArray();
-         var applicationEndTimes = new List<float>(applicationStartTimes.Skip(1)) {endTime};
+         var applicationStartTimes = allApplicationParameters.Select(x => x.StartTime.Value).ToFloatArray();
+         var applicationEndTimes = applicationStartTimes.Select(startTime => applicationStartTimes.Where(x => x > startTime).DefaultIfEmpty(endTime).First()).ToList();
 
 
          for (var i = 0; i < applicationStartTimes.Length; i++)
@@ -44,7 +44,7 @@ namespace OSPSuite.Core.Domain.Services
          }
 
          // single dosing
-         if (allApplicationParameters.Count <= 1)
+         if (applicationStartTimes.Length <= 1)
          {
             options.InfusionTime = allApplicationParameters.FirstOrDefault()?.InfusionTime?.Value;
          }
@@ -63,17 +63,7 @@ namespace OSPSuite.Core.Domain.Services
 
          options.TotalDrugMassPerBodyWeight = drugMassPerBodyWeightFor(totalDrugMass, bodyWeight);
 
-         var allApplicationsByStartTime = applicationsByStartTime(allApplicationParametersOrderedByStartTime);
-         options.DosingIntervals.Each((x, i) => x.DrugMassPerBodyWeight = drugMassPerBodyWeightFor(allApplicationsByStartTime[i], bodyWeight));
-      }
-
-      private IReadOnlyList<IGrouping<float, ApplicationParameters>> applicationsByStartTime(IReadOnlyList<ApplicationParameters> allApplicationParametersOrderedByStartTime) =>
-         allApplicationParametersOrderedByStartTime.GroupBy(x => x.StartTime.Value.ToFloat()).ToList();
-
-      private double? drugMassPerBodyWeightFor(IEnumerable<ApplicationParameters> applications, double? bodyWeight)
-      {
-         var allDrugMassesPerBodyWeight = applications.Select(x => drugMassPerBodyWeightFor(x.DrugMass, bodyWeight)).ToList();
-         return allDrugMassesPerBodyWeight.Contains(null) ? null : allDrugMassesPerBodyWeight.Sum();
+         options.DosingIntervals.Each((x, i) => x.DrugMassPerBodyWeight = drugMassPerBodyWeightFor(allApplicationParametersOrderedByStartTime[i].DrugMass, bodyWeight));
       }
 
       private double? drugMassPerBodyWeightFor(IParameter drugMass, double? bodyWeight)

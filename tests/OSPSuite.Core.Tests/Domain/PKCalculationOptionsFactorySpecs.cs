@@ -4,6 +4,7 @@ using FakeItEasy;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain.Builder;
+using OSPSuite.Core.Domain.PKAnalyses;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Helpers;
 
@@ -61,16 +62,22 @@ namespace OSPSuite.Core.Domain
       }
 
       [Observation]
-      public void should_create_one_dosing_interval_per_application_start_time()
+      public void should_create_one_dosing_interval_per_application_ending_at_the_next_later_application()
       {
-         _result.DosingIntervals.Select(x => x.StartValue).ShouldOnlyContainInOrder(0f, 1440f, 2880f);
-         _result.DosingIntervals.Select(x => x.EndValue).ShouldOnlyContainInOrder(1440f, 2880f, 4320f);
+         _result.DosingIntervals.Select(x => x.StartValue).ShouldOnlyContainInOrder(0f, 0f, 1440f, 2880f);
+         _result.DosingIntervals.Select(x => x.EndValue).ShouldOnlyContainInOrder(1440f, 1440f, 2880f, 4320f);
+         _result.DosingIntervals.Select(x => x.DrugMassPerBodyWeight).ShouldOnlyContainInOrder(0d, 1d, 1d, 1d);
       }
 
       [Observation]
-      public void should_set_the_drug_mass_of_each_dosing_interval_to_the_drug_mass_applied_at_its_start_time()
+      public void should_return_the_first_and_last_intervals_between_application_start_times()
       {
-         _result.DosingIntervals.Select(x => x.DrugMassPerBodyWeight).ShouldOnlyContainInOrder(1d, 1d, 1d);
+         _result.FirstInterval.StartValue.ShouldBeEqualTo(0f);
+         _result.FirstInterval.EndValue.ShouldBeEqualTo(1440f);
+         _result.FirstInterval.DrugMassPerBodyWeight.ShouldBeEqualTo(1d);
+         _result.LastMinusOneInterval.StartValue.ShouldBeEqualTo(1440f);
+         _result.LastInterval.StartValue.ShouldBeEqualTo(2880f);
+         _result.LastInterval.EndValue.ShouldBeEqualTo(4320f);
       }
    }
 
@@ -86,16 +93,30 @@ namespace OSPSuite.Core.Domain
       }
 
       [Observation]
-      public void should_create_one_dosing_interval_per_application_start_time()
+      public void should_create_one_dosing_interval_per_application_ending_at_the_next_later_application()
       {
-         _result.DosingIntervals.Select(x => x.StartValue).ShouldOnlyContainInOrder(0f, 1440f);
-         _result.DosingIntervals.Select(x => x.EndValue).ShouldOnlyContainInOrder(1440f, 2880f);
+         _result.DosingIntervals.Select(x => x.StartValue).ShouldOnlyContainInOrder(0f, 0f, 1440f);
+         _result.DosingIntervals.Select(x => x.EndValue).ShouldOnlyContainInOrder(1440f, 1440f, 2880f);
+         _result.DosingIntervals.Select(x => x.DrugMassPerBodyWeight).ShouldOnlyContainInOrder(1d, 0.5d, 1d);
       }
 
       [Observation]
-      public void should_set_the_drug_mass_of_the_first_dosing_interval_to_the_sum_of_the_drug_masses_applied_at_its_start_time()
+      public void should_set_the_drug_mass_of_the_first_interval_to_the_sum_of_the_drug_masses_applied_at_its_start_time()
       {
-         _result.DosingIntervals.Select(x => x.DrugMassPerBodyWeight).ShouldOnlyContainInOrder(1.5d, 1d);
+         _result.SingleDosing.ShouldBeFalse();
+         _result.FirstInterval.DrugMassPerBodyWeight.ShouldBeEqualTo(1.5d);
+         _result.LastMinusOneInterval.StartValue.ShouldBeEqualTo(0f);
+         _result.LastInterval.StartValue.ShouldBeEqualTo(1440f);
+         _result.LastInterval.DrugMassPerBodyWeight.ShouldBeEqualTo(1d);
+      }
+
+      [Observation]
+      public void should_resolve_the_application_indexes_of_a_user_defined_pk_parameter_to_the_applications()
+      {
+         var userDefinedPKParameter = new UserDefinedPKParameter {StartApplicationIndex = 1, EndApplicationIndex = 2};
+         userDefinedPKParameter.EstimateStartTimeFrom(_result).ShouldBeEqualTo(0f);
+         userDefinedPKParameter.EstimateEndTimeFrom(_result).ShouldBeEqualTo(1440f);
+         userDefinedPKParameter.EstimateDrugMassPerBodyWeight(_result).ShouldBeEqualTo(0.5d);
       }
    }
 
@@ -116,11 +137,11 @@ namespace OSPSuite.Core.Domain
       }
 
       [Observation]
-      public void should_create_one_dosing_interval_with_the_sum_of_the_drug_masses_applied_at_its_start_time()
+      public void should_return_a_first_interval_with_the_sum_of_the_drug_masses_applied_at_its_start_time()
       {
-         _result.DosingIntervals.Select(x => x.StartValue).ShouldOnlyContainInOrder(0f);
-         _result.DosingIntervals.Select(x => x.EndValue).ShouldOnlyContainInOrder(1440f);
-         _result.DosingIntervals.Select(x => x.DrugMassPerBodyWeight).ShouldOnlyContainInOrder(1.5d);
+         _result.FirstInterval.StartValue.ShouldBeEqualTo(0f);
+         _result.FirstInterval.EndValue.ShouldBeEqualTo(1440f);
+         _result.FirstInterval.DrugMassPerBodyWeight.ShouldBeEqualTo(1.5d);
       }
    }
 }

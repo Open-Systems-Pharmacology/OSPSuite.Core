@@ -18,6 +18,10 @@ namespace OSPSuite.Core.Domain.Services
       /// </summary>
       public double? InfusionTime { get; set; }
 
+      /// <summary>
+      ///    One dosing interval per application, ordered by start time. Applications starting at the same time have the same
+      ///    interval
+      /// </summary>
       public IReadOnlyList<DosingInterval> DosingIntervals => _dosingIntervals;
 
       public virtual void AddInterval(DosingInterval dosingInterval) => _dosingIntervals.Add(dosingInterval);
@@ -40,7 +44,7 @@ namespace OSPSuite.Core.Domain.Services
             if (!dosingIntervalsWellDefined)
                return true;
 
-            return _dosingIntervals.Count <= 1;
+            return allDosingIntervalsByStartTime.Count <= 1;
          }
       }
 
@@ -53,10 +57,26 @@ namespace OSPSuite.Core.Domain.Services
 
       private bool dosingIntervalsWellDefined => _dosingIntervals.All(x => x.IsValid);
 
-      public DosingInterval FirstInterval => DosingIntervals.FirstOrDefault();
+      public DosingInterval FirstInterval => allDosingIntervalsByStartTime.FirstOrDefault();
 
-      public DosingInterval LastMinusOneInterval => DosingIntervalAt(DosingIntervals.Count - 2);
+      public DosingInterval LastMinusOneInterval => allDosingIntervalsByStartTime.ElementAtOrDefault(allDosingIntervalsByStartTime.Count - 2);
 
-      public DosingInterval LastInterval => DosingIntervalAt(DosingIntervals.Count - 1);
+      public DosingInterval LastInterval => allDosingIntervalsByStartTime.LastOrDefault();
+
+      private IReadOnlyList<DosingInterval> allDosingIntervalsByStartTime => _dosingIntervals.GroupBy(x => x.StartValue).Select(mergedDosingInterval).ToList();
+
+      private DosingInterval mergedDosingInterval(IGrouping<float?, DosingInterval> dosingIntervals)
+      {
+         if (dosingIntervals.Count() == 1)
+            return dosingIntervals.First();
+
+         var allDrugMassesPerBodyWeight = dosingIntervals.Select(x => x.DrugMassPerBodyWeight).ToList();
+         return new DosingInterval
+         {
+            StartValue = dosingIntervals.Key,
+            EndValue = dosingIntervals.First().EndValue,
+            DrugMassPerBodyWeight = allDrugMassesPerBodyWeight.Contains(null) ? null : allDrugMassesPerBodyWeight.Sum()
+         };
+      }
    }
 }
