@@ -24,7 +24,10 @@ namespace OSPSuite.Core.Domain.Services
 
          // all application start times starting before the end of the simulation
          var applicationStartTimes = allApplicationParameters.Select(x => x.StartTime.Value).ToFloatArray();
-         var applicationEndTimes = applicationStartTimes.Select(startTime => applicationStartTimes.Where(x => x > startTime).DefaultIfEmpty(endTime).First()).ToList();
+         var distinctStartTimes = applicationStartTimes.Distinct().ToList();
+         var nextStartTimeByStartTime = distinctStartTimes.Zip(distinctStartTimes.Skip(1).Append(endTime), (startTime, nextStartTime) => (startTime, nextStartTime))
+            .ToDictionary(x => x.startTime, x => x.nextStartTime);
+         var applicationEndTimes = applicationStartTimes.Select(x => nextStartTimeByStartTime[x]).ToList();
 
 
          for (var i = 0; i < applicationStartTimes.Length; i++)
