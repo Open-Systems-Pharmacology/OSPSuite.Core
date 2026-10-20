@@ -133,8 +133,18 @@ namespace OSPSuite.Presentation.Presenters.ObservedData
       public void MetaDataNameChanged(MetaDataDTO metaDataDTO, string oldName) => 
          handleThisChange(metaDataNameChanged, metaDataDTO, oldName, oldName);
 
-      public void RemoveMetaData(MetaDataDTO metaDataDTO) => 
+      public void RemoveMetaData(MetaDataDTO metaDataDTO)
+      {
+         //A row that was never saved to the repositories only exists in the view. Removing it with a command would
+         //register an inverse command that adds the row as-is (possibly without name) to the repositories
+         if (!existsInAllRepositories(metaDataDTO.Name))
+         {
+            _metaDataDTOList.Remove(metaDataDTO);
+            return;
+         }
+
          AddCommand(_observedDataMetaDataTask.RemoveMetaData(_allDataRepositories, mapFrom(metaDataDTO)));
+      }
 
       private bool isPredefinedProperty(IExtendedProperty extendedProperty) => 
          _observedDataConfiguration.DefaultMetaDataCategories.Contains(extendedProperty.Name);
@@ -152,11 +162,13 @@ namespace OSPSuite.Presentation.Presenters.ObservedData
          if (!metaDataDTO.IsValid())
             return;
 
-         if (_allDataRepositories.All(x => x.ExtendedProperties.Contains(originalKey)))
+         if (existsInAllRepositories(originalKey))
             actionToRun(metaDataDTO, oldData);
          else
             metaDataAdded(metaDataDTO);
       }
+
+      private bool existsInAllRepositories(string key) => _allDataRepositories.All(x => x.ExtendedProperties.Contains(key));
 
       private void metaDataAdded(MetaDataDTO metaDataDTO) => 
          AddCommand(_observedDataMetaDataTask.AddMetaData(_allDataRepositories, mapFrom(metaDataDTO)));

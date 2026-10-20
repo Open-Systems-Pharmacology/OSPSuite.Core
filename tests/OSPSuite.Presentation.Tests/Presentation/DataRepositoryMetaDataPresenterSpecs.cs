@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using FakeItEasy;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
@@ -237,6 +238,98 @@ namespace OSPSuite.Presentation.Presentation
       public void command_for_change_is_issued()
       {
          A.CallTo(() => _observedDataMetaDataTask.ChangeMetaData(A<IEnumerable<DataRepository>>.That.Contains(_dataRepository), A<MetaDataChanged>.Ignored)).MustHaveHappened();
+      }
+   }
+
+   public abstract class When_removing_a_metadata_row_that_was_never_saved : concern_for_DataRepositoryMetaDataPresenter
+   {
+      protected NotifyList<MetaDataDTO> _boundMetaData;
+      protected MetaDataDTO _newMetaDataDTO;
+
+      protected override void Context()
+      {
+         base.Context();
+         SetExtendedProperty("Species", "Human");
+         A.CallTo(() => _view.BindToMetaData(A<IEnumerable<MetaDataDTO>>._))
+            .Invokes(x => _boundMetaData = x.GetArgument<NotifyList<MetaDataDTO>>(0));
+         sut.EditObservedData(_dataRepository);
+         sut.NewMetaDataAdded();
+         _newMetaDataDTO = _boundMetaData.Last();
+      }
+
+      protected override void Because()
+      {
+         sut.RemoveMetaData(_newMetaDataDTO);
+      }
+
+      [Observation]
+      public void command_to_remove_is_not_issued()
+      {
+         A.CallTo(() => _observedDataMetaDataTask.RemoveMetaData(A<IEnumerable<DataRepository>>._, A<MetaDataKeyValue>._)).MustNotHaveHappened();
+      }
+
+      [Observation]
+      public void the_row_is_removed_from_the_view()
+      {
+         _boundMetaData.ShouldNotContain(_newMetaDataDTO);
+      }
+
+      [Observation]
+      public void the_saved_rows_are_kept()
+      {
+         _boundMetaData.Select(x => x.Name).ShouldOnlyContain("Species");
+      }
+
+      [Observation]
+      public void the_repository_metadata_is_unchanged()
+      {
+         _dataRepository.ExtendedProperties.Keys.ShouldOnlyContain("Species");
+      }
+   }
+
+   public class When_removing_a_new_metadata_row_without_name : When_removing_a_metadata_row_that_was_never_saved
+   {
+   }
+
+   public class When_removing_a_new_metadata_row_with_a_name_but_without_value : When_removing_a_metadata_row_that_was_never_saved
+   {
+      protected override void Context()
+      {
+         base.Context();
+         //name is set but the row is not valid since the value is empty. The row is not saved
+         _newMetaDataDTO.Name = "Route";
+         sut.MetaDataNameChanged(_newMetaDataDTO, string.Empty);
+      }
+
+      [Observation]
+      public void command_to_add_is_not_issued()
+      {
+         A.CallTo(() => _observedDataMetaDataTask.AddMetaData(A<IEnumerable<DataRepository>>._, A<MetaDataKeyValue>._)).MustNotHaveHappened();
+      }
+   }
+
+   public class When_removing_a_metadata_row_that_exists_in_the_repository : concern_for_DataRepositoryMetaDataPresenter
+   {
+      private MetaDataDTO _metaDataDTO;
+
+      protected override void Context()
+      {
+         base.Context();
+         SetExtendedProperty("Species", "Human");
+         A.CallTo(() => _view.BindToMetaData(A<IEnumerable<MetaDataDTO>>._))
+            .Invokes(x => _metaDataDTO = x.GetArgument<IEnumerable<MetaDataDTO>>(0).Single());
+         sut.EditObservedData(_dataRepository);
+      }
+
+      protected override void Because()
+      {
+         sut.RemoveMetaData(_metaDataDTO);
+      }
+
+      [Observation]
+      public void command_to_remove_is_issued()
+      {
+         A.CallTo(() => _observedDataMetaDataTask.RemoveMetaData(A<IEnumerable<DataRepository>>.That.Contains(_dataRepository), A<MetaDataKeyValue>.That.Matches(x => x.Key.Equals("Species") && x.Value.Equals("Human")))).MustHaveHappened();
       }
    }
 
