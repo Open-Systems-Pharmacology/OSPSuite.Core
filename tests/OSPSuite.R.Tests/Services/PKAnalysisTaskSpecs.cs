@@ -10,6 +10,8 @@ using OSPSuite.Core.Domain.PKAnalyses;
 using OSPSuite.Core.Domain.Populations;
 using OSPSuite.R.Domain;
 using OSPSuite.Utility;
+using OSPSuite.Utility.Extensions;
+using static OSPSuite.Core.Domain.Constants.PKParameters;
 
 namespace OSPSuite.R.Services
 {
@@ -141,6 +143,188 @@ namespace OSPSuite.R.Services
       {
          base.GlobalCleanup();
          FileHelper.DeleteFile(_csvFile);
+      }
+   }
+
+   public abstract class concern_for_PKAnalysisTask_converting_selected_pk_analyses_to_csv : concern_for_PKAnalysisTask
+   {
+      protected const string ARTERIAL_PLASMA_PATH = "Organism|ArterialBlood|Plasma|Caffeine|Concentration in container";
+      protected const string WHOLE_BLOOD_PATH = "Organism|ArterialBlood|Caffeine|Whole Blood";
+      private PopulationSimulationPKAnalyses _calculatedPKAnalyses;
+      protected PopulationSimulationPKAnalyses _pkAnalyses;
+      protected PKAnalysesSelection _selection;
+      protected string _csv;
+
+      public override void GlobalContext()
+      {
+         base.GlobalContext();
+         var result = _simulationRunner.Run(new SimulationRunArgs { Simulation = _simulation });
+         _calculatedPKAnalyses = sut.CalculateFor(new CalculatePKAnalysisArgs { Simulation = _simulation, SimulationResults = result });
+
+         //Ordered by PK parameter and not by output, to show that the selection keeps the order of the PK-Analyses
+         _pkAnalyses = PKAnalysesWith(
+            (_outputPath, C_max), (ARTERIAL_PLASMA_PATH, C_max), (WHOLE_BLOOD_PATH, C_max),
+            (_outputPath, Tmax), (ARTERIAL_PLASMA_PATH, Tmax), (WHOLE_BLOOD_PATH, Tmax),
+            (_outputPath, AUC_inf), (ARTERIAL_PLASMA_PATH, AUC_inf), (WHOLE_BLOOD_PATH, AUC_inf));
+      }
+
+      protected override void Because()
+      {
+         _csv = sut.PKAnalysesToCSV(_pkAnalyses, _simulation, _selection);
+      }
+
+      protected PopulationSimulationPKAnalyses PKAnalysesWith(params (string quantityPath, string pkParameterName)[] pkParameters)
+      {
+         var pkAnalyses = new PopulationSimulationPKAnalyses();
+         pkParameters.Each(x => pkAnalyses.AddPKAnalysis(_calculatedPKAnalyses.PKParameterFor(x.quantityPath, x.pkParameterName)));
+         return pkAnalyses;
+      }
+
+      protected string CSVFor(params (string quantityPath, string pkParameterName)[] pkParameters) => sut.PKAnalysesToCSV(PKAnalysesWith(pkParameters), _simulation);
+   }
+
+   public class When_converting_the_pk_analyses_of_some_outputs_and_pk_parameters_to_a_csv_string : concern_for_PKAnalysisTask_converting_selected_pk_analyses_to_csv
+   {
+      protected override void Context()
+      {
+         base.Context();
+         _selection = new PKAnalysesSelection
+         {
+            QuantityPaths = new[] { WHOLE_BLOOD_PATH, _outputPath },
+            PKParameterNames = new[] { Tmax, C_max }
+         };
+      }
+
+      [Observation]
+      public void should_return_the_selected_pk_analyses_in_the_order_of_the_pk_analyses()
+      {
+         _csv.ShouldBeEqualTo(CSVFor((_outputPath, C_max), (WHOLE_BLOOD_PATH, C_max), (_outputPath, Tmax), (WHOLE_BLOOD_PATH, Tmax)));
+      }
+
+      [Observation]
+      public void should_not_change_the_pk_analyses()
+      {
+         _pkAnalyses.All().Count().ShouldBeEqualTo(9);
+      }
+   }
+
+   public class When_converting_the_pk_analyses_of_one_output_and_one_pk_parameter_to_a_csv_string : concern_for_PKAnalysisTask_converting_selected_pk_analyses_to_csv
+   {
+      protected override void Context()
+      {
+         base.Context();
+         _selection = new PKAnalysesSelection
+         {
+            QuantityPath = ARTERIAL_PLASMA_PATH,
+            PKParameterName = AUC_inf
+         };
+      }
+
+      [Observation]
+      public void should_return_the_pk_analysis_of_this_output_and_pk_parameter()
+      {
+         _csv.ShouldBeEqualTo(CSVFor((ARTERIAL_PLASMA_PATH, AUC_inf)));
+      }
+   }
+
+   public class When_converting_the_pk_analyses_of_one_pk_parameter_to_a_csv_string : concern_for_PKAnalysisTask_converting_selected_pk_analyses_to_csv
+   {
+      protected override void Context()
+      {
+         base.Context();
+         _selection = new PKAnalysesSelection { PKParameterName = Tmax };
+      }
+
+      [Observation]
+      public void should_return_this_pk_parameter_for_all_outputs()
+      {
+         _csv.ShouldBeEqualTo(CSVFor((_outputPath, Tmax), (ARTERIAL_PLASMA_PATH, Tmax), (WHOLE_BLOOD_PATH, Tmax)));
+      }
+   }
+
+   public class When_converting_the_pk_analyses_of_some_outputs_to_a_csv_string : concern_for_PKAnalysisTask_converting_selected_pk_analyses_to_csv
+   {
+      protected override void Context()
+      {
+         base.Context();
+         _selection = new PKAnalysesSelection { QuantityPaths = new[] { ARTERIAL_PLASMA_PATH, _outputPath } };
+      }
+
+      [Observation]
+      public void should_return_all_pk_parameters_of_these_outputs()
+      {
+         _csv.ShouldBeEqualTo(CSVFor(
+            (_outputPath, C_max), (ARTERIAL_PLASMA_PATH, C_max),
+            (_outputPath, Tmax), (ARTERIAL_PLASMA_PATH, Tmax),
+            (_outputPath, AUC_inf), (ARTERIAL_PLASMA_PATH, AUC_inf)));
+      }
+   }
+
+   public class When_converting_the_pk_analyses_with_a_selection_where_nothing_is_set_to_a_csv_string : concern_for_PKAnalysisTask_converting_selected_pk_analyses_to_csv
+   {
+      protected override void Context()
+      {
+         base.Context();
+         _selection = new PKAnalysesSelection();
+      }
+
+      [Observation]
+      public void should_return_all_pk_analyses()
+      {
+         _csv.ShouldBeEqualTo(sut.PKAnalysesToCSV(_pkAnalyses, _simulation));
+      }
+   }
+
+   public class When_converting_the_pk_analyses_without_a_selection_to_a_csv_string : concern_for_PKAnalysisTask_converting_selected_pk_analyses_to_csv
+   {
+      protected override void Context()
+      {
+         base.Context();
+         _selection = null;
+      }
+
+      [Observation]
+      public void should_return_all_pk_analyses()
+      {
+         _csv.ShouldBeEqualTo(sut.PKAnalysesToCSV(_pkAnalyses, _simulation));
+      }
+   }
+
+   public class When_converting_the_pk_analyses_of_an_output_that_does_not_exist_to_a_csv_string : concern_for_PKAnalysisTask_converting_selected_pk_analyses_to_csv
+   {
+      protected override void Context()
+      {
+         base.Context();
+         _selection = new PKAnalysesSelection
+         {
+            QuantityPath = "Organism|DoesNotExist",
+            PKParameterName = C_max
+         };
+      }
+
+      [Observation]
+      public void should_only_return_the_header()
+      {
+         _csv.ShouldBeEqualTo(CSVFor());
+      }
+   }
+
+   public class When_converting_the_pk_analyses_of_an_empty_list_of_pk_parameters_to_a_csv_string : concern_for_PKAnalysisTask_converting_selected_pk_analyses_to_csv
+   {
+      protected override void Context()
+      {
+         base.Context();
+         _selection = new PKAnalysesSelection
+         {
+            QuantityPath = _outputPath,
+            PKParameterNames = Array.Empty<string>()
+         };
+      }
+
+      [Observation]
+      public void should_only_return_the_header()
+      {
+         _csv.ShouldBeEqualTo(CSVFor());
       }
    }
 
