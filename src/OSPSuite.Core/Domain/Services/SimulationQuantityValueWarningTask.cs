@@ -17,7 +17,9 @@ namespace OSPSuite.Core.Domain.Services
       /// <summary>
       ///    Adds warnings during simulation creation for all non-finite (NaN or Infinity) parameters in the
       ///    <paramref name="model" /> to the <paramref name="creationResult" />
-      ///    if the <see cref="ICoreUserSettings" /> indicate enable warnings for non-finite parameters
+      ///    if the <see cref="SimulationConfiguration.WarnForNonFiniteQuantities" /> of the configuration being constructed
+      ///    enables warnings for non-finite parameters. When the configuration does not define it, the
+      ///    <see cref="ICoreUserSettings" /> are used
       /// </summary>
       void WarnForNonFiniteQuantities(IModel model, CreationResult creationResult);
 
@@ -27,6 +29,13 @@ namespace OSPSuite.Core.Domain.Services
       ///    if the <see cref="ICoreUserSettings" /> indicate enable warnings for non-finite parameters
       /// </summary>
       void WarnForNonFiniteQuantities(IModel model, RunValidationResult runValidationResult);
+
+      /// <summary>
+      ///    Adds warnings before simulation starts for all non-finite (NaN or Infinity) parameters in the
+      ///    <paramref name="model" /> to the <paramref name="runValidationResult" />
+      ///    if <paramref name="warnForNonFiniteQuantities" /> is <c>true</c>, regardless of the <see cref="ICoreUserSettings" />
+      /// </summary>
+      void WarnForNonFiniteQuantities(IModel model, RunValidationResult runValidationResult, bool warnForNonFiniteQuantities);
    }
 
    public class SimulationQuantityValueWarningTask : ISimulationQuantityValueWarningTask
@@ -52,20 +61,23 @@ namespace OSPSuite.Core.Domain.Services
       public void WarnForNonFiniteQuantities(IModel model, CreationResult creationResult)
       {
          var simulationBuilder = creationResult.SimulationBuilder;
+         var warnForNonFiniteQuantities = simulationBuilder?.WarnForNonFiniteQuantities ?? _userSettings.WarnForNonFiniteQuantities;
 
-         warnForNonFiniteQuantities(model, creationResult, simulationBuilder);
+         warnForNonFiniteQuantitiesIn(model, creationResult, warnForNonFiniteQuantities, simulationBuilder);
       }
 
-      private void warnForNonFiniteQuantities(IModel model, WithValidationResult creationResult, SimulationBuilder simulationBuilder = null)
+      private void warnForNonFiniteQuantitiesIn(IModel model, WithValidationResult creationResult, bool warnForNonFiniteQuantities, SimulationBuilder simulationBuilder = null)
       {
-         if (!_userSettings.WarnForNonFiniteQuantities)
+         if (!warnForNonFiniteQuantities)
             return;
 
          creationResult.Add(new ValidationResult(allNanQuantities<IQuantity>(model).Select(x => createValidationMessageForNan(x, simulationBuilder))));
          creationResult.Add(new ValidationResult(allInfiniteQuantities<IQuantity>(model).Select(x => createValidationMessageForInf(x, simulationBuilder))));
       }
 
-      public void WarnForNonFiniteQuantities(IModel model, RunValidationResult runValidationResult) => warnForNonFiniteQuantities(model, runValidationResult);
+      public void WarnForNonFiniteQuantities(IModel model, RunValidationResult runValidationResult) => WarnForNonFiniteQuantities(model, runValidationResult, _userSettings.WarnForNonFiniteQuantities);
+
+      public void WarnForNonFiniteQuantities(IModel model, RunValidationResult runValidationResult, bool warnForNonFiniteQuantities) => warnForNonFiniteQuantitiesIn(model, runValidationResult, warnForNonFiniteQuantities);
 
       private static IEnumerable<T> allInfiniteQuantities<T>(IModel model) where T : class, IQuantity => model.Root.GetAllChildren<T>().Where(x => double.IsInfinity(x.Value));
 

@@ -26,6 +26,12 @@ namespace OSPSuite.Core.Domain.Builder
       public bool PerformCircularReferenceCheck { get; set; } = true;
       public bool CreateAllProcessRateParameters { get; set; }
 
+      /// <summary>
+      ///    Indicates whether model construction warns for quantities that are NaN or infinite at t=0. When <c>null</c> (the
+      ///    default), <see cref="ICoreUserSettings.WarnForNonFiniteQuantities" /> is used.
+      /// </summary>
+      public bool? WarnForNonFiniteQuantities { get; set; }
+
       public virtual IndividualBuildingBlock Individual { get; set; }
       public virtual SimulationSettings SimulationSettings { get; set; }
 
@@ -111,6 +117,7 @@ namespace OSPSuite.Core.Domain.Builder
          ShouldValidate = sourceConfiguration.ShouldValidate;
          ShowProgress = sourceConfiguration.ShowProgress;
          PerformCircularReferenceCheck = sourceConfiguration.PerformCircularReferenceCheck;
+         WarnForNonFiniteQuantities = sourceConfiguration.WarnForNonFiniteQuantities;
       }
    }
 }

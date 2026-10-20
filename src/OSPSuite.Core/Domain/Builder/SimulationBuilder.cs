@@ -42,6 +42,8 @@ namespace OSPSuite.Core.Domain.Builder
 
       public virtual bool CreateAllProcessRateParameters => _simulationConfiguration.CreateAllProcessRateParameters;
 
+      public virtual bool? WarnForNonFiniteQuantities => _simulationConfiguration?.WarnForNonFiniteQuantities;
+
       public IEntity BuilderFor(IEntity modelObject) => SimulationEntitySourceFor(modelObject)?.Source;
 
       internal SimulationEntitySource SimulationEntitySourceFor(IEntity entity) => _entitySources[entity.Id];
