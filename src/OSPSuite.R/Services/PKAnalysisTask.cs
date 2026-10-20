@@ -1,4 +1,5 @@
 ﻿using System.Data;
+using System.Linq;
 using System.Threading;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
@@ -22,7 +23,14 @@ namespace OSPSuite.R.Services
    public interface IPKAnalysisTask
    {
       void ExportPKAnalysesToCSV(PopulationSimulationPKAnalyses pkAnalyses, IModelCoreSimulation simulation, string fileName);
-      string PKAnalysesToCSV(PopulationSimulationPKAnalyses pkAnalyses, IModelCoreSimulation simulation);
+
+      /// <summary>
+      ///    Returns the CSV of the PK-Analyses kept by <paramref name="selection" />, in the order of
+      ///    <see cref="PopulationSimulationPKAnalyses.All" />. Paths and names that are not in <paramref name="pkAnalyses" />
+      ///    keep nothing. Without <paramref name="selection" />, all PK-Analyses are kept
+      /// </summary>
+      string PKAnalysesToCSV(PopulationSimulationPKAnalyses pkAnalyses, IModelCoreSimulation simulation, PKAnalysesSelection selection = null);
+
       DataTable ConvertToDataTable(PopulationSimulationPKAnalyses pkAnalyses, IModelCoreSimulation simulation);
       PopulationSimulationPKAnalyses ImportPKAnalysesFromCSV(string fileName, IModelCoreSimulation simulation);
       PopulationSimulationPKAnalyses CalculateFor(CalculatePKAnalysisArgs calculatePKAnalysisArgs);
@@ -53,9 +61,9 @@ namespace OSPSuite.R.Services
          dataTable.ExportToCSV(fileName);
       }
 
-      public string PKAnalysesToCSV(PopulationSimulationPKAnalyses pkAnalyses, IModelCoreSimulation simulation)
+      public string PKAnalysesToCSV(PopulationSimulationPKAnalyses pkAnalyses, IModelCoreSimulation simulation, PKAnalysesSelection selection = null)
       {
-         var dataTable = ConvertToDataTable(pkAnalyses, simulation);
+         var dataTable = ConvertToDataTable(selectedPKAnalysesFrom(pkAnalyses, selection), simulation);
          return dataTable.ToCSV();
       }
 
@@ -78,6 +86,16 @@ namespace OSPSuite.R.Services
       public DataTable ConvertToDataTable(PopulationSimulationPKAnalyses pkAnalyses, IModelCoreSimulation simulation)
       {
          return _populationSimulationPKAnalysesToDataTableConverter.PKAnalysesToDataTable(pkAnalyses, simulation);
+      }
+
+      private PopulationSimulationPKAnalyses selectedPKAnalysesFrom(PopulationSimulationPKAnalyses pkAnalyses, PKAnalysesSelection selection)
+      {
+         if (selection == null)
+            return pkAnalyses;
+
+         var selectedPKAnalyses = new PopulationSimulationPKAnalyses();
+         pkAnalyses.All().Where(selection.Keeps).Each(selectedPKAnalyses.AddPKAnalysis);
+         return selectedPKAnalyses;
       }
    }
 }
