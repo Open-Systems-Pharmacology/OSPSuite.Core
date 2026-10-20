@@ -37,8 +37,20 @@ namespace OSPSuite.Core.Serialization.Exchange
          using (var serializationContext = SerializationTransaction.Create(_container))
          {
             var serializer = _xmlSerializerRepository.SerializerFor(simulationTransfer);
-            return serializer.Serialize(simulationTransfer, serializationContext);
+            var simulationTransferElement = serializer.Serialize(simulationTransfer, serializationContext);
+            AddToSerializedSimulationTransfer(simulationTransferElement, simulationTransfer, serializationContext);
+            return simulationTransferElement;
          }
+      }
+
+      /// <summary>
+      ///    Called once the <paramref name="simulationTransfer" /> has been serialized into
+      ///    <paramref name="simulationTransferElement" />, before the element is saved or returned.
+      ///    Override it to add application specific content to the pkml. Applications that do not know about this content
+      ///    ignore it when loading the file.
+      /// </summary>
+      protected virtual void AddToSerializedSimulationTransfer(XElement simulationTransferElement, SimulationTransfer simulationTransfer, SerializationContext serializationContext)
+      {
       }
 
       public SimulationTransfer Load(string pkmlFileFullPath, IWithIdRepository withIdRepository = null) => 

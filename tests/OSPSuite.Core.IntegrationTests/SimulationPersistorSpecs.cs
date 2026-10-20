@@ -14,6 +14,7 @@ using OSPSuite.Helpers;
 using OSPSuite.Utility;
 using OSPSuite.Utility.Container;
 using OSPSuite.Utility.Exceptions;
+using IContainer = OSPSuite.Utility.Container.IContainer;
 
 namespace OSPSuite.Core
 {
@@ -111,6 +112,56 @@ namespace OSPSuite.Core
 
          The.Action(() => _simulationPersistor.Load(_filePath, deserializationObjectBaseRepository))
             .ShouldThrowAn<OSPSuiteException>();
+      }
+   }
+
+   internal class When_saving_a_simulation_with_a_persistor_adding_content_to_the_pkml : concern_for_SimulationPersistor
+   {
+      private const string ADDITIONAL_CONTENT = "AdditionalContent";
+      private SimulationTransfer _simulationTransfer;
+      private SimulationTransfer _loadedSimulationTransfer;
+
+      private class SimulationPersistorWithAdditionalContent : SimulationPersistor
+      {
+         public SimulationPersistorWithAdditionalContent(IOSPSuiteXmlSerializerRepository xmlSerializerRepository, IContainer container, IPKMLPersistor pkmlPersistor) : base(xmlSerializerRepository, container, pkmlPersistor)
+         {
+         }
+
+         protected override void AddToSerializedSimulationTransfer(XElement simulationTransferElement, SimulationTransfer simulationTransfer, SerializationContext serializationContext)
+         {
+            simulationTransferElement.Element(Constants.Serialization.SIMULATION).Add(new XElement(ADDITIONAL_CONTENT));
+         }
+      }
+
+      protected override void Context()
+      {
+         base.Context();
+         _simulationPersistor = new SimulationPersistorWithAdditionalContent(_serializerRepository, IoC.Container, _pkmlPersistor);
+         _simulationTransfer = new SimulationTransfer { Simulation = _simulation };
+      }
+
+      protected override void Because()
+      {
+         _simulationPersistor.Save(_simulationTransfer, _filePath);
+         _loadedSimulationTransfer = IoC.Resolve<ISimulationPersistor>().Load(_filePath);
+      }
+
+      [Observation]
+      public void should_save_the_additional_content_in_the_file()
+      {
+         XElement.Load(_filePath).Element(Constants.Serialization.SIMULATION).Element(ADDITIONAL_CONTENT).ShouldNotBeNull();
+      }
+
+      [Observation]
+      public void should_add_the_additional_content_when_serializing()
+      {
+         XElement.Parse(_simulationPersistor.Serialize(_simulationTransfer)).Element(Constants.Serialization.SIMULATION).Element(ADDITIONAL_CONTENT).ShouldNotBeNull();
+      }
+
+      [Observation]
+      public void should_still_be_able_to_load_the_simulation_with_the_default_persistor()
+      {
+         AssertForSpecs.AreEqual(_loadedSimulationTransfer.Simulation, _simulation);
       }
    }
 
