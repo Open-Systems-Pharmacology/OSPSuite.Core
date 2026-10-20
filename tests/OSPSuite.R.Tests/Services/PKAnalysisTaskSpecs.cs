@@ -180,7 +180,10 @@ namespace OSPSuite.R.Services
          return pkAnalyses;
       }
 
-      protected string CSVFor(params (string quantityPath, string pkParameterName)[] pkParameters) => sut.PKAnalysesToCSV(PKAnalysesWith(pkParameters), _simulation);
+      //Converted without PKAnalysesToCSV, so that the expected CSV does not depend on the selection
+      protected string CSVFor(PopulationSimulationPKAnalyses pkAnalyses) => sut.ConvertToDataTable(pkAnalyses, _simulation).ToCSV();
+
+      protected string CSVFor(params (string quantityPath, string pkParameterName)[] pkParameters) => CSVFor(PKAnalysesWith(pkParameters));
    }
 
    public class When_converting_the_pk_analyses_of_some_outputs_and_pk_parameters_to_a_csv_string : concern_for_PKAnalysisTask_converting_selected_pk_analyses_to_csv
@@ -270,22 +273,21 @@ namespace OSPSuite.R.Services
       [Observation]
       public void should_return_all_pk_analyses()
       {
-         _csv.ShouldBeEqualTo(sut.PKAnalysesToCSV(_pkAnalyses, _simulation));
+         _csv.ShouldBeEqualTo(CSVFor(_pkAnalyses));
       }
    }
 
    public class When_converting_the_pk_analyses_without_a_selection_to_a_csv_string : concern_for_PKAnalysisTask_converting_selected_pk_analyses_to_csv
    {
-      protected override void Context()
+      protected override void Because()
       {
-         base.Context();
-         _selection = null;
+         _csv = sut.PKAnalysesToCSV(_pkAnalyses, _simulation);
       }
 
       [Observation]
       public void should_return_all_pk_analyses()
       {
-         _csv.ShouldBeEqualTo(sut.PKAnalysesToCSV(_pkAnalyses, _simulation));
+         _csv.ShouldBeEqualTo(CSVFor(_pkAnalyses));
       }
    }
 

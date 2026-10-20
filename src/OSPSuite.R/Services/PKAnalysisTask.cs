@@ -23,14 +23,13 @@ namespace OSPSuite.R.Services
    public interface IPKAnalysisTask
    {
       void ExportPKAnalysesToCSV(PopulationSimulationPKAnalyses pkAnalyses, IModelCoreSimulation simulation, string fileName);
-      string PKAnalysesToCSV(PopulationSimulationPKAnalyses pkAnalyses, IModelCoreSimulation simulation);
 
       /// <summary>
       ///    Returns the CSV of the PK-Analyses kept by <paramref name="selection" />, in the order of
       ///    <see cref="PopulationSimulationPKAnalyses.All" />. Paths and names that are not in <paramref name="pkAnalyses" />
-      ///    keep nothing. A null <paramref name="selection" /> keeps all PK-Analyses
+      ///    keep nothing. Without <paramref name="selection" />, all PK-Analyses are kept
       /// </summary>
-      string PKAnalysesToCSV(PopulationSimulationPKAnalyses pkAnalyses, IModelCoreSimulation simulation, PKAnalysesSelection selection);
+      string PKAnalysesToCSV(PopulationSimulationPKAnalyses pkAnalyses, IModelCoreSimulation simulation, PKAnalysesSelection selection = null);
 
       DataTable ConvertToDataTable(PopulationSimulationPKAnalyses pkAnalyses, IModelCoreSimulation simulation);
       PopulationSimulationPKAnalyses ImportPKAnalysesFromCSV(string fileName, IModelCoreSimulation simulation);
@@ -62,15 +61,10 @@ namespace OSPSuite.R.Services
          dataTable.ExportToCSV(fileName);
       }
 
-      public string PKAnalysesToCSV(PopulationSimulationPKAnalyses pkAnalyses, IModelCoreSimulation simulation)
+      public string PKAnalysesToCSV(PopulationSimulationPKAnalyses pkAnalyses, IModelCoreSimulation simulation, PKAnalysesSelection selection = null)
       {
-         var dataTable = ConvertToDataTable(pkAnalyses, simulation);
+         var dataTable = ConvertToDataTable(selectedPKAnalysesFrom(pkAnalyses, selection), simulation);
          return dataTable.ToCSV();
-      }
-
-      public string PKAnalysesToCSV(PopulationSimulationPKAnalyses pkAnalyses, IModelCoreSimulation simulation, PKAnalysesSelection selection)
-      {
-         return PKAnalysesToCSV(selectedPKAnalysesFrom(pkAnalyses, selection), simulation);
       }
 
       public PopulationSimulationPKAnalyses ImportPKAnalysesFromCSV(string fileName, IModelCoreSimulation simulation)
