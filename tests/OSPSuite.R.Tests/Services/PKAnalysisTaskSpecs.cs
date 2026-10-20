@@ -188,11 +188,9 @@ namespace OSPSuite.R.Services
       protected override void Context()
       {
          base.Context();
-         _selection = new PKAnalysesSelection
-         {
-            QuantityPaths = new[] { WHOLE_BLOOD_PATH, _outputPath },
-            PKParameterNames = new[] { Tmax, C_max }
-         };
+         _selection = new PKAnalysesSelection();
+         _selection.AddQuantityPaths(WHOLE_BLOOD_PATH, _outputPath);
+         _selection.AddPKParameterNames(Tmax, C_max);
       }
 
       [Observation]
@@ -213,11 +211,9 @@ namespace OSPSuite.R.Services
       protected override void Context()
       {
          base.Context();
-         _selection = new PKAnalysesSelection
-         {
-            QuantityPath = ARTERIAL_PLASMA_PATH,
-            PKParameterName = AUC_inf
-         };
+         _selection = new PKAnalysesSelection();
+         _selection.AddQuantityPaths(ARTERIAL_PLASMA_PATH);
+         _selection.AddPKParameterNames(AUC_inf);
       }
 
       [Observation]
@@ -232,7 +228,8 @@ namespace OSPSuite.R.Services
       protected override void Context()
       {
          base.Context();
-         _selection = new PKAnalysesSelection { PKParameterName = Tmax };
+         _selection = new PKAnalysesSelection();
+         _selection.AddPKParameterNames(Tmax);
       }
 
       [Observation]
@@ -242,12 +239,14 @@ namespace OSPSuite.R.Services
       }
    }
 
-   public class When_converting_the_pk_analyses_of_some_outputs_to_a_csv_string : concern_for_PKAnalysisTask_converting_selected_pk_analyses_to_csv
+   public class When_converting_the_pk_analyses_of_outputs_added_one_by_one_to_a_csv_string : concern_for_PKAnalysisTask_converting_selected_pk_analyses_to_csv
    {
       protected override void Context()
       {
          base.Context();
-         _selection = new PKAnalysesSelection { QuantityPaths = new[] { ARTERIAL_PLASMA_PATH, _outputPath } };
+         _selection = new PKAnalysesSelection();
+         _selection.AddQuantityPaths(ARTERIAL_PLASMA_PATH);
+         _selection.AddQuantityPaths(_outputPath);
       }
 
       [Observation]
@@ -260,7 +259,7 @@ namespace OSPSuite.R.Services
       }
    }
 
-   public class When_converting_the_pk_analyses_with_a_selection_where_nothing_is_set_to_a_csv_string : concern_for_PKAnalysisTask_converting_selected_pk_analyses_to_csv
+   public class When_converting_the_pk_analyses_with_a_selection_where_nothing_was_added_to_a_csv_string : concern_for_PKAnalysisTask_converting_selected_pk_analyses_to_csv
    {
       protected override void Context()
       {
@@ -295,11 +294,9 @@ namespace OSPSuite.R.Services
       protected override void Context()
       {
          base.Context();
-         _selection = new PKAnalysesSelection
-         {
-            QuantityPath = "Organism|DoesNotExist",
-            PKParameterName = C_max
-         };
+         _selection = new PKAnalysesSelection();
+         _selection.AddQuantityPaths("Organism|DoesNotExist");
+         _selection.AddPKParameterNames(C_max);
       }
 
       [Observation]
@@ -314,11 +311,9 @@ namespace OSPSuite.R.Services
       protected override void Context()
       {
          base.Context();
-         _selection = new PKAnalysesSelection
-         {
-            QuantityPath = _outputPath,
-            PKParameterNames = Array.Empty<string>()
-         };
+         _selection = new PKAnalysesSelection();
+         _selection.AddQuantityPaths(_outputPath);
+         _selection.AddPKParameterNames();
       }
 
       [Observation]
