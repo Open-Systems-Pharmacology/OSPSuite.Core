@@ -38,6 +38,7 @@ namespace OSPSuite.Core.Domain
          sut.ShowProgress = !sut.ShowProgress;
          sut.ShouldValidate = !sut.ShouldValidate;
          sut.SimModelExportMode = SimModelExportMode.Full;
+         sut.WarnForNonFiniteQuantities = true;
 
          sut.AddCalculationMethodsOverridesFor("moleculeName", new List<UsedCalculationMethod> { new("category", "method") });
 
@@ -66,6 +67,7 @@ namespace OSPSuite.Core.Domain
          _result.ShowProgress.ShouldBeEqualTo(sut.ShowProgress);
          _result.ShouldValidate.ShouldBeEqualTo(sut.ShouldValidate);
          _result.SimModelExportMode.ShouldBeEqualTo(sut.SimModelExportMode);
+         _result.WarnForNonFiniteQuantities.ShouldBeEqualTo(sut.WarnForNonFiniteQuantities);
       }
 
       [Observation]

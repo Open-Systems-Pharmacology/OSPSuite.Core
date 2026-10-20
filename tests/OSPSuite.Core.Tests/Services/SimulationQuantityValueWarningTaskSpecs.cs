@@ -37,6 +37,11 @@ internal abstract class concern_for_SimulationQuantityWarningTask : ContextSpeci
       public bool WarnForNonFiniteQuantities { get; set; }
    }
 
+   /// <summary>
+   ///    The value of <see cref="SimulationConfiguration.WarnForNonFiniteQuantities" /> for the configuration being constructed
+   /// </summary>
+   protected virtual bool? ConfigurationWarnsForNonFiniteQuantities => null;
+
    protected override void Context()
    {
       base.Context();
@@ -47,6 +52,7 @@ internal abstract class concern_for_SimulationQuantityWarningTask : ContextSpeci
       _cloneManager = A.Fake<ICloneManagerForModel>();
       _containerMergeTask = new ContainerMergeTask();
       _simulationBuilder = new SimulationBuilder(_cloneManager, _containerMergeTask);
+      _simulationBuilder.PerformMerge(new SimulationConfiguration { WarnForNonFiniteQuantities = ConfigurationWarnsForNonFiniteQuantities });
       _creationResult = new CreationResult(_model, _simulationBuilder);
 
       _buildingBlock = new ReactionBuildingBlock();
@@ -312,6 +318,99 @@ internal class creating_warnings_during_simulation_creation_for_non_finite_param
    public void should_add_a_warning_to_the_creation_result()
    {
       _creationResult.ValidationResult.Messages.Count().ShouldBeEqualTo(1);
+   }
+}
+
+internal abstract class When_creating_warnings_for_non_finite_parameters : When_creating_warnings_for_non_finite_quantities
+{
+   protected override IQuantity NewSimulationQuantity()
+   {
+      return new Parameter().WithValue(double.NaN).WithId(NAN_PARAMETER_ID).WithName(NAN_PARAMETER_NAME);
+   }
+
+   protected override IQuantity NewBuilder()
+   {
+      return new Parameter().WithId(PARAMETER_BUILDER_ID).WithName(PARAMETER_BUILDER_NAME);
+   }
+}
+
+internal class creating_warnings_during_simulation_creation_for_non_finite_parameters_and_the_configuration_enables_warnings_but_not_the_user_setting : When_creating_warnings_for_non_finite_parameters
+{
+   protected override bool ShouldWarnForFiniteParameters => false;
+   protected override bool? ConfigurationWarnsForNonFiniteQuantities => true;
+
+   protected override void Because()
+   {
+      sut.WarnForNonFiniteQuantities(_model, _creationResult);
+   }
+
+   [Observation]
+   public void should_add_a_warning_to_the_creation_result()
+   {
+      _creationResult.ValidationResult.Messages.Count().ShouldBeEqualTo(1);
+   }
+}
+
+internal class creating_warnings_during_simulation_creation_for_non_finite_parameters_and_the_configuration_disables_warnings_but_not_the_user_setting : When_creating_warnings_for_non_finite_parameters
+{
+   protected override bool ShouldWarnForFiniteParameters => true;
+   protected override bool? ConfigurationWarnsForNonFiniteQuantities => false;
+
+   protected override void Because()
+   {
+      sut.WarnForNonFiniteQuantities(_model, _creationResult);
+   }
+
+   [Observation]
+   public void should_not_add_a_warning_to_the_creation_result()
+   {
+      _creationResult.ValidationResult.Messages.Count().ShouldBeEqualTo(0);
+   }
+}
+
+internal class creating_warnings_during_simulation_run_for_non_finite_parameters_when_warnings_are_requested_but_the_user_setting_disables_warnings : When_creating_warnings_for_non_finite_parameters
+{
+   private RunValidationResult _runValidationResult;
+   protected override bool ShouldWarnForFiniteParameters => false;
+
+   protected override void Context()
+   {
+      base.Context();
+      _runValidationResult = new RunValidationResult();
+   }
+
+   protected override void Because()
+   {
+      sut.WarnForNonFiniteQuantities(_model, _runValidationResult, warnForNonFiniteQuantities: true);
+   }
+
+   [Observation]
+   public void should_add_a_warning_to_the_run_validation_result()
+   {
+      _runValidationResult.ValidationResult.Messages.Count().ShouldBeEqualTo(1);
+   }
+}
+
+internal class creating_warnings_during_simulation_run_for_non_finite_parameters_when_warnings_are_not_requested_but_the_user_setting_enables_warnings : When_creating_warnings_for_non_finite_parameters
+{
+   private RunValidationResult _runValidationResult;
+   protected override bool ShouldWarnForFiniteParameters => true;
+
+   protected override void Context()
+   {
+      base.Context();
+      _runValidationResult = new RunValidationResult();
+   }
+
+   protected override void Because()
+   {
+      sut.WarnForNonFiniteQuantities(_model, _runValidationResult, warnForNonFiniteQuantities: false);
+   }
+
+   [Observation]
+   public void should_not_add_a_warning_to_the_run_validation_result()
+   {
+      _runValidationResult.ValidationResult.Messages.Count().ShouldBeEqualTo(0);
    }
 }
 
