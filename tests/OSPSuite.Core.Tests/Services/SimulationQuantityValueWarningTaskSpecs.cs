@@ -37,16 +37,6 @@ internal abstract class concern_for_SimulationQuantityWarningTask : ContextSpeci
       public bool WarnForNonFiniteQuantities { get; set; }
    }
 
-   private class SimulationBuilderForSpecs : SimulationBuilder
-   {
-      public SimulationBuilderForSpecs(ICloneManagerForModel cloneManager, IContainerMergeTask containerMergeTask, bool? warnForNonFiniteQuantities) : base(cloneManager, containerMergeTask)
-      {
-         WarnForNonFiniteQuantities = warnForNonFiniteQuantities;
-      }
-
-      public override bool? WarnForNonFiniteQuantities { get; }
-   }
-
    /// <summary>
    ///    The value of <see cref="SimulationConfiguration.WarnForNonFiniteQuantities" /> for the configuration being constructed
    /// </summary>
@@ -61,7 +51,8 @@ internal abstract class concern_for_SimulationQuantityWarningTask : ContextSpeci
       _model = new Model { Root = new ARootContainer() };
       _cloneManager = A.Fake<ICloneManagerForModel>();
       _containerMergeTask = new ContainerMergeTask();
-      _simulationBuilder = new SimulationBuilderForSpecs(_cloneManager, _containerMergeTask, ConfigurationWarnsForNonFiniteQuantities);
+      _simulationBuilder = new SimulationBuilder(_cloneManager, _containerMergeTask);
+      _simulationBuilder.PerformMerge(new SimulationConfiguration { WarnForNonFiniteQuantities = ConfigurationWarnsForNonFiniteQuantities });
       _creationResult = new CreationResult(_model, _simulationBuilder);
 
       _buildingBlock = new ReactionBuildingBlock();
