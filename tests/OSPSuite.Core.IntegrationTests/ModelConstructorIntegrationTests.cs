@@ -735,6 +735,55 @@ namespace OSPSuite.Core
       }
    }
 
+   internal class When_a_parameter_references_a_local_molecule_parameter_removed_because_it_is_NaN_at_time_zero : concern_for_ModelConstructor
+   {
+      private IParameter _referencingParameter;
+      private SpatialStructure _spatialStructure;
+
+      protected override void Context()
+      {
+         base.Context();
+         _spatialStructure = _simulationConfiguration.ModuleConfigurations[0].Module.SpatialStructure;
+         var boneCell = _spatialStructure.TopContainers.First(x => x.IsNamed(ORGANISM)).EntityAt<IContainer>(Bone, Cell);
+
+         //NaNParam is a local parameter of molecule E that is NaN at t=0 and is therefore removed from the model
+         var formula = IoC.Resolve<IObjectBaseFactory>().Create<ExplicitFormula>().WithName("ReferencingNaNParam").WithFormulaString("NaNParam");
+         formula.AddObjectPath(IoC.Resolve<IObjectPathFactory>().CreateFormulaUsablePathFrom(ObjectPath.PARENT_CONTAINER, "E", "NaNParam").WithAlias("NaNParam"));
+         _spatialStructure.FormulaCache.Add(formula);
+
+         _referencingParameter = IoC.Resolve<ModelHelperForSpecs>().NewConstantParameter("ReferencingNaNParam", 0);
+         _referencingParameter.Formula = formula;
+         boneCell.Add(_referencingParameter);
+      }
+
+      [Observation]
+      public void should_return_an_invalid_result()
+      {
+         _result.IsInvalid.ShouldBeTrue();
+      }
+
+      [Observation]
+      public void should_report_the_reference_that_could_not_be_resolved_as_an_error_for_the_builder_of_the_referencing_parameter()
+      {
+         var error = _result.ValidationResult.Messages.Single(x => x.NotificationType == NotificationType.Error);
+         error.Object.ShouldBeEqualTo(_referencingParameter);
+         error.BuildingBlock.ShouldBeEqualTo(_spatialStructure);
+         error.Text.Contains("..|E|NaNParam").ShouldBeTrue(error.Text);
+      }
+
+      [Observation]
+      public void should_keep_the_warning_that_the_referenced_parameter_was_removed()
+      {
+         var removedParameterWarning = Warning.RemovedParameterDueToNanAtTimeZero(new ObjectPath(_modelName, ORGANISM, Bone, Cell, "E", "NaNParam").PathAsString);
+         var allWarnings = _result.ValidationResult.Messages
+            .Where(x => x.NotificationType == NotificationType.Warning)
+            .SelectMany(x => x.Details.Concat(new[] { x.Text }))
+            .ToList();
+
+         allWarnings.ShouldContain(removedParameterWarning);
+      }
+   }
+
    internal class When_naming_the_model_like_a_distributed_parameter_sub_parameter : concern_for_ModelConstructor
    {
       protected override void Context()
