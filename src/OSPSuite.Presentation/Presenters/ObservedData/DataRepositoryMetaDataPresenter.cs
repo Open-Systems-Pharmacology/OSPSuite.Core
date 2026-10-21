@@ -71,6 +71,8 @@ namespace OSPSuite.Presentation.Presenters.ObservedData
    {
       protected IEnumerable<DataRepository> _allDataRepositories;
       private NotifyList<MetaDataDTO> _metaDataDTOList;
+      //Meta data of the repositories as it was when bound, for each row created from it. Rows added in the view are not in here
+      private readonly Dictionary<MetaDataDTO, MetaDataKeyValue> _savedMetaData = new Dictionary<MetaDataDTO, MetaDataKeyValue>();
       private readonly IObservedDataMetaDataTask _observedDataMetaDataTask;
       private readonly IObservedDataConfiguration _observedDataConfiguration;
       private readonly IParameterFactory _parameterFactory;
@@ -137,13 +139,14 @@ namespace OSPSuite.Presentation.Presenters.ObservedData
       {
          //A row that was never saved to the repositories only exists in the view. Removing it with a command would
          //register an inverse command that adds the row as-is (possibly without name) to the repositories
-         if (!existsInAllRepositories(metaDataDTO.Name))
+         if (!_savedMetaData.TryGetValue(metaDataDTO, out var savedMetaData))
          {
             _metaDataDTOList.Remove(metaDataDTO);
             return;
          }
 
-         AddCommand(_observedDataMetaDataTask.RemoveMetaData(_allDataRepositories, mapFrom(metaDataDTO)));
+         //Use the saved meta data and not the row, as the row may contain edits that were not saved
+         AddCommand(_observedDataMetaDataTask.RemoveMetaData(_allDataRepositories, savedMetaData));
       }
 
       private bool isPredefinedProperty(IExtendedProperty extendedProperty) => 
@@ -162,13 +165,11 @@ namespace OSPSuite.Presentation.Presenters.ObservedData
          if (!metaDataDTO.IsValid())
             return;
 
-         if (existsInAllRepositories(originalKey))
+         if (_allDataRepositories.All(x => x.ExtendedProperties.Contains(originalKey)))
             actionToRun(metaDataDTO, oldData);
          else
             metaDataAdded(metaDataDTO);
       }
-
-      private bool existsInAllRepositories(string key) => _allDataRepositories.All(x => x.ExtendedProperties.Contains(key));
 
       private void metaDataAdded(MetaDataDTO metaDataDTO) => 
          AddCommand(_observedDataMetaDataTask.AddMetaData(_allDataRepositories, mapFrom(metaDataDTO)));
@@ -239,7 +240,8 @@ namespace OSPSuite.Presentation.Presenters.ObservedData
       {
          if (IsLatched) return;
          _metaDataDTOList = new NotifyList<MetaDataDTO>();
-         _allDataRepositories.ToList().IntersectingMetaData().Each(x => _metaDataDTOList.Add(createDTO(x)));
+         _savedMetaData.Clear();
+         _allDataRepositories.ToList().IntersectingMetaData().Each(addSavedMetaData);
          _view.BindToMetaData(_metaDataDTOList);
          _view.AddOutputPathEnabled = !hasOutputPath();
 
@@ -255,6 +257,13 @@ namespace OSPSuite.Presentation.Presenters.ObservedData
          var lowerLimitsOfQuantification = retrieveLLOQs().ToList();
          if (lowerLimitsOfQuantification.Count == 1)
             _view.BindToLLOQ(lowerLimitsOfQuantification.First());
+      }
+
+      private void addSavedMetaData(IExtendedProperty extendedProperty)
+      {
+         var metaDataDTO = createDTO(extendedProperty);
+         _savedMetaData.Add(metaDataDTO, new MetaDataKeyValue { Key = metaDataDTO.Name, Value = metaDataDTO.Value });
+         _metaDataDTOList.Add(metaDataDTO);
       }
 
       private IEnumerable<IParameter> retrieveLLOQs()
