@@ -86,6 +86,30 @@ namespace OSPSuite.Core
       protected override Func<ModuleHelperForSpecs, SimulationConfiguration> SimulationConfigurationBuilder() => x => x.CreateSimulationConfigurationWithLogicalNeighborhood();
    }
 
+   internal class When_the_parent_container_of_a_top_container_merged_from_another_module_cannot_be_found : concern_for_ModuleIntegration
+   {
+      private SpatialStructure _spatialStructure;
+      private IContainer _topContainer;
+
+      protected override Func<ModuleHelperForSpecs, SimulationConfiguration> SimulationConfigurationBuilder() => x =>
+      {
+         var simulationConfiguration = x.CreateSimulationConfiguration();
+         _spatialStructure = simulationConfiguration.ModuleConfigurations[1].Module.SpatialStructure;
+         _topContainer = _spatialStructure.TopContainers.First();
+         _topContainer.ParentPath = new ObjectPath("DOES_NOT_EXIST");
+         return simulationConfiguration;
+      };
+
+      [Observation]
+      public void should_return_an_invalid_result_reporting_the_error_for_the_model()
+      {
+         _result.IsInvalid.ShouldBeTrue();
+         var error = _result.ValidationResult.Messages.Single(x => x.NotificationType == NotificationType.Error);
+         error.Text.ShouldBeEqualTo(Error.CannotFindParentContainerWithPath("DOES_NOT_EXIST", _topContainer.Name, _spatialStructure.Name, _spatialStructure.Module.Name));
+         error.Object.ShouldBeEqualTo(_model);
+      }
+   }
+
    internal class When_running_the_case_study_for_module_integration_with_merge_behavior_overwrite_for_passive_transport : concern_for_ModuleIntegration
    {
       protected override Func<ModuleHelperForSpecs, SimulationConfiguration> SimulationConfigurationBuilder() => x => x.CreateSimulationConfigurationForExtendMergeBehavior();

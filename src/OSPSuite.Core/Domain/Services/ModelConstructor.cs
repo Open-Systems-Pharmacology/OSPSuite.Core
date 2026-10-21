@@ -6,6 +6,7 @@ using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Mappers;
 using OSPSuite.Core.Services;
 using OSPSuite.Utility.Events;
+using OSPSuite.Utility.Exceptions;
 using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Domain.Services
@@ -19,6 +20,8 @@ namespace OSPSuite.Core.Domain.Services
       ///    concurrent call. Parallel callers should set <see cref="SimulationConfiguration.ShowProgress" /> to
       ///    <c>false</c> per call and report aggregate progress themselves; otherwise every call publishes its own
       ///    progress stream into the shared event publisher.
+      ///    A model that cannot be built does not throw: an <see cref="OSPSuiteException" /> raised while building is
+      ///    reported as an error in the returned invalid result, along with the messages accumulated before it.
       /// </summary>
       CreationResult CreateModelFrom(SimulationConfiguration simulationConfiguration, string modelName);
    }
@@ -99,7 +102,25 @@ namespace OSPSuite.Core.Domain.Services
          var model = _objectBaseFactory.Create<IModel>().WithName(modelName);
          var simulationBuilder = _simulationBuilderFactory.CreateFor(simulationConfiguration);
          var modelConfiguration = new ModelConfiguration(model, simulationConfiguration, simulationBuilder);
-         var creationResult = buildProcess(modelConfiguration,
+         var creationResult = new CreationResult(model, simulationBuilder);
+
+         try
+         {
+            createModel(modelConfiguration, creationResult);
+         }
+         catch (OSPSuiteException e)
+         {
+            //keep the messages accumulated so far and report the exception that stopped the build as an error
+            creationResult.Add(new ValidationResult(new[] { errorMessageFor(e, modelConfiguration) }));
+         }
+
+         return creationResult;
+      }
+
+      private void createModel(ModelConfiguration modelConfiguration, CreationResult creationResult)
+      {
+         var model = modelConfiguration.Model;
+         buildProcess(modelConfiguration, creationResult,
             //One function per process step
             checkSimulationConfiguration,
             createModelStructure,
@@ -109,7 +130,7 @@ namespace OSPSuite.Core.Domain.Services
             setQuantitiesValues);
 
          if (creationResult.State == ValidationState.Invalid)
-            return creationResult;
+            return;
 
          //replace all keywords define in the model structure once all build processes have been executed
          _keywordReplacerTask.ReplaceIn(modelConfiguration);
@@ -118,15 +139,27 @@ namespace OSPSuite.Core.Domain.Services
          _formulaTask.ExpandDynamicReferencesIn(model);
 
          _formulaTask.ExpandDynamicFormulaIn(model);
-         
+
          creationResult.Add(validateModel(modelConfiguration));
 
          if (creationResult.State == ValidationState.Invalid)
-            return creationResult;
+            return;
 
-         finalizeModel(model, simulationBuilder, creationResult);
+         finalizeModel(model, modelConfiguration.SimulationBuilder, creationResult);
+      }
 
-         return creationResult;
+      private ValidationMessage errorMessageFor(OSPSuiteException exception, ModelConfiguration modelConfiguration)
+      {
+         //without an entity to blame, the error is reported for the model itself
+         if (!(exception is UnableToResolvePathException unableToResolvePathException))
+            return new ValidationMessage(NotificationType.Error, exception.Message, modelConfiguration.Model, null);
+
+         //report the error for the builder of the entity referencing the path so that the user can navigate to it
+         var entity = unableToResolvePathException.Entity;
+         var simulationBuilder = modelConfiguration.SimulationBuilder;
+         var builder = simulationBuilder.BuilderFor(entity);
+         var buildingBlock = builder == null ? null : simulationBuilder.BuilderSourceFor(builder)?.BuildingBlock;
+         return new ValidationMessage(NotificationType.Error, exception.Message, builder ?? entity, buildingBlock);
       }
 
       private void finalizeModel(IModel model, SimulationBuilder simulationBuilder, CreationResult creationResult)
@@ -180,10 +213,9 @@ namespace OSPSuite.Core.Domain.Services
          return new ValidationResult(validation, circularReferenceValidation);
       }
 
-      private CreationResult buildProcess(ModelConfiguration modelConfiguration,
+      private void buildProcess(ModelConfiguration modelConfiguration, CreationResult result,
          params Func<ModelConfiguration, ValidationResult>[] steps)
       {
-         var result = new CreationResult(modelConfiguration.Model, modelConfiguration.SimulationBuilder);
          IProgressUpdater progress = null;
 
          try
@@ -210,8 +242,6 @@ namespace OSPSuite.Core.Domain.Services
          {
             progress?.Dispose();
          }
-
-         return result;
       }
 
       private ValidationResult checkSimulationConfiguration(ModelConfiguration modelConfiguration)

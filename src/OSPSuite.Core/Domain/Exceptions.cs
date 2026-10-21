@@ -126,10 +126,16 @@ namespace OSPSuite.Core.Domain
 
    public class UnableToResolvePathException : OSPSuiteException
    {
+      /// <summary>
+      ///    The entity whose formula references the path that could not be resolved
+      /// </summary>
+      public IEntity Entity { get; }
+
       public UnableToResolvePathException(ObjectPath objectPath, IEntity currentEntity)
          : base($"Unable to resolve path '{objectPath}' for entity '{currentEntity.Name}' with path '{currentEntity.EntityPath()}'")
 
       {
+         Entity = currentEntity;
       }
    }
 
