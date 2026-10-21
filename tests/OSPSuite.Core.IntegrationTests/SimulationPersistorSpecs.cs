@@ -114,6 +114,85 @@ namespace OSPSuite.Core
       }
    }
 
+   internal class When_saving_and_loading_a_simulation_transfer_containing_the_changes_made_to_the_simulation : concern_for_SimulationPersistor
+   {
+      private SimulationTransfer _simulationTransfer;
+      private SimulationTransfer _loadedSimulationTransfer;
+
+      protected override void Context()
+      {
+         base.Context();
+         var changedQuantity = new OriginalQuantityValue
+         {
+            Path = "Organism|Liver|Concentration",
+            Value = 2.5,
+            Dimension = DimensionMassConcentration,
+            DisplayUnit = DimensionMassConcentration.Units.Last(),
+            Type = OriginalQuantityValue.Types.Quantity
+         };
+         changedQuantity.UpdateValueOriginFrom(new ValueOrigin
+         {
+            Source = ValueOriginSources.Database,
+            Method = ValueOriginDeterminationMethods.Assumption,
+            Description = "Changed in the simulation"
+         });
+
+         var changedScaleDivisor = new OriginalQuantityValue
+         {
+            Path = "Organism|Liver|A",
+            Value = 1,
+            Dimension = DimensionLess,
+            DisplayUnit = DimensionLess.DefaultUnit,
+            Type = OriginalQuantityValue.Types.ScaleDivisor
+         };
+
+         _simulationTransfer = new SimulationTransfer
+         {
+            Simulation = _simulation,
+            OriginalQuantityValues = { changedQuantity, changedScaleDivisor },
+            HasUntraceableChanges = true
+         };
+      }
+
+      protected override void Because()
+      {
+         _simulationPersistor.Save(_simulationTransfer, _filePath);
+         _loadedSimulationTransfer = _simulationPersistor.Load(_filePath);
+      }
+
+      [Observation]
+      public void should_load_the_original_quantity_values_and_the_untraceable_changes_flag()
+      {
+         _loadedSimulationTransfer.OriginalQuantityValues.Count.ShouldBeEqualTo(2);
+         _loadedSimulationTransfer.HasUntraceableChanges.ShouldBeTrue();
+         AssertForSpecs.AreEqualSimulationTransfer(_simulationTransfer, _loadedSimulationTransfer);
+      }
+   }
+
+   internal class When_loading_a_simulation_transfer_without_changes_made_to_the_simulation : concern_for_SimulationPersistor
+   {
+      private SimulationTransfer _loadedSimulationTransfer;
+
+      protected override void Because()
+      {
+         _simulationPersistor.Save(new SimulationTransfer { Simulation = _simulation }, _filePath);
+         _loadedSimulationTransfer = _simulationPersistor.Load(_filePath);
+      }
+
+      [Observation]
+      public void should_not_write_any_original_quantity_values_to_the_file()
+      {
+         XElement.Load(_filePath).Element(nameof(SimulationTransfer.OriginalQuantityValues)).ShouldBeNull();
+      }
+
+      [Observation]
+      public void should_load_a_simulation_transfer_without_changes()
+      {
+         _loadedSimulationTransfer.OriginalQuantityValues.ShouldBeEmpty();
+         _loadedSimulationTransfer.HasUntraceableChanges.ShouldBeFalse();
+      }
+   }
+
    internal class When_deserializing_a_simulation_transfer_containing_observed_data_and_mapping : concern_for_SimulationPersistor
    {
       private SimulationTransfer _simulationTransfer;
