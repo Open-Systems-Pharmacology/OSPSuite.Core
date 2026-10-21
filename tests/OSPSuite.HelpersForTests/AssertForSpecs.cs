@@ -1288,6 +1288,24 @@ namespace OSPSuite.Helpers
          AreEqualEnumerableWithSameOrder(x1.AllObservedData, x2.AllObservedData);
          AreEqualEnumerableWithSameOrder(x1.Favorites, x2.Favorites);
          AssertAreEqual(x1.PkmlVersion, x2.PkmlVersion);
+         Assert.AreEqual(x1.OriginalQuantityValues.Count, x2.OriginalQuantityValues.Count);
+         for (var i = 0; i < x1.OriginalQuantityValues.Count; i++)
+         {
+            AreEqualOriginalQuantityValue(x1.OriginalQuantityValues[i], x2.OriginalQuantityValues[i]);
+         }
+
+         Assert.AreEqual(x1.HasUntraceableChanges, x2.HasUntraceableChanges);
+      }
+
+      public static void AreEqualOriginalQuantityValue(OriginalQuantityValue x1, OriginalQuantityValue x2)
+      {
+         if (!AssertBothNotNull(x1, x2)) return;
+         AssertAreEqual(x1.Path, x2.Path);
+         AssertAreEqualDouble(x1.Value, x2.Value);
+         AssertAreEqual(x1.Type, x2.Type);
+         AreEqualDimension(x1.Dimension, x2.Dimension);
+         AreEqualUnit(x1.DisplayUnit, x2.DisplayUnit);
+         AreEqualValueOrigin(x1.ValueOrigin, x2.ValueOrigin);
       }
 
       public static void AreEqualSimulation(IModelCoreSimulation x1, IModelCoreSimulation x2)

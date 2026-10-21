@@ -17,6 +17,8 @@ namespace OSPSuite.Core.Serialization.Exchange
          MapEnumerable(x => x.AllObservedData, x => x.AllObservedData.Add);
          //This needs to be done after observed data serialization to ensure that the observed data were deserialized
          Map(x => x.OutputMappings);
+         MapEnumerable(x => x.OriginalQuantityValues, x => x.OriginalQuantityValues.Add);
+         Map(x => x.HasUntraceableChanges);
       }
    }
 }

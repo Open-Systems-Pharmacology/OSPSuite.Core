@@ -14,7 +14,6 @@ using OSPSuite.Helpers;
 using OSPSuite.Utility;
 using OSPSuite.Utility.Container;
 using OSPSuite.Utility.Exceptions;
-using IContainer = OSPSuite.Utility.Container.IContainer;
 
 namespace OSPSuite.Core
 {
@@ -115,53 +114,82 @@ namespace OSPSuite.Core
       }
    }
 
-   internal class When_saving_a_simulation_with_a_persistor_adding_content_to_the_pkml : concern_for_SimulationPersistor
+   internal class When_saving_and_loading_a_simulation_transfer_containing_the_changes_made_to_the_simulation : concern_for_SimulationPersistor
    {
-      private const string ADDITIONAL_CONTENT = "AdditionalContent";
       private SimulationTransfer _simulationTransfer;
       private SimulationTransfer _loadedSimulationTransfer;
-
-      private class SimulationPersistorWithAdditionalContent : SimulationPersistor
-      {
-         public SimulationPersistorWithAdditionalContent(IOSPSuiteXmlSerializerRepository xmlSerializerRepository, IContainer container, IPKMLPersistor pkmlPersistor) : base(xmlSerializerRepository, container, pkmlPersistor)
-         {
-         }
-
-         protected override void AddToSerializedSimulationTransfer(XElement simulationTransferElement, SimulationTransfer simulationTransfer, SerializationContext serializationContext)
-         {
-            simulationTransferElement.Element(Constants.Serialization.SIMULATION).Add(new XElement(ADDITIONAL_CONTENT));
-         }
-      }
 
       protected override void Context()
       {
          base.Context();
-         _simulationPersistor = new SimulationPersistorWithAdditionalContent(_serializerRepository, IoC.Container, _pkmlPersistor);
-         _simulationTransfer = new SimulationTransfer { Simulation = _simulation };
+         var changedQuantity = new OriginalQuantityValue
+         {
+            Path = "Organism|Liver|Concentration",
+            Value = 2.5,
+            Dimension = DimensionMassConcentration,
+            DisplayUnit = DimensionMassConcentration.Units.Last(),
+            Type = OriginalQuantityValue.Types.Quantity
+         };
+         changedQuantity.UpdateValueOriginFrom(new ValueOrigin
+         {
+            Source = ValueOriginSources.Database,
+            Method = ValueOriginDeterminationMethods.Assumption,
+            Description = "Changed in the simulation"
+         });
+
+         var changedScaleDivisor = new OriginalQuantityValue
+         {
+            Path = "Organism|Liver|A",
+            Value = 1,
+            Dimension = DimensionLess,
+            DisplayUnit = DimensionLess.DefaultUnit,
+            Type = OriginalQuantityValue.Types.ScaleDivisor
+         };
+
+         _simulationTransfer = new SimulationTransfer
+         {
+            Simulation = _simulation,
+            OriginalQuantityValues = { changedQuantity, changedScaleDivisor },
+            HasUntraceableChanges = true
+         };
       }
 
       protected override void Because()
       {
          _simulationPersistor.Save(_simulationTransfer, _filePath);
-         _loadedSimulationTransfer = IoC.Resolve<ISimulationPersistor>().Load(_filePath);
+         _loadedSimulationTransfer = _simulationPersistor.Load(_filePath);
       }
 
       [Observation]
-      public void should_save_the_additional_content_in_the_file()
+      public void should_load_the_original_quantity_values_and_the_untraceable_changes_flag()
       {
-         XElement.Load(_filePath).Element(Constants.Serialization.SIMULATION).Element(ADDITIONAL_CONTENT).ShouldNotBeNull();
+         _loadedSimulationTransfer.OriginalQuantityValues.Count.ShouldBeEqualTo(2);
+         _loadedSimulationTransfer.HasUntraceableChanges.ShouldBeTrue();
+         AssertForSpecs.AreEqualSimulationTransfer(_simulationTransfer, _loadedSimulationTransfer);
+      }
+   }
+
+   internal class When_loading_a_simulation_transfer_without_changes_made_to_the_simulation : concern_for_SimulationPersistor
+   {
+      private SimulationTransfer _loadedSimulationTransfer;
+
+      protected override void Because()
+      {
+         _simulationPersistor.Save(new SimulationTransfer { Simulation = _simulation }, _filePath);
+         _loadedSimulationTransfer = _simulationPersistor.Load(_filePath);
       }
 
       [Observation]
-      public void should_add_the_additional_content_when_serializing()
+      public void should_not_write_any_original_quantity_values_to_the_file()
       {
-         XElement.Parse(_simulationPersistor.Serialize(_simulationTransfer)).Element(Constants.Serialization.SIMULATION).Element(ADDITIONAL_CONTENT).ShouldNotBeNull();
+         XElement.Load(_filePath).Element(nameof(SimulationTransfer.OriginalQuantityValues)).ShouldBeNull();
       }
 
       [Observation]
-      public void should_still_be_able_to_load_the_simulation_with_the_default_persistor()
+      public void should_load_a_simulation_transfer_without_changes()
       {
-         AssertForSpecs.AreEqual(_loadedSimulationTransfer.Simulation, _simulation);
+         _loadedSimulationTransfer.OriginalQuantityValues.ShouldBeEmpty();
+         _loadedSimulationTransfer.HasUntraceableChanges.ShouldBeFalse();
       }
    }
 
