@@ -196,21 +196,6 @@ namespace OSPSuite.Core.Snapshots.Mappers
       }
 
       /// <summary>
-      ///    Only use for conversion of older snapshot. Returns the <paramref name="parameterPath" /> where the parameter name
-      ///    (last entry) was replaced if the parameter was renamed in V13. To be used by all snapshot fields persisting a
-      ///    parameter path (e.g. advanced parameters or population analysis fields)
-      /// </summary>
-      public static string RenamedParameterPathForV13(string parameterPath)
-      {
-         if (string.IsNullOrEmpty(parameterPath))
-            return parameterPath;
-
-         var path = parameterPath.ToObjectPath();
-         RenameParametersForV13(path);
-         return path.ToString();
-      }
-
-      /// <summary>
       ///    Only use for conversion of older snapshot. Replaces the name of the parameter (last entry of the
       ///    <paramref name="path" />) if the parameter was renamed in V13
       /// </summary>
