@@ -567,6 +567,21 @@ namespace OSPSuite.Core.Mappers
       }
    }
 
+   public class When_renaming_a_parameter_path_from_a_v12_snapshot : StaticContextSpecification
+   {
+      [Observation]
+      public void should_rename_the_parameter_if_the_parameter_was_renamed()
+      {
+         ParameterMapper.RenamedParameterPathForV13($"Organism|{ParameterMapper.TimeToCompleteGallbladderRefilling}").ShouldBeEqualTo($"Organism|{ParameterMapper.TimeToCompleteGallbladderEmptying}");
+      }
+
+      [Observation]
+      public void should_not_change_the_path_otherwise()
+      {
+         ParameterMapper.RenamedParameterPathForV13($"{ParameterMapper.TimeToCompleteGallbladderRefilling}|P1").ShouldBeEqualTo($"{ParameterMapper.TimeToCompleteGallbladderRefilling}|P1");
+      }
+   }
+
    public class When_mapping_snapshot_parameters_defined_in_a_given_container : concern_for_ParameterMapper
    {
       private Container _container;
