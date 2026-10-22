@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using Newtonsoft.Json;
 using OSPSuite.Utility.Format;
 
@@ -22,7 +23,9 @@ namespace OSPSuite.Infrastructure.Serialization.Json
 
          var formatted = _doubleFormatter.Format(d.Value);
 
-         double.TryParse(formatted, out double roundedFromString);
+         //the formatter always writes invariant notation. Parsing with the current culture would interpret
+         //the decimal separator as a group separator e.g. in German, turning 1.0000000000 into 10000000000
+         double.TryParse(formatted, NumberStyles.Float, CultureInfo.InvariantCulture, out double roundedFromString);
 
          writer.WriteValue(roundedFromString);
       }
