@@ -209,9 +209,7 @@ namespace OSPSuite.Core.Snapshots.Mappers
          if (string.Equals(newName, path[lastIndex]))
             return;
 
-         var pathEntries = path.ToList();
-         pathEntries[lastIndex] = newName;
-         path.ReplaceWith(pathEntries);
+         path[lastIndex] = newName;
       }
 
       /// <summary>
