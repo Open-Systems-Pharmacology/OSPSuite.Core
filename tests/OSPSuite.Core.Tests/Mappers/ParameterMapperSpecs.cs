@@ -503,6 +503,70 @@ namespace OSPSuite.Core.Mappers
       }
    }
 
+   public class When_mapping_localized_parameters_from_a_v12_snapshot_referencing_a_renamed_parameter : concern_for_ParameterMapper
+   {
+      private LocalizedParameter _localParameter;
+      private Container _container;
+
+      protected override async Task Context()
+      {
+         await base.Context();
+         _container = new Container().WithName("Organism");
+         _parameter.Name = ParameterMapper.TimeToCompleteGallbladderEmptying;
+         _container.Add(_parameter);
+
+         _localParameter = new LocalizedParameter
+         {
+            Path = $"Organism|{ParameterMapper.TimeToCompleteGallbladderRefilling}",
+            Value = 5,
+            Unit = _parameter.DisplayUnit.Name
+         };
+      }
+
+      protected override Task Because()
+      {
+         return sut.MapLocalizedParameters(new[] { _localParameter }, _container, new SnapshotContext(new TestProject(), SnapshotVersions.V12));
+      }
+
+      [Observation]
+      public void should_map_the_value_to_the_renamed_parameter()
+      {
+         _parameter.ValueInDisplayUnit.ShouldBeEqualTo(5);
+      }
+   }
+
+   public class When_mapping_snapshot_parameters_from_a_v12_snapshot_referencing_a_renamed_parameter : concern_for_ParameterMapper
+   {
+      private Container _container;
+      private SnapshotParameter _snapshot;
+
+      protected override async Task Context()
+      {
+         await base.Context();
+         _container = new Container().WithName("Organism");
+         _parameter.Name = ParameterMapper.TimeToCompleteGallbladderEmptying;
+         _container.Add(_parameter);
+
+         _snapshot = new SnapshotParameter
+         {
+            Name = ParameterMapper.TimeToCompleteGallbladderRefilling,
+            Value = 5,
+            Unit = _parameter.DisplayUnit.Name
+         };
+      }
+
+      protected override async Task Because()
+      {
+         await sut.MapParameters(new[] { _snapshot }, _container, _container.Name, new SnapshotContext(new TestProject(), SnapshotVersions.V12));
+      }
+
+      [Observation]
+      public void should_map_the_value_to_the_renamed_parameter()
+      {
+         _parameter.ValueInDisplayUnit.ShouldBeEqualTo(5);
+      }
+   }
+
    public class When_mapping_snapshot_parameters_defined_in_a_given_container : concern_for_ParameterMapper
    {
       private Container _container;
