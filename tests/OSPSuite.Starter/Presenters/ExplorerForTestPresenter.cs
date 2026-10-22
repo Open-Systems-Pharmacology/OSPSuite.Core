@@ -44,7 +44,7 @@ namespace OSPSuite.Starter.Presenters
       {
       }
 
-      public override bool RemoveDataUnderClassification(ITreeNode<IClassification> classificationNode)
+      public override bool RemoveDataUnderClassifications(IReadOnlyList<ITreeNode<IClassification>> classificationNodes)
       {
          return true;
       }

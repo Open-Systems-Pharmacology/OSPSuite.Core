@@ -2137,6 +2137,8 @@ namespace OSPSuite.Assets
       public static readonly string DeleteSubFoldersAndData = "All Subfolders and Data";
       public static readonly string DeleteFolderAndKeepData = "Folder and Keep Data";
       public static readonly string DeleteFolderAndData = "Folder and Data";
+      public static readonly string DeleteFoldersAndKeepData = "Folders and Keep Data";
+      public static readonly string DeleteFoldersAndData = "Folders and Data";
       public static readonly string CreateGroup = "Create Subfolder...";
       public static readonly string EditAllMetaData = "Edit All MetaData...";
       public static readonly string EditMetaData = "Edit MetaData...";

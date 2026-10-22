@@ -32,10 +32,10 @@ namespace OSPSuite.Presentation.Presenters.ObservedData
       void GroupObservedDataByCategory(ITreeNode<IClassification> parentNode, string category);
 
       /// <summary>
-      ///    Returns <c>true</c> if the observed data defined under the <paramref name="classificationNode" /> were removed
+      ///    Returns <c>true</c> if the observed data defined under the <paramref name="classificationNodes" /> were removed
       ///    otherwise <c>false</c>
       /// </summary>
-      bool RemoveObservedDataUnder(ITreeNode<IClassification> classificationNode);
+      bool RemoveObservedDataUnder(IReadOnlyList<ITreeNode<IClassification>> classificationNodes);
    }
 
    public class ObservedDataInExplorerPresenter : ClassificationInExplorerPresenter<ClassifiableObservedData>, IObservedDataInExplorerPresenter
@@ -68,9 +68,9 @@ namespace OSPSuite.Presentation.Presenters.ObservedData
          return rootNode == _rootNodeType;
       }
 
-      public bool RemoveObservedDataUnder(ITreeNode<IClassification> classificationNode)
+      public bool RemoveObservedDataUnder(IReadOnlyList<ITreeNode<IClassification>> classificationNodes)
       {
-         var allObservedData = classificationNode.AllNodes<ObservedDataNode>().Select(x => x.Tag.Repository);
+         var allObservedData = classificationNodes.SelectMany(x => x.AllNodes<ObservedDataNode>()).Select(x => x.Tag.Repository);
          return _observedDataTask.Delete(allObservedData);
       }
 

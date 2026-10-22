@@ -158,25 +158,30 @@ namespace OSPSuite.Presentation.Presentation
       }
    }
 
-   public class When_removing_all_observed_data_defined_under_a_classifiaction_node : concern_for_ObservedDataInExplorerPresenter
+   public class When_removing_all_observed_data_defined_under_classifiaction_nodes : concern_for_ObservedDataInExplorerPresenter
    {
       private ITreeNode<IClassification> _observedDataFolder;
+      private ITreeNode<IClassification> _anotherObservedDataFolder;
       private bool _result;
       private ITreeNode _anotherNode;
       private List<DataRepository> _allObservedData;
       private DataRepository _repo1;
       private DataRepository _repo2;
+      private DataRepository _repo3;
 
       protected override void Context()
       {
          base.Context();
          _observedDataFolder = new ClassificationNode(new Classification());
+         _anotherObservedDataFolder = new ClassificationNode(new Classification());
          _anotherNode = A.Fake<ITreeNode>();
          _repo1 = new DataRepository().WithId("1");
          _repo2 = new DataRepository().WithId("2");
+         _repo3 = new DataRepository().WithId("3");
          _observedDataFolder.AddChild(new ObservedDataNode(new ClassifiableObservedData { Subject = _repo1 }));
          _observedDataFolder.AddChild(new ObservedDataNode(new ClassifiableObservedData { Subject = _repo2 }));
          _observedDataFolder.AddChild(_anotherNode);
+         _anotherObservedDataFolder.AddChild(new ObservedDataNode(new ClassifiableObservedData { Subject = _repo3 }));
 
          A.CallTo(() => _observedDataTask.Delete(A<IEnumerable<DataRepository>>._, false))
             .Invokes(x => _allObservedData = x.GetArgument<IEnumerable<DataRepository>>(0).ToList())
@@ -185,13 +190,14 @@ namespace OSPSuite.Presentation.Presentation
 
       protected override void Because()
       {
-         _result = sut.RemoveObservedDataUnder(_observedDataFolder);
+         _result = sut.RemoveObservedDataUnder(new[] { _observedDataFolder, _anotherObservedDataFolder });
       }
 
       [Observation]
-      public void should_delete_all_observed_data_defined_unter_the_node()
+      public void should_delete_all_observed_data_defined_under_the_nodes_at_once()
       {
-         _allObservedData.ShouldOnlyContain(_repo1, _repo2);
+         A.CallTo(() => _observedDataTask.Delete(A<IEnumerable<DataRepository>>._, false)).MustHaveHappenedOnceExactly();
+         _allObservedData.ShouldOnlyContain(_repo1, _repo2, _repo3);
       }
 
       [Observation]

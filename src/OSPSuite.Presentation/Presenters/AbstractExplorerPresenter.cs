@@ -6,6 +6,7 @@ using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Events;
 using OSPSuite.Presentation.Core;
+using OSPSuite.Presentation.Extensions;
 using OSPSuite.Presentation.MenuAndBars;
 using OSPSuite.Presentation.Nodes;
 using OSPSuite.Presentation.Presenters.Classifications;
@@ -60,10 +61,14 @@ namespace OSPSuite.Presentation.Presenters
       void AddToClassificationTree(ITreeNode<IClassification> parentNode, string category);
 
       /// <summary>
-      ///    Removes the data defined under the classification. The classification itself is not removed.
+      ///    Removes the data defined under the classifications. The classifications themselves are not removed.
       ///    Returns <c>true</c> if the data were indeed deleted otherwise <c>false</c> (for example if user canceled deletion)
       /// </summary>
-      bool RemoveDataUnderClassification(ITreeNode<IClassification> classificationNode);
+      /// <param name="classificationNodes">
+      ///    The nodes whose data should be removed. There is at least one node and all nodes share the same
+      ///    <see cref="ClassificationType" />
+      /// </param>
+      bool RemoveDataUnderClassifications(IReadOnlyList<ITreeNode<IClassification>> classificationNodes);
 
       /// <summary>
       ///    Removes the classification node. The data are not deleted
@@ -82,6 +87,20 @@ namespace OSPSuite.Presentation.Presenters
       /// <param name="removeParent">Specifies whether the parent node should be remove or not. Default is <c>false</c></param>
       /// <param name="removeData">Specifies whether the data should also be removed. Defaults is <c>false</c></param>
       void RemoveChildrenClassifications(ITreeNode<IClassification> parentClassificationNode, bool removeParent = false, bool removeData = false);
+
+      /// <summary>
+      ///    Removes the classification nodes and all their sub-classification nodes. Unless the data are removed as well, leafs
+      ///    remain and are attached to the parent of each removed node
+      /// </summary>
+      /// <param name="classificationNodes">
+      ///    The nodes to remove. They all share the same <see cref="ClassificationType" />. A node defined under another node
+      ///    to remove is removed along with that node
+      /// </param>
+      /// <param name="removeData">
+      ///    Specifies whether the data should also be removed. The user confirms the removal of the data under all nodes
+      ///    at once. Defaults is <c>false</c>
+      /// </param>
+      void RemoveClassifications(IReadOnlyList<ITreeNode<IClassification>> classificationNodes, bool removeData = false);
 
       /// <summary>
       ///    Returns the node whose <c>Id</c> is equal to the <paramref name="objectWithId" /> Id or null a node with this id was
@@ -207,7 +226,7 @@ namespace OSPSuite.Presentation.Presenters
       public abstract bool CanDrag(ITreeNode node);
       public abstract IEnumerable<ClassificationTemplate> AvailableClassificationCategories(ITreeNode<IClassification> parentClassificationNode);
       public abstract void AddToClassificationTree(ITreeNode<IClassification> parentNode, string category);
-      public abstract bool RemoveDataUnderClassification(ITreeNode<IClassification> classificationNode);
+      public abstract bool RemoveDataUnderClassifications(IReadOnlyList<ITreeNode<IClassification>> classificationNodes);
 
       protected abstract void AddProjectToTree(IProject project);
 
@@ -312,7 +331,7 @@ namespace OSPSuite.Presentation.Presenters
 
          if (removeData)
          {
-            if (!RemoveDataUnderClassification(parentClassificationNode))
+            if (!RemoveDataUnderClassifications(new[] {parentClassificationNode}))
                return;
          }
 
@@ -320,6 +339,24 @@ namespace OSPSuite.Presentation.Presenters
 
          if (removeParent)
             RemoveClassification(parentClassificationNode);
+      }
+
+      public virtual void RemoveClassifications(IReadOnlyList<ITreeNode<IClassification>> classificationNodes, bool removeData = false)
+      {
+         //A node defined under another node to remove is already removed with its ancestor
+         var topMostClassificationNodes = classificationNodes.Where(node => !classificationNodes.Any(x => node.ParentNode.HasAncestor(x))).ToList();
+         if (!topMostClassificationNodes.Any())
+            return;
+
+         ResetActiveClassification();
+
+         if (removeData)
+         {
+            if (!RemoveDataUnderClassifications(topMostClassificationNodes))
+               return;
+         }
+
+         topMostClassificationNodes.Each(node => RemoveChildrenClassifications(node, removeParent: true));
       }
 
       public virtual ITreeNode AddSubjectToClassifyToTree<TSubject, TClassifiable>(TSubject subject, Func<TClassifiable, ITreeNode> addClassifiableToTree)

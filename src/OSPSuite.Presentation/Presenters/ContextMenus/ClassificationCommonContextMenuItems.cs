@@ -1,4 +1,5 @@
-﻿using OSPSuite.Assets;
+﻿using System.Collections.Generic;
+using OSPSuite.Assets;
 using OSPSuite.Core.Domain;
 using OSPSuite.Presentation.Core;
 using OSPSuite.Presentation.MenuAndBars;
@@ -22,6 +23,35 @@ namespace OSPSuite.Presentation.Presenters.ContextMenus
          groupMenu.AddItem(DeleteClassificationAndKeepDataMenu(classificationNode, presenter));
 
          return groupMenu;
+      }
+
+      /// <summary>
+      ///    Returns the main menu entry for the remove section of multiple classification nodes
+      /// </summary>
+      public static IMenuBarItem RemoveClassificationsMainMenu(IReadOnlyList<ITreeNode<IClassification>> classificationNodes, IExplorerPresenter presenter)
+      {
+         var groupMenu = CreateSubMenu.WithCaption(MenuNames.DeleteSubMenu)
+            .WithIcon(ApplicationIcons.Delete)
+            .AsGroupStarter();
+
+         groupMenu.AddItem(DeleteClassificationsAndDataMenu(classificationNodes, presenter));
+         groupMenu.AddItem(DeleteClassificationsAndKeepDataMenu(classificationNodes, presenter));
+
+         return groupMenu;
+      }
+
+      public static IMenuBarButton DeleteClassificationsAndKeepDataMenu(IReadOnlyList<ITreeNode<IClassification>> classificationNodes, IExplorerPresenter presenter)
+      {
+         return CreateMenuButton.WithCaption(MenuNames.DeleteFoldersAndKeepData)
+            .WithIcon(ApplicationIcons.DeleteFolderOnly)
+            .WithActionCommand(() => presenter.RemoveClassifications(classificationNodes));
+      }
+
+      public static IMenuBarButton DeleteClassificationsAndDataMenu(IReadOnlyList<ITreeNode<IClassification>> classificationNodes, IExplorerPresenter presenter)
+      {
+         return CreateMenuButton.WithCaption(MenuNames.DeleteFoldersAndData)
+            .WithIcon(ApplicationIcons.Delete)
+            .WithActionCommand(() => presenter.RemoveClassifications(classificationNodes, removeData: true));
       }
 
       public static IMenuBarButton DeleteChildrenClassificationsAndKeepDataMenu(ITreeNode<IClassification> classificationNode, IExplorerPresenter presenter)

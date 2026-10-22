@@ -24,7 +24,7 @@ namespace OSPSuite.Presentation.Presenters
 
    {
       bool CanDrag(ITreeNode node);
-      bool RemoveDataUnderClassification(ITreeNode<IClassification> classificationNode);
+      bool RemoveDataUnderClassifications(IReadOnlyList<ITreeNode<IClassification>> classificationNodes);
       void AddParameterAnalysablesToTree(IProject project);
       void InitializeWith(IExplorerPresenter explorerPresenter, IClassificationPresenter classificationPresenter);
    }
@@ -78,17 +78,19 @@ namespace OSPSuite.Presentation.Presenters
                 node.IsAnImplementationOf<SensitivityAnalysisNode>();
       }
 
-      public bool RemoveDataUnderClassification(ITreeNode<IClassification> classificationNode)
+      public bool RemoveDataUnderClassifications(IReadOnlyList<ITreeNode<IClassification>> classificationNodes)
       {
-         if (classificationNode.Tag.ClassificationType == ClassificationType.ParameterIdentification)
+         var classificationType = classificationNodes.First().Tag.ClassificationType;
+
+         if (classificationType == ClassificationType.ParameterIdentification)
          {
-            IReadOnlyList<ParameterIdentification> allParameterIdentifications = classificationNode.AllNodes<ParameterIdentificationNode>().Select(x => x.Tag.ParameterIdentification).ToList();
+            IReadOnlyList<ParameterIdentification> allParameterIdentifications = classificationNodes.SelectMany(x => x.AllNodes<ParameterIdentificationNode>()).Select(x => x.Tag.ParameterIdentification).ToList();
             return _parameterIdentificationTask.Delete(allParameterIdentifications);
          }
 
-         if (classificationNode.Tag.ClassificationType == ClassificationType.SensitiviyAnalysis)
+         if (classificationType == ClassificationType.SensitiviyAnalysis)
          {
-            IReadOnlyList<SensitivityAnalysis> allSensitivityAnalyses = classificationNode.AllNodes<SensitivityAnalysisNode>().Select(x => x.Tag.SensitivityAnalysis).ToList();
+            IReadOnlyList<SensitivityAnalysis> allSensitivityAnalyses = classificationNodes.SelectMany(x => x.AllNodes<SensitivityAnalysisNode>()).Select(x => x.Tag.SensitivityAnalysis).ToList();
             return _sensitivityAnalysisTask.Delete(allSensitivityAnalyses);
          }
 
