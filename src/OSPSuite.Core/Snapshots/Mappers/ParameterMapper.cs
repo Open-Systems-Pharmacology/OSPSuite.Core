@@ -25,6 +25,12 @@ namespace OSPSuite.Core.Snapshots.Mappers
       //only use for conversion of older snapshot. Do not use in code otherwise
       public const string NoFormulation = "No formulation";
 
+      //only use for conversion of older snapshot. Do not use in code otherwise
+      public const string TimeToCompleteGallbladderRefilling = "Time to complete gallbladder refilling";
+
+      //only use for conversion of older snapshot. Do not use in code otherwise
+      public const string TimeToCompleteGallbladderEmptying = "Time to complete gallbladder emptying";
+
       private readonly TableFormulaMapper _tableFormulaMapper;
       private readonly ValueOriginMapper _valueOriginMapper;
       private readonly IEntityPathResolver _entityPathResolver;
@@ -174,7 +180,36 @@ namespace OSPSuite.Core.Snapshots.Mappers
          //for V12 or earlier, applications defined without a formulation are now located under a dedicated 'No formulation' container
          InsertNoFormulationContainer(path);
 
+         //for V12 or earlier, some parameters were renamed
+         RenameParametersForV13(path);
+
          return path.ToString();
+      }
+
+      /// <summary>
+      ///    Only use for conversion of older snapshot. Returns the new name of a parameter renamed in V13 or the
+      ///    <paramref name="parameterName" /> itself if the parameter was not renamed
+      /// </summary>
+      public static string RenamedParameterNameForV13(string parameterName)
+      {
+         return string.Equals(parameterName, TimeToCompleteGallbladderRefilling) ? TimeToCompleteGallbladderEmptying : parameterName;
+      }
+
+      /// <summary>
+      ///    Only use for conversion of older snapshot. Replaces the name of the parameter (last entry of the
+      ///    <paramref name="path" />) if the parameter was renamed in V13
+      /// </summary>
+      public static void RenameParametersForV13(ObjectPath path)
+      {
+         if (path.Count == 0)
+            return;
+
+         var lastIndex = path.Count - 1;
+         var newName = RenamedParameterNameForV13(path[lastIndex]);
+         if (string.Equals(newName, path[lastIndex]))
+            return;
+
+         path[lastIndex] = newName;
       }
 
       /// <summary>
@@ -206,7 +241,12 @@ namespace OSPSuite.Core.Snapshots.Mappers
 
       public virtual Task MapParameters(IReadOnlyList<SnapshotParameter> snapshots, IContainer container, string containerDescriptor, SnapshotContext snapshotContext)
       {
-         return mapParameters(snapshots, x => container.Parameter(x.Name), x => x.Name, containerDescriptor, snapshotContext);
+         return mapParameters(snapshots, x => container.Parameter(adjustedName(x, snapshotContext)), x => x.Name, containerDescriptor, snapshotContext);
+      }
+
+      private string adjustedName(SnapshotParameter snapshot, SnapshotContext snapshotContext)
+      {
+         return snapshotContext != null && snapshotContext.IsV12FormatOrEarlier ? RenamedParameterNameForV13(snapshot.Name) : snapshot.Name;
       }
 
       private Task mapParameters<T>(IReadOnlyList<T> snapshots, Func<T, IParameter> parameterRetrieverFunc, Func<T, string> parameterIdentifierFunc, string containerDescriptor, SnapshotContext snapshotContext, bool showParameterNotFoundWarning = true) where T : SnapshotParameter
