@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Globalization;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Services;
@@ -82,6 +83,52 @@ namespace OSPSuite.Infrastructure.Serialization
       {
          _result.Name.ShouldBeEqualTo("NaN");
          _result.Values[0].ShouldBeEqualTo(1.5f);
+      }
+   }
+
+   public class When_round_tripping_a_nullable_double_using_a_culture_with_a_comma_as_decimal_separator : concern_for_JsonSerializer
+   {
+      private CultureInfo _originalCulture;
+
+      protected override void Context()
+      {
+         base.Context();
+         _originalCulture = CultureInfo.CurrentCulture;
+         CultureInfo.CurrentCulture = new CultureInfo("de-DE");
+      }
+
+      public override void Cleanup()
+      {
+         base.Cleanup();
+         CultureInfo.CurrentCulture = _originalCulture;
+      }
+
+      private double? roundTrip(double? value) =>
+         sut.DeserializeFromString<Parameter>(sut.Serialize(new Parameter {Value = value})).Result.Value;
+
+      [Observation]
+      public void should_not_interpret_the_decimal_separator_as_a_group_separator()
+      {
+         roundTrip(1.0).ShouldBeEqualTo(1.0);
+         roundTrip(30.0).ShouldBeEqualTo(30.0);
+         roundTrip(1.123456789).ShouldBeEqualTo(1.123456789);
+         roundTrip(1e-12).ShouldBeEqualTo(1e-12);
+         roundTrip(0.0000000142).ShouldBeEqualTo(0.0000000142);
+         roundTrip(449.9999999996).ShouldBeEqualTo(449.9999999996);
+         roundTrip(-1.5).ShouldBeEqualTo(-1.5);
+      }
+
+      [Observation]
+      public void should_still_round_to_the_expected_precision()
+      {
+         roundTrip(449.9999999999991).ShouldBeEqualTo(450);
+         roundTrip(199.999999998E-2).ShouldBeEqualTo(2d);
+      }
+
+      [Observation]
+      public void should_preserve_a_null_value()
+      {
+         roundTrip(null).ShouldBeNull();
       }
    }
 }
