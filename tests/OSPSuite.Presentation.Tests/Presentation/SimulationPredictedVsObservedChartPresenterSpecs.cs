@@ -346,11 +346,16 @@ namespace OSPSuite.Presentation.Presentation
          base.Context();
          //first open: chart is new, curves get created with default settings
          sut.InitializeAnalysis(_predictedVsObservedChart, _simulation);
-         var customizedCurve = _predictedVsObservedChart.Curves.First();
+         var customizedCurve = _predictedVsObservedChart.Curves.First(x => Equals(x.yData.Repository, _simulation.ResultsDataRepository));
          customizedCurve.Color = Color.Red;
          customizedCurve.Symbol = Symbols.Circle;
          _customizedCurveId = customizedCurve.Id;
          _curveCountBeforeReload = _predictedVsObservedChart.Curves.Count();
+
+         //the identity line is backed by an in-memory repository that is never persisted, so the chart serializer
+         //drops its curve on load (see CurveChart.AddCurveIfConsistent). Mimic that before reopening.
+         _predictedVsObservedChart.Curves.Where(x => Equals(x.yData.Repository.Name, _predictedVsObservedService.Identity)).ToList()
+            .ForEach(_predictedVsObservedChart.RemoveCurve);
 
          //close/open: a brand new presenter loads the persisted chart
          _reopenedPresenter = new SimulationPredictedVsObservedChartPresenter(_view, _chartPresenterContext, _predictedVsObservedService, _observedDataRepository);
