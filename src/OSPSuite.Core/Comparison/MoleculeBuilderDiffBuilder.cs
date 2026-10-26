@@ -21,6 +21,10 @@ namespace OSPSuite.Core.Comparison
       {
          _containerDiffBuilder.Compare(comparison);
          CompareValues(x=>!x.IsFloating,Captions.Diff.Stationary,comparison);
+         //both drive model construction: global molecule parameters are only created for floating xenobiotic molecules and
+         //the start formula is mapped differently for amount and concentration based molecules
+         CompareValues(x => x.IsXenobiotic, x => x.IsXenobiotic, comparison);
+         CompareValues(x => x.Dimension, x => x.Dimension, comparison);
          _enumerableComparerComparer.CompareEnumerables(comparison,x=>x.UsedCalculationMethods,x=>x.Category, missingItemType: ObjectTypes.CalculationMethod);
          compareDefaultStartFormula(comparison);
          if (comparison.Settings.OnlyComputingRelevant)

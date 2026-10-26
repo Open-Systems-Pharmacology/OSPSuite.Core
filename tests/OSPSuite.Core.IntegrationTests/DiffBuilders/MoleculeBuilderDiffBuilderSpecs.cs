@@ -4,9 +4,58 @@ using OSPSuite.Core.Comparison;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Formulas;
+using OSPSuite.Helpers;
 
 namespace OSPSuite.Core.DiffBuilders
 {
+   public class When_comparing_two_molecule_builder_where_only_one_is_xenobiotic : concern_for_ObjectComparer
+   {
+      protected override void Context()
+      {
+         base.Context();
+         _comparerSettings = new ComparerSettings();
+         var moleculeBuilder1 = new MoleculeBuilder().WithName("Drug");
+         moleculeBuilder1.IsXenobiotic = true;
+
+         var moleculeBuilder2 = new MoleculeBuilder().WithName("Drug");
+         moleculeBuilder2.IsXenobiotic = false;
+
+         _object1 = moleculeBuilder1;
+         _object2 = moleculeBuilder2;
+      }
+
+      [Observation]
+      public void should_report_the_difference()
+      {
+         _report.Count.ShouldBeEqualTo(1);
+      }
+   }
+
+   public class When_comparing_two_molecule_builder_with_different_dimensions_and_the_same_start_value : concern_for_ObjectComparer
+   {
+      protected override void Context()
+      {
+         base.Context();
+         _comparerSettings = new ComparerSettings();
+         var moleculeBuilder1 = new MoleculeBuilder().WithName("Drug");
+         moleculeBuilder1.Dimension = DomainHelperForSpecs.ConcentrationDimensionForSpecs();
+         moleculeBuilder1.DefaultStartFormula = new ConstantFormula(1);
+
+         var moleculeBuilder2 = new MoleculeBuilder().WithName("Drug");
+         moleculeBuilder2.Dimension = Constants.Dimension.NO_DIMENSION;
+         moleculeBuilder2.DefaultStartFormula = new ConstantFormula(1);
+
+         _object1 = moleculeBuilder1;
+         _object2 = moleculeBuilder2;
+      }
+
+      [Observation]
+      public void should_report_the_different_dimension()
+      {
+         _report.Count.ShouldBeEqualTo(1);
+      }
+   }
+
    public class When_comparing_two_molecule_builder_with_different_constant_start_values_without_comparing_hidden_entities : concern_for_ObjectComparer
    {
       protected override void Context()

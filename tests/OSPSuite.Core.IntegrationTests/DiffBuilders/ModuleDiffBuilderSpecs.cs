@@ -267,6 +267,49 @@ namespace OSPSuite.Core.DiffBuilders
       }
    }
 
+   public class When_comparing_two_modules_where_only_one_overrides_a_distribution_sub_parameter : concern_for_ModuleDiffBuilder
+   {
+      protected override void AdjustModulesForDiff(Module module1, Module module2)
+      {
+         _comparerSettings = new ComparerSettings();
+         addDistributedParameter(module1);
+         addDistributedParameter(module2);
+         module2.ParameterValuesCollection[0].Add(new ParameterValue
+         {
+            Path = new ObjectPath("Organism", "Liver", "Volume", "Mean"),
+            Value = 99
+         });
+      }
+
+      private static void addDistributedParameter(Module module)
+      {
+         var distributedParameter = parameterValue("Volume", value: 5);
+         distributedParameter.DistributionType = DistributionType.Normal;
+         module.ParameterValuesCollection[0].Add(distributedParameter);
+      }
+
+      [Observation]
+      public void should_report_the_one_sided_override()
+      {
+         _report.Count.ShouldBeEqualTo(1);
+      }
+   }
+
+   public class When_comparing_two_modules_where_a_molecule_is_xenobiotic_in_only_one : concern_for_ModuleDiffBuilder
+   {
+      protected override void AdjustModulesForDiff(Module module1, Module module2)
+      {
+         _comparerSettings = new ComparerSettings();
+         module2.Molecules.FindByName("A").IsXenobiotic = false;
+      }
+
+      [Observation]
+      public void should_report_the_difference()
+      {
+         _report.Count.ShouldBeEqualTo(1);
+      }
+   }
+
    public class When_comparing_a_module_against_a_module_with_an_additional_parameter_values_building_block_of_the_same_name : concern_for_ModuleDiffBuilder
    {
       protected override void AdjustModulesForDiff(Module module1, Module module2)

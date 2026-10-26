@@ -50,6 +50,13 @@ namespace OSPSuite.Core.Comparison
       /// </summary>
       public bool ShowValueOrigin { get; set; }
 
+      /// <summary>
+      ///    Specifies if sub parameters of distributed parameters (mean, deviation, ...) defined in only one of two compared
+      ///    building blocks should be ignored instead of being reported as missing. Comparison views set this to <c>true</c>
+      ///    as these entries are generated and would only add noise. A content comparison should leave it <c>false</c>, as a
+      ///    one-sided entry is applied to the model and is a real difference. Default is <c>false</c>
+      /// </summary>
+      public bool IgnoreOneSidedDistributionSubParameters { get; set; }
 
       public ComparerSettings()
       {
@@ -58,6 +65,7 @@ namespace OSPSuite.Core.Comparison
          RelativeTolerance = Constants.DOUBLE_RELATIVE_EPSILON;
          CompareHiddenEntities = false;
          ShowValueOrigin = true;
+         IgnoreOneSidedDistributionSubParameters = false;
       }
    }
 }
