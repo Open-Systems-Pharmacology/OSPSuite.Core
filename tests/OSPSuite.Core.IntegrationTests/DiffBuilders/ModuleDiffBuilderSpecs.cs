@@ -1,7 +1,9 @@
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
+using OSPSuite.Core.Comparison;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Builder;
+using OSPSuite.Core.Domain.Formulas;
 
 namespace OSPSuite.Core.DiffBuilders
 {
@@ -28,7 +30,9 @@ namespace OSPSuite.Core.DiffBuilders
          module.PKSimVersion = "13.0";
 
          var molecules = new MoleculeBuildingBlock().WithName($"{name} - Molecules");
-         molecules.Add(new MoleculeBuilder().WithName("A"));
+         var moleculeBuilder = new MoleculeBuilder().WithName("A");
+         moleculeBuilder.DefaultStartFormula = new ConstantFormula(0);
+         molecules.Add(moleculeBuilder);
          module.Add(molecules);
 
          var reactions = new ReactionBuildingBlock().WithName($"{name} - Reactions");
@@ -215,6 +219,77 @@ namespace OSPSuite.Core.DiffBuilders
 
       [Observation]
       public void should_report_the_missing_molecule()
+      {
+         _report.Count.ShouldBeEqualTo(1);
+      }
+   }
+
+   public class When_comparing_two_modules_with_a_different_molecule_start_value_using_default_settings : concern_for_ModuleDiffBuilder
+   {
+      protected override void AdjustModulesForDiff(Module module1, Module module2)
+      {
+         _comparerSettings = new ComparerSettings();
+         module2.Molecules.FindByName("A").DefaultStartFormula = new ConstantFormula(1.1);
+      }
+
+      [Observation]
+      public void should_report_the_different_start_value()
+      {
+         _report.Count.ShouldBeEqualTo(1);
+      }
+   }
+
+   public class When_comparing_two_modules_with_a_different_distribution_in_a_parameter_values_building_block : concern_for_ModuleDiffBuilder
+   {
+      protected override void AdjustModulesForDiff(Module module1, Module module2)
+      {
+         addDistributedParameterWithMean(module1, mean: 1);
+         addDistributedParameterWithMean(module2, mean: 2);
+      }
+
+      private static void addDistributedParameterWithMean(Module module, double mean)
+      {
+         var parameterValues = module.ParameterValuesCollection[0];
+         var distributedParameter = parameterValue("Volume", value: 5);
+         distributedParameter.DistributionType = DistributionType.Normal;
+         parameterValues.Add(distributedParameter);
+         parameterValues.Add(new ParameterValue
+         {
+            Path = new ObjectPath("Organism", "Liver", "Volume", "Mean"),
+            Value = mean
+         });
+      }
+
+      [Observation]
+      public void should_report_the_different_distribution_sub_parameter()
+      {
+         _report.Count.ShouldBeEqualTo(1);
+      }
+   }
+
+   public class When_comparing_a_module_against_a_module_with_an_additional_parameter_values_building_block_of_the_same_name : concern_for_ModuleDiffBuilder
+   {
+      protected override void AdjustModulesForDiff(Module module1, Module module2)
+      {
+         module2.Add(parameterValues("Parameter Values 1", value: 99));
+      }
+
+      [Observation]
+      public void should_report_the_additional_building_block_as_missing()
+      {
+         _report.Count.ShouldBeEqualTo(1);
+      }
+   }
+
+   public class When_comparing_a_module_with_an_additional_parameter_values_building_block_of_the_same_name_against_a_module : concern_for_ModuleDiffBuilder
+   {
+      protected override void AdjustModulesForDiff(Module module1, Module module2)
+      {
+         module1.Add(parameterValues("Parameter Values 1", value: 99));
+      }
+
+      [Observation]
+      public void should_report_the_additional_building_block_as_missing()
       {
          _report.Count.ShouldBeEqualTo(1);
       }

@@ -199,6 +199,39 @@ namespace OSPSuite.Core.DiffBuilders
       }
    }
 
+   public class When_comparing_parameter_values_building_blocks_with_distributed_parameters_whose_sub_parameters_have_different_values : concern_for_ObjectComparer
+   {
+      protected override void Context()
+      {
+         base.Context();
+         _object1 = buildingBlockWithDistributedParameterAndMean(mean: 1);
+         _object2 = buildingBlockWithDistributedParameterAndMean(mean: 2);
+      }
+
+      private static ParameterValuesBuildingBlock buildingBlockWithDistributedParameterAndMean(double mean)
+      {
+         var parameterValuesBuildingBlock = new ParameterValuesBuildingBlock().WithName("Tada");
+         var distributedParameter = new ParameterValue().WithName("Volume");
+         distributedParameter.ContainerPath = new ObjectPath("Root", "Liver");
+         distributedParameter.DistributionType = DistributionType.Normal;
+         parameterValuesBuildingBlock.Add(distributedParameter);
+
+         parameterValuesBuildingBlock.Add(new ParameterValue
+         {
+            Path = new ObjectPath("Root", "Liver", "Volume", "Mean"),
+            Value = mean
+         });
+
+         return parameterValuesBuildingBlock;
+      }
+
+      [Observation]
+      public void should_report_the_different_sub_parameter_value()
+      {
+         _report.Count.ShouldBeEqualTo(1);
+      }
+   }
+
    public class When_comparing_parameter_values_building_blocks_with_distributed_parameters_that_have_different_distribution_types : concern_for_ObjectComparer
    {
       protected override void Context()

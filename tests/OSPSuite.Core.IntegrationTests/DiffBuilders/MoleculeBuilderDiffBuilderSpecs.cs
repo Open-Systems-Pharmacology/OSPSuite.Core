@@ -1,11 +1,35 @@
 ﻿using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
+using OSPSuite.Core.Comparison;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Formulas;
 
 namespace OSPSuite.Core.DiffBuilders
 {
+   public class When_comparing_two_molecule_builder_with_different_constant_start_values_without_comparing_hidden_entities : concern_for_ObjectComparer
+   {
+      protected override void Context()
+      {
+         base.Context();
+         _comparerSettings = new ComparerSettings();
+         var moleculeBuilder1 = new MoleculeBuilder().WithName("Drug");
+         moleculeBuilder1.DefaultStartFormula = new ConstantFormula(0);
+
+         var moleculeBuilder2 = new MoleculeBuilder().WithName("Drug");
+         moleculeBuilder2.DefaultStartFormula = new ConstantFormula(1.1);
+
+         _object1 = moleculeBuilder1;
+         _object2 = moleculeBuilder2;
+      }
+
+      [Observation]
+      public void should_report_the_different_start_value()
+      {
+         _report.Count.ShouldBeEqualTo(1);
+      }
+   }
+
    public class When_comparing_two_molecule_builder_with_different_start_values : concern_for_ObjectComparer
    {
       protected override void Context()
