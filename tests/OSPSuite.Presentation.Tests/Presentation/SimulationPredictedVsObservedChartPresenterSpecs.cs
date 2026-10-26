@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using FakeItEasy;
 using OSPSuite.BDDHelper;
@@ -331,6 +332,47 @@ namespace OSPSuite.Presentation.Presentation
       public void should_add_the_chart_template_menu_based_on_the_chart_templates_defined_in_the_simulation()
       {
          A.CallTo(() => _chartEditorPresenter.AddChartTemplateMenu((IWithChartTemplates) _simulationWithTemplates, A<Action<CurveChartTemplate>>._)).MustHaveHappened();
+      }
+   }
+
+   public class When_loading_a_chart_whose_curves_were_customized_by_the_user : concern_for_SimulationPredictedVsObservedChartPresenter
+   {
+      private SimulationPredictedVsObservedChartPresenter _reopenedPresenter;
+      private string _customizedCurveId;
+      private int _curveCountBeforeReload;
+
+      protected override void Context()
+      {
+         base.Context();
+         //first open: chart is new, curves get created with default settings
+         sut.InitializeAnalysis(_predictedVsObservedChart, _simulation);
+         var customizedCurve = _predictedVsObservedChart.Curves.First();
+         customizedCurve.Color = Color.Red;
+         customizedCurve.Symbol = Symbols.Circle;
+         _customizedCurveId = customizedCurve.Id;
+         _curveCountBeforeReload = _predictedVsObservedChart.Curves.Count();
+
+         //close/open: a brand new presenter loads the persisted chart
+         _reopenedPresenter = new SimulationPredictedVsObservedChartPresenter(_view, _chartPresenterContext, _predictedVsObservedService, _observedDataRepository);
+      }
+
+      protected override void Because()
+      {
+         _reopenedPresenter.InitializeAnalysis(_predictedVsObservedChart, _simulation);
+      }
+
+      [Observation]
+      public void should_keep_the_user_defined_curve_settings()
+      {
+         var curve = _predictedVsObservedChart.CurveBy(_customizedCurveId);
+         curve.Color.ShouldBeEqualTo(Color.Red);
+         curve.Symbol.ShouldBeEqualTo(Symbols.Circle);
+      }
+
+      [Observation]
+      public void should_not_duplicate_the_curves()
+      {
+         _predictedVsObservedChart.Curves.Count().ShouldBeEqualTo(_curveCountBeforeReload);
       }
    }
 }
