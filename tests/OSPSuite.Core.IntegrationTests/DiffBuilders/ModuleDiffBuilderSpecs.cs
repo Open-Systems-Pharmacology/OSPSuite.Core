@@ -295,6 +295,39 @@ namespace OSPSuite.Core.DiffBuilders
       }
    }
 
+   public class When_comparing_two_modules_with_different_constant_reaction_kinetics_using_default_settings : concern_for_ModuleDiffBuilder
+   {
+      protected override void AdjustModulesForDiff(Module module1, Module module2)
+      {
+         _comparerSettings = new ComparerSettings();
+         module1.Reactions.FindByName("R1").Formula = new ConstantFormula(1);
+         module2.Reactions.FindByName("R1").Formula = new ConstantFormula(99);
+      }
+
+      [Observation]
+      public void should_report_the_different_kinetic()
+      {
+         _report.Count.ShouldBeEqualTo(1);
+      }
+   }
+
+   public class When_comparing_two_modules_with_different_process_rate_parameter_persistence : concern_for_ModuleDiffBuilder
+   {
+      protected override void AdjustModulesForDiff(Module module1, Module module2)
+      {
+         module1.Reactions.FindByName("R1").CreateProcessRateParameter = true;
+         module1.Reactions.FindByName("R1").ProcessRateParameterPersistable = true;
+         module2.Reactions.FindByName("R1").CreateProcessRateParameter = true;
+         module2.Reactions.FindByName("R1").ProcessRateParameterPersistable = false;
+      }
+
+      [Observation]
+      public void should_report_the_different_persistence()
+      {
+         _report.Count.ShouldBeEqualTo(1);
+      }
+   }
+
    public class When_comparing_two_modules_where_a_molecule_is_xenobiotic_in_only_one : concern_for_ModuleDiffBuilder
    {
       protected override void AdjustModulesForDiff(Module module1, Module module2)

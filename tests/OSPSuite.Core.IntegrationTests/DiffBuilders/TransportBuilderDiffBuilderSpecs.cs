@@ -1,9 +1,11 @@
 ﻿using System.Linq;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
+using OSPSuite.Core.Comparison;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Descriptors;
+using OSPSuite.Core.Domain.Formulas;
 
 namespace OSPSuite.Core.DiffBuilders
 {
@@ -166,6 +168,47 @@ namespace OSPSuite.Core.DiffBuilders
       public void should_report_the_differences_accordingly()
       {
          _report.Count().ShouldBeEqualTo(2);
+      }
+   }
+
+   public class When_comparing_Transports_with_different_constant_kinetics_without_comparing_hidden_entities : concern_for_ObjectComparer
+   {
+      protected override void Context()
+      {
+         base.Context();
+         _comparerSettings = new ComparerSettings();
+         _object1 = new TransportBuilder().WithName("Passive").WithFormula(new ConstantFormula(1));
+         _object2 = new TransportBuilder().WithName("Passive").WithFormula(new ConstantFormula(99));
+      }
+
+      [Observation]
+      public void should_report_the_different_kinetic()
+      {
+         _report.Count().ShouldBeEqualTo(1);
+      }
+   }
+
+   public class When_comparing_Transports_with_different_process_rate_parameter_persistence : concern_for_ObjectComparer
+   {
+      protected override void Context()
+      {
+         base.Context();
+         var t1 = new TransportBuilder().WithName("Passive");
+         t1.CreateProcessRateParameter = true;
+         t1.ProcessRateParameterPersistable = true;
+
+         var t2 = new TransportBuilder().WithName("Passive");
+         t2.CreateProcessRateParameter = true;
+         t2.ProcessRateParameterPersistable = false;
+
+         _object1 = t1;
+         _object2 = t2;
+      }
+
+      [Observation]
+      public void should_report_the_different_persistence()
+      {
+         _report.Count().ShouldBeEqualTo(1);
       }
    }
 }

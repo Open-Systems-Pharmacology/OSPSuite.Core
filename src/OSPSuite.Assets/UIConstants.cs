@@ -567,7 +567,6 @@ namespace OSPSuite.Assets
          public static readonly string SourceAmount = "Source Amount";
          public static readonly string TargetAmount = "Target Amount";
          public static readonly string PKSimVersion = "PK-Sim Version";
-         public static readonly string DefaultStartValue = "Default Start Value";
 
          public static string PropertyDiffers(string propertyName, int value1, int value2) => PropertyDiffers(propertyName, $"{value1}", $"{value2}");
 
