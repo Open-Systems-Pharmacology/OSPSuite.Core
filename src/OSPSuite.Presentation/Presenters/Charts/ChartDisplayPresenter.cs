@@ -127,14 +127,6 @@ namespace OSPSuite.Presentation.Presenters.Charts
       void ShowCurveInLegend(Curve curve, bool show);
 
       /// <summary>
-      ///    Moves the curve from it's current place to a target place in the legend
-      ///    Subsequent entries are bumped down in the order
-      /// </summary>
-      /// <param name="movingCurve">The curve being moved</param>
-      /// <param name="targetCurve">The place the curve should occupy after move</param>
-      void MoveSeriesInLegend(Curve movingCurve, Curve targetCurve);
-
-      /// <summary>
       ///    If no curves have been added to the chart, then <paramref name="hint" /> text will appear in place of the empty
       ///    chart
       /// </summary>
@@ -573,12 +565,6 @@ namespace OSPSuite.Presentation.Presenters.Charts
       {
          curveBinderFor(curve).ShowCurveInLegend(showInLegend: show);
          curve.VisibleInLegend = show;
-      }
-
-      public void MoveSeriesInLegend(Curve movingCurve, Curve targetCurve)
-      {
-         Chart.MoveCurvesInLegend(movingCurve, targetCurve);
-         View.ReOrderLegend();
       }
 
       public void SetNoCurvesSelectedHint(string hint) => _view.SetNoCurvesSelectedHint(hint);

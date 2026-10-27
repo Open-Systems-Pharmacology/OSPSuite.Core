@@ -4,7 +4,6 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.Linq;
 using System.Windows.Forms;
-using DevExpress.Charts.Native;
 using DevExpress.Utils;
 using DevExpress.XtraBars;
 using DevExpress.XtraCharts;
@@ -94,7 +93,7 @@ namespace OSPSuite.UI.Views.Charts
          _chartControl.CustomDrawSeriesPoint += (o, e) => OnEvent(() => drawSeriesPoint(e));
          _chartControl.Click += (o, e) => OnEvent(() => chartClick(e as MouseEventArgs));
          _chartControl.DoubleClick += (o, e) => OnEvent(() => chartDoubleClick(e as MouseEventArgs));
-         _chartControl.MouseMove += (o, e) => OnEvent(() => OnChartMouseMove(e));
+         _chartControl.MouseMove += (o, e) => OnEvent(() => OnMouseMove(e));
          _chartControl.DragOver += (o, e) => OnEvent(() => OnDragOver(e));
          _chartControl.DragDrop += (o, e) => OnEvent(() => OnDragDrop(e));
          _chartControl.SizeChanged += (o, e) => OnEvent(onSizeChanged);
@@ -130,62 +129,16 @@ namespace OSPSuite.UI.Views.Charts
          _chartControl.ExportChartToImageFile(_presenter.Chart, watermark, filePath, ImageFormat.Png);
       }
 
-      private static bool canDropMovingLegendHere(ChartHitInfo hitInfo)
-      {
-         return inLegendSeries(hitInfo);
-      }
-
-      private static bool inLegendSeries(ChartHitInfo hitInfo)
-      {
-         return hitInfo.InLegend && hitInfo.InSeries;
-      }
-
-      private void dropLegendHere(ISeries series, ISeries seriesBeingMoved)
-      {
-         _presenter.MoveSeriesInLegend(_presenter.CurveFromSeriesId(seriesBeingMoved.Name), _presenter.CurveFromSeriesId(series.Name));
-      }
-
-      protected void OnChartMouseMove(MouseEventArgs e)
-      {
-         OnMouseMove(e);
-         var hitInfo = _chartControl.CalcHitInfo(e.Location);
-         if (canMoveLegendItem(e, hitInfo) && e.Button.IsLeft())
-         {
-            _chartControl.DoDragDrop(hitInfo.Series.DowncastTo<Series>(), DragDropEffects.Move);
-         }
-      }
-
-      private static bool canMoveLegendItem(MouseEventArgs e, ChartHitInfo hitInfo)
-      {
-         return hitInfo.InLegend && hitInfo.InSeries && e.Button == MouseButtons.Left;
-      }
-
       protected override void OnDragDrop(DragEventArgs dragDropEventArgs)
       {
          base.OnDragDrop(dragDropEventArgs);
          _presenter.OnDragDrop(new DragEvent(dragDropEventArgs));
-         var hitInfo = _chartControl.CalcHitInfo(chartControlPointFromDragDropEventArgs(dragDropEventArgs));
-         if (!canDropMovingLegendHere(hitInfo)) return;
-
-         var seriesBeingMoved = dragDropEventArgs.Data.GetData(typeof(Series)).DowncastTo<Series>();
-         if (seriesBeingMoved != null)
-            dropLegendHere(hitInfo.Series.DowncastTo<Series>(), seriesBeingMoved);
       }
 
       protected override void OnDragOver(DragEventArgs dragOverEventArgs)
       {
          base.OnDragOver(dragOverEventArgs);
          _presenter.OnDragOver(new DragEvent(dragOverEventArgs));
-
-         if (inLegendSeries(_chartControl.CalcHitInfo(chartControlPointFromDragDropEventArgs(dragOverEventArgs))))
-         {
-            dragOverEventArgs.Effect = DragDropEffects.Move;
-         }
-      }
-
-      private Point chartControlPointFromDragDropEventArgs(DragEventArgs dragOverEventArgs)
-      {
-         return _chartControl.PointToClient(new Point(dragOverEventArgs.X, dragOverEventArgs.Y));
       }
 
       private void onSizeChanged()
