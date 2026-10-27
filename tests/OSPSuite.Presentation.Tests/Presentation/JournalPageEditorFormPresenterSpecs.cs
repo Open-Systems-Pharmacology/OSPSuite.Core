@@ -113,9 +113,10 @@ namespace OSPSuite.Presentation.Presentation
       }
 
       [Observation]
-      public void should_not_result_in_a_call_to_save_the_current_journal_page()
+      public void should_save_the_current_journal_page_before_clearing_the_editor()
       {
-         A.CallTo(() => _journalPageEditorPresenter.Save()).MustNotHaveHappened();
+         A.CallTo(() => _journalPageEditorPresenter.Save()).MustHaveHappened()
+            .Then(A.CallTo(() => _journalPageEditorPresenter.Clear()).MustHaveHappened());
       }
    }
 

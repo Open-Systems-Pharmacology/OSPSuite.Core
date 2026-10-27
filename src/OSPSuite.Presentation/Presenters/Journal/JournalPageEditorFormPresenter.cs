@@ -83,6 +83,7 @@ namespace OSPSuite.Presentation.Presenters.Journal
 
       public void Handle(ProjectClosingEvent eventToHandle)
       {
+         save();
          closeForm();
       }
 
