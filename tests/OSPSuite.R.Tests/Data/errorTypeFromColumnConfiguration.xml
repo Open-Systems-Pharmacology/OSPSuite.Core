@@ -7,7 +7,7 @@
       </MappedColumn>
     </MappingDataFormatParameter>
     <MappingDataFormatParameter columnName="Concentration [mg/l]">
-      <MappedColumn name="Concentration" dimension="Concentration (mass)">
+      <MappedColumn name="Measurement" dimension="Concentration (mass)">
         <Unit selectedUnit="mg/l" />
       </MappedColumn>
     </MappingDataFormatParameter>

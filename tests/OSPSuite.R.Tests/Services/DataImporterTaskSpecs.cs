@@ -357,6 +357,16 @@ namespace OSPSuite.R.Services
       }
 
       [Observation]
+      public void should_import_the_measurement_of_every_data_set()
+      {
+         foreach (var dataRepository in _dataRepositories)
+         {
+            var measurementColumn = dataRepository.AllButBaseGrid().Single(x => x.DataInfo.AuxiliaryType == AuxiliaryType.Undefined);
+            measurementColumn.Dimension.Name.ShouldBeEqualTo(Constants.Dimension.MASS_CONCENTRATION);
+         }
+      }
+
+      [Observation]
       public void should_import_a_dimensionless_geometric_error_as_written_for_a_geometric_data_set()
       {
          var errorColumn = errorColumnOf("A");
@@ -404,6 +414,17 @@ namespace OSPSuite.R.Services
       {
          sut.IgnoreSheetNamesAtImport = true;
          The.Action(() => sut.ImportCsvFromConfiguration(getFileFullName("errorTypeFromColumnConfiguration.xml"), getFileFullName("errorTypeFromColumn_conflict.csv"), ';'))
+            .ShouldThrowAn<ImporterParsingException>();
+      }
+   }
+
+   public class When_importing_an_arithmetic_data_set_with_a_geometric_default_error_type_without_unit : concern_for_DataImporter
+   {
+      [Observation]
+      public void should_throw_a_parsing_exception_because_the_arithmetic_error_has_no_unit()
+      {
+         sut.IgnoreSheetNamesAtImport = true;
+         The.Action(() => sut.ImportCsvFromConfiguration(getFileFullName("errorTypeFromColumnGeometricDefaultConfiguration.xml"), getFileFullName("errorTypeFromColumn.csv"), ';'))
             .ShouldThrowAn<ImporterParsingException>();
       }
    }

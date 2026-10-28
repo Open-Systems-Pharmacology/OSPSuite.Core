@@ -121,6 +121,7 @@ namespace OSPSuite.Infrastructure.Import.Core
          {
             foreach (var parsedDataSet in dataSet.Value.Data)
             {
+               validateArithmeticErrorFromColumnUnits(parsedDataSet, dataSet.Value, errors);
                var errorStdDevValues = parsedDataSet.Data.Keys.SelectMany(x => x.ErrorStdDevValues).ToList();
                if (!errorStdDevValues.Any())
                   continue;
@@ -137,6 +138,24 @@ namespace OSPSuite.Infrastructure.Import.Core
          }
 
          return errors;
+      }
+
+      //an arithmetic error whose type comes from a column takes the dimension of its units (e.g. no unit for a geometric default)
+      //so its units must have the dimension of the measurement units
+      private void validateArithmeticErrorFromColumnUnits(ParsedDataSet parsedDataSet, IDataSet dataSet, ParseErrors errors)
+      {
+         var arithmeticErrorsFromColumn = parsedDataSet.Data.Where(x => !x.Key.Column.ErrorStdDevColumn.IsNullOrEmpty()
+                                                                         && x.Key.ErrorDeviation == Constants.STD_DEV_ARITHMETIC
+                                                                         && x.Key.Column.Dimension == null);
+
+         foreach (var errorColumn in arithmeticErrorsFromColumn)
+         {
+            var measurementColumn = parsedDataSet.Data.FirstOrDefault(x => x.Key.ColumnInfo.Name == errorColumn.Key.ColumnInfo.RelatedColumnOf);
+            if (measurementColumn.Key == null || measurementColumn.Value.Count != errorColumn.Value.Count)
+               continue;
+
+            validateErrorFromColumnDimension(measurementColumn.Value, errorColumn.Value, measurementColumn.Key.ColumnInfo, errors, dataSet);
+         }
       }
 
       public void SetMappings(string fileName, IReadOnlyList<MetaDataMappingConverter> mappings)
