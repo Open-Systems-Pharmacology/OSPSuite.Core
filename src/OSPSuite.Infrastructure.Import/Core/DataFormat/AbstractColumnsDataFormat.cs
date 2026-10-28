@@ -380,7 +380,8 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
          return new SimulationPoint
          {
             Measurement = double.NaN,
-            Unit = unit
+            Unit = unit,
+            Lloq = double.NaN
          };
       }
 

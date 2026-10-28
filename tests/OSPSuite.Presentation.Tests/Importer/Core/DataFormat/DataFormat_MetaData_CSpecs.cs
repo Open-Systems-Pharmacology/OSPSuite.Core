@@ -291,6 +291,37 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
             dataset.Data.ElementAt(1).Value.ElementAt(2).Measurement.ShouldBeEqualTo(10);
          }
       }
+
+      [TestCase]
+      public void parse_empty_and_non_numeric_error_as_missing_without_lloq()
+      {
+         A.CallTo(() => _mockedData.GetRows(A<Func<IEnumerable<string>, bool>>.Ignored)).ReturnsLazily(
+            param => new List<UnformattedRow>()
+            {
+               new UnformattedRow(0,
+                  new List<string>()
+                     { "PeripheralVenousBlood", "Arterialized", "Human", "75 [g] glucose", "<Molecule>", "99", "10", "", "po", "<GroupId>" }),
+               new UnformattedRow(1,
+                  new List<string>()
+                     { "PeripheralVenousBlood", "Arterialized", "Human", "75 [g] glucose", "<Molecule>", "99", "10", "abc", "po", "<GroupId>" })
+            });
+
+         var data = sut.Parse
+         (
+            _mockedData,
+            _columnInfos
+         );
+         foreach (var dataset in data)
+         {
+            var errorValues = dataset.Data.Single(x => x.Key.ColumnInfo.Name == "Error").Value;
+            errorValues.Count.ShouldBeEqualTo(2);
+            foreach (var errorValue in errorValues)
+            {
+               errorValue.Measurement.ShouldBeEqualTo(double.NaN);
+               errorValue.Lloq.ShouldBeEqualTo(double.NaN);
+            }
+         }
+      }
    }
 
    public class When_parsing_format_with_missing_molecule_mapping : concern_for_DataFormatHeadersWithUnits
