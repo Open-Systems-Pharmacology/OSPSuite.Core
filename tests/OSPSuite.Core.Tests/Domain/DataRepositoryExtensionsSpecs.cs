@@ -4,6 +4,7 @@ using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Extensions;
+using OSPSuite.Utility.Exceptions;
 using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Domain
@@ -177,4 +178,78 @@ namespace OSPSuite.Core.Domain
    }
 
  
+}
+namespace OSPSuite.Core.Domain
+{
+   public class When_validating_a_subject_count : StaticContextSpecification
+   {
+      [Observation]
+      public void should_accept_whole_numbers_greater_than_or_equal_to_one()
+      {
+         DataRepositoryExtensions.IsValidSubjectCount("1").ShouldBeTrue();
+         DataRepositoryExtensions.IsValidSubjectCount("12").ShouldBeTrue();
+      }
+
+      [Observation]
+      public void should_reject_numbers_smaller_than_one()
+      {
+         DataRepositoryExtensions.IsValidSubjectCount("0").ShouldBeFalse();
+         DataRepositoryExtensions.IsValidSubjectCount("-3").ShouldBeFalse();
+      }
+
+      [Observation]
+      public void should_reject_values_that_are_not_whole_numbers()
+      {
+         DataRepositoryExtensions.IsValidSubjectCount("2.5").ShouldBeFalse();
+         DataRepositoryExtensions.IsValidSubjectCount("twelve").ShouldBeFalse();
+         DataRepositoryExtensions.IsValidSubjectCount(string.Empty).ShouldBeFalse();
+         DataRepositoryExtensions.IsValidSubjectCount(null).ShouldBeFalse();
+      }
+   }
+
+   public class When_setting_and_retrieving_the_subject_count_of_a_data_repository : StaticContextSpecification
+   {
+      private DataRepository _dataRepository;
+
+      protected override void Context()
+      {
+         _dataRepository = new DataRepository();
+      }
+
+      [Observation]
+      public void should_return_null_if_no_subject_count_is_defined()
+      {
+         _dataRepository.SubjectCount().ShouldBeNull();
+      }
+
+      [Observation]
+      public void should_store_the_subject_count_as_meta_data()
+      {
+         _dataRepository.SetSubjectCount(12);
+         _dataRepository.ExtendedPropertyValueFor(Constants.ObservedData.SUBJECT_COUNT).ShouldBeEqualTo("12");
+         _dataRepository.SubjectCount().ShouldBeEqualTo(12);
+      }
+
+      [Observation]
+      public void should_overwrite_an_existing_subject_count()
+      {
+         _dataRepository.SetSubjectCount(12);
+         _dataRepository.SetSubjectCount(8);
+         _dataRepository.SubjectCount().ShouldBeEqualTo(8);
+      }
+
+      [Observation]
+      public void should_throw_an_exception_when_setting_a_subject_count_smaller_than_one()
+      {
+         The.Action(() => _dataRepository.SetSubjectCount(0)).ShouldThrowAn<OSPSuiteException>();
+         _dataRepository.ExtendedProperties.Contains(Constants.ObservedData.SUBJECT_COUNT).ShouldBeFalse();
+      }
+
+      [Observation]
+      public void should_throw_an_exception_when_retrieving_an_invalid_stored_subject_count()
+      {
+         _dataRepository.ExtendedProperties.Add(new ExtendedProperty<string> {Name = Constants.ObservedData.SUBJECT_COUNT, Value = "abc"});
+         The.Action(() => _dataRepository.SubjectCount()).ShouldThrowAn<OSPSuiteException>();
+      }
+   }
 }

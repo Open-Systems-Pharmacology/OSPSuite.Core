@@ -59,6 +59,7 @@ namespace OSPSuite.Presentation.DTO
          internal static IEnumerable<IBusinessRule> AllForMultipleEdits()
          {
             yield return uniqueName;
+            yield return validSubjectCount;
          }
 
          internal static IEnumerable<IBusinessRule> All()
@@ -84,6 +85,17 @@ namespace OSPSuite.Presentation.DTO
                   .Property(item => item.Name)
                   .WithRule((dto, newName) => dto.isNameUnique(newName))
                   .WithError((dto, newName) => dto.nameAlreadyExistsError(newName));
+            }
+         }
+
+         private static IBusinessRule validSubjectCount
+         {
+            get
+            {
+               return CreateRule.For<MetaDataDTO>()
+                  .Property(item => item.Value)
+                  .WithRule((dto, value) => !string.Equals(dto.Name, Constants.ObservedData.SUBJECT_COUNT) || string.IsNullOrEmpty(value) || DataRepositoryExtensions.IsValidSubjectCount(value))
+                  .WithError((dto, value) => Error.InvalidSubjectCount(value, Constants.ObservedData.MIN_SUBJECT_COUNT));
             }
          }
       }

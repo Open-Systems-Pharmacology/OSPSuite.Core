@@ -1,11 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Core.Domain;
+using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Import;
 using OSPSuite.Infrastructure.Import.Core.Exceptions;
 using OSPSuite.Infrastructure.Import.Services;
 using OSPSuite.Utility.Collections;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Infrastructure.Import.Core
 {
@@ -55,6 +57,11 @@ namespace OSPSuite.Infrastructure.Import.Core
       NanSettings NanSettings { get; set; }
       ImportedDataSet ImportedDataSetAt(int index);
       ParseErrors ValidateDataSourceUnits(ColumnInfoCache columnInfos);
+
+      /// <summary>
+      ///    Validates the meta data values of all data sets, e.g. that a subject count is a whole number of at least one
+      /// </summary>
+      ParseErrors ValidateMetaData();
    }
 
    public class DataSource : IDataSource
@@ -290,6 +297,24 @@ namespace OSPSuite.Infrastructure.Import.Core
       {
          var errors = validateUnitsSupportedAndSameDimension(columnInfos);
          errors.Add(validateErrorAgainstMeasurement(columnInfos));
+         return errors;
+      }
+
+      public ParseErrors ValidateMetaData()
+      {
+         var errors = new ParseErrors();
+         foreach (var dataSet in DataSets)
+         {
+            var invalidSubjectCounts = dataSet.Data
+               .SelectMany(x => x.EnumerateMetaData(_mappings))
+               .Where(x => x.Name == Constants.ObservedData.SUBJECT_COUNT)
+               .Select(x => x.Value)
+               .Where(x => !x.IsNullOrEmpty() && !DataRepositoryExtensions.IsValidSubjectCount(x))
+               .Distinct();
+
+            invalidSubjectCounts.Each(x => errors.Add(dataSet, new InvalidSubjectCountParseErrorDescription(x)));
+         }
+
          return errors;
       }
    }

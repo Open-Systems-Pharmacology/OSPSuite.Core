@@ -194,6 +194,9 @@ namespace OSPSuite.Infrastructure.Import.Services
          categories.Add(CreateMetaDataCategory<string>(Constants.ObservedData.GENDER, isListOfValuesFixed: true));
          categories.Add(CreateMetaDataCategory<string>(Constants.ObservedData.DOSE));
          categories.Add(CreateMetaDataCategory<string>(Constants.ObservedData.ROUTE));
+         var subjectCountCategory = CreateMetaDataCategory<int>(Constants.ObservedData.SUBJECT_COUNT);
+         subjectCountCategory.MinValue = Constants.ObservedData.MIN_SUBJECT_COUNT;
+         categories.Add(subjectCountCategory);
 
          return categories;
       }

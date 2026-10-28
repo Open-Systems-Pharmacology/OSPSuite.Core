@@ -1,12 +1,14 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using FakeItEasy;
+using OSPSuite.Assets;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Import;
 using OSPSuite.Infrastructure.Import.Core;
+using OSPSuite.Infrastructure.Import.Core.Exceptions;
 using OSPSuite.Infrastructure.Import.Services;
 
 namespace OSPSuite.Infrastructure.Import
@@ -1111,6 +1113,62 @@ namespace OSPSuite.Infrastructure.Import
       public void should_be_valid()
       {
          sut.ValidateDataSourceUnits(_columnInfos).Any().ShouldBeTrue();
+      }
+   }
+
+   public abstract class concern_for_DataSource_with_subject_count : concern_for_DataSource
+   {
+      protected IDataSet _dataSet;
+
+      protected void addDataSetsWithSubjectCounts(params string[] subjectCounts)
+      {
+         _dataSet = new DataSet();
+         //the value of a meta data that is not mapped to a column is the value itself
+         _dataSet.AddData(subjectCounts.Select(x => new ParsedDataSet(new List<string> { x }, new DataSheet(), new List<UnformattedRow>(),
+            new Dictionary<ExtendedColumn, IList<SimulationPoint>>())));
+         sut.SetMappings("file", new List<MetaDataMappingConverter> { new MetaDataMappingConverter { Id = Constants.ObservedData.SUBJECT_COUNT } });
+         sut.DataSets.Clear();
+         sut.DataSets.Add("sheet1", _dataSet);
+      }
+   }
+
+   public class When_validating_the_meta_data_of_data_sets_with_valid_subject_counts : concern_for_DataSource_with_subject_count
+   {
+      protected override void Context()
+      {
+         base.Context();
+         addDataSetsWithSubjectCounts("1", "12", string.Empty);
+      }
+
+      [Observation]
+      public void should_not_report_any_error()
+      {
+         sut.ValidateMetaData().Any().ShouldBeFalse();
+      }
+   }
+
+   public class When_validating_the_meta_data_of_data_sets_with_invalid_subject_counts : concern_for_DataSource_with_subject_count
+   {
+      private ParseErrors _errors;
+
+      protected override void Context()
+      {
+         base.Context();
+         addDataSetsWithSubjectCounts("12", "0", "2.5", "2.5");
+      }
+
+      protected override void Because()
+      {
+         _errors = sut.ValidateMetaData();
+      }
+
+      [Observation]
+      public void should_report_one_error_for_each_distinct_invalid_subject_count()
+      {
+         _errors.ErrorsFor(_dataSet).Select(x => x.GetType()).ShouldOnlyContain(typeof(InvalidSubjectCountParseErrorDescription), typeof(InvalidSubjectCountParseErrorDescription));
+         _errors.ErrorsFor(_dataSet).Select(x => x.Message).ShouldOnlyContain(
+            Error.InvalidSubjectCount("0", Constants.ObservedData.MIN_SUBJECT_COUNT),
+            Error.InvalidSubjectCount("2.5", Constants.ObservedData.MIN_SUBJECT_COUNT));
       }
    }
 }

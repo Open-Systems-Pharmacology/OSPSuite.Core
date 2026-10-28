@@ -224,6 +224,44 @@ namespace OSPSuite.R.Services
       }
    }
 
+   public class When_setting_and_getting_the_subject_count_of_a_data_repository : concern_for_DataRepositoryTask
+   {
+      private DataRepository _dataRepository;
+
+      protected override void Context()
+      {
+         base.Context();
+         _dataRepository = DomainHelperForSpecs.ObservedData("TOTO");
+      }
+
+      [Observation]
+      public void should_return_null_if_the_subject_count_is_not_defined()
+      {
+         sut.GetSubjectCount(_dataRepository).ShouldBeNull();
+      }
+
+      [Observation]
+      public void should_return_the_subject_count_that_was_set()
+      {
+         sut.SetSubjectCount(_dataRepository, 12);
+         sut.GetSubjectCount(_dataRepository).ShouldBeEqualTo(12);
+         _dataRepository.ExtendedPropertyValueFor(Constants.ObservedData.SUBJECT_COUNT).ShouldBeEqualTo("12");
+      }
+
+      [Observation]
+      public void should_throw_an_exception_when_setting_a_subject_count_smaller_than_one()
+      {
+         The.Action(() => sut.SetSubjectCount(_dataRepository, 0)).ShouldThrowAn<OSPSuiteException>();
+      }
+
+      [Observation]
+      public void should_throw_an_exception_when_getting_an_invalid_subject_count()
+      {
+         sut.AddMetaData(_dataRepository, Constants.ObservedData.SUBJECT_COUNT, "2.5");
+         The.Action(() => sut.GetSubjectCount(_dataRepository)).ShouldThrowAn<OSPSuiteException>();
+      }
+   }
+
    public class When_removing_a_column_from_a_data_repository : concern_for_DataRepositoryTask
    {
       private DataRepository _dataRepository;
