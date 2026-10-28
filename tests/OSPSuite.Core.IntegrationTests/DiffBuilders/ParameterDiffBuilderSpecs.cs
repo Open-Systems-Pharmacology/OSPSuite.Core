@@ -350,10 +350,10 @@ namespace OSPSuite.Core.DiffBuilders
       }
 
       [Observation]
-      public void should_report_the_fixed_value_and_the_differently_named_deviation_sub_parameters()
+      public void should_report_the_fixed_value_the_resulting_percentile_and_the_differently_named_deviation_sub_parameters()
       {
-         //fixed value, deviation only in the first parameter, geometric deviation only in the second parameter
-         _report.Count.ShouldBeEqualTo(3);
+         //fixed value, percentile recomputed from the fixed value, deviation only in the first parameter, geometric deviation only in the second parameter
+         _report.Count.ShouldBeEqualTo(4);
       }
    }
 
