@@ -4,6 +4,7 @@ using OSPSuite.Core.Comparison;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Formulas;
+using OSPSuite.Helpers;
 
 namespace OSPSuite.Core.DiffBuilders
 {
@@ -323,6 +324,58 @@ namespace OSPSuite.Core.DiffBuilders
 
       [Observation]
       public void should_report_the_different_persistence()
+      {
+         _report.Count.ShouldBeEqualTo(1);
+      }
+   }
+
+   public abstract class concern_for_ModuleDiffBuilder_with_event_groups : concern_for_ModuleDiffBuilder
+   {
+      protected override void AdjustModulesForDiff(Module module1, Module module2)
+      {
+         AdjustEventGroupsForDiff(addEventGroupTo(module1), addEventGroupTo(module2));
+      }
+
+      protected abstract void AdjustEventGroupsForDiff(EventGroupBuilder eventGroup1, EventGroupBuilder eventGroup2);
+
+      private static EventGroupBuilder addEventGroupTo(Module module)
+      {
+         var eventGroup = new EventGroupBuilder().WithName("Application");
+         eventGroup.EventGroupType = "Application";
+         var eventBuilder = new EventBuilder().WithName("Start");
+         eventBuilder.Dimension = Constants.Dimension.NO_DIMENSION;
+         eventGroup.Add(eventBuilder);
+
+         var eventGroups = new EventGroupBuildingBlock().WithName($"{module.Name} - Events");
+         eventGroups.Add(eventGroup);
+         module.Add(eventGroups);
+         return eventGroup;
+      }
+   }
+
+   public class When_comparing_two_modules_with_different_event_group_types : concern_for_ModuleDiffBuilder_with_event_groups
+   {
+      protected override void AdjustEventGroupsForDiff(EventGroupBuilder eventGroup1, EventGroupBuilder eventGroup2)
+      {
+         eventGroup2.EventGroupType = "Formulation";
+      }
+
+      [Observation]
+      public void should_report_the_different_event_group_type()
+      {
+         _report.Count.ShouldBeEqualTo(1);
+      }
+   }
+
+   public class When_comparing_two_modules_with_different_event_dimensions : concern_for_ModuleDiffBuilder_with_event_groups
+   {
+      protected override void AdjustEventGroupsForDiff(EventGroupBuilder eventGroup1, EventGroupBuilder eventGroup2)
+      {
+         eventGroup2.GetSingleChildByName<EventBuilder>("Start").Dimension = DomainHelperForSpecs.TimeDimensionForSpecs();
+      }
+
+      [Observation]
+      public void should_report_the_different_event_dimension()
       {
          _report.Count.ShouldBeEqualTo(1);
       }
