@@ -426,4 +426,61 @@ namespace OSPSuite.Core.DiffBuilders
          _report.Count.ShouldBeEqualTo(1);
       }
    }
+
+   public class When_comparing_containers_having_distributed_parameters_with_the_same_sub_parameters_but_a_differently_bound_deviation : concern_for_ObjectComparer
+   {
+      private const string ALTERNATIVE_DEVIATION = "Alternative Deviation";
+
+      protected override void Context()
+      {
+         base.Context();
+         _object1 = containerWithNormalDistributedParameter(deviationParameterName: Constants.Distribution.DEVIATION);
+         _object2 = containerWithNormalDistributedParameter(deviationParameterName: ALTERNATIVE_DEVIATION);
+      }
+
+      private static Container containerWithNormalDistributedParameter(string deviationParameterName)
+      {
+         var distributedFormulaFactory = IoC.Resolve<IDistributionFormulaFactory>();
+         var container = new Container {Name = "O"};
+         var parameter = new DistributedParameter {Name = "P1"}.WithParentContainer(container);
+         var mean = new Parameter().WithFormula(new ConstantFormula(1)).WithName(Constants.Distribution.MEAN).WithParentContainer(parameter);
+         new Parameter().WithFormula(new ConstantFormula(2)).WithName(Constants.Distribution.DEVIATION).WithParentContainer(parameter);
+         new Parameter().WithFormula(new ConstantFormula(2)).WithName(ALTERNATIVE_DEVIATION).WithParentContainer(parameter);
+         new Parameter().WithFormula(new ConstantFormula(0.5)).WithName(Constants.Distribution.PERCENTILE).WithParentContainer(parameter);
+         var deviation = parameter.GetSingleChildByName<IParameter>(deviationParameterName);
+         parameter.Formula = distributedFormulaFactory.CreateNormalDistributionFormulaFor(parameter, mean, deviation);
+         return container;
+      }
+
+      [Observation]
+      public void should_report_the_different_path_bound_to_the_deviation_alias()
+      {
+         _report.Count.ShouldBeEqualTo(1);
+      }
+   }
+
+   public class When_comparing_parameters_differing_only_in_their_persistence_using_default_settings : concern_for_ObjectComparer
+   {
+      protected override void Context()
+      {
+         base.Context();
+         _comparerSettings = new ComparerSettings();
+         _object1 = containerWithParameter(persistable: true);
+         _object2 = containerWithParameter(persistable: false);
+      }
+
+      private static Container containerWithParameter(bool persistable)
+      {
+         var container = new Container {Name = "O"};
+         var parameter = new Parameter {Name = "P1"}.WithFormula(new ConstantFormula(5)).WithParentContainer(container);
+         parameter.Persistable = persistable;
+         return container;
+      }
+
+      [Observation]
+      public void should_report_the_different_persistence()
+      {
+         _report.Count.ShouldBeEqualTo(1);
+      }
+   }
 }

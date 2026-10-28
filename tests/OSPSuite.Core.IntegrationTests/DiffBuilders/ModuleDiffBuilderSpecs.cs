@@ -412,6 +412,66 @@ namespace OSPSuite.Core.DiffBuilders
       }
    }
 
+   public class When_comparing_two_modules_whose_distributions_bind_the_deviation_alias_to_different_sub_parameters : concern_for_ModuleDiffBuilder
+   {
+      private const string ALTERNATIVE_DEVIATION = "Alternative Deviation";
+
+      protected override void AdjustModulesForDiff(Module module1, Module module2)
+      {
+         module1.Add(spatialStructureWithDistributedParameter(module1.Name, deviationParameterName: Constants.Distribution.DEVIATION));
+         module2.Add(spatialStructureWithDistributedParameter(module2.Name, deviationParameterName: ALTERNATIVE_DEVIATION));
+      }
+
+      private static SpatialStructure spatialStructureWithDistributedParameter(string moduleName, string deviationParameterName)
+      {
+         var distributedFormulaFactory = IoC.Resolve<IDistributionFormulaFactory>();
+         var organism = new Container().WithName("Organism");
+         var parameter = new DistributedParameter().WithName("Volume").WithParentContainer(organism);
+         var mean = new Parameter().WithFormula(new ConstantFormula(1)).WithName(Constants.Distribution.MEAN).WithParentContainer(parameter);
+         new Parameter().WithFormula(new ConstantFormula(2)).WithName(Constants.Distribution.DEVIATION).WithParentContainer(parameter);
+         new Parameter().WithFormula(new ConstantFormula(2)).WithName(ALTERNATIVE_DEVIATION).WithParentContainer(parameter);
+         new Parameter().WithFormula(new ConstantFormula(0.5)).WithName(Constants.Distribution.PERCENTILE).WithParentContainer(parameter);
+         var deviation = parameter.GetSingleChildByName<IParameter>(deviationParameterName);
+         parameter.Formula = distributedFormulaFactory.CreateNormalDistributionFormulaFor(parameter, mean, deviation);
+
+         var spatialStructure = new SpatialStructure().WithName($"{moduleName} - Spatial Structure");
+         spatialStructure.AddTopContainer(organism);
+         return spatialStructure;
+      }
+
+      [Observation]
+      public void should_report_the_different_path_bound_to_the_deviation_alias()
+      {
+         _report.Count.ShouldBeEqualTo(1);
+      }
+   }
+
+   public class When_comparing_two_modules_where_a_parameter_is_persistable_in_only_one : concern_for_ModuleDiffBuilder
+   {
+      protected override void AdjustModulesForDiff(Module module1, Module module2)
+      {
+         module1.Add(spatialStructureWithParameter(module1.Name, persistable: true));
+         module2.Add(spatialStructureWithParameter(module2.Name, persistable: false));
+      }
+
+      private static SpatialStructure spatialStructureWithParameter(string moduleName, bool persistable)
+      {
+         var organism = new Container().WithName("Organism");
+         var parameter = new Parameter().WithName("Volume").WithFormula(new ConstantFormula(5)).WithParentContainer(organism);
+         parameter.Persistable = persistable;
+
+         var spatialStructure = new SpatialStructure().WithName($"{moduleName} - Spatial Structure");
+         spatialStructure.AddTopContainer(organism);
+         return spatialStructure;
+      }
+
+      [Observation]
+      public void should_report_the_different_persistence()
+      {
+         _report.Count.ShouldBeEqualTo(1);
+      }
+   }
+
    public class When_comparing_two_modules_where_a_table_parameter_is_fixed_to_its_current_value_in_only_one : concern_for_ModuleDiffBuilder
    {
       protected override void AdjustModulesForDiff(Module module1, Module module2)

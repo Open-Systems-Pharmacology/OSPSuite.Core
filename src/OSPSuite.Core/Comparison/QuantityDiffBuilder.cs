@@ -29,11 +29,11 @@ namespace OSPSuite.Core.Comparison
          CompareValues(x => x.QuantityType, x => x.QuantityType, comparison);
          CompareValues(x => x.NegativeValuesAllowed, x => x.NegativeValuesAllowed, comparison);
 
+         //only persistable quantities are written to the results: a different persistence changes the output of a simulation
+         CompareValues(x => x.Persistable, x => x.Persistable, comparison);
+
          if (!comparison.Settings.OnlyComputingRelevant)
-         {
-            CompareValues(x => x.Persistable, x => x.Persistable, comparison);
             CompareValues(x => x.DisplayUnit, Captions.DisplayUnit, comparison);
-         }
 
          if (shouldCompareValues(comparison))
             compareValues(comparison);
