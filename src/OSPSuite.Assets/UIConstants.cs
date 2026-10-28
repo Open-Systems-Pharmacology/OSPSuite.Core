@@ -145,8 +145,8 @@ namespace OSPSuite.Assets
       public static readonly string None = "<None>";
       public static readonly string Favorites = "Favorites";
       public static readonly string Favorite = "Favorite";
-      public static readonly string CopyTable = "Copy Table";
-      public static readonly string CopySelectedRows = "Copy Selected Rows";
+      public static readonly string CopyTableAsText = "Copy Table as Text";
+      public static readonly string CopySelectedRowsAsText = "Copy Selected Rows as Text";
       public static readonly string TaggedWith = "Tagged With";
       public static readonly string ChartExportSettings = "Chart Export Settings";
       public static readonly string Word = "Word®";
@@ -176,7 +176,7 @@ namespace OSPSuite.Assets
       public static readonly string GroupingModeSimple = "Simple";
       public static readonly string GroupingModeAdvanced = "Advanced";
       public static readonly string Cancel = "Cancel";
-      public static readonly string CopySelection = "Copy Selection";
+      public static readonly string CopySelectionAsText = "Copy Selection as Text";
       public static readonly string NumberOfProcessors = "Max. number of processors to use";
       public static readonly string Boundary = "Boundary";
       public static readonly string OptimalValue = "Optimal Value";
