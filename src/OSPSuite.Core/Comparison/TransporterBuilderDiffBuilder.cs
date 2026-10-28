@@ -20,6 +20,7 @@ namespace OSPSuite.Core.Comparison
          _containerDiffBuilder.Compare(comparison);
          CompareValues(x => x.SourceCriteria, x => x.SourceCriteria, comparison);
          CompareValues(x => x.TargetCriteria, x => x.TargetCriteria, comparison);
+         CompareValues(x => x.TransportType, x => x.TransportType, comparison);
          CompareValues(x => x.Dimension, x => x.Dimension, comparison);
          _moleculeDependentBuilderDiffBuilder.Compare(comparison);
          CompareValues(x => x.CreateProcessRateParameter, x => x.CreateProcessRateParameter, comparison);

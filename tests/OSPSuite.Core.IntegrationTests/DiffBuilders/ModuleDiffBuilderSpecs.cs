@@ -5,6 +5,7 @@ using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Formulas;
 using OSPSuite.Helpers;
+using OSPSuite.Utility.Container;
 
 namespace OSPSuite.Core.DiffBuilders
 {
@@ -376,6 +377,36 @@ namespace OSPSuite.Core.DiffBuilders
 
       [Observation]
       public void should_report_the_different_event_dimension()
+      {
+         _report.Count.ShouldBeEqualTo(1);
+      }
+   }
+
+   public class When_comparing_two_modules_whose_spatial_structures_differ_only_in_a_distribution_deviation : concern_for_ModuleDiffBuilder
+   {
+      protected override void AdjustModulesForDiff(Module module1, Module module2)
+      {
+         module1.Add(spatialStructureWithDistributedParameter(module1.Name, deviation: 2));
+         module2.Add(spatialStructureWithDistributedParameter(module2.Name, deviation: 3));
+      }
+
+      private static SpatialStructure spatialStructureWithDistributedParameter(string moduleName, double deviation)
+      {
+         var distributedFormulaFactory = IoC.Resolve<IDistributionFormulaFactory>();
+         var organism = new Container().WithName("Organism");
+         var parameter = new DistributedParameter().WithName("Volume").WithParentContainer(organism);
+         var mean = new Parameter().WithFormula(new ConstantFormula(1)).WithName(Constants.Distribution.MEAN).WithParentContainer(parameter);
+         var dev = new Parameter().WithFormula(new ConstantFormula(deviation)).WithName(Constants.Distribution.DEVIATION).WithParentContainer(parameter);
+         new Parameter().WithFormula(new ConstantFormula(0.5)).WithName(Constants.Distribution.PERCENTILE).WithParentContainer(parameter);
+         parameter.Formula = distributedFormulaFactory.CreateNormalDistributionFormulaFor(parameter, mean, dev);
+
+         var spatialStructure = new SpatialStructure().WithName($"{moduleName} - Spatial Structure");
+         spatialStructure.AddTopContainer(organism);
+         return spatialStructure;
+      }
+
+      [Observation]
+      public void should_report_the_different_deviation()
       {
          _report.Count.ShouldBeEqualTo(1);
       }

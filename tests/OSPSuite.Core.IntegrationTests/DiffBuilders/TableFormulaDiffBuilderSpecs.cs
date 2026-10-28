@@ -2,6 +2,7 @@
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Formulas;
+using OSPSuite.Helpers;
 
 namespace OSPSuite.Core.DiffBuilders
 {
@@ -66,4 +67,75 @@ namespace OSPSuite.Core.DiffBuilders
       }
    }
 
+
+   public class When_comparing_two_table_formula_with_different_x_dimensions : concern_for_ObjectComparer
+   {
+      protected override void Context()
+      {
+         base.Context();
+         var formula1 = new TableFormula {XDimension = DomainHelperForSpecs.TimeDimensionForSpecs()};
+         formula1.AddPoint(10, 1);
+
+         var formula2 = new TableFormula {XDimension = Constants.Dimension.NO_DIMENSION};
+         formula2.AddPoint(10, 1);
+
+         _object1 = formula1;
+         _object2 = formula2;
+      }
+
+      [Observation]
+      public void should_report_the_different_x_dimension()
+      {
+         _report.Count.ShouldBeEqualTo(1);
+      }
+   }
+
+   public class When_comparing_two_table_formula_with_offset_referencing_different_offsets : concern_for_ObjectComparer
+   {
+      protected override void Context()
+      {
+         base.Context();
+         var formula1 = new TableFormulaWithOffset();
+         formula1.AddTableObjectPath(new FormulaUsablePath("Organism", "Table") {Alias = "Table"});
+         formula1.AddOffsetObjectPath(new FormulaUsablePath("Organism", "Offset") {Alias = "Offset"});
+
+         var formula2 = new TableFormulaWithOffset();
+         formula2.AddTableObjectPath(new FormulaUsablePath("Organism", "Table") {Alias = "Table"});
+         formula2.AddOffsetObjectPath(new FormulaUsablePath("Organism", "OtherOffset") {Alias = "Offset"});
+
+         _object1 = formula1;
+         _object2 = formula2;
+      }
+
+      [Observation]
+      public void should_report_the_different_offset_path()
+      {
+         _report.Count.ShouldBeEqualTo(1);
+      }
+   }
+
+   public class When_comparing_two_table_formula_with_x_argument_using_different_aliases : concern_for_ObjectComparer
+   {
+      protected override void Context()
+      {
+         base.Context();
+         var formula1 = new TableFormulaWithXArgument();
+         formula1.AddTableObjectPath(new FormulaUsablePath("Organism", "Table") {Alias = "Table"});
+         formula1.AddXArgumentObjectPath(new FormulaUsablePath("Organism", "X") {Alias = "X"});
+
+         var formula2 = new TableFormulaWithXArgument();
+         formula2.AddTableObjectPath(new FormulaUsablePath("Organism", "Table") {Alias = "Table"});
+         formula2.AddXArgumentObjectPath(new FormulaUsablePath("Organism", "X") {Alias = "Y"});
+
+         _object1 = formula1;
+         _object2 = formula2;
+      }
+
+      [Observation]
+      public void should_report_the_different_alias_and_the_path_using_it()
+      {
+         //x argument alias, path with alias X only in the first formula, path with alias Y only in the second formula
+         _report.Count.ShouldBeEqualTo(3);
+      }
+   }
 }

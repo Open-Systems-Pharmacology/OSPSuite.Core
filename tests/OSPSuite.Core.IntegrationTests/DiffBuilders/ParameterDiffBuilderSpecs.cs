@@ -287,7 +287,36 @@ namespace OSPSuite.Core.DiffBuilders
       }
 
       [Observation]
-      public void should_report_the_differences_accordingly()
+      public void should_report_the_different_distribution_types_and_the_sub_parameters_specific_to_each_distribution()
+      {
+         //different formula types, deviation only in the normal distribution, geometric deviation only in the log normal distribution
+         _report.Count.ShouldBeEqualTo(3);
+      }
+   }
+
+   public class When_comparing_containers_having_distributed_parameters_with_the_same_value_but_different_deviations : concern_for_ObjectComparer
+   {
+      protected override void Context()
+      {
+         base.Context();
+         _object1 = containerWithNormalDistributedParameter(deviation: 2);
+         _object2 = containerWithNormalDistributedParameter(deviation: 3);
+      }
+
+      private static Container containerWithNormalDistributedParameter(double deviation)
+      {
+         var distributedFormulaFactory = IoC.Resolve<IDistributionFormulaFactory>();
+         var container = new Container {Name = "O"};
+         var parameter = new DistributedParameter {Name = "P1"}.WithParentContainer(container);
+         var mean = new Parameter().WithFormula(new ConstantFormula(1)).WithName(Constants.Distribution.MEAN).WithParentContainer(parameter);
+         var dev = new Parameter().WithFormula(new ConstantFormula(deviation)).WithName(Constants.Distribution.DEVIATION).WithParentContainer(parameter);
+         new Parameter().WithFormula(new ConstantFormula(0.5)).WithName(Constants.Distribution.PERCENTILE).WithParentContainer(parameter);
+         parameter.Formula = distributedFormulaFactory.CreateNormalDistributionFormulaFor(parameter, mean, dev);
+         return container;
+      }
+
+      [Observation]
+      public void should_report_the_different_deviation()
       {
          _report.Count.ShouldBeEqualTo(1);
       }
@@ -321,9 +350,10 @@ namespace OSPSuite.Core.DiffBuilders
       }
 
       [Observation]
-      public void should_report_the_differences_accordingly()
+      public void should_report_the_fixed_value_and_the_differently_named_deviation_sub_parameters()
       {
-         _report.Count.ShouldBeEqualTo(1);
+         //fixed value, deviation only in the first parameter, geometric deviation only in the second parameter
+         _report.Count.ShouldBeEqualTo(3);
       }
    }
 

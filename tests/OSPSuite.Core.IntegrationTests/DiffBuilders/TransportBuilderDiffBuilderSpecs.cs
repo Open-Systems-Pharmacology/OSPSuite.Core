@@ -211,4 +211,26 @@ namespace OSPSuite.Core.DiffBuilders
          _report.Count().ShouldBeEqualTo(1);
       }
    }
+
+   public class When_comparing_Transports_with_different_transport_types : concern_for_ObjectComparer
+   {
+      protected override void Context()
+      {
+         base.Context();
+         var t1 = new TransportBuilder().WithName("Active");
+         t1.TransportType = TransportType.Influx;
+
+         var t2 = new TransportBuilder().WithName("Active");
+         t2.TransportType = TransportType.Efflux;
+
+         _object1 = t1;
+         _object2 = t2;
+      }
+
+      [Observation]
+      public void should_report_the_different_transport_type()
+      {
+         _report.Count().ShouldBeEqualTo(1);
+      }
+   }
 }

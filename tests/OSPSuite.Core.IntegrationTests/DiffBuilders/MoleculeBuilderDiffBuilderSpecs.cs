@@ -155,4 +155,26 @@ namespace OSPSuite.Core.DiffBuilders
          _report.Count.ShouldBeEqualTo(1);
       }
    }
+
+   public class When_comparing_two_transporter_molecule_containers_realizing_different_transports : concern_for_ObjectComparer
+   {
+      protected override void Context()
+      {
+         base.Context();
+         var container1 = new TransporterMoleculeContainer().WithName("Transporter");
+         container1.TransportName = "Pgp";
+
+         var container2 = new TransporterMoleculeContainer().WithName("Transporter");
+         container2.TransportName = "Mrp";
+
+         _object1 = container1;
+         _object2 = container2;
+      }
+
+      [Observation]
+      public void should_report_the_different_transport_name()
+      {
+         _report.Count.ShouldBeEqualTo(1);
+      }
+   }
 }
