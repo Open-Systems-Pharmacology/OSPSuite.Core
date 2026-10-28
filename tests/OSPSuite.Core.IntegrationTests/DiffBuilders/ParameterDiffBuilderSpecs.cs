@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Comparison;
@@ -291,6 +292,46 @@ namespace OSPSuite.Core.DiffBuilders
       {
          //different formula types, deviation only in the normal distribution, geometric deviation only in the log normal distribution
          _report.Count.ShouldBeEqualTo(3);
+      }
+   }
+
+   public class When_comparing_containers_having_different_distributed_parameters_that_are_not_eligible_for_comparison : concern_for_ObjectComparer
+   {
+      private Func<IComparison<IParameter>, bool> _originalEligibility;
+
+      protected override void Context()
+      {
+         base.Context();
+         _originalEligibility = ParameterDiffBuilder.ShouldCompareParametersIn;
+         ParameterDiffBuilder.ShouldCompareParametersIn = _ => false;
+
+         var distributedFormulaFactory = IoC.Resolve<IDistributionFormulaFactory>();
+         var c1 = new Container {Name = "O"};
+         var p11 = new DistributedParameter {Name = "P1"}.WithParentContainer(c1);
+         var meanP11 = new Parameter().WithFormula(new ConstantFormula(1)).WithName(Constants.Distribution.MEAN).WithParentContainer(p11);
+         var devP11 = new Parameter().WithFormula(new ConstantFormula(2)).WithName(Constants.Distribution.DEVIATION).WithParentContainer(p11);
+         p11.Formula = distributedFormulaFactory.CreateNormalDistributionFormulaFor(p11, meanP11, devP11);
+
+         var c2 = new Container {Name = "O"};
+         var p21 = new DistributedParameter {Name = "P1"}.WithParentContainer(c2);
+         var meanP21 = new Parameter().WithFormula(new ConstantFormula(1)).WithName(Constants.Distribution.MEAN).WithParentContainer(p21);
+         var devP21 = new Parameter().WithFormula(new ConstantFormula(2)).WithName(Constants.Distribution.GEOMETRIC_DEVIATION).WithParentContainer(p21);
+         p21.Formula = distributedFormulaFactory.CreateLogNormalDistributionFormulaFor(p21, meanP21, devP21);
+
+         _object1 = c1;
+         _object2 = c2;
+      }
+
+      public override void Cleanup()
+      {
+         base.Cleanup();
+         ParameterDiffBuilder.ShouldCompareParametersIn = _originalEligibility;
+      }
+
+      [Observation]
+      public void should_not_report_the_sub_parameters_of_the_excluded_parameters()
+      {
+         _report.ShouldBeEmpty();
       }
    }
 

@@ -154,4 +154,48 @@ namespace OSPSuite.Core.DiffBuilders
          _report.Count.ShouldBeEqualTo(1);
       }
    }
-};
+
+   public class When_comparing_a_parameter_using_a_table_formula_with_the_same_parameter_fixed_to_the_current_table_value : concern_for_ObjectComparer
+   {
+      protected override void Context()
+      {
+         base.Context();
+         _object1 = new Parameter().WithName("P").WithFormula(tableFormula());
+         var fixedParameter = new Parameter().WithName("P").WithFormula(tableFormula());
+         fixedParameter.Value = 1;
+         _object2 = fixedParameter;
+      }
+
+      private static TableFormula tableFormula()
+      {
+         var formula = new TableFormula();
+         formula.AddPoint(0, 1);
+         formula.AddPoint(1, 99);
+         return formula;
+      }
+
+      [Observation]
+      public void should_report_that_only_one_parameter_is_fixed()
+      {
+         _report.Count.ShouldBeEqualTo(1);
+      }
+   }
+
+   public class When_comparing_a_parameter_using_a_constant_formula_with_the_same_parameter_fixed_to_the_same_value : concern_for_ObjectComparer
+   {
+      protected override void Context()
+      {
+         base.Context();
+         _object1 = new Parameter().WithName("P").WithFormula(new ConstantFormula(1));
+         var fixedParameter = new Parameter().WithName("P").WithFormula(new ConstantFormula(5));
+         fixedParameter.Value = 1;
+         _object2 = fixedParameter;
+      }
+
+      [Observation]
+      public void should_not_report_any_difference_as_both_parameters_are_constant_in_the_model()
+      {
+         _report.ShouldBeEmpty();
+      }
+   }
+}

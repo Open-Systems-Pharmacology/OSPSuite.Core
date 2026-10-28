@@ -412,6 +412,37 @@ namespace OSPSuite.Core.DiffBuilders
       }
    }
 
+   public class When_comparing_two_modules_where_a_table_parameter_is_fixed_to_its_current_value_in_only_one : concern_for_ModuleDiffBuilder
+   {
+      protected override void AdjustModulesForDiff(Module module1, Module module2)
+      {
+         module1.Add(spatialStructureWithTableParameter(module1.Name, fixValue: false));
+         module2.Add(spatialStructureWithTableParameter(module2.Name, fixValue: true));
+      }
+
+      private static SpatialStructure spatialStructureWithTableParameter(string moduleName, bool fixValue)
+      {
+         var tableFormula = new TableFormula();
+         tableFormula.AddPoint(0, 1);
+         tableFormula.AddPoint(1, 99);
+
+         var organism = new Container().WithName("Organism");
+         var parameter = new Parameter().WithName("P").WithFormula(tableFormula).WithParentContainer(organism);
+         if (fixValue)
+            parameter.Value = 1;
+
+         var spatialStructure = new SpatialStructure().WithName($"{moduleName} - Spatial Structure");
+         spatialStructure.AddTopContainer(organism);
+         return spatialStructure;
+      }
+
+      [Observation]
+      public void should_report_that_the_parameter_is_fixed_in_only_one_module()
+      {
+         _report.Count.ShouldBeEqualTo(1);
+      }
+   }
+
    public class When_comparing_two_modules_where_a_molecule_is_xenobiotic_in_only_one : concern_for_ModuleDiffBuilder
    {
       protected override void AdjustModulesForDiff(Module module1, Module module2)
