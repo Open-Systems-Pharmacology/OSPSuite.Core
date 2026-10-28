@@ -74,6 +74,16 @@ namespace OSPSuite.UI.Views.Importer
          errorTypePanelControl.FillWith(view);
       }
 
+      public void FillErrorTypeColumnView(IView view)
+      {
+         errorTypeColumnPanelControl.FillWith(view);
+      }
+
+      public void SetErrorTypeCaption(string caption)
+      {
+         errorTypeLayoutControlItem.Text = caption;
+      }
+
       public void HideUnits()
       {
          UnitsLayoutControlGroup.Visibility = DevExpress.XtraLayout.Utils.LayoutVisibility.Never;

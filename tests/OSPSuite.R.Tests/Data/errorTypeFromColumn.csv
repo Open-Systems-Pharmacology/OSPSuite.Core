@@ -1,0 +1,7 @@
+Id;Time [h];Concentration [mg/l];Error;Error type
+A;1;10;2;GSD
+A;2;20;3;gsd
+B;1;10;1;
+B;2;20;2;
+C;1;10;1;ASD
+C;2;20;2;ASD

@@ -419,6 +419,9 @@ namespace OSPSuite.Assets
          public static readonly string Unit = "Unit";
          public static readonly string ImportLLOQFromColumn = "Import LLOQ from a column";
          public static readonly string ImportUnitFromColumn = "Import unit from a column";
+         public static readonly string ImportErrorTypeFromColumn = "Import error type from a column";
+         public static readonly string ErrorTypeColumnDescription = "The selected error type will be used for all data sets";
+         public static readonly string DefaultErrorType = "Error type (default for empty cells)";
          public static readonly string Column = "Column";
          public static readonly string LoadCurrentSheet = "Add Current Sheet";
          public static readonly string AllSheetsAlreadyImported = "All imported";
@@ -502,6 +505,11 @@ namespace OSPSuite.Assets
          }
 
          public static string MappingHintGeometricError = "Geometric standard deviation";
+
+         public static string MappingHintErrorTypeColumn(string errorTypeColumn, string defaultErrorType)
+         {
+            return $"The error type of each data set will be read from column {errorTypeColumn} ({defaultErrorType} when empty)";
+         }
 
          public static string AddGroupByHint = "Configure the parameters and click the add button to add a new grouping by field";
 
@@ -1459,6 +1467,12 @@ namespace OSPSuite.Assets
       public static readonly string MismatchingArrayLengths = "Arrays should have the same length";
       public static string ColumnNotFound(string columnName) => $"Column {columnName} unexpectedly not found.";
       public static string BaseGridColumnNotFoundException(string columnName) => $"BaseGrid Column {columnName} unexpectedly not found.";
+      public static string UnknownErrorType(string sheetName, string dataSetName, string errorType, IEnumerable<string> acceptedErrorTypes) =>
+         $"The error type '{errorType}' of the data set '{dataSetName}' in the sheet '{sheetName}' is not supported. Accepted values are: {acceptedErrorTypes.ToString(", ")}. Leave the cell empty to use the default error type.";
+
+      public static string ConflictingErrorTypes(string sheetName, string dataSetName, IEnumerable<string> errorTypes) =>
+         $"The data set '{dataSetName}' in the sheet '{sheetName}' has more than one error type: {errorTypes.ToString(", ")}. All rows of a data set must have the same error type. Group the data by the error type column to split it into several data sets.";
+
       public static string EmptyDataSet(string dataSetName) => $"Your settings ended up with following empty datasets: '{dataSetName}'. Please remove the data set from your data, filter it out or add at least one observation for it.";
 
       public static string MissingColumnException(string sheetName, IReadOnlyList<string> missingColumns) => $"The mapped column(s) \n \n '{missingColumns.ToString("\n")}' \n \n is missing at least from the sheet \n \n '{sheetName}' \n \n that you are trying to load.";

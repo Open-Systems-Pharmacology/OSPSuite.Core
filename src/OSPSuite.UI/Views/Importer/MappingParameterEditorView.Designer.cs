@@ -32,6 +32,7 @@ namespace OSPSuite.UI.Views.Importer
       {
          this.layoutControl = new DevExpress.XtraLayout.LayoutControl();
          this.errorTypePanelControl = new DevExpress.XtraEditors.PanelControl();
+         this.errorTypeColumnPanelControl = new DevExpress.XtraEditors.PanelControl();
          this.lloqPanelControl = new DevExpress.XtraEditors.PanelControl();
          this.unitsPanelControl = new DevExpress.XtraEditors.PanelControl();
          this.Root = new DevExpress.XtraLayout.LayoutControlGroup();
@@ -43,10 +44,12 @@ namespace OSPSuite.UI.Views.Importer
          this.lloqLayoutControlItem = new DevExpress.XtraLayout.LayoutControlItem();
          this.ErrorLayoutControlGroup = new DevExpress.XtraLayout.LayoutControlGroup();
          this.errorTypeLayoutControlItem = new DevExpress.XtraLayout.LayoutControlItem();
+         this.errorTypeColumnLayoutControlItem = new DevExpress.XtraLayout.LayoutControlItem();
          ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControl)).BeginInit();
          this.layoutControl.SuspendLayout();
          ((System.ComponentModel.ISupportInitialize)(this.errorTypePanelControl)).BeginInit();
+         ((System.ComponentModel.ISupportInitialize)(this.errorTypeColumnPanelControl)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.lloqPanelControl)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.unitsPanelControl)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.Root)).BeginInit();
@@ -58,11 +61,13 @@ namespace OSPSuite.UI.Views.Importer
          ((System.ComponentModel.ISupportInitialize)(this.lloqLayoutControlItem)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.ErrorLayoutControlGroup)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.errorTypeLayoutControlItem)).BeginInit();
+         ((System.ComponentModel.ISupportInitialize)(this.errorTypeColumnLayoutControlItem)).BeginInit();
          this.SuspendLayout();
          // 
          // layoutControl
          // 
          this.layoutControl.Controls.Add(this.errorTypePanelControl);
+         this.layoutControl.Controls.Add(this.errorTypeColumnPanelControl);
          this.layoutControl.Controls.Add(this.lloqPanelControl);
          this.layoutControl.Controls.Add(this.unitsPanelControl);
          this.layoutControl.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -71,7 +76,7 @@ namespace OSPSuite.UI.Views.Importer
          this.layoutControl.Name = "layoutControl";
          this.layoutControl.OptionsCustomizationForm.DesignTimeCustomizationFormPositionAndSize = new System.Drawing.Rectangle(3511, -188, 812, 500);
          this.layoutControl.Root = this.Root;
-         this.layoutControl.Size = new System.Drawing.Size(796, 304);
+         this.layoutControl.Size = new System.Drawing.Size(796, 384);
          this.layoutControl.TabIndex = 38;
          // 
          // errorTypePanelControl
@@ -83,10 +88,19 @@ namespace OSPSuite.UI.Views.Importer
          this.errorTypePanelControl.Size = new System.Drawing.Size(562, 69);
          this.errorTypePanelControl.TabIndex = 7;
          // 
+         // errorTypeColumnPanelControl
+         //
+         this.errorTypeColumnPanelControl.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+         this.errorTypeColumnPanelControl.Location = new System.Drawing.Point(199, 92);
+         this.errorTypeColumnPanelControl.Margin = new System.Windows.Forms.Padding(0);
+         this.errorTypeColumnPanelControl.Name = "errorTypeColumnPanelControl";
+         this.errorTypeColumnPanelControl.Size = new System.Drawing.Size(562, 76);
+         this.errorTypeColumnPanelControl.TabIndex = 8;
+         //
          // lloqPanelControl
-         // 
+         //
          this.lloqPanelControl.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-         this.lloqPanelControl.Location = new System.Drawing.Point(188, 181);
+         this.lloqPanelControl.Location = new System.Drawing.Point(188, 261);
          this.lloqPanelControl.Margin = new System.Windows.Forms.Padding(0);
          this.lloqPanelControl.Name = "lloqPanelControl";
          this.lloqPanelControl.Size = new System.Drawing.Size(584, 66);
@@ -95,7 +109,7 @@ namespace OSPSuite.UI.Views.Importer
          // unitsPanelControl
          // 
          this.unitsPanelControl.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-         this.unitsPanelControl.Location = new System.Drawing.Point(188, 111);
+         this.unitsPanelControl.Location = new System.Drawing.Point(188, 191);
          this.unitsPanelControl.Margin = new System.Windows.Forms.Padding(0);
          this.unitsPanelControl.Name = "unitsPanelControl";
          this.unitsPanelControl.Size = new System.Drawing.Size(584, 51);
@@ -106,7 +120,7 @@ namespace OSPSuite.UI.Views.Importer
          this.Root.Items.AddRange(new DevExpress.XtraLayout.BaseLayoutItem[] {
             this.layoutControlGroup1});
          this.Root.Name = "Root";
-         this.Root.Size = new System.Drawing.Size(796, 304);
+         this.Root.Size = new System.Drawing.Size(796, 384);
          this.Root.TextVisible = false;
          // 
          // layoutControlGroup1
@@ -119,13 +133,13 @@ namespace OSPSuite.UI.Views.Importer
             this.ErrorLayoutControlGroup});
          this.layoutControlGroup1.Location = new System.Drawing.Point(0, 0);
          this.layoutControlGroup1.Name = "layoutControlGroup1";
-         this.layoutControlGroup1.Size = new System.Drawing.Size(776, 284);
+         this.layoutControlGroup1.Size = new System.Drawing.Size(776, 364);
          this.layoutControlGroup1.TextVisible = false;
          // 
          // emptySpaceItem1
          // 
          this.emptySpaceItem1.AllowHotTrack = false;
-         this.emptySpaceItem1.Location = new System.Drawing.Point(0, 242);
+         this.emptySpaceItem1.Location = new System.Drawing.Point(0, 322);
          this.emptySpaceItem1.Name = "emptySpaceItem1";
          this.emptySpaceItem1.Size = new System.Drawing.Size(776, 42);
          this.emptySpaceItem1.TextSize = new System.Drawing.Size(0, 0);
@@ -134,7 +148,7 @@ namespace OSPSuite.UI.Views.Importer
          // 
          this.UnitsLayoutControlGroup.Items.AddRange(new DevExpress.XtraLayout.BaseLayoutItem[] {
             this.unitsLayoutControlItem});
-         this.UnitsLayoutControlGroup.Location = new System.Drawing.Point(0, 87);
+         this.UnitsLayoutControlGroup.Location = new System.Drawing.Point(0, 167);
          this.UnitsLayoutControlGroup.Name = "UnitsLayoutControlGroup";
          this.UnitsLayoutControlGroup.Size = new System.Drawing.Size(776, 79);
          this.UnitsLayoutControlGroup.TextVisible = false;
@@ -151,7 +165,7 @@ namespace OSPSuite.UI.Views.Importer
          // 
          this.LloqLayoutControlGroup.Items.AddRange(new DevExpress.XtraLayout.BaseLayoutItem[] {
             this.lloqLayoutControlItem});
-         this.LloqLayoutControlGroup.Location = new System.Drawing.Point(0, 166);
+         this.LloqLayoutControlGroup.Location = new System.Drawing.Point(0, 246);
          this.LloqLayoutControlGroup.Name = "LloqLayoutControlGroup";
          this.LloqLayoutControlGroup.Padding = new DevExpress.XtraLayout.Utils.Padding(9, 9, 0, 0);
          this.LloqLayoutControlGroup.Size = new System.Drawing.Size(776, 76);
@@ -168,20 +182,30 @@ namespace OSPSuite.UI.Views.Importer
          // ErrorLayoutControlGroup
          // 
          this.ErrorLayoutControlGroup.Items.AddRange(new DevExpress.XtraLayout.BaseLayoutItem[] {
-            this.errorTypeLayoutControlItem});
+            this.errorTypeLayoutControlItem,
+            this.errorTypeColumnLayoutControlItem});
          this.ErrorLayoutControlGroup.Location = new System.Drawing.Point(0, 0);
          this.ErrorLayoutControlGroup.Name = "ErrorLayoutControlGroup";
          this.ErrorLayoutControlGroup.Padding = new DevExpress.XtraLayout.Utils.Padding(20, 20, 4, 4);
-         this.ErrorLayoutControlGroup.Size = new System.Drawing.Size(776, 87);
+         this.ErrorLayoutControlGroup.Size = new System.Drawing.Size(776, 167);
          this.ErrorLayoutControlGroup.TextVisible = false;
-         // 
+         //
          // errorTypeLayoutControlItem
-         // 
+         //
          this.errorTypeLayoutControlItem.Control = this.errorTypePanelControl;
          this.errorTypeLayoutControlItem.Location = new System.Drawing.Point(0, 0);
          this.errorTypeLayoutControlItem.Name = "errorTypeLayoutControlItem";
          this.errorTypeLayoutControlItem.Size = new System.Drawing.Size(730, 73);
          this.errorTypeLayoutControlItem.TextSize = new System.Drawing.Size(161, 16);
+         //
+         // errorTypeColumnLayoutControlItem
+         //
+         this.errorTypeColumnLayoutControlItem.Control = this.errorTypeColumnPanelControl;
+         this.errorTypeColumnLayoutControlItem.Location = new System.Drawing.Point(0, 73);
+         this.errorTypeColumnLayoutControlItem.Name = "errorTypeColumnLayoutControlItem";
+         this.errorTypeColumnLayoutControlItem.Size = new System.Drawing.Size(730, 80);
+         this.errorTypeColumnLayoutControlItem.TextSize = new System.Drawing.Size(0, 0);
+         this.errorTypeColumnLayoutControlItem.TextVisible = false;
          // 
          // MappingParameterEditorView
          // 
@@ -190,11 +214,12 @@ namespace OSPSuite.UI.Views.Importer
          this.Controls.Add(this.layoutControl);
          this.Margin = new System.Windows.Forms.Padding(8);
          this.Name = "MappingParameterEditorView";
-         this.Size = new System.Drawing.Size(796, 304);
+         this.Size = new System.Drawing.Size(796, 384);
          ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControl)).EndInit();
          this.layoutControl.ResumeLayout(false);
          ((System.ComponentModel.ISupportInitialize)(this.errorTypePanelControl)).EndInit();
+         ((System.ComponentModel.ISupportInitialize)(this.errorTypeColumnPanelControl)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.lloqPanelControl)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.unitsPanelControl)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.Root)).EndInit();
@@ -206,6 +231,7 @@ namespace OSPSuite.UI.Views.Importer
          ((System.ComponentModel.ISupportInitialize)(this.lloqLayoutControlItem)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.ErrorLayoutControlGroup)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.errorTypeLayoutControlItem)).EndInit();
+         ((System.ComponentModel.ISupportInitialize)(this.errorTypeColumnLayoutControlItem)).EndInit();
          this.ResumeLayout(false);
 
       }
@@ -214,6 +240,8 @@ namespace OSPSuite.UI.Views.Importer
       private DevExpress.XtraLayout.LayoutControl layoutControl;
       private DevExpress.XtraLayout.LayoutControlGroup Root;
       private DevExpress.XtraEditors.PanelControl errorTypePanelControl;
+      private DevExpress.XtraEditors.PanelControl errorTypeColumnPanelControl;
+      private DevExpress.XtraLayout.LayoutControlItem errorTypeColumnLayoutControlItem;
       private DevExpress.XtraEditors.PanelControl lloqPanelControl;
       private DevExpress.XtraLayout.LayoutControlItem lloqLayoutControlItem;
       private DevExpress.XtraLayout.LayoutControlItem errorTypeLayoutControlItem;

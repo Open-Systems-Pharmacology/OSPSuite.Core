@@ -61,6 +61,7 @@ namespace OSPSuite.Core.Import
          Dimension = baseColumn.Dimension;
          LloqColumn = baseColumn.LloqColumn;
          ErrorStdDev = baseColumn.ErrorStdDev;
+         ErrorStdDevColumn = baseColumn.ErrorStdDevColumn;
       }
 
       public string Name { get; set; }
@@ -72,6 +73,18 @@ namespace OSPSuite.Core.Import
 
       public string ErrorStdDev { get; set; }
 
+      /// <summary>
+      ///    Column defining the error type of each data set. When set, <see cref="ErrorStdDev" /> is the default used for data
+      ///    sets without a value in this column
+      /// </summary>
+      public string ErrorStdDevColumn { get; set; }
+
+      /// <summary>
+      ///    True if every data set is imported with a geometric standard deviation, i.e. the error type is geometric and not read
+      ///    from a column
+      /// </summary>
+      public bool ErrorStdDevIsAlwaysGeometric => ErrorStdDev == Constants.STD_DEV_GEOMETRIC && string.IsNullOrEmpty(ErrorStdDevColumn);
+
       public override string ToString()
       {
          return $"{Name} [{Unit}]";
@@ -80,9 +93,8 @@ namespace OSPSuite.Core.Import
       public bool MissingUnitMapping()
       {
          return
-            //manual selection: selected unit not set and the column is not a Geometric Standard Deviation
-            (Unit.SelectedUnit == UnitDescription.InvalidUnit &&
-             (ErrorStdDev == null || ErrorStdDev.Equals(Constants.STD_DEV_ARITHMETIC)))
+            //manual selection: selected unit not set and the column is not always a Geometric Standard Deviation
+            (Unit.SelectedUnit == UnitDescription.InvalidUnit && !ErrorStdDevIsAlwaysGeometric)
             ||
             //select from a column: selected unit is null (not set) and no column has been selected
             (Unit.SelectedUnit == null &&

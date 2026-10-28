@@ -826,4 +826,116 @@ namespace OSPSuite.Presentation.Importer.Presenters
          _mappingSource.MappedColumn.Dimension.Name.ShouldBeEqualTo(Constants.Dimension.FRACTION);
       }
    }
+
+   public abstract class concern_for_ColumnMappingPresenter_with_error_type_column : concern_for_ColumnMappingPresenter
+   {
+      protected const string ERROR_TYPE_COLUMN = "Col1";
+      protected Column _errorColumn;
+
+      protected override void Context()
+      {
+         base.Context();
+         _errorColumn = new Column { Name = "Error", Unit = new UnitDescription("?", "") };
+         _parameters = CreateParameters((MappingDataFormatParameter)_parameters[1], new MappingDataFormatParameter("Error", _errorColumn));
+         A.CallTo(() => _basicFormat.Parameters).Returns(_parameters);
+         A.CallTo(() => _basicFormat.ExcelColumnNames).Returns(new List<string> { "Time", "Concentration", "Error", ERROR_TYPE_COLUMN, "Col2" });
+         A.CallTo(() => _mappingParameterEditorPresenter.Unit).Returns(new UnitDescription("mol/l"));
+         A.CallTo(() => _mappingParameterEditorPresenter.Dimension).Returns(DimensionFactoryForSpecs.ConcentrationDimension);
+         A.CallTo(() => _mappingParameterEditorPresenter.SelectedErrorType).Returns(ARITMETIC_ERROR);
+         A.CallTo(() => _mappingParameterEditorPresenter.ErrorTypeColumn).Returns(ERROR_TYPE_COLUMN);
+      }
+
+      protected ColumnMappingDTO errorMapping => new ColumnMappingDTO(ColumnMappingDTO.ColumnType.Mapping, "Error", _parameters[2], 0, _columnInfos.ElementAt(2));
+   }
+
+   public class When_updating_the_error_description_with_the_error_type_from_a_column : concern_for_ColumnMappingPresenter_with_error_type_column
+   {
+      protected override void Context()
+      {
+         base.Context();
+         A.CallTo(() => _mappingParameterEditorPresenter.ErrorTypeFromColumn()).Returns(true);
+         UpdateSettings();
+      }
+
+      protected override void Because()
+      {
+         sut.SetSubEditorSettingsForMapping(errorMapping);
+         sut.UpdateDescriptionForModel(_parameters[2] as MappingDataFormatParameter);
+      }
+
+      [Observation]
+      public void should_set_the_error_type_column_and_the_default_error_type()
+      {
+         _errorColumn.ErrorStdDevColumn.ShouldBeEqualTo(ERROR_TYPE_COLUMN);
+         _errorColumn.ErrorStdDev.ShouldBeEqualTo(Constants.STD_DEV_GEOMETRIC);
+      }
+
+      [Observation]
+      public void should_keep_the_unit_for_arithmetic_data_sets_even_if_the_default_error_type_is_geometric()
+      {
+         _errorColumn.Unit.SelectedUnit.ShouldBeEqualTo("mol/l");
+         _errorColumn.Dimension.ShouldBeEqualTo(DimensionFactoryForSpecs.ConcentrationDimension);
+      }
+   }
+
+   public class When_updating_the_error_description_without_the_error_type_from_a_column : concern_for_ColumnMappingPresenter_with_error_type_column
+   {
+      protected override void Context()
+      {
+         base.Context();
+         _errorColumn.ErrorStdDevColumn = ERROR_TYPE_COLUMN;
+         A.CallTo(() => _mappingParameterEditorPresenter.ErrorTypeFromColumn()).Returns(false);
+         UpdateSettings();
+      }
+
+      protected override void Because()
+      {
+         sut.SetSubEditorSettingsForMapping(errorMapping);
+         sut.UpdateDescriptionForModel(_parameters[2] as MappingDataFormatParameter);
+      }
+
+      [Observation]
+      public void should_remove_the_error_type_column()
+      {
+         _errorColumn.ErrorStdDevColumn.ShouldBeNull();
+      }
+
+      [Observation]
+      public void should_make_the_geometric_error_dimensionless()
+      {
+         _errorColumn.ErrorStdDev.ShouldBeEqualTo(Constants.STD_DEV_GEOMETRIC);
+         _errorColumn.Dimension.ShouldBeEqualTo(Constants.Dimension.NO_DIMENSION);
+      }
+   }
+
+   public class When_setting_editor_settings_for_an_error_with_an_error_type_column : concern_for_ColumnMappingPresenter_with_error_type_column
+   {
+      protected override void Context()
+      {
+         base.Context();
+         _errorColumn.ErrorStdDevColumn = ERROR_TYPE_COLUMN;
+         A.CallTo(() => _basicFormat.GetParameters<MappingDataFormatParameter>()).Returns(_parameters.OfType<MappingDataFormatParameter>());
+         UpdateSettings();
+      }
+
+      protected override void Because()
+      {
+         sut.SetSubEditorSettingsForMapping(errorMapping);
+      }
+
+      [Observation]
+      public void should_select_the_error_type_column()
+      {
+         A.CallTo(() => _mappingParameterEditorPresenter.SetErrorTypeColumnOptions(
+            A<IEnumerable<string>>.That.Matches(l => l.First() == ERROR_TYPE_COLUMN && l.Contains("Col2")),
+            ERROR_TYPE_COLUMN,
+            true)).MustHaveHappened();
+      }
+
+      [Observation]
+      public void should_not_offer_the_error_type_column_for_another_mapping()
+      {
+         sut.GetAvailableRowsFor(errorMapping).Select(x => x.Description).ShouldNotContain(ERROR_TYPE_COLUMN);
+      }
+   }
 }

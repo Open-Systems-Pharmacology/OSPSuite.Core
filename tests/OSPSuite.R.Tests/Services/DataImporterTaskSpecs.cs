@@ -1,10 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain;
+using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Import;
+using OSPSuite.Infrastructure.Import.Core;
 using OSPSuite.Utility;
 using OSPSuite.Utility.Exceptions;
 using OSPSuite.Utility.Extensions;
@@ -321,6 +324,87 @@ namespace OSPSuite.R.Services
          sut.SetAllLoadedSheet(configuration, "TestSheet_1_withMW");
          sut.IgnoreSheetNamesAtImport = false;
          The.Action(() => sut.ImportExcelFromConfiguration(configuration, fileFullName)).ShouldThrowAn<InvalidArgumentException>();
+      }
+   }
+
+   public class When_importing_data_whose_error_type_comes_from_a_column : concern_for_DataImporter
+   {
+      private IReadOnlyList<DataRepository> _dataRepositories;
+
+      protected override void Because()
+      {
+         sut.IgnoreSheetNamesAtImport = true;
+         _dataRepositories = sut.ImportCsvFromConfiguration(getFileFullName("errorTypeFromColumnConfiguration.xml"), getFileFullName("errorTypeFromColumn.csv"), ';');
+      }
+
+      private DataColumn errorColumnOf(string id)
+      {
+         return _dataRepositories
+            .Single(x => x.ExtendedProperties["Id"].ValueAsObject.ToString() == id)
+            .AllButBaseGrid()
+            .Single(x => x.DataInfo.AuxiliaryType != AuxiliaryType.Undefined);
+      }
+
+      private Column errorMappingOf(ImporterConfiguration configuration)
+      {
+         return configuration.Parameters.OfType<MappingDataFormatParameter>().Single(x => x.MappedColumn.Name == "Error").MappedColumn;
+      }
+
+      [Observation]
+      public void should_create_one_data_set_per_group_and_not_per_error_type()
+      {
+         _dataRepositories.Count.ShouldBeEqualTo(3);
+      }
+
+      [Observation]
+      public void should_import_a_dimensionless_geometric_error_as_written_for_a_geometric_data_set()
+      {
+         var errorColumn = errorColumnOf("A");
+         errorColumn.DataInfo.AuxiliaryType.ShouldBeEqualTo(AuxiliaryType.GeometricStdDev);
+         errorColumn.Dimension.Name.ShouldBeEqualTo(Constants.Dimension.DIMENSIONLESS);
+         errorColumn.Values.ToArray().ShouldBeEqualTo(new[] { 2f, 3f });
+      }
+
+      [Observation]
+      public void should_import_an_arithmetic_error_for_a_data_set_without_error_type()
+      {
+         var errorColumn = errorColumnOf("B");
+         errorColumn.DataInfo.AuxiliaryType.ShouldBeEqualTo(AuxiliaryType.ArithmeticStdDev);
+         errorColumn.Dimension.Name.ShouldBeEqualTo(Constants.Dimension.MASS_CONCENTRATION);
+      }
+
+      [Observation]
+      public void should_import_an_arithmetic_error_for_an_arithmetic_data_set()
+      {
+         errorColumnOf("C").DataInfo.AuxiliaryType.ShouldBeEqualTo(AuxiliaryType.ArithmeticStdDev);
+      }
+
+      [Observation]
+      public void should_keep_the_error_type_column_when_saving_and_loading_the_configuration()
+      {
+         var tempFileName = FileHelper.GenerateTemporaryFileName();
+         sut.SaveConfiguration(sut.GetConfiguration(getFileFullName("errorTypeFromColumnConfiguration.xml")), tempFileName);
+         var configurationCopy = sut.GetConfiguration(tempFileName);
+         FileHelper.DeleteFile(tempFileName);
+
+         errorMappingOf(configurationCopy).ErrorStdDevColumn.ShouldBeEqualTo("Error type");
+      }
+
+      [Observation]
+      public void should_load_a_configuration_without_error_type_column()
+      {
+         errorMappingOf(sut.GetConfiguration(getFileFullName("importerConfiguration1.xml"))).ErrorStdDevColumn.ShouldBeNull();
+      }
+   }
+
+   public class When_importing_data_with_conflicting_error_types_in_one_data_set : concern_for_DataImporter
+   {
+      [Observation]
+      public void should_throw_a_parsing_exception()
+      {
+         sut.IgnoreSheetNamesAtImport = true;
+         The.Action(() => sut.ImportCsvFromConfiguration(getFileFullName("errorTypeFromColumnConfiguration.xml"), getFileFullName("errorTypeFromColumn_conflict.csv"), ';'))
+            .ShouldThrowAn<ImporterParsingException>();
       }
    }
 }

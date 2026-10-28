@@ -118,7 +118,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          var errorColumn = ((MappingDataFormatParameter)errorColumnDTO.Source).MappedColumn;
 
          if ((errorColumn.Unit.SelectedUnit != "?") && (!string.IsNullOrEmpty(errorColumn.Unit.ColumnName))) return;
-         if (errorColumn.ErrorStdDev == Constants.STD_DEV_GEOMETRIC)
+         if (errorColumn.ErrorStdDevIsAlwaysGeometric)
          {
             errorColumn.Unit = new UnitDescription("");
             return;
@@ -249,11 +249,14 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
          if (model.ColumnInfo.IsAuxiliary)
          {
-            if (_mappingParameterEditorPresenter.SelectedErrorType == 0)
-               column.ErrorStdDev = Constants.STD_DEV_ARITHMETIC;
-            else
+            var errorStdDevColumn = _mappingParameterEditorPresenter.ErrorTypeColumn;
+            column.ErrorStdDevColumn = _mappingParameterEditorPresenter.ErrorTypeFromColumn() && !errorStdDevColumn.IsNullOrEmpty() ? errorStdDevColumn : null;
+
+            column.ErrorStdDev = _mappingParameterEditorPresenter.SelectedErrorType == 0 ? Constants.STD_DEV_ARITHMETIC : Constants.STD_DEV_GEOMETRIC;
+
+            //units are kept when the error type comes from a column as arithmetic data sets need them
+            if (column.ErrorStdDevIsAlwaysGeometric)
             {
-               column.ErrorStdDev = Constants.STD_DEV_GEOMETRIC;
                column.Dimension = Constants.Dimension.NO_DIMENSION;
                column.Unit = new UnitDescription(column.Dimension.BaseUnit.Name);
             }
@@ -339,6 +342,13 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
          if (model.ColumnInfo.IsAuxiliary)
          {
+            var errorTypeColumns = new List<string>();
+            if (!column.ErrorStdDevColumn.IsNullOrEmpty())
+               errorTypeColumns.Add(column.ErrorStdDevColumn);
+
+            errorTypeColumns.AddRange(availableColumns());
+            _mappingParameterEditorPresenter.SetErrorTypeColumnOptions(errorTypeColumns, column.ErrorStdDevColumn, !column.ErrorStdDevColumn.IsNullOrEmpty());
+
             _mappingParameterEditorPresenter.SetErrorTypeOptions
             (
                new List<string>() { Constants.STD_DEV_ARITHMETIC, Constants.STD_DEV_GEOMETRIC },
@@ -551,7 +561,8 @@ namespace OSPSuite.Presentation.Presenters.Importer
             (
                cn =>
                   _format.GetParameters<MappingDataFormatParameter>().All(p =>
-                     p.ColumnName != cn && p.MappedColumn?.Unit?.ColumnName != cn && p.MappedColumn?.LloqColumn != cn) &&
+                     p.ColumnName != cn && p.MappedColumn?.Unit?.ColumnName != cn && p.MappedColumn?.LloqColumn != cn &&
+                     p.MappedColumn?.ErrorStdDevColumn != cn) &&
                   _format.GetParameters<MetaDataFormatParameter>().All(p => p.ColumnName != cn) &&
                   _format.GetParameters<GroupByDataFormatParameter>().All(p => p.ColumnName != cn)
             );
@@ -747,7 +758,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       private static void checkErrorUnitAgainstMeasurementUnit(Column errorColumn, Column measurementColumn)
       {
-         if (errorColumn.ErrorStdDev != Constants.STD_DEV_GEOMETRIC &&
+         if (!errorColumn.ErrorStdDevIsAlwaysGeometric &&
              ((errorColumn.Unit?.ColumnName.IsNullOrEmpty() != measurementColumn.Unit?.ColumnName.IsNullOrEmpty()) ||
               (measurementColumn.Unit?.ColumnName == null && measurementColumn.Dimension != errorColumn.Dimension)))
          {
