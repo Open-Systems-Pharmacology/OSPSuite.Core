@@ -31,6 +31,29 @@ namespace OSPSuite.Core.DiffBuilders
       }
    }
 
+   public class When_comparing_two_molecule_builder_with_different_quantity_types_using_default_settings : concern_for_ObjectComparer
+   {
+      protected override void Context()
+      {
+         base.Context();
+         _comparerSettings = new ComparerSettings();
+         var moleculeBuilder1 = new MoleculeBuilder().WithName("Drug");
+         moleculeBuilder1.QuantityType = QuantityType.Drug;
+
+         var moleculeBuilder2 = new MoleculeBuilder().WithName("Drug");
+         moleculeBuilder2.QuantityType = QuantityType.Metabolite;
+
+         _object1 = moleculeBuilder1;
+         _object2 = moleculeBuilder2;
+      }
+
+      [Observation]
+      public void should_report_the_different_quantity_type()
+      {
+         _report.Count.ShouldBeEqualTo(1);
+      }
+   }
+
    public class When_comparing_two_molecule_builder_with_different_dimensions_and_the_same_start_value : concern_for_ObjectComparer
    {
       protected override void Context()

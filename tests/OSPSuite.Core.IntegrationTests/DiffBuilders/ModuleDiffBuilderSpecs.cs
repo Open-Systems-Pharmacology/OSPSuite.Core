@@ -518,6 +518,22 @@ namespace OSPSuite.Core.DiffBuilders
       }
    }
 
+   public class When_comparing_two_modules_where_a_molecule_is_a_drug_in_one_and_a_metabolite_in_the_other : concern_for_ModuleDiffBuilder
+   {
+      protected override void AdjustModulesForDiff(Module module1, Module module2)
+      {
+         _comparerSettings = new ComparerSettings();
+         module1.Molecules.FindByName("A").QuantityType = QuantityType.Drug;
+         module2.Molecules.FindByName("A").QuantityType = QuantityType.Metabolite;
+      }
+
+      [Observation]
+      public void should_report_the_different_quantity_type()
+      {
+         _report.Count.ShouldBeEqualTo(1);
+      }
+   }
+
    public class When_comparing_a_module_against_a_module_with_an_additional_parameter_values_building_block_of_the_same_name : concern_for_ModuleDiffBuilder
    {
       protected override void AdjustModulesForDiff(Module module1, Module module2)

@@ -24,12 +24,10 @@ namespace OSPSuite.Core.Comparison
          //the start formula is mapped differently for amount and concentration based molecules
          CompareValues(x => x.IsXenobiotic, x => x.IsXenobiotic, comparison);
          CompareValues(x => x.Dimension, x => x.Dimension, comparison);
+         //copied to every molecule amount of the model and used to classify outputs and PK analyses
+         CompareValues(x => x.QuantityType, x => x.QuantityType, comparison);
          _enumerableComparerComparer.CompareEnumerables(comparison,x=>x.UsedCalculationMethods,x=>x.Category, missingItemType: ObjectTypes.CalculationMethod);
          _objectComparer.Compare(comparison.ChildComparison(x => x.DefaultStartFormula));
-         if (comparison.Settings.OnlyComputingRelevant)
-            return;
-
-         CompareValues(x => x.QuantityType, x => x.QuantityType, comparison);
       }
    }
 
