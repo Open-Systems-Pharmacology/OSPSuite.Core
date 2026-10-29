@@ -117,6 +117,7 @@ namespace OSPSuite.Presentation.Presentation
          confidenceIntervalDTO.Name.ShouldBeEqualTo(_identificationParameter.Name);
          confidenceIntervalDTO.ConfidenceInterval.ShouldBeEqualTo(50);
          confidenceIntervalDTO.Value.ShouldBeEqualTo(100);
+         confidenceIntervalDTO.RelativeConfidenceInterval.ShouldBeEqualTo(50);
          confidenceIntervalDTO.Unit.ShouldBeEqualTo(_identificationParameter.DisplayUnit);
       }
    }
