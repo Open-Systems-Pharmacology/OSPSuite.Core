@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Comparison;
@@ -287,7 +288,76 @@ namespace OSPSuite.Core.DiffBuilders
       }
 
       [Observation]
-      public void should_report_the_differences_accordingly()
+      public void should_report_the_different_distribution_types_and_the_sub_parameters_specific_to_each_distribution()
+      {
+         //different formula types, deviation only in the normal distribution, geometric deviation only in the log normal distribution
+         _report.Count.ShouldBeEqualTo(3);
+      }
+   }
+
+   public class When_comparing_containers_having_different_distributed_parameters_that_are_not_eligible_for_comparison : concern_for_ObjectComparer
+   {
+      private Func<IComparison<IParameter>, bool> _originalEligibility;
+
+      protected override void Context()
+      {
+         base.Context();
+         _originalEligibility = ParameterDiffBuilder.ShouldCompareParametersIn;
+         ParameterDiffBuilder.ShouldCompareParametersIn = _ => false;
+
+         var distributedFormulaFactory = IoC.Resolve<IDistributionFormulaFactory>();
+         var c1 = new Container {Name = "O"};
+         var p11 = new DistributedParameter {Name = "P1"}.WithParentContainer(c1);
+         var meanP11 = new Parameter().WithFormula(new ConstantFormula(1)).WithName(Constants.Distribution.MEAN).WithParentContainer(p11);
+         var devP11 = new Parameter().WithFormula(new ConstantFormula(2)).WithName(Constants.Distribution.DEVIATION).WithParentContainer(p11);
+         p11.Formula = distributedFormulaFactory.CreateNormalDistributionFormulaFor(p11, meanP11, devP11);
+
+         var c2 = new Container {Name = "O"};
+         var p21 = new DistributedParameter {Name = "P1"}.WithParentContainer(c2);
+         var meanP21 = new Parameter().WithFormula(new ConstantFormula(1)).WithName(Constants.Distribution.MEAN).WithParentContainer(p21);
+         var devP21 = new Parameter().WithFormula(new ConstantFormula(2)).WithName(Constants.Distribution.GEOMETRIC_DEVIATION).WithParentContainer(p21);
+         p21.Formula = distributedFormulaFactory.CreateLogNormalDistributionFormulaFor(p21, meanP21, devP21);
+
+         _object1 = c1;
+         _object2 = c2;
+      }
+
+      public override void Cleanup()
+      {
+         base.Cleanup();
+         ParameterDiffBuilder.ShouldCompareParametersIn = _originalEligibility;
+      }
+
+      [Observation]
+      public void should_not_report_the_sub_parameters_of_the_excluded_parameters()
+      {
+         _report.ShouldBeEmpty();
+      }
+   }
+
+   public class When_comparing_containers_having_distributed_parameters_with_the_same_value_but_different_deviations : concern_for_ObjectComparer
+   {
+      protected override void Context()
+      {
+         base.Context();
+         _object1 = containerWithNormalDistributedParameter(deviation: 2);
+         _object2 = containerWithNormalDistributedParameter(deviation: 3);
+      }
+
+      private static Container containerWithNormalDistributedParameter(double deviation)
+      {
+         var distributedFormulaFactory = IoC.Resolve<IDistributionFormulaFactory>();
+         var container = new Container {Name = "O"};
+         var parameter = new DistributedParameter {Name = "P1"}.WithParentContainer(container);
+         var mean = new Parameter().WithFormula(new ConstantFormula(1)).WithName(Constants.Distribution.MEAN).WithParentContainer(parameter);
+         var dev = new Parameter().WithFormula(new ConstantFormula(deviation)).WithName(Constants.Distribution.DEVIATION).WithParentContainer(parameter);
+         new Parameter().WithFormula(new ConstantFormula(0.5)).WithName(Constants.Distribution.PERCENTILE).WithParentContainer(parameter);
+         parameter.Formula = distributedFormulaFactory.CreateNormalDistributionFormulaFor(parameter, mean, dev);
+         return container;
+      }
+
+      [Observation]
+      public void should_report_the_different_deviation()
       {
          _report.Count.ShouldBeEqualTo(1);
       }
@@ -321,9 +391,10 @@ namespace OSPSuite.Core.DiffBuilders
       }
 
       [Observation]
-      public void should_report_the_differences_accordingly()
+      public void should_report_the_fixed_value_the_resulting_percentile_and_the_differently_named_deviation_sub_parameters()
       {
-         _report.Count.ShouldBeEqualTo(1);
+         //fixed value, percentile recomputed from the fixed value, deviation only in the first parameter, geometric deviation only in the second parameter
+         _report.Count.ShouldBeEqualTo(4);
       }
    }
 
@@ -351,6 +422,63 @@ namespace OSPSuite.Core.DiffBuilders
 
       [Observation]
       public void should_have_one_report_entry_only_for_the_parameter_whose_value_was_set()
+      {
+         _report.Count.ShouldBeEqualTo(1);
+      }
+   }
+
+   public class When_comparing_containers_having_distributed_parameters_with_the_same_sub_parameters_but_a_differently_bound_deviation : concern_for_ObjectComparer
+   {
+      private const string ALTERNATIVE_DEVIATION = "Alternative Deviation";
+
+      protected override void Context()
+      {
+         base.Context();
+         _object1 = containerWithNormalDistributedParameter(deviationParameterName: Constants.Distribution.DEVIATION);
+         _object2 = containerWithNormalDistributedParameter(deviationParameterName: ALTERNATIVE_DEVIATION);
+      }
+
+      private static Container containerWithNormalDistributedParameter(string deviationParameterName)
+      {
+         var distributedFormulaFactory = IoC.Resolve<IDistributionFormulaFactory>();
+         var container = new Container {Name = "O"};
+         var parameter = new DistributedParameter {Name = "P1"}.WithParentContainer(container);
+         var mean = new Parameter().WithFormula(new ConstantFormula(1)).WithName(Constants.Distribution.MEAN).WithParentContainer(parameter);
+         new Parameter().WithFormula(new ConstantFormula(2)).WithName(Constants.Distribution.DEVIATION).WithParentContainer(parameter);
+         new Parameter().WithFormula(new ConstantFormula(2)).WithName(ALTERNATIVE_DEVIATION).WithParentContainer(parameter);
+         new Parameter().WithFormula(new ConstantFormula(0.5)).WithName(Constants.Distribution.PERCENTILE).WithParentContainer(parameter);
+         var deviation = parameter.GetSingleChildByName<IParameter>(deviationParameterName);
+         parameter.Formula = distributedFormulaFactory.CreateNormalDistributionFormulaFor(parameter, mean, deviation);
+         return container;
+      }
+
+      [Observation]
+      public void should_report_the_different_path_bound_to_the_deviation_alias()
+      {
+         _report.Count.ShouldBeEqualTo(1);
+      }
+   }
+
+   public class When_comparing_parameters_differing_only_in_their_persistence_using_default_settings : concern_for_ObjectComparer
+   {
+      protected override void Context()
+      {
+         base.Context();
+         _comparerSettings = new ComparerSettings();
+         _object1 = containerWithParameter(persistable: true);
+         _object2 = containerWithParameter(persistable: false);
+      }
+
+      private static Container containerWithParameter(bool persistable)
+      {
+         var container = new Container {Name = "O"};
+         var parameter = new Parameter {Name = "P1"}.WithFormula(new ConstantFormula(5)).WithParentContainer(container);
+         parameter.Persistable = persistable;
+         return container;
+      }
+
+      [Observation]
+      public void should_report_the_different_persistence()
       {
          _report.Count.ShouldBeEqualTo(1);
       }

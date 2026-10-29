@@ -186,4 +186,48 @@ namespace OSPSuite.Core.DiffBuilders
          diffItem.CommonAncestor.ShouldBeEqualTo(_p1);
       }
    }
+
+   public class When_comparing_EventGroups_having_different_event_group_types : concern_for_ObjectComparer
+   {
+      protected override void Context()
+      {
+         base.Context();
+         var eg1 = new EventGroupBuilder().WithName("Application");
+         eg1.EventGroupType = "Application";
+
+         var eg2 = new EventGroupBuilder().WithName("Application");
+         eg2.EventGroupType = "Formulation";
+
+         _object1 = eg1;
+         _object2 = eg2;
+      }
+
+      [Observation]
+      public void should_report_the_different_event_group_type()
+      {
+         _report.Count().ShouldBeEqualTo(1);
+      }
+   }
+
+   public class When_comparing_ApplicationBuilder_with_different_event_group_types : concern_for_ObjectComparer
+   {
+      protected override void Context()
+      {
+         base.Context();
+         var app1 = new ApplicationBuilder().WithName("Application");
+         app1.EventGroupType = "Application";
+
+         var app2 = new ApplicationBuilder().WithName("Application");
+         app2.EventGroupType = "Formulation";
+
+         _object1 = app1;
+         _object2 = app2;
+      }
+
+      [Observation]
+      public void should_report_the_different_event_group_type()
+      {
+         _report.Count().ShouldBeEqualTo(1);
+      }
+   }
 }

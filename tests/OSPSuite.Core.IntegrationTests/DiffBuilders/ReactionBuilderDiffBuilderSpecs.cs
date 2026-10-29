@@ -234,4 +234,45 @@ namespace OSPSuite.Core.DiffBuilders
          _report.Count().ShouldBeEqualTo(2);
       }
    }
+
+   public class When_comparing_reactions_with_different_constant_kinetics_without_comparing_hidden_entities : concern_for_ObjectComparer
+   {
+      protected override void Context()
+      {
+         base.Context();
+         _comparerSettings = new ComparerSettings();
+         _object1 = new ReactionBuilder().WithName("Reaction").WithFormula(new ConstantFormula(1));
+         _object2 = new ReactionBuilder().WithName("Reaction").WithFormula(new ConstantFormula(99));
+      }
+
+      [Observation]
+      public void should_report_the_different_kinetic()
+      {
+         _report.Count.ShouldBeEqualTo(1);
+      }
+   }
+
+   public class When_comparing_reactions_with_different_process_rate_parameter_persistence : concern_for_ObjectComparer
+   {
+      protected override void Context()
+      {
+         base.Context();
+         var r1 = new ReactionBuilder().WithName("Reaction");
+         r1.CreateProcessRateParameter = true;
+         r1.ProcessRateParameterPersistable = true;
+
+         var r2 = new ReactionBuilder().WithName("Reaction");
+         r2.CreateProcessRateParameter = true;
+         r2.ProcessRateParameterPersistable = false;
+
+         _object1 = r1;
+         _object2 = r2;
+      }
+
+      [Observation]
+      public void should_report_the_different_persistence()
+      {
+         _report.Count.ShouldBeEqualTo(1);
+      }
+   }
 }

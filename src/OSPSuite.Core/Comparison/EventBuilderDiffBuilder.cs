@@ -21,6 +21,7 @@ namespace OSPSuite.Core.Comparison
       {
          _entityDiffBuilder.Compare(comparison);
          CompareValues(x => x.OneTime, x => x.OneTime, comparison);
+         CompareValues(x => x.Dimension, x => x.Dimension, comparison);
          _objectComparer.Compare(comparison.FormulaComparison());
          _enumerableComparer.CompareEnumerables(comparison, x => x.Assignments, item => item.ObjectPath);
          _enumerableComparer.CompareEnumerables(comparison, x => x.GetChildren<IEntity>(i => !i.IsAnImplementationOf<EventAssignmentBuilder>()), item => item.Name);

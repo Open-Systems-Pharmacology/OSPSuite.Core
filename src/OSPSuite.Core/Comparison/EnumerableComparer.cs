@@ -110,11 +110,14 @@ namespace OSPSuite.Core.Comparison
          string getDetails(TItem item) => presentObjectDetailsFunc?.Invoke(item) ?? string.Empty;
 
 
+         //each entity of list2 is matched at most once so that several entities sharing the same key are not all paired with the same counterpart
+         var unmatchedFromList2 = list2.ToList();
          foreach (var entity1 in list1)
          {
-            var entity2 = list2.FirstOrDefault(item => equalityFunc(item, entity1));
+            var entity2 = unmatchedFromList2.FirstOrDefault(item => equalityFunc(item, entity1));
             if (entity2 != null)
             {
+               unmatchedFromList2.Remove(entity2);
                var childComparison = new Comparison<TItem>(entity1, entity2, comparison.Settings, comparison.Report, object1);
                _objectComparer.Compare(childComparison);
             }
@@ -122,12 +125,9 @@ namespace OSPSuite.Core.Comparison
                comparison.Add(missingItem(object1, object2, entity1, null, getMissingType(entity1), identifierRetrieverFunc(entity1), getDetails(entity1)));
          }
 
-         //all common entity have been added. Add missing entity from object1 base on object2
-         foreach (var entity2 in list2)
+         //all common entities have been compared. Entities of object2 left unmatched are missing in object1
+         foreach (var entity2 in unmatchedFromList2)
          {
-            if (list1.Any(item => equalityFunc(item, entity2)))
-               continue;
-
             comparison.Add(missingItem(object1, object2, null, entity2, getMissingType(entity2), identifierRetrieverFunc(entity2), getDetails(entity2)));
          }
       }

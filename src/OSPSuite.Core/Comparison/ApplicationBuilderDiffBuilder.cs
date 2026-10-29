@@ -19,6 +19,11 @@ namespace OSPSuite.Core.Comparison
       public override void Compare(IComparison<ApplicationBuilder> comparison)
       {
          _entityDiffBuilder.Compare(comparison);
+         //container properties are compared here as the children are compared below with a special treatment for the application molecules
+         CompareValues(x => x.ContainerType, x => x.ContainerType, comparison);
+         CompareValues(x => x.Mode, x => x.Mode, comparison);
+         CompareValues(x => x.ParentPath, x => x.ParentPath, comparison);
+         CompareStringValues(x => x.EventGroupType, x => x.EventGroupType, comparison);
          CompareStringValues(x => x.MoleculeName, x => x.MoleculeName, comparison);
          CompareValues(x => x.SourceCriteria, x => x.SourceCriteria, comparison);
          //Special treatment for application molecule builder, better compare relative container path then name

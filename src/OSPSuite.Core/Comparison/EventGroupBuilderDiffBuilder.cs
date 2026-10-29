@@ -15,6 +15,7 @@ namespace OSPSuite.Core.Comparison
       {
          _containerDiffBuilder.Compare(comparison);
          CompareValues(x => x.SourceCriteria, x => x.SourceCriteria, comparison);
+         CompareStringValues(x => x.EventGroupType, x => x.EventGroupType, comparison);
       }
    }
 }

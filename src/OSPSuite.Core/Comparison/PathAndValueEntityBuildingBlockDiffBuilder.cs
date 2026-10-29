@@ -15,13 +15,41 @@ namespace OSPSuite.Core.Comparison
 
       }
 
-      protected override IEnumerable<TBuilder> GetBuilders(TBuildingBlock buildingBlock)
+      public override void Compare(IComparison<TBuildingBlock> comparison)
       {
-         return base.GetBuilders(buildingBlock).Where(x => !isSubParameter(x, buildingBlock.Where(parameter => parameter.IsDistributed()).Select(parameter => parameter.Path)));
+         if (!comparison.Settings.IgnoreOneSidedDistributionSubParameters)
+         {
+            base.Compare(comparison);
+            return;
+         }
+
+         _objectBaseDiffBuilder.Compare(comparison);
+         _enumerableComparer.CompareEnumerables(comparison, allExceptSubParametersOf, _equalityProperty, _presentObjectDetailsFunc);
+         compareSubParametersDefinedInBothBuildingBlocks(comparison);
       }
 
-      private bool isSubParameter(TBuilder pathAndValueEntity, IEnumerable<ObjectPath> distributedPaths)
+      /// <summary>
+      ///    When one-sided sub parameters are ignored, sub parameters of distributed parameters (mean, deviation, ...) are left
+      ///    out of the main comparison so that they are not reported as missing when only one building block defines them. The
+      ///    ones defined in both building blocks are still compared, as a different distribution is a real difference.
+      /// </summary>
+      private void compareSubParametersDefinedInBothBuildingBlocks(IComparison<TBuildingBlock> comparison)
       {
+         var subParameterPaths2 = subParametersOf(comparison.Object2).Select(x => x.Path).ToList();
+         var commonPaths = subParametersOf(comparison.Object1).Select(x => x.Path).Where(path => subParameterPaths2.Any(path.Equals)).ToList();
+         if (!commonPaths.Any())
+            return;
+
+         _enumerableComparer.CompareEnumerables(comparison, buildingBlock => subParametersOf(buildingBlock).Where(x => commonPaths.Any(x.Path.Equals)), _equalityProperty, _presentObjectDetailsFunc);
+      }
+
+      private IEnumerable<TBuilder> allExceptSubParametersOf(TBuildingBlock buildingBlock) => GetBuilders(buildingBlock).Where(x => !isSubParameter(x, buildingBlock));
+
+      private IEnumerable<TBuilder> subParametersOf(TBuildingBlock buildingBlock) => buildingBlock.Where(x => isSubParameter(x, buildingBlock));
+
+      private static bool isSubParameter(TBuilder pathAndValueEntity, TBuildingBlock buildingBlock)
+      {
+         var distributedPaths = buildingBlock.Where(parameter => parameter.IsDistributed()).Select(parameter => parameter.Path);
          return distributedPaths.Any(x => pathAndValueEntity.ContainerPath.Equals(x));
       }
    }

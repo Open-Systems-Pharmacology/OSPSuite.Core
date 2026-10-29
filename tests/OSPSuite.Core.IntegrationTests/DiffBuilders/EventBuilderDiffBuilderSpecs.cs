@@ -4,6 +4,7 @@ using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Formulas;
+using OSPSuite.Helpers;
 
 namespace OSPSuite.Core.DiffBuilders
 {
@@ -81,6 +82,28 @@ namespace OSPSuite.Core.DiffBuilders
       public void should_report_the_differences_accordingly()
       {
          _report.Count().ShouldBeEqualTo(2);
+      }
+   }
+
+   public class When_comparing_EventBuilders_with_different_dimensions : concern_for_ObjectComparer
+   {
+      protected override void Context()
+      {
+         base.Context();
+         var e1 = new EventBuilder().WithName("Event");
+         e1.Dimension = DomainHelperForSpecs.TimeDimensionForSpecs();
+
+         var e2 = new EventBuilder().WithName("Event");
+         e2.Dimension = Constants.Dimension.NO_DIMENSION;
+
+         _object1 = e1;
+         _object2 = e2;
+      }
+
+      [Observation]
+      public void should_report_the_different_dimension()
+      {
+         _report.Count().ShouldBeEqualTo(1);
       }
    }
 }

@@ -159,11 +159,63 @@ namespace OSPSuite.Core.DiffBuilders
       }
    }
 
+   public abstract class concern_for_one_sided_distribution_sub_parameters : concern_for_ObjectComparer
+   {
+      protected override void Context()
+      {
+         base.Context();
+         var initialConditionsBuildingBlock1 = new InitialConditionsBuildingBlock().WithName("Tada");
+         var initialConditionA = new InitialCondition().WithName("MSVa");
+         initialConditionA.ContainerPath = new ObjectPath("Root", "Liver", "Plasma");
+         initialConditionA.DistributionType = DistributionType.Normal;
+         initialConditionsBuildingBlock1.Add(initialConditionA);
+         initialConditionsBuildingBlock1.Add(new InitialCondition
+         {
+            Path = new ObjectPath("Root", "Liver", "Plasma", "MSVa", "Mean"),
+            Value = 99
+         });
+
+         var initialConditionsBuildingBlock2 = new InitialConditionsBuildingBlock().WithName("Tada");
+         initialConditionA = new InitialCondition().WithName("MSVa");
+         initialConditionA.DistributionType = DistributionType.Normal;
+         initialConditionA.ContainerPath = new ObjectPath("Root", "Liver", "Plasma");
+         initialConditionsBuildingBlock2.Add(initialConditionA);
+
+         _object1 = initialConditionsBuildingBlock1;
+         _object2 = initialConditionsBuildingBlock2;
+      }
+   }
+
+   public class When_comparing_building_blocks_where_only_one_defines_a_distribution_sub_parameter : concern_for_one_sided_distribution_sub_parameters
+   {
+      [Observation]
+      public void should_report_the_sub_parameter_as_missing_by_default()
+      {
+         _report.Count.ShouldBeEqualTo(1);
+      }
+   }
+
+   public class When_comparing_building_blocks_where_only_one_defines_a_distribution_sub_parameter_and_one_sided_sub_parameters_are_ignored : concern_for_one_sided_distribution_sub_parameters
+   {
+      protected override void Context()
+      {
+         base.Context();
+         _comparerSettings.IgnoreOneSidedDistributionSubParameters = true;
+      }
+
+      [Observation]
+      public void should_not_report_any_differences()
+      {
+         _report.ShouldBeEmpty();
+      }
+   }
+
    public class When_comparing_parameter_values_building_blocks_with_distributed_parameters_that_have_sub_parameter_differences : concern_for_ObjectComparer
    {
       protected override void Context()
       {
          base.Context();
+         _comparerSettings.IgnoreOneSidedDistributionSubParameters = true;
          var initialConditionsBuildingBlock1 = new InitialConditionsBuildingBlock().WithName("Tada");
          var initialConditionA = new InitialCondition().WithName("MSVa");
          initialConditionA.ContainerPath = new ObjectPath("Root", "Liver", "Plasma");
@@ -196,6 +248,39 @@ namespace OSPSuite.Core.DiffBuilders
       public void should_not_report_any_differences()
       {
          _report.ShouldBeEmpty();
+      }
+   }
+
+   public class When_comparing_parameter_values_building_blocks_with_distributed_parameters_whose_sub_parameters_have_different_values : concern_for_ObjectComparer
+   {
+      protected override void Context()
+      {
+         base.Context();
+         _object1 = buildingBlockWithDistributedParameterAndMean(mean: 1);
+         _object2 = buildingBlockWithDistributedParameterAndMean(mean: 2);
+      }
+
+      private static ParameterValuesBuildingBlock buildingBlockWithDistributedParameterAndMean(double mean)
+      {
+         var parameterValuesBuildingBlock = new ParameterValuesBuildingBlock().WithName("Tada");
+         var distributedParameter = new ParameterValue().WithName("Volume");
+         distributedParameter.ContainerPath = new ObjectPath("Root", "Liver");
+         distributedParameter.DistributionType = DistributionType.Normal;
+         parameterValuesBuildingBlock.Add(distributedParameter);
+
+         parameterValuesBuildingBlock.Add(new ParameterValue
+         {
+            Path = new ObjectPath("Root", "Liver", "Volume", "Mean"),
+            Value = mean
+         });
+
+         return parameterValuesBuildingBlock;
+      }
+
+      [Observation]
+      public void should_report_the_different_sub_parameter_value()
+      {
+         _report.Count.ShouldBeEqualTo(1);
       }
    }
 

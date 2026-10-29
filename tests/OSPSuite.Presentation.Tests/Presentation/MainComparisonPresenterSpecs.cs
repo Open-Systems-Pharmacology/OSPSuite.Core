@@ -70,6 +70,12 @@ namespace OSPSuite.Presentation.Presentation
       {
          A.CallTo(() => _comparisonPresenter.StartComparison(_leftObject, _rightObject, "LEFT", "RIGHT", _userComparerSettings)).MustHaveHappened();
       }
+
+      [Observation]
+      public void should_ignore_distribution_sub_parameters_defined_on_one_side_only()
+      {
+         _userComparerSettings.IgnoreOneSidedDistributionSubParameters.ShouldBeTrue();
+      }
    }
 
    public class When_exporting_the_comparison_to_excel_and_the_user_cancels_in_the_main_comparison_presenter : concern_for_MainComparisonPresenter

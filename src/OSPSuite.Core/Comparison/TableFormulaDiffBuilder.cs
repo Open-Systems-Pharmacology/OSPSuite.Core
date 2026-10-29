@@ -19,6 +19,7 @@ namespace OSPSuite.Core.Comparison
       {
          _objectBaseDiffBuilder.Compare(comparison);
          CompareValues(x => x.Dimension, x => x.Dimension, comparison);
+         CompareValues(x => x.XDimension, x => x.XDimension, comparison);
          CompareStringValues(x => x.XName, x => x.XName, comparison);
          CompareStringValues(x => x.YName, x => x.YName, comparison);
          CompareValues(x => x.UseDerivedValues, x => x.UseDerivedValues, comparison);

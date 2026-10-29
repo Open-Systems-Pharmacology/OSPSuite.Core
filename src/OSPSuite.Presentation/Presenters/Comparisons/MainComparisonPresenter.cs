@@ -84,6 +84,8 @@ namespace OSPSuite.Presentation.Presenters.Comparisons
          view.AddComparisonView(_comparisonPresenter.View);
          view.SettingsVisible = false;
          _comparerSettings = presentationUserSettings.ComparerSettings;
+         //sub parameters of distributed parameters defined on one side only are generated entries that would only add noise to the view
+         _comparerSettings.IgnoreOneSidedDistributionSubParameters = true;
          comparerSettingsPresenter.Edit(_comparerSettings);
          updateButtons();
       }

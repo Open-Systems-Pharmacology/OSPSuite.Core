@@ -29,16 +29,49 @@ namespace OSPSuite.Core.Comparison
          CompareValues(x => x.QuantityType, x => x.QuantityType, comparison);
          CompareValues(x => x.NegativeValuesAllowed, x => x.NegativeValuesAllowed, comparison);
 
+         //only persistable quantities are written to the results: a different persistence changes the output of a simulation
+         CompareValues(x => x.Persistable, x => x.Persistable, comparison);
+
          if (!comparison.Settings.OnlyComputingRelevant)
-         {
-            CompareValues(x => x.Persistable, x => x.Persistable, comparison);
             CompareValues(x => x.DisplayUnit, Captions.DisplayUnit, comparison);
-         }
 
          if (shouldCompareValues(comparison))
-            CompareDoubleValues(x => x.Value, x => x.Value, comparison, x => x.DisplayUnit);
+            compareValues(comparison);
          else
             _objectComparer.Compare(comparison.FormulaComparison());
+      }
+
+      private void compareValues(IComparison<IQuantity> comparison)
+      {
+         var numberOfDifferencesBeforeComparison = comparison.Report.Count;
+         CompareDoubleValues(x => x.Value, x => x.Value, comparison, x => x.DisplayUnit);
+
+         //values differ: the difference is already reported
+         if (comparison.Report.Count != numberOfDifferencesBeforeComparison)
+            return;
+
+         compareFixedValueOverridingFormula(comparison);
+      }
+
+      /// <summary>
+      ///    A fixed value is exported as a constant whereas a formula stays active in the model. Equal values therefore hide a
+      ///    different behavior over time when only one quantity is fixed and the other one uses a non constant formula.
+      /// </summary>
+      private void compareFixedValueOverridingFormula(IComparison<IQuantity> comparison)
+      {
+         if (!comparison.ComparedObjectsDefined)
+            return;
+
+         var q1 = comparison.Object1;
+         var q2 = comparison.Object2;
+         if (q1.IsFixedValue == q2.IsFixedValue)
+            return;
+
+         var activeFormula = q1.IsFixedValue ? q2.Formula : q1.Formula;
+         if (activeFormula == null || activeFormula.IsConstant())
+            return;
+
+         CompareValues(x => x.IsFixedValue, x => x.IsFixedValue, comparison);
       }
 
       private static bool shouldCompareValues(IComparison<IQuantity> comparison)

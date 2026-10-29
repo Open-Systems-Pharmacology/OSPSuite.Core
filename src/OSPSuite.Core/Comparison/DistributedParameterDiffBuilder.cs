@@ -5,10 +5,12 @@ namespace OSPSuite.Core.Comparison
    public class DistributedParameterDiffBuilder : DiffBuilder<IDistributedParameter>
    {
       private readonly ParameterDiffBuilder _parameterDiffBuilder;
+      private readonly EnumerableComparer _enumerableComparer;
 
-      public DistributedParameterDiffBuilder(ParameterDiffBuilder parameterDiffBuilder)
+      public DistributedParameterDiffBuilder(ParameterDiffBuilder parameterDiffBuilder, EnumerableComparer enumerableComparer)
       {
          _parameterDiffBuilder = parameterDiffBuilder;
+         _enumerableComparer = enumerableComparer;
       }
 
       public override void Compare(IComparison<IDistributedParameter> comparison)
@@ -17,6 +19,11 @@ namespace OSPSuite.Core.Comparison
 
          if (shouldCompareDistributedParameterValue(comparison))
             CompareDoubleValues(x => x.Value, x => x.Value, comparison, x => x.DisplayUnit);
+
+         //the distribution is defined by the sub parameters (mean, deviation, percentile...) which are not necessarily reflected in the value.
+         //They are only compared if the parameter itself is eligible for comparison (e.g. hidden parameters may be excluded)
+         if (ParameterDiffBuilder.ShouldCompareParametersIn(comparison))
+            _enumerableComparer.CompareEnumerables(comparison, x => x.Children, item => item.Name);
       }
 
       private bool shouldCompareDistributedParameterValue(IComparison<IDistributedParameter> comparison)
