@@ -346,8 +346,8 @@ namespace OSPSuite.Presentation.Presenters.Importer
             if (!column.ErrorStdDevColumn.IsNullOrEmpty())
                errorTypeColumns.Add(column.ErrorStdDevColumn);
 
-            errorTypeColumns.AddRange(availableColumns());
-            _mappingParameterEditorPresenter.SetErrorTypeColumnOptions(errorTypeColumns, column.ErrorStdDevColumn, !column.ErrorStdDevColumn.IsNullOrEmpty());
+            errorTypeColumns.AddRange(availableColumnsForErrorType());
+            _mappingParameterEditorPresenter.SetErrorTypeColumnOptions(errorTypeColumns.Distinct(), column.ErrorStdDevColumn, !column.ErrorStdDevColumn.IsNullOrEmpty());
 
             _mappingParameterEditorPresenter.SetErrorTypeOptions
             (
@@ -428,7 +428,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          var options = new List<RowOptionDTO>();
          if (model == null)
             return options;
-         var excelColumns = availableColumns();
+         var excelColumns = isGroupBy(model) ? availableColumnsForGroupBy() : availableColumns();
          var topNames = new List<string>();
          if (model.CurrentColumnType == ColumnMappingDTO.ColumnType.MetaData)
          {
@@ -502,7 +502,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
             }
          }
 
-         var availableColumns = this.availableColumns();
+         var availableColumns = isGroupBy(model) ? availableColumnsForGroupBy() : this.availableColumns();
          switch (model.CurrentColumnType)
          {
             case ColumnMappingDTO.ColumnType.Mapping:
@@ -567,6 +567,23 @@ namespace OSPSuite.Presentation.Presenters.Importer
                   _format.GetParameters<GroupByDataFormatParameter>().All(p => p.ColumnName != cn)
             );
       }
+
+      private static bool isGroupBy(ColumnMappingDTO model) =>
+         model.CurrentColumnType == ColumnMappingDTO.ColumnType.GroupBy || model.CurrentColumnType == ColumnMappingDTO.ColumnType.AddGroupBy;
+
+      private IEnumerable<string> groupByColumns() => _format.GetParameters<GroupByDataFormatParameter>().Select(p => p.ColumnName);
+
+      //the error type column can also group the data, e.g. to split a data set with several error types
+      private IEnumerable<string> availableColumnsForGroupBy()
+      {
+         var errorTypeColumns = _format.GetParameters<MappingDataFormatParameter>()
+            .Select(p => p.MappedColumn?.ErrorStdDevColumn)
+            .Where(cn => !cn.IsNullOrEmpty());
+
+         return availableColumns().Union(errorTypeColumns.Except(groupByColumns()));
+      }
+
+      private IEnumerable<string> availableColumnsForErrorType() => availableColumns().Union(groupByColumns());
 
       //TODO This method shpould take a mapping as parameter. The view must know if from the databinder
       public ToolTipDescription ToolTipDescriptionFor(int index)

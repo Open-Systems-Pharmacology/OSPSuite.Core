@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using FakeItEasy;
 using NUnit.Framework;
+using OSPSuite.Assets;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain;
@@ -936,6 +937,40 @@ namespace OSPSuite.Presentation.Importer.Presenters
       public void should_not_offer_the_error_type_column_for_another_mapping()
       {
          sut.GetAvailableRowsFor(errorMapping).Select(x => x.Description).ShouldNotContain(ERROR_TYPE_COLUMN);
+      }
+
+      [Observation]
+      public void should_offer_the_error_type_column_to_group_the_data()
+      {
+         var addGroupByMapping = new ColumnMappingDTO(ColumnMappingDTO.ColumnType.AddGroupBy, "", new AddGroupByFormatParameter(Captions.Importer.SelectToAdd), 0);
+         sut.GetAvailableRowsFor(addGroupByMapping).Select(x => x.Description).ShouldContain(ERROR_TYPE_COLUMN);
+         sut.GetAvailableOptionsFor(addGroupByMapping).Select(x => x.Label).ShouldContain(ERROR_TYPE_COLUMN);
+      }
+   }
+
+   public class When_setting_editor_settings_for_an_error_with_a_column_grouping_the_data : concern_for_ColumnMappingPresenter_with_error_type_column
+   {
+      protected override void Context()
+      {
+         base.Context();
+         _parameters.Add(new GroupByDataFormatParameter(ERROR_TYPE_COLUMN));
+         A.CallTo(() => _basicFormat.GetParameters<MappingDataFormatParameter>()).Returns(_parameters.OfType<MappingDataFormatParameter>());
+         A.CallTo(() => _basicFormat.GetParameters<GroupByDataFormatParameter>()).Returns(_parameters.OfType<GroupByDataFormatParameter>());
+         UpdateSettings();
+      }
+
+      protected override void Because()
+      {
+         sut.SetSubEditorSettingsForMapping(errorMapping);
+      }
+
+      [Observation]
+      public void should_offer_the_grouping_column_as_error_type_column()
+      {
+         A.CallTo(() => _mappingParameterEditorPresenter.SetErrorTypeColumnOptions(
+            A<IEnumerable<string>>.That.Matches(l => l.Contains(ERROR_TYPE_COLUMN) && l.Contains("Col2")),
+            null,
+            false)).MustHaveHappened();
       }
    }
 }
