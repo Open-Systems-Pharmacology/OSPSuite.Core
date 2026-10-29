@@ -528,7 +528,7 @@ namespace OSPSuite.Assets
          }
          public static readonly string UnitInformationDescription = "Here you can enter unit information which will be used for all created import data table columns";
 
-         public static readonly string ImportFileFilter = "Excel Files (*.xls, *.xlsx)|*.xls;*.xlsx|Comma Separated Value Files (*.csv)|*.csv|NonMem Files (*.NMdat)|*.NMdat|All Files (*.*)|*.*";
+         public static readonly string ImportFileFilter = "All Supported Files (*.xls, *.xlsx, *.csv, *.NMdat)|*.xls;*.xlsx;*.csv;*.NMdat|Excel Files (*.xls, *.xlsx)|*.xls;*.xlsx|Comma Separated Value Files (*.csv)|*.csv|NonMem Files (*.NMdat)|*.NMdat|All Files (*.*)|*.*";
 
          public static string UpdatedMappingsMessage(IEnumerable<(string ParameterName, string OutputPath)> updatedMappingsInfo)
          {
