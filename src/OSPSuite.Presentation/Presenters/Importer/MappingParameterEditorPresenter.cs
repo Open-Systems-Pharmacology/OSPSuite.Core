@@ -53,7 +53,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          View.FillErrorView(_errorEditorPresenter.BaseView);
          View.FillErrorTypeColumnView(_errorTypeColumnEditorPresenter.BaseView);
          errorEditorPresenter.OnOptionSelectionChanged += errorSelectionChanged;
-         errorTypeColumnEditorPresenter.OnErrorTypeFromColumnChanged += (o, e) => updateViewForErrorType(_errorEditorPresenter.SelectedText);
+         errorTypeColumnEditorPresenter.OnErrorTypeFromColumnChanged += (o, e) => errorTypeFromColumnChanged();
       }
 
       public string LloqColumn => _lloqEditorPresenter.LloqColumn;
@@ -138,13 +138,28 @@ namespace OSPSuite.Presentation.Presenters.Importer
             View.ShowUnits();
       }
 
+      private void errorTypeFromColumnChanged()
+      {
+         var errorType = _errorEditorPresenter.SelectedText;
+         updateViewForErrorType(errorType);
+
+         //a geometric default has no unit but arithmetic data sets need the unit of an arithmetic error
+         if (ErrorTypeFromColumn() && errorType == Constants.STD_DEV_GEOMETRIC)
+            selectUnitFor(Constants.STD_DEV_ARITHMETIC);
+      }
+
       private void errorSelectionChanged(object sender, OptionChangedEventArgs e)
       {
          updateViewForErrorType(e.Text);
-         var unit = _unitValueOnTypeChanged(e.Text);
+         selectUnitFor(e.Text);
+      }
+
+      private void selectUnitFor(string errorType)
+      {
+         var unit = _unitValueOnTypeChanged(errorType);
          if (unit == null)
             return;
-         
+
          _unitsEditorPresenter.SelectUnit(unit);
       }
    }

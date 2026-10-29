@@ -1213,6 +1213,21 @@ namespace OSPSuite.Infrastructure.Import
       }
    }
 
+   public class When_adding_sheets_with_an_arithmetic_error_type_from_column_in_the_measurement_dimension_without_error_unit : concern_for_DataSource_with_an_arithmetic_error_type_from_column
+   {
+      protected override void Context()
+      {
+         base.Context();
+         _fakeDataSet.Data.First().Data.Keys.First(x => x.ColumnInfo.Name == "Error").Column.Dimension = _fakedConcentrationDimensionMolar;
+      }
+
+      [Observation]
+      public void should_report_that_the_error_unit_does_not_match_the_measurement_unit()
+      {
+         _errors.ErrorsFor(_fakeDataSet).OfType<ErrorUnitParseErrorDescription>().Any().ShouldBeTrue();
+      }
+   }
+
    public class When_adding_sheets_with_an_arithmetic_error_type_from_column_in_the_measurement_unit : concern_for_DataSource_with_an_arithmetic_error_type_from_column
    {
       protected override void Context()

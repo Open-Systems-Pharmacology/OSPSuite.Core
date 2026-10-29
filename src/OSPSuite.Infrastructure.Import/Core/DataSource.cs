@@ -140,13 +140,12 @@ namespace OSPSuite.Infrastructure.Import.Core
          return errors;
       }
 
-      //an arithmetic error whose type comes from a column takes the dimension of its units (e.g. no unit for a geometric default)
+      //an arithmetic error whose type comes from a column may keep the units of a geometric default (no unit)
       //so its units must have the dimension of the measurement units
       private void validateArithmeticErrorFromColumnUnits(ParsedDataSet parsedDataSet, IDataSet dataSet, ParseErrors errors)
       {
          var arithmeticErrorsFromColumn = parsedDataSet.Data.Where(x => !x.Key.Column.ErrorStdDevColumn.IsNullOrEmpty()
-                                                                         && x.Key.ErrorDeviation == Constants.STD_DEV_ARITHMETIC
-                                                                         && x.Key.Column.Dimension == null);
+                                                                         && x.Key.ErrorDeviation == Constants.STD_DEV_ARITHMETIC);
 
          foreach (var errorColumn in arithmeticErrorsFromColumn)
          {
