@@ -303,6 +303,42 @@ namespace OSPSuite.Core.Services
       }
    }
 
+   public class When_hashing_two_modules_with_the_same_content_where_ids_are_equal_to_values_of_other_attributes : concern_for_BuildingBlockContentHasher
+   {
+      private Module _module1;
+      private Module _module2;
+
+      protected override void Context()
+      {
+         base.Context();
+         _module1 = CreateModule();
+         _module2 = CreateModule();
+
+         //Ids are unrestricted strings. "0" and "1" are also serialized for flags, for values and for the ordinals of
+         //object paths, aliases and dimensions in the string table of the formula cache.
+         //An unreferenced id (the Liver container) ...
+         var organism = _module2.SpatialStructure.TopContainers.First(x => x.Name == Constants.ORGANISM);
+         organism.Container("Liver").Id = "0";
+
+         //... and a referenced id (the reaction formula in the formula cache)
+         var kinetic = _module2.Reactions.First().Formula;
+         kinetic.Id = "1";
+         _module2.Reactions.FormulaCache.Refresh();
+      }
+
+      [Observation]
+      public void should_return_the_same_hash()
+      {
+         sut.ContentHashFor(_module1).ShouldBeEqualTo(sut.ContentHashFor(_module2));
+      }
+
+      [Observation]
+      public void should_consider_the_modules_to_have_the_same_content()
+      {
+         sut.HaveSameContent(_module1, _module2).ShouldBeTrue();
+      }
+   }
+
    public class When_hashing_a_module_that_was_saved_to_pkml_and_loaded_again : concern_for_BuildingBlockContentHasher
    {
       private IPKMLPersistor _pkmlPersistor;

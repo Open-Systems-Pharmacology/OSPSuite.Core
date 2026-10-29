@@ -112,16 +112,20 @@ namespace OSPSuite.Core.Domain.Services
 
       private XElement normalizedElementFor(object objectToHash)
       {
-         var element = serialize(objectToHash);
+         //A marker that cannot occur in the content, so that an attribute referencing an object can be recognized
+         //without any assumption on the format of ids (an id may well be equal to a value such as "0" or "1")
+         var referenceMarker = $"{Guid.NewGuid():N}:";
+         var element = serialize(objectToHash, referenceMarker);
          removeExcludedContent(element);
-         replaceIdsWithOrdinals(element);
+         replaceIdsWithOrdinals(element, referenceMarker);
          return element;
       }
 
-      private XElement serialize(object objectToSerialize)
+      private XElement serialize(object objectToSerialize, string referenceMarker)
       {
          using (var serializationContext = SerializationTransaction.Create(_container))
          {
+            serializationContext.ReferenceMarker = referenceMarker;
             var serializer = _serializerRepository.SerializerFor(objectToSerialize);
             return serializer.Serialize(objectToSerialize, serializationContext);
          }
@@ -149,33 +153,33 @@ namespace OSPSuite.Core.Domain.Services
       ///    both on the reference and on the referenced object, by an ordinal that reflects the order in which the ids are
       ///    referenced. The structure of the references is thereby preserved while the ids themselves are discarded. Ids that
       ///    are not referenced are simply removed, so that it does not matter whether an object has an id or not.
+      ///    A reference is recognized by the <paramref name="referenceMarker" /> written in front of the referenced id.
       /// </summary>
-      private static void replaceIdsWithOrdinals(XElement rootElement)
+      private static void replaceIdsWithOrdinals(XElement rootElement, string referenceMarker)
       {
+         var ordinalsById = new Dictionary<string, string>();
+
+         var referenceAttributes = rootElement.DescendantsAndSelf()
+            .SelectMany(x => x.Attributes())
+            .Where(x => x.Value.StartsWith(referenceMarker, StringComparison.Ordinal));
+
+         foreach (var referenceAttribute in referenceAttributes)
+         {
+            var referencedId = referenceAttribute.Value.Substring(referenceMarker.Length);
+            if (!ordinalsById.TryGetValue(referencedId, out var ordinal))
+            {
+               ordinal = $"#{ordinalsById.Count}";
+               ordinalsById.Add(referencedId, ordinal);
+            }
+
+            referenceAttribute.Value = ordinal;
+         }
+
          var idAttributes = rootElement.DescendantsAndSelf()
             .Where(isElementWithObjectId)
             .Select(x => x.Attribute(Constants.Serialization.Attribute.ID))
             .Where(x => x != null)
             .ToList();
-
-         var objectIds = new HashSet<string>(idAttributes.Select(x => x.Value));
-         var ordinalsById = new Dictionary<string, string>();
-
-         var referenceAttributes = rootElement.DescendantsAndSelf()
-            .SelectMany(x => x.Attributes())
-            .Where(x => !string.Equals(x.Name.LocalName, Constants.Serialization.Attribute.ID))
-            .Where(x => objectIds.Contains(x.Value));
-
-         foreach (var referenceAttribute in referenceAttributes)
-         {
-            if (!ordinalsById.TryGetValue(referenceAttribute.Value, out var ordinal))
-            {
-               ordinal = $"#{ordinalsById.Count}";
-               ordinalsById.Add(referenceAttribute.Value, ordinal);
-            }
-
-            referenceAttribute.Value = ordinal;
-         }
 
          foreach (var idAttribute in idAttributes)
          {
