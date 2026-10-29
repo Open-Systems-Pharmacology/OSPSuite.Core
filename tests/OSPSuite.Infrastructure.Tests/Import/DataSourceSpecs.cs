@@ -7,6 +7,7 @@ using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Import;
 using OSPSuite.Infrastructure.Import.Core;
+using OSPSuite.Infrastructure.Import.Core.Exceptions;
 using OSPSuite.Infrastructure.Import.Services;
 
 namespace OSPSuite.Infrastructure.Import
@@ -1111,6 +1112,137 @@ namespace OSPSuite.Infrastructure.Import
       public void should_be_valid()
       {
          sut.ValidateDataSourceUnits(_columnInfos).Any().ShouldBeTrue();
+      }
+   }
+
+   public abstract class concern_for_DataSource_with_error_type_from_column : concern_for_DataSource
+   {
+      protected ParseErrors _errors;
+
+      protected void setErrorStdDevValues(params string[] errorStdDevValues)
+      {
+         var errorColumn = _fakeDataSet.Data.First().Data.Keys.First(x => x.ColumnInfo.Name == "Error");
+         errorColumn.ErrorStdDevValues = errorStdDevValues.ToList();
+      }
+
+      protected override void Because()
+      {
+         var sheets = new DataSheetCollection();
+         sheets.AddSheet(new DataSheet { SheetName = "sheet1" });
+         _errors = sut.AddSheets(sheets, _columnInfos, "");
+      }
+   }
+
+   public class When_adding_sheets_with_an_unknown_error_type : concern_for_DataSource_with_error_type_from_column
+   {
+      protected override void Context()
+      {
+         base.Context();
+         setErrorStdDevValues("SD");
+      }
+
+      [Observation]
+      public void should_report_the_unknown_error_type()
+      {
+         var error = _errors.ErrorsFor(_fakeDataSet).OfType<UnknownErrorTypeParseErrorDescription>().Single();
+         error.Message.Contains("'SD'").ShouldBeTrue();
+         error.Message.Contains("sheet1").ShouldBeTrue();
+         error.Message.Contains(ErrorStdDevValues.AcceptedValues.First()).ShouldBeTrue();
+      }
+
+      [Observation]
+      public void should_not_report_a_conflict()
+      {
+         _errors.ErrorsFor(_fakeDataSet).OfType<ConflictingErrorTypesParseErrorDescription>().ShouldBeEmpty();
+      }
+   }
+
+   public class When_adding_sheets_with_conflicting_error_types_in_one_data_set : concern_for_DataSource_with_error_type_from_column
+   {
+      protected override void Context()
+      {
+         base.Context();
+         setErrorStdDevValues("ASD", "GSD");
+      }
+
+      [Observation]
+      public void should_report_the_conflict()
+      {
+         var error = _errors.ErrorsFor(_fakeDataSet).OfType<ConflictingErrorTypesParseErrorDescription>().Single();
+         error.Message.Contains("ASD").ShouldBeTrue();
+         error.Message.Contains("GSD").ShouldBeTrue();
+      }
+   }
+
+   public class When_adding_sheets_with_equivalent_error_types_in_one_data_set : concern_for_DataSource_with_error_type_from_column
+   {
+      protected override void Context()
+      {
+         base.Context();
+         setErrorStdDevValues("gsd", Constants.STD_DEV_GEOMETRIC);
+      }
+
+      [Observation]
+      public void should_not_report_any_error()
+      {
+         _errors.Any().ShouldBeFalse();
+      }
+   }
+
+   public abstract class concern_for_DataSource_with_an_arithmetic_error_type_from_column : concern_for_DataSource_with_error_type_from_column
+   {
+      protected override void Context()
+      {
+         base.Context();
+         setErrorStdDevValues("ASD");
+         var errorColumn = _fakeDataSet.Data.First().Data.Keys.First(x => x.ColumnInfo.Name == "Error");
+         errorColumn.ErrorDeviation = Constants.STD_DEV_ARITHMETIC;
+         errorColumn.Column.ErrorStdDev = Constants.STD_DEV_ARITHMETIC;
+         errorColumn.Column.ErrorStdDevColumn = "Error type";
+         errorColumn.Column.Dimension = null;
+         A.CallTo(() => _fakedConcentrationDimensionMolar.SupportsUnit("pmol/l", A<bool>._)).Returns(true);
+      }
+   }
+
+   public class When_adding_sheets_with_an_arithmetic_error_type_from_column_without_error_unit : concern_for_DataSource_with_an_arithmetic_error_type_from_column
+   {
+      [Observation]
+      public void should_report_that_the_error_unit_does_not_match_the_measurement_unit()
+      {
+         _errors.ErrorsFor(_fakeDataSet).OfType<ErrorUnitParseErrorDescription>().Any().ShouldBeTrue();
+      }
+   }
+
+   public class When_adding_sheets_with_an_arithmetic_error_type_from_column_in_the_measurement_dimension_without_error_unit : concern_for_DataSource_with_an_arithmetic_error_type_from_column
+   {
+      protected override void Context()
+      {
+         base.Context();
+         _fakeDataSet.Data.First().Data.Keys.First(x => x.ColumnInfo.Name == "Error").Column.Dimension = _fakedConcentrationDimensionMolar;
+      }
+
+      [Observation]
+      public void should_report_that_the_error_unit_does_not_match_the_measurement_unit()
+      {
+         _errors.ErrorsFor(_fakeDataSet).OfType<ErrorUnitParseErrorDescription>().Any().ShouldBeTrue();
+      }
+   }
+
+   public class When_adding_sheets_with_an_arithmetic_error_type_from_column_in_the_measurement_unit : concern_for_DataSource_with_an_arithmetic_error_type_from_column
+   {
+      protected override void Context()
+      {
+         base.Context();
+         foreach (var errorValue in _fakeDataSet.Data.First().Data.First(x => x.Key.ColumnInfo.Name == "Error").Value)
+         {
+            errorValue.Unit = "pmol/l";
+         }
+      }
+
+      [Observation]
+      public void should_not_report_any_error()
+      {
+         _errors.Any().ShouldBeFalse();
       }
    }
 }

@@ -6,6 +6,7 @@ using OSPSuite.Core.Import;
 using OSPSuite.Infrastructure.Import.Core.Exceptions;
 using OSPSuite.Infrastructure.Import.Services;
 using OSPSuite.Utility.Collections;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Infrastructure.Import.Core
 {
@@ -88,7 +89,7 @@ namespace OSPSuite.Infrastructure.Import.Core
 
          if (NanSettings == null || !double.TryParse(NanSettings.Indicator, out var indicator))
             indicator = double.NaN;
-         var errors = new ParseErrors();
+         var errors = validateErrorStdDevFromColumn();
          foreach (var dataSet in DataSets.KeyValues)
          {
             if (NanSettings != null && NanSettings.Action == NanSettings.ActionType.Throw)
@@ -110,6 +111,50 @@ namespace OSPSuite.Infrastructure.Import.Core
          }
 
          return errors;
+      }
+
+      //checks that the error type read from a column is known and unique within every data set
+      private ParseErrors validateErrorStdDevFromColumn()
+      {
+         var errors = new ParseErrors();
+         foreach (var dataSet in DataSets.KeyValues)
+         {
+            foreach (var parsedDataSet in dataSet.Value.Data)
+            {
+               validateArithmeticErrorFromColumnUnits(parsedDataSet, dataSet.Value, errors);
+               var errorStdDevValues = parsedDataSet.Data.Keys.SelectMany(x => x.ErrorStdDevValues).ToList();
+               if (!errorStdDevValues.Any())
+                  continue;
+
+               var dataSetName = string.Join(".", parsedDataSet.Description.Where(metaData => metaData.Value != null).Select(metaData => metaData.Value));
+               var unknownValues = errorStdDevValues.Where(x => ErrorStdDevValues.ErrorStdDevFor(x) == null).ToList();
+               unknownValues.Each(x => errors.Add(dataSet.Value, new UnknownErrorTypeParseErrorDescription(dataSet.Key, dataSetName, x)));
+
+               if (unknownValues.Any() || errorStdDevValues.Select(ErrorStdDevValues.ErrorStdDevFor).Distinct().Count() == 1)
+                  continue;
+
+               errors.Add(dataSet.Value, new ConflictingErrorTypesParseErrorDescription(dataSet.Key, dataSetName, errorStdDevValues));
+            }
+         }
+
+         return errors;
+      }
+
+      //an arithmetic error whose type comes from a column may keep the units of a geometric default (no unit)
+      //so its units must have the dimension of the measurement units
+      private void validateArithmeticErrorFromColumnUnits(ParsedDataSet parsedDataSet, IDataSet dataSet, ParseErrors errors)
+      {
+         var arithmeticErrorsFromColumn = parsedDataSet.Data.Where(x => !x.Key.Column.ErrorStdDevColumn.IsNullOrEmpty()
+                                                                         && x.Key.ErrorDeviation == Constants.STD_DEV_ARITHMETIC);
+
+         foreach (var errorColumn in arithmeticErrorsFromColumn)
+         {
+            var measurementColumn = parsedDataSet.Data.FirstOrDefault(x => x.Key.ColumnInfo.Name == errorColumn.Key.ColumnInfo.RelatedColumnOf);
+            if (measurementColumn.Key == null || measurementColumn.Value.Count != errorColumn.Value.Count)
+               continue;
+
+            validateErrorFromColumnDimension(measurementColumn.Value, errorColumn.Value, measurementColumn.Key.ColumnInfo, errors, dataSet);
+         }
       }
 
       public void SetMappings(string fileName, IReadOnlyList<MetaDataMappingConverter> mappings)

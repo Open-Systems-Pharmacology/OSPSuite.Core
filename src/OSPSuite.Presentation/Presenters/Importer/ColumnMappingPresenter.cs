@@ -118,7 +118,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          var errorColumn = ((MappingDataFormatParameter)errorColumnDTO.Source).MappedColumn;
 
          if ((errorColumn.Unit.SelectedUnit != "?") && (!string.IsNullOrEmpty(errorColumn.Unit.ColumnName))) return;
-         if (errorColumn.ErrorStdDev == Constants.STD_DEV_GEOMETRIC)
+         if (errorColumn.ErrorStdDevIsAlwaysGeometric)
          {
             errorColumn.Unit = new UnitDescription("");
             return;
@@ -249,11 +249,14 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
          if (model.ColumnInfo.IsAuxiliary)
          {
-            if (_mappingParameterEditorPresenter.SelectedErrorType == 0)
-               column.ErrorStdDev = Constants.STD_DEV_ARITHMETIC;
-            else
+            var errorStdDevColumn = _mappingParameterEditorPresenter.ErrorTypeColumn;
+            column.ErrorStdDevColumn = _mappingParameterEditorPresenter.ErrorTypeFromColumn() && !errorStdDevColumn.IsNullOrEmpty() ? errorStdDevColumn : null;
+
+            column.ErrorStdDev = _mappingParameterEditorPresenter.SelectedErrorType == 0 ? Constants.STD_DEV_ARITHMETIC : Constants.STD_DEV_GEOMETRIC;
+
+            //units are kept when the error type comes from a column as arithmetic data sets need them
+            if (column.ErrorStdDevIsAlwaysGeometric)
             {
-               column.ErrorStdDev = Constants.STD_DEV_GEOMETRIC;
                column.Dimension = Constants.Dimension.NO_DIMENSION;
                column.Unit = new UnitDescription(column.Dimension.BaseUnit.Name);
             }
@@ -339,6 +342,13 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
          if (model.ColumnInfo.IsAuxiliary)
          {
+            var errorTypeColumns = new List<string>();
+            if (!column.ErrorStdDevColumn.IsNullOrEmpty())
+               errorTypeColumns.Add(column.ErrorStdDevColumn);
+
+            errorTypeColumns.AddRange(availableColumnsForErrorType());
+            _mappingParameterEditorPresenter.SetErrorTypeColumnOptions(errorTypeColumns.Distinct(), column.ErrorStdDevColumn, !column.ErrorStdDevColumn.IsNullOrEmpty());
+
             _mappingParameterEditorPresenter.SetErrorTypeOptions
             (
                new List<string>() { Constants.STD_DEV_ARITHMETIC, Constants.STD_DEV_GEOMETRIC },
@@ -418,7 +428,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          var options = new List<RowOptionDTO>();
          if (model == null)
             return options;
-         var excelColumns = availableColumns();
+         var excelColumns = isGroupBy(model) ? availableColumnsForGroupBy() : availableColumns();
          var topNames = new List<string>();
          if (model.CurrentColumnType == ColumnMappingDTO.ColumnType.MetaData)
          {
@@ -492,7 +502,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
             }
          }
 
-         var availableColumns = this.availableColumns();
+         var availableColumns = isGroupBy(model) ? availableColumnsForGroupBy() : this.availableColumns();
          switch (model.CurrentColumnType)
          {
             case ColumnMappingDTO.ColumnType.Mapping:
@@ -551,11 +561,29 @@ namespace OSPSuite.Presentation.Presenters.Importer
             (
                cn =>
                   _format.GetParameters<MappingDataFormatParameter>().All(p =>
-                     p.ColumnName != cn && p.MappedColumn?.Unit?.ColumnName != cn && p.MappedColumn?.LloqColumn != cn) &&
+                     p.ColumnName != cn && p.MappedColumn?.Unit?.ColumnName != cn && p.MappedColumn?.LloqColumn != cn &&
+                     p.MappedColumn?.ErrorStdDevColumn != cn) &&
                   _format.GetParameters<MetaDataFormatParameter>().All(p => p.ColumnName != cn) &&
                   _format.GetParameters<GroupByDataFormatParameter>().All(p => p.ColumnName != cn)
             );
       }
+
+      private static bool isGroupBy(ColumnMappingDTO model) =>
+         model.CurrentColumnType == ColumnMappingDTO.ColumnType.GroupBy || model.CurrentColumnType == ColumnMappingDTO.ColumnType.AddGroupBy;
+
+      private IEnumerable<string> groupByColumns() => _format.GetParameters<GroupByDataFormatParameter>().Select(p => p.ColumnName);
+
+      //the error type column can also group the data, e.g. to split a data set with several error types
+      private IEnumerable<string> availableColumnsForGroupBy()
+      {
+         var errorTypeColumns = _format.GetParameters<MappingDataFormatParameter>()
+            .Select(p => p.MappedColumn?.ErrorStdDevColumn)
+            .Where(cn => !cn.IsNullOrEmpty());
+
+         return availableColumns().Union(errorTypeColumns.Except(groupByColumns()));
+      }
+
+      private IEnumerable<string> availableColumnsForErrorType() => availableColumns().Union(groupByColumns());
 
       //TODO This method shpould take a mapping as parameter. The view must know if from the databinder
       public ToolTipDescription ToolTipDescriptionFor(int index)
@@ -747,7 +775,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       private static void checkErrorUnitAgainstMeasurementUnit(Column errorColumn, Column measurementColumn)
       {
-         if (errorColumn.ErrorStdDev != Constants.STD_DEV_GEOMETRIC &&
+         if (!errorColumn.ErrorStdDevIsAlwaysGeometric &&
              ((errorColumn.Unit?.ColumnName.IsNullOrEmpty() != measurementColumn.Unit?.ColumnName.IsNullOrEmpty()) ||
               (measurementColumn.Unit?.ColumnName == null && measurementColumn.Dimension != errorColumn.Dimension)))
          {

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using OSPSuite.Assets;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Import;
@@ -13,7 +14,10 @@ namespace OSPSuite.Presentation.Presenters.Importer
       void SetUnitOptions(Column importDataColumn, IReadOnlyList<IDimension> dimensions, IEnumerable<string> availableColumns);
       void SetLloqOptions(IEnumerable<string> columns, string selected, bool lloqColumnsSelection);
       void SetErrorTypeOptions(IEnumerable<string> types, string selected, Func<string, string> onTypeChanged);
+      void SetErrorTypeColumnOptions(IEnumerable<string> columns, string selected, bool errorTypeFromColumn);
       int SelectedErrorType { get; }
+      bool ErrorTypeFromColumn();
+      string ErrorTypeColumn { get; }
       bool LloqFromColumn();
       UnitDescription Unit { get; }
       IDimension Dimension { get; }
@@ -28,6 +32,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
       private readonly IUnitsEditorPresenter _unitsEditorPresenter;
       private readonly ILloqEditorPresenter _lloqEditorPresenter;
       private readonly IOptionsEditorPresenter _errorEditorPresenter;
+      private readonly IErrorTypeColumnEditorPresenter _errorTypeColumnEditorPresenter;
       private Func<string, string> _unitValueOnTypeChanged;
 
 
@@ -35,21 +40,32 @@ namespace OSPSuite.Presentation.Presenters.Importer
          IMappingParameterEditorView view,
          IUnitsEditorPresenter unitsEditorPresenter,
          ILloqEditorPresenter lloqEditorPresenter,
-         IOptionsEditorPresenter errorEditorPresenter
+         IOptionsEditorPresenter errorEditorPresenter,
+         IErrorTypeColumnEditorPresenter errorTypeColumnEditorPresenter
       ) : base(view)
       {
          _unitsEditorPresenter = unitsEditorPresenter;
          _lloqEditorPresenter = lloqEditorPresenter;
          _errorEditorPresenter = errorEditorPresenter;
+         _errorTypeColumnEditorPresenter = errorTypeColumnEditorPresenter;
          View.FillUnitsView(_unitsEditorPresenter.BaseView);
          View.FillLloqView(_lloqEditorPresenter.BaseView);
          View.FillErrorView(_errorEditorPresenter.BaseView);
+         View.FillErrorTypeColumnView(_errorTypeColumnEditorPresenter.BaseView);
          errorEditorPresenter.OnOptionSelectionChanged += errorSelectionChanged;
+         errorTypeColumnEditorPresenter.OnErrorTypeFromColumnChanged += (o, e) => errorTypeFromColumnChanged();
       }
 
       public string LloqColumn => _lloqEditorPresenter.LloqColumn;
 
       public int SelectedErrorType => _errorEditorPresenter.SelectedIndex;
+
+      public bool ErrorTypeFromColumn()
+      {
+         return _errorTypeColumnEditorPresenter.ErrorTypeFromColumn();
+      }
+
+      public string ErrorTypeColumn => _errorTypeColumnEditorPresenter.ErrorTypeColumn;
 
       public bool LloqFromColumn()
       {
@@ -58,8 +74,9 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       public UnitDescription Unit => _unitsEditorPresenter.Unit;
 
-      public IDimension Dimension => _errorEditorPresenter.SelectedText == Constants.STD_DEV_GEOMETRIC ? 
-         Constants.Dimension.NO_DIMENSION : 
+      //when the error type comes from a column, arithmetic data sets need the units even if the default type is geometric
+      public IDimension Dimension => isAlwaysGeometric(_errorEditorPresenter.SelectedText) ?
+         Constants.Dimension.NO_DIMENSION :
          _unitsEditorPresenter.Dimension;
 
       public void SetUnitColumnSelection()
@@ -100,21 +117,49 @@ namespace OSPSuite.Presentation.Presenters.Importer
          _unitValueOnTypeChanged = unitValueOnTypeChanged;
          _errorEditorPresenter.SetOptions(new Dictionary<string, IEnumerable<string>>() {{"", types}}, selected);
          View.ShowErrorTypes();
+         updateViewForErrorType(selected);
+      }
 
-         if (selected != null && selected.Equals(Constants.STD_DEV_GEOMETRIC))
+      public void SetErrorTypeColumnOptions(IEnumerable<string> columns, string selected, bool errorTypeFromColumn)
+      {
+         _errorTypeColumnEditorPresenter.SetOptions(columns, errorTypeFromColumn, selected);
+         updateViewForErrorType(_errorEditorPresenter.SelectedText);
+      }
+
+      private bool isAlwaysGeometric(string errorType) => errorType == Constants.STD_DEV_GEOMETRIC && !ErrorTypeFromColumn();
+
+      private void updateViewForErrorType(string errorType)
+      {
+         View.SetErrorTypeCaption(ErrorTypeFromColumn() ? Captions.Importer.DefaultErrorType : Captions.ErrorType);
+
+         if (isAlwaysGeometric(errorType))
             View.HideUnits();
+         else
+            View.ShowUnits();
+      }
+
+      private void errorTypeFromColumnChanged()
+      {
+         var errorType = _errorEditorPresenter.SelectedText;
+         updateViewForErrorType(errorType);
+
+         //a geometric default has no unit but arithmetic data sets need the unit of an arithmetic error
+         if (ErrorTypeFromColumn() && errorType == Constants.STD_DEV_GEOMETRIC)
+            selectUnitFor(Constants.STD_DEV_ARITHMETIC);
       }
 
       private void errorSelectionChanged(object sender, OptionChangedEventArgs e)
       {
-         if (e.Text.Equals(Constants.STD_DEV_ARITHMETIC))
-            View.ShowUnits();
-         else if (e.Text.Equals(Constants.STD_DEV_GEOMETRIC))
-            View.HideUnits();
-         var unit = _unitValueOnTypeChanged(e.Text);
+         updateViewForErrorType(e.Text);
+         selectUnitFor(e.Text);
+      }
+
+      private void selectUnitFor(string errorType)
+      {
+         var unit = _unitValueOnTypeChanged(errorType);
          if (unit == null)
             return;
-         
+
          _unitsEditorPresenter.SelectUnit(unit);
       }
    }
