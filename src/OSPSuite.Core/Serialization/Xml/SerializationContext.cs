@@ -38,7 +38,15 @@ namespace OSPSuite.Core.Serialization.Xml
       /// </summary>
       public bool SkipResolveStep { get; set; }
 
-      //cache containing as key the origin formula id of a formula and as value the corresponding formula id 
+      /// <summary>
+      ///    Text written in front of the id of an object whenever the object is serialized as a reference (see
+      ///    <see cref="ObjectReferenceMapper" />). Empty by default, so that references are written as plain ids. A consumer
+      ///    that post-processes the serialization sets a marker to tell reference attributes apart from other attributes
+      ///    whose value happens to be equal to an id.
+      /// </summary>
+      public string ReferenceMarker { get; set; } = string.Empty;
+
+      //cache containing as key the origin formula id of a formula and as value the corresponding formula id
       private readonly ICache<string, string> _formulaIdMap = new Cache<string, string>();
 
       /// <summary>
