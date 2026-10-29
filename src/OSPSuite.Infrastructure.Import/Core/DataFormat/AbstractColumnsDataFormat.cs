@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Extensions;
@@ -404,20 +405,19 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
                Unit = unit,
                Lloq = double.NaN
             };
-         if (element.StartsWith("<"))
-         {
-            result = element.Substring(1).ConvertedTo<double>();
+         //same parsing as ConvertedTo<double> (comma as decimal separator, invariant culture) without throwing for a non-numeric suffix
+         if (element.StartsWith("<") && double.TryParse(element.Substring(1).Replace(",", "."), NumberStyles.Float | NumberStyles.AllowThousands, NumberFormatInfo.InvariantInfo, out result))
             return new SimulationPoint
             {
                Lloq = result,
                Unit = unit
             };
-         }
 
          return new SimulationPoint
          {
             Measurement = double.NaN,
-            Unit = unit
+            Unit = unit,
+            Lloq = double.NaN
          };
       }
 

@@ -411,6 +411,124 @@ namespace OSPSuite.Infrastructure.Import
       }
    }
 
+   public class When_mapping_a_data_set_with_a_missing_arithmetic_error_value : concern_for_DataSetToDataRepositoryMapperSpecs
+   {
+      private ImportedDataSet _importedDataSetWithMissingError;
+      private DataColumn _errorColumn;
+
+      protected override void Context()
+      {
+         base.Context();
+         var timeDimension = DomainHelperForSpecs.TimeDimensionForSpecs();
+
+         var parsedData = new Dictionary<ExtendedColumn, IList<SimulationPoint>>()
+         {
+            {
+               new ExtendedColumn()
+               {
+                  Column = new Column()
+                  {
+                     Name = "Time",
+                     Unit = new UnitDescription("min"),
+                     Dimension = timeDimension
+                  },
+                  ColumnInfo = new ColumnInfo()
+                  {
+                     BaseGridName = null,
+                     Name = "Time"
+                  }
+               },
+               new List<SimulationPoint>()
+               {
+                  new SimulationPoint() { Unit = "min", Measurement = 0, Lloq = double.NaN },
+                  new SimulationPoint() { Unit = "min", Measurement = 1, Lloq = double.NaN },
+                  new SimulationPoint() { Unit = "min", Measurement = 2, Lloq = double.NaN }
+               }
+            },
+            {
+               new ExtendedColumn()
+               {
+                  Column = new Column()
+                  {
+                     Name = "Concentration",
+                     Unit = new UnitDescription("µmol/l"),
+                     Dimension = _concentrationDimensionLLOQ
+                  },
+                  ColumnInfo = new ColumnInfo()
+                  {
+                     BaseGridName = "Time",
+                     Name = "Concentration"
+                  }
+               },
+               new List<SimulationPoint>()
+               {
+                  new SimulationPoint() { Unit = "µmol/l", Measurement = 10, Lloq = double.NaN },
+                  new SimulationPoint() { Unit = "µmol/l", Measurement = 20, Lloq = double.NaN },
+                  new SimulationPoint() { Unit = "µmol/l", Measurement = 30, Lloq = double.NaN }
+               }
+            },
+            {
+               new ExtendedColumn()
+               {
+                  Column = new Column()
+                  {
+                     Name = "Error",
+                     Unit = new UnitDescription("µmol/l"),
+                     Dimension = _concentrationDimensionLLOQ
+                  },
+                  ColumnInfo = new ColumnInfo()
+                  {
+                     BaseGridName = "Time",
+                     Name = "Error",
+                     IsMandatory = false,
+                     RelatedColumnOf = "Concentration"
+                  },
+                  ErrorDeviation = Constants.STD_DEV_ARITHMETIC
+               },
+               new List<SimulationPoint>()
+               {
+                  new SimulationPoint() { Unit = "µmol/l", Measurement = 1.5, Lloq = double.NaN },
+                  //an empty or non-numeric Error cell is parsed as a missing value without LLOQ
+                  new SimulationPoint() { Unit = "µmol/l", Measurement = double.NaN, Lloq = double.NaN },
+                  new SimulationPoint() { Unit = "µmol/l", Measurement = 0.5, Lloq = double.NaN }
+               }
+            }
+         };
+         _importedDataSetWithMissingError = new ImportedDataSet(
+            "file.xlsx",
+            "Sheet1",
+            new ParsedDataSet(new List<string>(), A.Fake<DataSheet>(), new List<UnformattedRow>(), parsedData),
+            "name",
+            new List<MetaDataInstance>()
+         );
+      }
+
+      protected override void Because()
+      {
+         _result = sut.ConvertImportDataSet(_importedDataSetWithMissingError);
+         _errorColumn = _result.DataRepository.Columns.Single(x => x.Name == "Error");
+      }
+
+      [Observation]
+      public void should_import_the_error_column_as_an_arithmetic_standard_deviation()
+      {
+         _errorColumn.DataInfo.AuxiliaryType.ShouldBeEqualTo(AuxiliaryType.ArithmeticStdDev);
+      }
+
+      [Observation]
+      public void should_keep_the_missing_error_value_missing()
+      {
+         float.IsNaN(_errorColumn.Values[0]).ShouldBeFalse();
+         float.IsNaN(_errorColumn.Values[1]).ShouldBeTrue();
+         float.IsNaN(_errorColumn.Values[2]).ShouldBeFalse();
+      }
+
+      [Observation]
+      public void should_not_set_an_lloq_on_the_error_column()
+      {
+         _errorColumn.DataInfo.LLOQ.ShouldBeNull();
+      }
+   }
 
    public abstract class concern_for_DataSetToDataRepositoryMapper_with_error_in_units_of_a_row : concern_for_DataSetToDataRepositoryMapperSpecs
    {
@@ -469,7 +587,6 @@ namespace OSPSuite.Infrastructure.Import
                }
             }
          };
-
          return new ImportedDataSet("file", "sheet1",
             new ParsedDataSet(new List<string>(), A.Fake<DataSheet>(), new List<UnformattedRow>(), parsedData), "name", new List<MetaDataInstance>());
       }
