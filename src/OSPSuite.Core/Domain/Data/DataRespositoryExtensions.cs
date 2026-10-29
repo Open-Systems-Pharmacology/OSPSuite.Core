@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
+using OSPSuite.Assets;
+using OSPSuite.Utility.Exceptions;
 using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Domain.Data
@@ -72,6 +75,48 @@ namespace OSPSuite.Core.Domain.Data
          {
             return _funcDistinct(obj).GetHashCode();
          }
+      }
+
+      /// <summary>
+      ///    Returns true if <paramref name="subjectCount" /> is a whole number greater than or equal to
+      ///    <see cref="Constants.ObservedData.MIN_SUBJECT_COUNT" />
+      /// </summary>
+      public static bool IsValidSubjectCount(string subjectCount) => tryParseSubjectCount(subjectCount, out _);
+
+      /// <summary>
+      ///    Returns the subject count stored in the meta data of the <paramref name="dataRepository" /> or <c>null</c> if the
+      ///    meta data is not defined
+      ///    <exception cref="OSPSuiteException">is thrown if the stored subject count is invalid</exception>
+      /// </summary>
+      public static int? SubjectCount(this DataRepository dataRepository)
+      {
+         var subjectCount = dataRepository.ExtendedPropertyValueFor(Constants.ObservedData.SUBJECT_COUNT);
+         if (subjectCount == null)
+            return null;
+
+         if (!tryParseSubjectCount(subjectCount, out var value))
+            throw new OSPSuiteException(Error.InvalidSubjectCount(subjectCount, Constants.ObservedData.MIN_SUBJECT_COUNT));
+
+         return value;
+      }
+
+      /// <summary>
+      ///    Stores the <paramref name="subjectCount" /> in the meta data of the <paramref name="dataRepository" />. An existing
+      ///    subject count is overwritten
+      ///    <exception cref="OSPSuiteException">is thrown if <paramref name="subjectCount" /> is invalid</exception>
+      /// </summary>
+      public static void SetSubjectCount(this DataRepository dataRepository, int subjectCount)
+      {
+         var subjectCountAsString = subjectCount.ToString(CultureInfo.InvariantCulture);
+         if (!IsValidSubjectCount(subjectCountAsString))
+            throw new OSPSuiteException(Error.InvalidSubjectCount(subjectCountAsString, Constants.ObservedData.MIN_SUBJECT_COUNT));
+
+         dataRepository.ExtendedProperties[Constants.ObservedData.SUBJECT_COUNT] = new ExtendedProperty<string> {Name = Constants.ObservedData.SUBJECT_COUNT, Value = subjectCountAsString};
+      }
+
+      private static bool tryParseSubjectCount(string subjectCount, out int value)
+      {
+         return int.TryParse(subjectCount, NumberStyles.Integer, CultureInfo.InvariantCulture, out value) && value >= Constants.ObservedData.MIN_SUBJECT_COUNT;
       }
 
       public static void AddColumns(this DataRepository repository, IEnumerable<DataColumn> columns) => columns.Each(repository.Add);

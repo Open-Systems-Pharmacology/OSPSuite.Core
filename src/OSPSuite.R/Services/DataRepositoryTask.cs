@@ -74,6 +74,21 @@ namespace OSPSuite.R.Services
       void RemoveMetaData(DataRepository dataRepository, string key);
 
       /// <summary>
+      ///    Returns the subject count of the <paramref name="dataRepository" /> or <c>null</c> if it is not defined
+      ///    <exception cref="OSPSuiteException">is thrown if the stored subject count is not a whole number of at least one</exception>
+      /// </summary>
+      /// <param name="dataRepository">DataRepository for which the subject count should be returned</param>
+      int? GetSubjectCount(DataRepository dataRepository);
+
+      /// <summary>
+      ///    Sets the subject count of the <paramref name="dataRepository" />. An existing subject count is overwritten
+      ///    <exception cref="OSPSuiteException">is thrown if <paramref name="subjectCount" /> is smaller than one</exception>
+      /// </summary>
+      /// <param name="dataRepository">DataRepository for which the subject count should be set</param>
+      /// <param name="subjectCount">Number of subjects the data were calculated from</param>
+      void SetSubjectCount(DataRepository dataRepository, int subjectCount);
+
+      /// <summary>
       ///    Set the <see cref="ColumnOrigins" /> for the column given as parameter
       /// </summary>
       /// <param name="column">Data column to set</param>
@@ -184,6 +199,10 @@ namespace OSPSuite.R.Services
       {
          dataRepository.ExtendedProperties.Remove(key);
       }
+
+      public int? GetSubjectCount(DataRepository dataRepository) => dataRepository.SubjectCount();
+
+      public void SetSubjectCount(DataRepository dataRepository, int subjectCount) => dataRepository.SetSubjectCount(subjectCount);
 
       public void SetColumnOrigin(DataColumn column, string columnOrigin)
       {
