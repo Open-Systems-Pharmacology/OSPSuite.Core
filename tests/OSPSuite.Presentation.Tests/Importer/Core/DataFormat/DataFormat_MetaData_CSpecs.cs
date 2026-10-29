@@ -303,7 +303,13 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
                      { "PeripheralVenousBlood", "Arterialized", "Human", "75 [g] glucose", "<Molecule>", "99", "10", "", "po", "<GroupId>" }),
                new UnformattedRow(1,
                   new List<string>()
-                     { "PeripheralVenousBlood", "Arterialized", "Human", "75 [g] glucose", "<Molecule>", "99", "10", "abc", "po", "<GroupId>" })
+                     { "PeripheralVenousBlood", "Arterialized", "Human", "75 [g] glucose", "<Molecule>", "99", "10", "abc", "po", "<GroupId>" }),
+               new UnformattedRow(2,
+                  new List<string>()
+                     { "PeripheralVenousBlood", "Arterialized", "Human", "75 [g] glucose", "<Molecule>", "99", "10", "<abc", "po", "<GroupId>" }),
+               new UnformattedRow(3,
+                  new List<string>()
+                     { "PeripheralVenousBlood", "Arterialized", "Human", "75 [g] glucose", "<Molecule>", "99", "10", "<", "po", "<GroupId>" })
             });
 
          var data = sut.Parse
@@ -314,12 +320,35 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
          foreach (var dataset in data)
          {
             var errorValues = dataset.Data.Single(x => x.Key.ColumnInfo.Name == "Error").Value;
-            errorValues.Count.ShouldBeEqualTo(2);
+            errorValues.Count.ShouldBeEqualTo(4);
             foreach (var errorValue in errorValues)
             {
                errorValue.Measurement.ShouldBeEqualTo(double.NaN);
                errorValue.Lloq.ShouldBeEqualTo(double.NaN);
             }
+         }
+      }
+
+      [TestCase]
+      public void parse_lloq_with_a_comma_as_decimal_separator()
+      {
+         A.CallTo(() => _mockedData.GetRows(A<Func<IEnumerable<string>, bool>>.Ignored)).ReturnsLazily(
+            param => new List<UnformattedRow>()
+            {
+               new UnformattedRow(0,
+                  new List<string>()
+                     { "PeripheralVenousBlood", "Arterialized", "Human", "75 [g] glucose", "<Molecule>", "99", "<0,005", "0", "po", "<GroupId>" })
+            });
+
+         var data = sut.Parse
+         (
+            _mockedData,
+            _columnInfos
+         );
+         foreach (var dataset in data)
+         {
+            dataset.Data.ElementAt(1).Value.First().Lloq.ShouldBeEqualTo(0.005);
+            dataset.Data.ElementAt(1).Value.First().Measurement.ShouldBeEqualTo(0);
          }
       }
    }
