@@ -51,8 +51,10 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
       {
          var value = optimizedParameter.Value;
          var displayUnit = identificationParameter.DisplayUnit;
-         var valueInDisplayUnit = identificationParameter.Dimension.BaseUnitValueToUnitValue(displayUnit, value);
-         var confidenceIntervalInDisplayUnit = identificationParameter.Dimension.BaseUnitValueToUnitValue(displayUnit, confidenceInterval[identificationParameter.Name]);
+         var dimension = identificationParameter.Dimension;
+         var valueInDisplayUnit = dimension.BaseUnitValueToUnitValue(displayUnit, value);
+         //the confidence interval is a difference, so the unit offset must not be applied
+         var confidenceIntervalInDisplayUnit = dimension.BaseUnitValueToUnitValue(displayUnit, confidenceInterval[identificationParameter.Name]) - dimension.BaseUnitValueToUnitValue(displayUnit, 0d);
 
          return new ParameterConfidenceIntervalDTO
          {

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using OSPSuite.Assets;
+using OSPSuite.Core.Domain;
 using OSPSuite.DataBinding.DevExpress;
 using OSPSuite.DataBinding.DevExpress.XtraGrid;
 using OSPSuite.Presentation.DTO.ParameterIdentifications;
@@ -13,6 +14,7 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
    {
       private readonly GridViewBinder<ParameterConfidenceIntervalDTO> _gridViewBinder;
       private IParameterIdentificationConfidenceIntervalPresenter _presenter;
+      private readonly DoubleFormatter _doubleFormatter = new DoubleFormatter();
 
       public ParameterIdentificationConfidenceIntervalView()
       {
@@ -45,8 +47,19 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
             .WithCaption(ObjectTypes.IdentificationParameter)
             .AsReadOnly();
 
-         _gridViewBinder.Bind(x => x.ConfidenceIntervalDisplay)
+         _gridViewBinder.Bind(x => x.Value)
+            .WithCaption(Captions.ParameterIdentification.OptimalValue)
+            .WithFormat(dto => new UnitFormatter(dto.Unit))
+            .AsReadOnly();
+
+         _gridViewBinder.Bind(x => x.ConfidenceInterval)
             .WithCaption(Captions.ParameterIdentification.ConfidenceInterval)
+            .WithFormat(dto => new UnitFormatter(dto.Unit))
+            .AsReadOnly();
+
+         _gridViewBinder.Bind(x => x.RelativeConfidenceInterval)
+            .WithCaption(Captions.ParameterIdentification.RelativeConfidenceInterval)
+            .WithFormat(_doubleFormatter)
             .AsReadOnly();
       }
 

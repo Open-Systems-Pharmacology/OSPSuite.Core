@@ -117,7 +117,51 @@ namespace OSPSuite.Presentation.Presentation
          confidenceIntervalDTO.Name.ShouldBeEqualTo(_identificationParameter.Name);
          confidenceIntervalDTO.ConfidenceInterval.ShouldBeEqualTo(50);
          confidenceIntervalDTO.Value.ShouldBeEqualTo(100);
+         confidenceIntervalDTO.RelativeConfidenceInterval.ShouldBeEqualTo(50);
          confidenceIntervalDTO.Unit.ShouldBeEqualTo(_identificationParameter.DisplayUnit);
+      }
+   }
+
+   public class When_calculating_the_confidence_interval_for_a_parameter_displayed_in_a_unit_with_an_offset : concern_for_ParameterIdentificationConfidenceIntervalPresenter
+   {
+      private ParameterSelection _parameterSelection;
+      private Dimension _temperatureDimension;
+      private Unit _celsius;
+      private IdentificationParameter _identificationParameter;
+
+      protected override void Context()
+      {
+         base.Context();
+         _temperatureDimension = new Dimension(new BaseDimensionRepresentation(), "Temperature", "K");
+         _celsius = _temperatureDimension.AddUnit("°C", 1, 273.15);
+
+         _parameterSelection = A.Fake<ParameterSelection>();
+         A.CallTo(() => _parameterSelection.FullQuantityPath).Returns("P1");
+         A.CallTo(() => _parameterSelection.Dimension).Returns(_temperatureDimension);
+         _runResult.JacobianMatrix = new JacobianMatrix(new[] {_parameterSelection.FullQuantityPath});
+
+         _identificationParameter = DomainHelperForSpecs.IdentificationParameter("IP1");
+         _identificationParameter.AddLinkedParameter(_parameterSelection);
+         _identificationParameter.StartValueParameter.Dimension = _temperatureDimension;
+         _identificationParameter.StartValueParameter.DisplayUnit = _celsius;
+
+         A.CallTo(_confidenceIntervalCalculator).WithReturnType<ICache<string, double>>().Returns(new Cache<string, double> {{_identificationParameter.Name, 2}});
+         A.CallTo(() => _runResult.BestResult.Values).Returns(new[] {new OptimizedParameterValue(_identificationParameter.Name, 300, 290, 0, 400, Scalings.Linear)});
+         A.CallTo(() => _parameterIdentification.IdentificationParameterByName(_identificationParameter.Name)).Returns(_identificationParameter);
+      }
+
+      protected override void Because()
+      {
+         sut.CalculateConfidenceIntervalFor(_parameterIdentification, _runResult);
+      }
+
+      [Observation]
+      public void should_apply_the_offset_to_the_point_estimate_only()
+      {
+         var confidenceIntervalDTO = _allParameterConfidenceIntervalDTOs[0];
+         confidenceIntervalDTO.Value.ShouldBeEqualTo(26.85, 1e-10);
+         confidenceIntervalDTO.ConfidenceInterval.ShouldBeEqualTo(2, 1e-10);
+         confidenceIntervalDTO.RelativeConfidenceInterval.ShouldBeEqualTo(100 * 2 / 26.85, 1e-10);
       }
    }
 
