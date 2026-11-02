@@ -195,6 +195,10 @@ namespace OSPSuite.Infrastructure.Import.Services
          categories.Add(CreateMetaDataCategory<string>(Constants.ObservedData.DOSE));
          categories.Add(CreateMetaDataCategory<string>(Constants.ObservedData.ROUTE));
 
+         var outputPathCategory = CreateMetaDataCategory<string>(Constants.OUTPUT_PATH);
+         outputPathCategory.Description = ObservedData.OutputPathDescription;
+         categories.Add(outputPathCategory);
+
          return categories;
       }
 

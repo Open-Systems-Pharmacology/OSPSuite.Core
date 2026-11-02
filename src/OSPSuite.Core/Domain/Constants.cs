@@ -544,6 +544,19 @@ namespace OSPSuite.Core.Domain
          public static readonly string PLASMA_COMPARTMENT = "Plasma";
          public static readonly string PERIPHERAL_VENOUS_BLOOD_ORGAN = "Peripheral Venous Blood";
          public static readonly string VENOUS_BLOOD_ORGAN = "VenousBlood";
+
+         /// <summary>
+         ///    Name of the virtual container used as second element of the quantity path of observed data columns
+         ///    (see <c>IObservedDataNormalizer</c>)
+         /// </summary>
+         public const string CONTAINER_NAME = "ObservedData";
+
+         /// <summary>
+         ///    Metadata categories that both PK-Sim and MoBi treat as standard observed data metadata whose names cannot be
+         ///    edited. Intended as the suite value for <c>IObservedDataConfiguration.DefaultMetaDataCategories</c>.
+         /// </summary>
+         //must stay below the category names it references: static initializers run in declaration order
+         public static readonly IReadOnlyList<string> DEFAULT_CATEGORIES = new[] {SPECIES, ORGAN, COMPARTMENT, MOLECULE, GENDER};
       }
 
       public static class LLOQModes

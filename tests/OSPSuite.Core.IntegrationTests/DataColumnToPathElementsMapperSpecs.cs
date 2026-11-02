@@ -93,6 +93,86 @@ namespace OSPSuite.Core
       }
    }
 
+   public class When_resolving_name_for_an_observation_column_with_the_normalized_observed_data_path : concern_for_DataColumnToPathElementsMapper
+   {
+      private DataColumn _dataColumn;
+      private PathElements _result;
+
+      protected override void Context()
+      {
+         base.Context();
+         var path = new List<string> {"Obs Data", Constants.ObservedData.CONTAINER_NAME, "VenousBlood", "Plasma", "Drug", "Concentration"};
+         _dataColumn = new DataColumn {QuantityInfo = new QuantityInfo(path, QuantityType.Undefined), DataInfo = new DataInfo(ColumnOrigins.Observation), Name = "dataColumnDisplayName"};
+      }
+
+      protected override void Because()
+      {
+         _result = sut.MapFrom(_dataColumn, null);
+      }
+
+      [Observation]
+      public void should_map_the_repository_name_to_simulation_and_top_container()
+      {
+         _result[PathElementId.Simulation].DisplayName.ShouldBeEqualTo("Obs Data");
+         _result[PathElementId.TopContainer].DisplayName.ShouldBeEqualTo("Obs Data");
+      }
+
+      [Observation]
+      public void should_map_the_organ_to_container()
+      {
+         _result[PathElementId.Container].DisplayName.ShouldBeEqualTo("VenousBlood");
+      }
+
+      [Observation]
+      public void should_map_the_compartment_to_bottom_compartment()
+      {
+         _result[PathElementId.BottomCompartment].DisplayName.ShouldBeEqualTo("Plasma");
+      }
+
+      [Observation]
+      public void should_map_the_molecule_to_molecule()
+      {
+         _result[PathElementId.Molecule].DisplayName.ShouldBeEqualTo("Drug");
+      }
+
+      [Observation]
+      public void should_map_the_column_name_to_name()
+      {
+         _result[PathElementId.Name].DisplayName.ShouldBeEqualTo("Concentration");
+      }
+   }
+
+   public class When_resolving_name_for_an_observation_column_whose_path_does_not_have_the_normalized_length : concern_for_DataColumnToPathElementsMapper
+   {
+      private DataColumn _dataColumn;
+      private PathElements _result;
+
+      protected override void Context()
+      {
+         base.Context();
+         var path = new List<string> {"Obs Data", "VenousBlood", "Plasma", "Drug", "Concentration"};
+         _dataColumn = new DataColumn {QuantityInfo = new QuantityInfo(path, QuantityType.Undefined), DataInfo = new DataInfo(ColumnOrigins.Observation), Name = "dataColumnDisplayName"};
+      }
+
+      protected override void Because()
+      {
+         _result = sut.MapFrom(_dataColumn, null);
+      }
+
+      [Observation]
+      public void should_fall_back_to_the_first_element_as_top_container_and_the_rest_as_container()
+      {
+         _result[PathElementId.TopContainer].DisplayName.ShouldBeEqualTo("Obs Data");
+         _result[PathElementId.Container].DisplayName.ShouldBeEqualTo("VenousBlood-Plasma-Drug-Concentration");
+      }
+
+      [Observation]
+      public void should_not_map_a_molecule()
+      {
+         _result[PathElementId.Molecule].DisplayName.ShouldBeEmpty();
+      }
+   }
+
    public class When_resolving_name_for_a_deviation_column : concern_for_DataColumnToPathElementsMapper
    {
       private DataColumn _dataColumn;
