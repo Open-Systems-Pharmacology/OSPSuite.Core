@@ -74,7 +74,7 @@ namespace OSPSuite.R.Services
       void RemoveMetaData(DataRepository dataRepository, string key);
 
       /// <summary>
-      ///    Returns the subject count of the <paramref name="dataRepository" /> or <c>null</c> if it is not defined
+      ///    Returns the subject count of the <paramref name="dataRepository" /> or <c>null</c> if it is not defined or empty
       ///    <exception cref="OSPSuiteException">is thrown if the stored subject count is not a whole number of at least one</exception>
       /// </summary>
       /// <param name="dataRepository">DataRepository for which the subject count should be returned</param>

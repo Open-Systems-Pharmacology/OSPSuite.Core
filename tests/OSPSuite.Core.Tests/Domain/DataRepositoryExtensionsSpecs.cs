@@ -223,6 +223,13 @@ namespace OSPSuite.Core.Domain
       }
 
       [Observation]
+      public void should_return_null_if_the_stored_subject_count_is_empty()
+      {
+         _dataRepository.ExtendedProperties.Add(new ExtendedProperty<string> {Name = Constants.ObservedData.SUBJECT_COUNT, Value = string.Empty});
+         _dataRepository.SubjectCount().ShouldBeNull();
+      }
+
+      [Observation]
       public void should_store_the_subject_count_as_meta_data()
       {
          _dataRepository.SetSubjectCount(12);

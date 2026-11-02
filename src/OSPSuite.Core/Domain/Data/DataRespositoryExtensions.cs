@@ -85,13 +85,13 @@ namespace OSPSuite.Core.Domain.Data
 
       /// <summary>
       ///    Returns the subject count stored in the meta data of the <paramref name="dataRepository" /> or <c>null</c> if the
-      ///    meta data is not defined
+      ///    meta data is not defined or empty
       ///    <exception cref="OSPSuiteException">is thrown if the stored subject count is invalid</exception>
       /// </summary>
       public static int? SubjectCount(this DataRepository dataRepository)
       {
          var subjectCount = dataRepository.ExtendedPropertyValueFor(Constants.ObservedData.SUBJECT_COUNT);
-         if (subjectCount == null)
+         if (string.IsNullOrEmpty(subjectCount))
             return null;
 
          if (!tryParseSubjectCount(subjectCount, out var value))
