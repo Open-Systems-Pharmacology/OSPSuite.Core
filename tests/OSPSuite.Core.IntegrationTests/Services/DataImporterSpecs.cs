@@ -460,6 +460,60 @@ namespace OSPSuite.Presentation.Services
       }
    }
 
+   public class When_retrieving_the_default_meta_data_categories_for_observed_data : concern_for_DataImporter
+   {
+      [Observation]
+      public void should_contain_an_optional_whole_number_subject_count_with_a_minimum_of_one()
+      {
+         var subjectCountCategory = _metaDataCategories.FindByName(Constants.ObservedData.SUBJECT_COUNT);
+         subjectCountCategory.IsMandatory.ShouldBeFalse();
+         subjectCountCategory.MetaDataType.ShouldBeEqualTo(typeof(int));
+         subjectCountCategory.MinValue.ShouldBeEqualTo(Constants.ObservedData.MIN_SUBJECT_COUNT);
+         subjectCountCategory.MinValueAllowed.ShouldBeTrue();
+      }
+   }
+
+   public class When_importing_a_valid_subject_count : concern_for_DataImporter
+   {
+      protected override void Because()
+      {
+         var parameterList = createTestParameters("TestInputMolecule", new UnitDescription("h"), new UnitDescription("mg/l"),
+            _massConcentrationDimension);
+         parameterList.Add(new MetaDataFormatParameter("12", Constants.ObservedData.SUBJECT_COUNT, isColumn: false));
+         _importerConfiguration.CloneParametersFrom(parameterList);
+      }
+
+      [Observation]
+      public void should_store_the_subject_count_in_the_meta_data_of_the_imported_data()
+      {
+         var result = sut.ImportFromConfiguration(_importerConfiguration, _metaDataCategories, _columnInfos, _dataImporterSettings,
+            getFileFullName(
+               "IntegrationSample1.xlsx"));
+         result.Count.ShouldBeGreaterThan(0);
+         result.Select(x => x.ExtendedPropertyValueFor(Constants.ObservedData.SUBJECT_COUNT)).Distinct().ShouldOnlyContain("12");
+      }
+   }
+
+   public class When_importing_an_invalid_subject_count : concern_for_DataImporter
+   {
+      protected override void Because()
+      {
+         var parameterList = createTestParameters("TestInputMolecule", new UnitDescription("h"), new UnitDescription("mg/l"),
+            _massConcentrationDimension);
+         parameterList.Add(new MetaDataFormatParameter("0", Constants.ObservedData.SUBJECT_COUNT, isColumn: false));
+         _importerConfiguration.CloneParametersFrom(parameterList);
+      }
+
+      [Observation]
+      public void should_not_import_the_data_and_report_a_parse_error()
+      {
+         sut.ImportFromConfiguration(_importerConfiguration, _metaDataCategories, _columnInfos, _dataImporterSettings,
+            getFileFullName(
+               "IntegrationSample1.xlsx")).Count.ShouldBeEqualTo(0);
+         A.CallTo(() => _dialogCreator.MessageBoxError(Error.SimpleParseErrorMessage)).MustHaveHappened();
+      }
+   }
+
    public class When_importing_with_non_existent_excel_columns : concern_for_DataImporter
    {
       protected override void Because()

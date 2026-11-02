@@ -203,7 +203,9 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       private ParseErrors validateDataSource(IDataSource dataSource)
       {
-         return dataSource.ValidateDataSourceUnits(_columnInfos);
+         var errors = dataSource.ValidateDataSourceUnits(_columnInfos);
+         errors.Add(dataSource.ValidateMetaData());
+         return errors;
       }
 
       private void loadSheets(IDataSourceFile dataSourceFile, IReadOnlyList<string> sheetNames, string filter, string selectedNamingConvention = null)
