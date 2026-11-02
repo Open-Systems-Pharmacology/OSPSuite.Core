@@ -261,8 +261,93 @@ namespace OSPSuite.Core.Services
       }
    }
 
-   internal class ObservedDataTaskForSpecs : ObservedDataTask
+   public abstract class concern_for_ObservedDataTask_updating_mol_weight : concern_for_ObservedDataTask
    {
+      protected const double MOL_WEIGHT_STORED_WITH_DATA = 100;
+      protected const double MOL_WEIGHT_OF_PROJECT_MOLECULE = 250;
+      protected DataColumn _observationColumn;
+      protected ObservedDataTaskForSpecs _observedDataTask;
+
+      protected override void Context()
+      {
+         base.Context();
+         _observedDataTask = (ObservedDataTaskForSpecs) sut;
+         _observedDataTask.ProjectMolecules["Drug"] = MOL_WEIGHT_OF_PROJECT_MOLECULE;
+         _observationColumn = _obsData1.AllButBaseGrid().Single();
+         _observationColumn.DataInfo.MolWeight = MOL_WEIGHT_STORED_WITH_DATA;
+      }
+
+      protected void AddMoleculeMetaData(string moleculeName)
+      {
+         _obsData1.ExtendedProperties.Add(new ExtendedProperty<string> {Name = Constants.ObservedData.MOLECULE, Value = moleculeName});
+      }
+
+      protected override void Because()
+      {
+         sut.UpdateMolWeight(_obsData1);
+      }
+   }
+
+   public class When_updating_the_mol_weight_of_observed_data_whose_molecule_is_defined_in_the_project : concern_for_ObservedDataTask_updating_mol_weight
+   {
+      protected override void Context()
+      {
+         base.Context();
+         AddMoleculeMetaData("Drug");
+      }
+
+      [Observation]
+      public void should_take_the_mol_weight_of_the_project_molecule_for_the_observation_columns()
+      {
+         _observationColumn.DataInfo.MolWeight.ShouldBeEqualTo(MOL_WEIGHT_OF_PROJECT_MOLECULE);
+      }
+
+      [Observation]
+      public void should_not_set_a_mol_weight_on_the_base_grid()
+      {
+         _obsData1.BaseGrid.DataInfo.MolWeight.ShouldBeNull();
+      }
+   }
+
+   public class When_updating_the_mol_weight_of_observed_data_whose_molecule_is_not_defined_in_the_project : concern_for_ObservedDataTask_updating_mol_weight
+   {
+      protected override void Context()
+      {
+         base.Context();
+         AddMoleculeMetaData("Unknown molecule");
+      }
+
+      [Observation]
+      public void should_keep_the_mol_weight_stored_with_the_observed_data()
+      {
+         _observationColumn.DataInfo.MolWeight.ShouldBeEqualTo(MOL_WEIGHT_STORED_WITH_DATA);
+      }
+   }
+
+   public class When_updating_the_mol_weight_of_observed_data_without_molecule_metadata : concern_for_ObservedDataTask_updating_mol_weight
+   {
+      [Observation]
+      public void should_keep_the_mol_weight_stored_with_the_observed_data()
+      {
+         _observationColumn.DataInfo.MolWeight.ShouldBeEqualTo(MOL_WEIGHT_STORED_WITH_DATA);
+      }
+
+      [Observation]
+      public void should_not_look_for_a_project_molecule()
+      {
+         _observedDataTask.RequestedMoleculeNames.ShouldBeEmpty();
+      }
+   }
+
+   public class ObservedDataTaskForSpecs : ObservedDataTask
+   {
+      /// <summary>
+      ///    Molecules of the fake project with their mol weight, keyed by name
+      /// </summary>
+      public Dictionary<string, double> ProjectMolecules { get; } = new Dictionary<string, double>();
+
+      public List<string> RequestedMoleculeNames { get; } = new List<string>();
+
       public ObservedDataTaskForSpecs(IDialogCreator dialogCreator, IOSPSuiteExecutionContext executionContext, IDataRepositoryExportTask dataRepositoryTask, IContainerTask containerTask, IObjectTypeResolver objectTypeResolver, IConfirmationManager confirmationManager, IOutputMappingMatchingTask outputMappingMatchingTask) : base(dialogCreator, executionContext, dataRepositoryTask,
          containerTask, objectTypeResolver, confirmationManager, outputMappingMatchingTask)
       {
@@ -272,8 +357,10 @@ namespace OSPSuite.Core.Services
       {
       }
 
-      public override void UpdateMolWeight(DataRepository observedData)
+      protected override double? MolWeightFor(string moleculeName)
       {
+         RequestedMoleculeNames.Add(moleculeName);
+         return ProjectMolecules.TryGetValue(moleculeName, out var molWeight) ? molWeight : (double?) null;
       }
    }
 }

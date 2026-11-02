@@ -19,6 +19,14 @@ namespace OSPSuite.Core.Domain.Mappers
 
    public class DataColumnToPathElementsMapper : IDataColumnToPathElementsMapper
    {
+      //layout of the quantity path of observed data columns: [repository, ObservedData, organ, compartment, molecule, column]
+      private const int OBSERVED_DATA_PATH_LENGTH = 6;
+      private const int OBSERVED_DATA_REPOSITORY_INDEX = 0;
+      private const int OBSERVED_DATA_ORGAN_INDEX = 2;
+      private const int OBSERVED_DATA_COMPARTMENT_INDEX = 3;
+      private const int OBSERVED_DATA_MOLECULE_INDEX = 4;
+      private const int OBSERVED_DATA_COLUMN_INDEX = 5;
+
       private readonly IPathToPathElementsMapper _pathToPathElementsMapper;
 
       public DataColumnToPathElementsMapper(IPathToPathElementsMapper pathToPathElementsMapper)
@@ -50,9 +58,25 @@ namespace OSPSuite.Core.Domain.Mappers
          };
       }
 
+      /// <summary>
+      ///    Maps the quantity path of an observed data column created by <c>IObservedDataNormalizer</c>
+      ///    ([repository, ObservedData, organ, compartment, molecule, column]) to path elements so that observed data is
+      ///    grouped and labelled like simulation outputs. Any other path falls back to the generic mapping.
+      /// </summary>
       protected virtual PathElements ObservedDataPathElementsFor(DataColumn dataColumn, List<string> quantityPath)
       {
-         return pathElementsForUnknownColumns(dataColumn, quantityPath);
+         if (quantityPath.Count != OBSERVED_DATA_PATH_LENGTH)
+            return pathElementsForUnknownColumns(dataColumn, quantityPath);
+
+         return new PathElements
+         {
+            [PathElementId.Simulation] = new PathElement {DisplayName = quantityPath[OBSERVED_DATA_REPOSITORY_INDEX]},
+            [PathElementId.TopContainer] = new PathElement {DisplayName = quantityPath[OBSERVED_DATA_REPOSITORY_INDEX]},
+            [PathElementId.Container] = new PathElement {DisplayName = quantityPath[OBSERVED_DATA_ORGAN_INDEX]},
+            [PathElementId.BottomCompartment] = new PathElement {DisplayName = quantityPath[OBSERVED_DATA_COMPARTMENT_INDEX]},
+            [PathElementId.Molecule] = new PathElement {DisplayName = quantityPath[OBSERVED_DATA_MOLECULE_INDEX]},
+            [PathElementId.Name] = new PathElement {DisplayName = quantityPath[OBSERVED_DATA_COLUMN_INDEX]}
+         };
       }
 
       private PathElements pathElementsForUnknownColumns(DataColumn dataColumn, List<string> quantityPath)

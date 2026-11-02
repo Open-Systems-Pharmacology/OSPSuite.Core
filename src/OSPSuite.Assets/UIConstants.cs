@@ -2537,6 +2537,7 @@ namespace OSPSuite.Assets
       public static readonly string ObservedDataOrganDescription = "Organ where the data was measured";
       public static readonly string ObservedDataCompartmentDescription = "Compartment where the data was measured";
       public static readonly string MoleculeNameDescription = "Name of the molecule for which the data were measured";
+      public static readonly string OutputPathDescription = "Full path of the simulation output the data belong to (e.g. Organism|VenousBlood|Plasma|Drug|Concentration). When set, it is used instead of Organ, Compartment and Molecule to map the data to a simulation output";
    }
 
    public static class Colors
