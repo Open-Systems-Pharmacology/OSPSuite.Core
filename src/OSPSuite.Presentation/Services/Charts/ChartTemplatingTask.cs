@@ -174,6 +174,8 @@ namespace OSPSuite.Presentation.Services.Charts
                if (copiedTemplate == null)
                   continue;
 
+               // A copy should never compete with the default template of the owner
+               copiedTemplate.IsDefault = false;
                usedNames.Add(copiedTemplate.Name);
                copiedTemplates.Add(copiedTemplate);
             }

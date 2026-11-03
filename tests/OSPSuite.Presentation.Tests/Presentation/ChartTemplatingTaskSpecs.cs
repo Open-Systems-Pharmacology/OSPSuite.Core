@@ -124,7 +124,8 @@ namespace OSPSuite.Presentation.Presentation
          _templateWithUniqueName = new CurveChartTemplate {Name = "Unique", ChartType = CurveChartTypes.PredictedVsObserved};
          _templateWithForbiddenName = new CurveChartTemplate {Name = "Forbidden", ChartType = CurveChartTypes.PredictedVsObserved};
          _templateWithCanceledRename = new CurveChartTemplate {Name = "Unique", ChartType = CurveChartTypes.PredictedVsObserved};
-         _copyWithUniqueName = new CurveChartTemplate {Name = "Unique", ChartType = CurveChartTypes.PredictedVsObserved};
+         // Cloning a default template returns a default copy
+         _copyWithUniqueName = new CurveChartTemplate {Name = "Unique", ChartType = CurveChartTypes.PredictedVsObserved, IsDefault = true};
          _copyWithForbiddenName = new CurveChartTemplate {Name = "Forbidden", ChartType = CurveChartTypes.PredictedVsObserved};
          _copyWithCanceledRename = new CurveChartTemplate {Name = "Unique", ChartType = CurveChartTypes.PredictedVsObserved};
          A.CallTo(() => _cloneManager.Clone(_templateWithUniqueName)).Returns(_copyWithUniqueName);
@@ -159,6 +160,12 @@ namespace OSPSuite.Presentation.Presentation
       public void should_not_return_a_copy_whose_name_is_used_by_another_copy_if_the_user_cancels_the_rename()
       {
          _result.ShouldNotContain(_copyWithCanceledRename);
+      }
+
+      [Observation]
+      public void should_not_mark_a_copied_template_as_default()
+      {
+         _copyWithUniqueName.IsDefault.ShouldBeFalse();
       }
 
       [Observation]
