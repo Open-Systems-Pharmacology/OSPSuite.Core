@@ -75,6 +75,7 @@ namespace OSPSuite.UI.Views.Charts
          _buttonRepository.ButtonClick += (o, e) => OnEvent(buttonClicked, e);
 
          loadTemplateButton.Click += (o, e) => OnEvent(loadTemplates);
+         copyTemplatesButton.Click += (o, e) => OnEvent(_presenter.CopyTemplatesFromProject);
       }
 
       private void setDefaultForTemplate(CurveChartTemplate template, bool set)
@@ -118,6 +119,8 @@ namespace OSPSuite.UI.Views.Charts
 
          loadTemplateButton.InitWithImage(ApplicationIcons.Load, Captions.LoadTemplate);
          loadTemplateControlItem.AdjustLongButtonSize(layoutControl);
+         copyTemplatesButton.InitWithImage(ApplicationIcons.Copy, Captions.CopyTemplatesFromProject);
+         copyTemplatesControlItem.AdjustLongButtonSize(layoutControl);
 
          Caption = Captions.ManageChartTemplates;
       }

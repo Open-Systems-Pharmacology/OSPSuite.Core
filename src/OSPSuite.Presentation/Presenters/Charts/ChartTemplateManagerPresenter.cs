@@ -20,6 +20,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
       private List<CurveChartTemplate> _chartTemplatesToEdit;
       private List<string> _forbiddenNames = new List<string>();
       private CurveChartTypes? _managedChartType;
+      private IWithChartTemplates _templateOwner;
       public bool HasChanged { private set; get; }
 
       public ChartTemplateManagerPresenter(IChartTemplateManagerView view, IChartTemplatingTask chartTemplatingTask,
@@ -41,16 +42,22 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
       public void EditTemplates(IEnumerable<CurveChartTemplate> chartTemplates)
       {
-         editTemplates(chartTemplates, new List<string>(), managedChartType: null);
+         EditTemplates(chartTemplates, templateOwner: null);
       }
 
-      public void EditTemplates(IEnumerable<CurveChartTemplate> chartTemplates, IReadOnlyList<string> forbiddenNames, CurveChartTypes managedChartType)
+      public void EditTemplates(IEnumerable<CurveChartTemplate> chartTemplates, IWithChartTemplates templateOwner)
       {
-         editTemplates(chartTemplates, forbiddenNames, managedChartType);
+         editTemplates(chartTemplates, new List<string>(), managedChartType: null, templateOwner);
       }
 
-      private void editTemplates(IEnumerable<CurveChartTemplate> chartTemplates, IReadOnlyList<string> forbiddenNames, CurveChartTypes? managedChartType)
+      public void EditTemplates(IEnumerable<CurveChartTemplate> chartTemplates, IReadOnlyList<string> forbiddenNames, CurveChartTypes managedChartType, IWithChartTemplates templateOwner = null)
       {
+         editTemplates(chartTemplates, forbiddenNames, managedChartType, templateOwner);
+      }
+
+      private void editTemplates(IEnumerable<CurveChartTemplate> chartTemplates, IReadOnlyList<string> forbiddenNames, CurveChartTypes? managedChartType, IWithChartTemplates templateOwner)
+      {
+         _templateOwner = templateOwner;
          _managedChartType = managedChartType;
          _forbiddenNames = forbiddenNames.ToList();
          _chartTemplatesToEdit = chartTemplates.OrderBy(x => x.Name).ToList();
@@ -125,6 +132,16 @@ namespace OSPSuite.Presentation.Presenters.Charts
          }
 
          addTemplate(template);
+      }
+
+      public void CopyTemplatesFromProject()
+      {
+         var copiedTemplates = _chartTemplatingTask.CopyTemplatesFromProject(_templateOwner, _managedChartType, allForbiddenNames());
+         if (!copiedTemplates.Any())
+            return;
+
+         rebindAction(() => _chartTemplatesToEdit.AddRange(copiedTemplates));
+         ShowTemplateDetails(copiedTemplates.Last());
       }
 
       private void addTemplate(CurveChartTemplate template)

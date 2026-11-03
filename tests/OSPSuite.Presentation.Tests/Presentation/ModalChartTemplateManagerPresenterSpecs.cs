@@ -4,6 +4,7 @@ using FakeItEasy;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Chart;
+using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Presentation.Presenters;
 using OSPSuite.Presentation.Presenters.Charts;
@@ -28,7 +29,8 @@ namespace OSPSuite.Presentation.Presentation
    public class When_editing_templates_and_the_user_clicks_ok : concern_for_ModalChartTemplateManagerPresenter
    {
       private List<CurveChartTemplate> _editedTemplates;
-      private IEnumerable<CurveChartTemplate> _templatesToManage;
+      private IWithChartTemplates _editedTemplateOwner;
+      private IWithChartTemplates _templateOwner;
       private CurveChartTemplate _template1;
       private CurveChartTemplate _template2;
       private CurveChartTemplate _cloneTemplate1;
@@ -37,8 +39,12 @@ namespace OSPSuite.Presentation.Presentation
       protected override void Context()
       {
          base.Context();
-         A.CallTo(() => _chartTemplateManagerPresenter.EditTemplates(A<IEnumerable<CurveChartTemplate>>._))
-            .Invokes(x => _editedTemplates = x.GetArgument<IEnumerable<CurveChartTemplate>>(0).ToList());
+         A.CallTo(() => _chartTemplateManagerPresenter.EditTemplates(A<IEnumerable<CurveChartTemplate>>._, A<IWithChartTemplates>._))
+            .Invokes(x =>
+            {
+               _editedTemplates = x.GetArgument<IEnumerable<CurveChartTemplate>>(0).ToList();
+               _editedTemplateOwner = x.GetArgument<IWithChartTemplates>(1);
+            });
 
          _template1 = new CurveChartTemplate { Name = "Template1" };
          _cloneTemplate1 = new CurveChartTemplate { Name = "Template1" };
@@ -47,18 +53,25 @@ namespace OSPSuite.Presentation.Presentation
          A.CallTo(() => _cloneManager.Clone(_template1)).Returns(_cloneTemplate1);
          A.CallTo(() => _cloneManager.Clone(_template2)).Returns(_cloneTemplate2);
 
-         _templatesToManage = new List<CurveChartTemplate> { _template1, _template2 };
+         _templateOwner = A.Fake<IWithChartTemplates>();
+         A.CallTo(() => _templateOwner.ChartTemplates).Returns(new[] { _template1, _template2 });
       }
 
       protected override void Because()
       {
-         sut.EditTemplates(_templatesToManage);
+         sut.EditTemplates(_templateOwner);
       }
 
       [Observation]
       public void should_clone_the_given_templates_and_display_them_in_the_view()
       {
          _editedTemplates.ShouldOnlyContain(_cloneTemplate1, _cloneTemplate2);
+      }
+
+      [Observation]
+      public void should_let_the_template_manager_know_which_object_owns_the_templates()
+      {
+         _editedTemplateOwner.ShouldBeEqualTo(_templateOwner);
       }
    }
 
@@ -70,11 +83,12 @@ namespace OSPSuite.Presentation.Presentation
       private CurveChartTemplate _predictedVsObservedTemplate;
       private CurveChartTemplate _cloneTimeProfileTemplate;
       private CurveChartTemplate _clonePredictedVsObservedTemplate;
+      private IWithChartTemplates _templateOwner;
 
       protected override void Context()
       {
          base.Context();
-         A.CallTo(() => _chartTemplateManagerPresenter.EditTemplates(A<IEnumerable<CurveChartTemplate>>._, A<IReadOnlyList<string>>._, CurveChartTypes.PredictedVsObserved))
+         A.CallTo(() => _chartTemplateManagerPresenter.EditTemplates(A<IEnumerable<CurveChartTemplate>>._, A<IReadOnlyList<string>>._, CurveChartTypes.PredictedVsObserved, A<IWithChartTemplates>._))
             .Invokes(x =>
             {
                _editedTemplates = x.GetArgument<IEnumerable<CurveChartTemplate>>(0).ToList();
@@ -89,11 +103,14 @@ namespace OSPSuite.Presentation.Presentation
          A.CallTo(() => _cloneManager.Clone(_predictedVsObservedTemplate)).Returns(_clonePredictedVsObservedTemplate);
 
          A.CallTo(() => _chartTemplateManagerPresenter.EditedTemplates).Returns(new[] {_clonePredictedVsObservedTemplate});
+
+         _templateOwner = A.Fake<IWithChartTemplates>();
+         A.CallTo(() => _templateOwner.ChartTemplates).Returns(new[] {_timeProfileTemplate, _predictedVsObservedTemplate});
       }
 
       protected override void Because()
       {
-         sut.EditTemplates(new[] {_timeProfileTemplate, _predictedVsObservedTemplate}, CurveChartTypes.PredictedVsObserved);
+         sut.EditTemplates(_templateOwner, CurveChartTypes.PredictedVsObserved);
       }
 
       [Observation]

@@ -55,6 +55,16 @@ namespace OSPSuite.Presentation.Services.Charts
       CurveChartTemplate LoadTemplateFromFile(string filePath, IReadOnlyList<string> forbiddenNames);
 
       /// <summary>
+      ///    Lets the user select templates owned by the current project or by any other object of the project owning chart
+      ///    templates (e.g. simulations), except <paramref name="templateOwner" />, and returns a copy of each selected
+      ///    template. Only templates created for charts of type <paramref name="chartType" /> are offered, or all templates
+      ///    if <paramref name="chartType" /> is <c>null</c>. The user will be asked to enter a unique name for each copy
+      ///    whose name is part of the <paramref name="forbiddenNames" /> or is used by a previous copy. Copies whose renaming
+      ///    was canceled by the user are not returned
+      /// </summary>
+      IReadOnlyList<CurveChartTemplate> CopyTemplatesFromProject(IWithChartTemplates templateOwner, CurveChartTypes? chartType, IReadOnlyList<string> forbiddenNames);
+
+      /// <summary>
       /// Initializes the given <paramref name="chart"/> from the <paramref name="template"/>.
       /// </summary>
       /// <param name="chart">Chart to initialize</param>
@@ -148,14 +158,40 @@ namespace OSPSuite.Presentation.Services.Charts
          if (template == null)
             return null;
 
-         if (forbiddenNames.Contains(template.Name))
-         {
-            var newName = retrieveNewNamesForTemplate(forbiddenNames, Captions.RenameTemplate, template.Name);
-            if (string.IsNullOrEmpty(newName))
-               return null;
+         return withUniqueName(template, forbiddenNames);
+      }
 
-            template.Name = newName;
+      public IReadOnlyList<CurveChartTemplate> CopyTemplatesFromProject(IWithChartTemplates templateOwner, CurveChartTypes? chartType, IReadOnlyList<string> forbiddenNames)
+      {
+         using (var presenter = _applicationController.Start<ICopyChartTemplatesPresenter>())
+         {
+            var templatesToCopy = presenter.SelectTemplatesToCopy(templateOwner, chartType);
+            var usedNames = forbiddenNames.ToList();
+            var copiedTemplates = new List<CurveChartTemplate>();
+            foreach (var templateToCopy in templatesToCopy)
+            {
+               var copiedTemplate = withUniqueName(_cloneManager.Clone(templateToCopy), usedNames);
+               if (copiedTemplate == null)
+                  continue;
+
+               usedNames.Add(copiedTemplate.Name);
+               copiedTemplates.Add(copiedTemplate);
+            }
+
+            return copiedTemplates;
          }
+      }
+
+      private CurveChartTemplate withUniqueName(CurveChartTemplate template, IReadOnlyList<string> forbiddenNames)
+      {
+         if (!forbiddenNames.Contains(template.Name))
+            return template;
+
+         var newName = retrieveNewNamesForTemplate(forbiddenNames, Captions.RenameTemplate, template.Name);
+         if (string.IsNullOrEmpty(newName))
+            return null;
+
+         template.Name = newName;
          return template;
       }
 
@@ -173,12 +209,12 @@ namespace OSPSuite.Presentation.Services.Charts
 
       public ICommand ManageTemplates(IWithChartTemplates withChartTemplates)
       {
-         return manageTemplates(withChartTemplates, presenter => presenter.EditTemplates(withChartTemplates.ChartTemplates));
+         return manageTemplates(withChartTemplates, presenter => presenter.EditTemplates(withChartTemplates));
       }
 
       public ICommand ManageTemplates(IWithChartTemplates withChartTemplates, CurveChartTypes chartType)
       {
-         return manageTemplates(withChartTemplates, presenter => presenter.EditTemplates(withChartTemplates.ChartTemplates, chartType));
+         return manageTemplates(withChartTemplates, presenter => presenter.EditTemplates(withChartTemplates, chartType));
       }
 
       private ICommand manageTemplates(IWithChartTemplates withChartTemplates, Action<IModalChartTemplateManagerPresenter> editTemplatesAction)
