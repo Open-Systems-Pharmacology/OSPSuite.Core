@@ -134,6 +134,9 @@ namespace OSPSuite.Assets
       public static readonly string LoadChartTemplateFromFile = "Load Chart Template...";
       public static readonly string OpenLayoutFromFile = "Open Layout Template...";
       public static readonly string LoadTemplate = "Load Template";
+      public static readonly string CopyTemplatesFromProject = "Copy From Project";
+      public static readonly string CopyChartTemplates = "Copy Chart Templates";
+      public static readonly string CopyFrom = "Copy from";
       public static readonly string ManageChartTemplates = "Manage Chart Templates";
       public static readonly string OutputSelections = "Output Selections";
       public static readonly string NewName = "New Name";

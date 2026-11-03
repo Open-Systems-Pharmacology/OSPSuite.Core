@@ -9,13 +9,17 @@ namespace OSPSuite.Presentation.Presenters.Charts
 {
    public interface IModalChartTemplateManagerPresenter : IPresenter<IModalChartTemplateManagerView>, IDisposablePresenter
    {
-      void EditTemplates(IEnumerable<CurveChartTemplate> chartTemplates);
+      /// <summary>
+      ///    Edits a copy of the templates owned by <paramref name="withChartTemplates" />
+      /// </summary>
+      void EditTemplates(IWithChartTemplates withChartTemplates);
 
       /// <summary>
-      ///    Edits the templates created for charts of type <paramref name="chartTypeToManage" /> only. Templates created for
-      ///    other chart types are not shown but are preserved and returned as part of <see cref="EditedTemplates" />
+      ///    Edits a copy of the templates owned by <paramref name="withChartTemplates" /> created for charts of type
+      ///    <paramref name="chartTypeToManage" /> only. Templates created for other chart types are not shown but are
+      ///    preserved and returned as part of <see cref="EditedTemplates" />
       /// </summary>
-      void EditTemplates(IEnumerable<CurveChartTemplate> chartTemplates, CurveChartTypes chartTypeToManage);
+      void EditTemplates(IWithChartTemplates withChartTemplates, CurveChartTypes chartTypeToManage);
 
       bool HasChanged { get; }
       IEnumerable<CurveChartTemplate> EditedTemplates { get; }
@@ -38,18 +42,18 @@ namespace OSPSuite.Presentation.Presenters.Charts
          view.SetBaseView(_chartTemplateManagerPresenter.BaseView);
       }
 
-      public void EditTemplates(IEnumerable<CurveChartTemplate> chartTemplates)
+      public void EditTemplates(IWithChartTemplates withChartTemplates)
       {
          _hiddenTemplates.Clear();
-         _chartTemplateManagerPresenter.EditTemplates(cloneOf(chartTemplates));
+         _chartTemplateManagerPresenter.EditTemplates(cloneOf(withChartTemplates.ChartTemplates), withChartTemplates);
       }
 
-      public void EditTemplates(IEnumerable<CurveChartTemplate> chartTemplates, CurveChartTypes chartTypeToManage)
+      public void EditTemplates(IWithChartTemplates withChartTemplates, CurveChartTypes chartTypeToManage)
       {
-         var clonedTemplates = cloneOf(chartTemplates);
+         var clonedTemplates = cloneOf(withChartTemplates.ChartTemplates);
          _hiddenTemplates.Clear();
          _hiddenTemplates.AddRange(clonedTemplates.Where(x => x.ChartType != chartTypeToManage));
-         _chartTemplateManagerPresenter.EditTemplates(clonedTemplates.Where(x => x.ChartType == chartTypeToManage), _hiddenTemplates.AllNames(), chartTypeToManage);
+         _chartTemplateManagerPresenter.EditTemplates(clonedTemplates.Where(x => x.ChartType == chartTypeToManage), _hiddenTemplates.AllNames(), chartTypeToManage, withChartTemplates);
       }
 
       private List<CurveChartTemplate> cloneOf(IEnumerable<CurveChartTemplate> chartTemplates)
