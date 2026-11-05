@@ -73,6 +73,12 @@ namespace OSPSuite.Infrastructure.Import.Core
             {
                value.RemoveAt(index);
             }
+
+            //the error type of a removed row must not decide the error type of the data set
+            foreach (var errorStdDevValues in dataSet.Data.Keys.Select(x => x.ErrorStdDevValues).Where(x => x.Any()))
+            {
+               errorStdDevValues.RemoveAt(index);
+            }
          }
       }
    }
