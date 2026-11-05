@@ -304,12 +304,12 @@ namespace OSPSuite.Presentation.Presenters.Importer
          var columns = new List<string>() { column.Unit.ColumnName };
          var dimensions = new List<IDimension>();
 
-         string measurementUnit = null;
+         UnitDescription measurementUnit = null;
          if (model.ColumnInfo.RelatedColumnOf != null) //if there is a measurement column
          {
             var relatedColumnDTO = _mappings.FirstOrDefault(c => c.MappingName == model.ColumnInfo.RelatedColumnOf);
             var relatedColumn = ((MappingDataFormatParameter)relatedColumnDTO?.Source)?.MappedColumn;
-            measurementUnit = relatedColumn?.Unit?.SelectedUnit;
+            measurementUnit = relatedColumn?.Unit;
 
             if (relatedColumn != null && !relatedColumn.Unit.ColumnName.IsNullOrEmpty())
             {

@@ -559,7 +559,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
          (
             A<IEnumerable<string>>.That.Matches(l => l.Contains(Constants.STD_DEV_ARITHMETIC) && l.Contains(Constants.STD_DEV_GEOMETRIC)),
             A<string>.Ignored,
-            A<Func<string, string>>.Ignored
+            A<Func<string, UnitDescription>>.Ignored
          )).MustHaveHappened();
       }
    }
@@ -945,6 +945,32 @@ namespace OSPSuite.Presentation.Importer.Presenters
          var addGroupByMapping = new ColumnMappingDTO(ColumnMappingDTO.ColumnType.AddGroupBy, "", new AddGroupByFormatParameter(Captions.Importer.SelectToAdd), 0);
          sut.GetAvailableRowsFor(addGroupByMapping).Select(x => x.Description).ShouldContain(ERROR_TYPE_COLUMN);
          sut.GetAvailableOptionsFor(addGroupByMapping).Select(x => x.Label).ShouldContain(ERROR_TYPE_COLUMN);
+      }
+   }
+
+   public class When_setting_editor_settings_for_an_error_whose_measurement_unit_comes_from_a_column : concern_for_ColumnMappingPresenter_with_error_type_column
+   {
+      private Func<string, UnitDescription> _unitForErrorType;
+
+      protected override void Context()
+      {
+         base.Context();
+         ((MappingDataFormatParameter)_parameters[1]).MappedColumn.Unit = new UnitDescription("mol/l", "Col2");
+         A.CallTo(() => _mappingParameterEditorPresenter.SetErrorTypeOptions(A<IEnumerable<string>>._, A<string>._, A<Func<string, UnitDescription>>._))
+            .Invokes((IEnumerable<string> types, string selected, Func<string, UnitDescription> unitForErrorType) => _unitForErrorType = unitForErrorType);
+         UpdateSettings();
+      }
+
+      protected override void Because()
+      {
+         sut.SetSubEditorSettingsForMapping(errorMapping);
+      }
+
+      [Observation]
+      public void should_give_the_unit_column_of_the_measurement_to_an_arithmetic_error()
+      {
+         _unitForErrorType(Constants.STD_DEV_ARITHMETIC).ColumnName.ShouldBeEqualTo("Col2");
+         _unitForErrorType(Constants.STD_DEV_GEOMETRIC).ShouldBeNull();
       }
    }
 

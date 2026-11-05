@@ -5,6 +5,7 @@ using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Import;
 using OSPSuite.Presentation.Views.Importer;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Presentation.Presenters.Importer
 {
@@ -13,7 +14,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
       void HideAll();
       void SetUnitOptions(Column importDataColumn, IReadOnlyList<IDimension> dimensions, IEnumerable<string> availableColumns);
       void SetLloqOptions(IEnumerable<string> columns, string selected, bool lloqColumnsSelection);
-      void SetErrorTypeOptions(IEnumerable<string> types, string selected, Func<string, string> onTypeChanged);
+      void SetErrorTypeOptions(IEnumerable<string> types, string selected, Func<string, UnitDescription> onTypeChanged);
       void SetErrorTypeColumnOptions(IEnumerable<string> columns, string selected, bool errorTypeFromColumn);
       int SelectedErrorType { get; }
       bool ErrorTypeFromColumn();
@@ -33,7 +34,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
       private readonly ILloqEditorPresenter _lloqEditorPresenter;
       private readonly IOptionsEditorPresenter _errorEditorPresenter;
       private readonly IErrorTypeColumnEditorPresenter _errorTypeColumnEditorPresenter;
-      private Func<string, string> _unitValueOnTypeChanged;
+      private Func<string, UnitDescription> _unitValueOnTypeChanged;
       private bool _settingErrorTypeColumnOptions;
 
 
@@ -113,7 +114,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          View.ShowLloq();
       }
 
-      public void SetErrorTypeOptions(IEnumerable<string> types, string selected, Func<string, string> unitValueOnTypeChanged)
+      public void SetErrorTypeOptions(IEnumerable<string> types, string selected, Func<string, UnitDescription> unitValueOnTypeChanged)
       {
          _unitValueOnTypeChanged = unitValueOnTypeChanged;
          _errorEditorPresenter.SetOptions(new Dictionary<string, IEnumerable<string>>() {{"", types}}, selected);
@@ -174,7 +175,16 @@ namespace OSPSuite.Presentation.Presenters.Importer
          if (unit == null)
             return;
 
-         _unitsEditorPresenter.SelectUnit(unit);
+         //when the units come from a column, the unit column of the error is kept, or else the one of the measurement is used
+         if (!unit.ColumnName.IsNullOrEmpty())
+         {
+            if (Unit.ColumnName.IsNullOrEmpty())
+               _unitsEditorPresenter.SelectColumn(unit.ColumnName);
+
+            return;
+         }
+
+         _unitsEditorPresenter.SelectUnit(unit.SelectedUnit);
       }
    }
 }

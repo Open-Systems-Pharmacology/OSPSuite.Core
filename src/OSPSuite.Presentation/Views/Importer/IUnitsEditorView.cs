@@ -14,5 +14,6 @@ namespace OSPSuite.Presentation.Views.Importer
       void ShowToggle();
       void SetUnitsManualSelection();
       string SelectedUnit { get; set; }
+      string SelectedColumn { get; set; }
    }
 }
