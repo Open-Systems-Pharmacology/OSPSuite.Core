@@ -1468,10 +1468,14 @@ namespace OSPSuite.Assets
       public static string ColumnNotFound(string columnName) => $"Column {columnName} unexpectedly not found.";
       public static string BaseGridColumnNotFoundException(string columnName) => $"BaseGrid Column {columnName} unexpectedly not found.";
       public static string UnknownErrorType(string sheetName, string dataSetName, string errorType, IEnumerable<string> acceptedErrorTypes) =>
-         $"The error type '{errorType}' of the data set '{dataSetName}' in the sheet '{sheetName}' is not supported. Accepted values are: {acceptedErrorTypes.ToString(", ")}. Leave the cell empty to use the default error type.";
+         $"The error type '{errorType}' of the {dataSetInSheet(sheetName, dataSetName)} is not supported. Accepted values are: {acceptedErrorTypes.ToString(", ")}. Leave the cell empty to use the default error type.";
 
       public static string ConflictingErrorTypes(string sheetName, string dataSetName, IEnumerable<string> errorTypes) =>
-         $"The data set '{dataSetName}' in the sheet '{sheetName}' has more than one error type: {errorTypes.ToString(", ")}. All rows of a data set must have the same error type. Group the data by the error type column to split it into several data sets.";
+         $"The {dataSetInSheet(sheetName, dataSetName)} has more than one error type: {errorTypes.ToString(", ")}. All rows of a data set must have the same error type. Group the data by the error type column to split it into several data sets.";
+
+      //without grouping, the data set has no name and is the whole sheet
+      private static string dataSetInSheet(string sheetName, string dataSetName) =>
+         string.IsNullOrEmpty(dataSetName) ? $"sheet '{sheetName}'" : $"data set '{dataSetName}' in the sheet '{sheetName}'";
 
       public static string EmptyDataSet(string dataSetName) => $"Your settings ended up with following empty datasets: '{dataSetName}'. Please remove the data set from your data, filter it out or add at least one observation for it.";
 

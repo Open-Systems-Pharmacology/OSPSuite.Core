@@ -1154,6 +1154,13 @@ namespace OSPSuite.Infrastructure.Import
       }
 
       [Observation]
+      public void should_not_name_a_data_set_without_grouping()
+      {
+         var error = _errors.ErrorsFor(_fakeDataSet).OfType<UnknownErrorTypeParseErrorDescription>().Single();
+         error.Message.Contains("data set").ShouldBeFalse();
+      }
+
+      [Observation]
       public void should_not_report_a_conflict()
       {
          _errors.ErrorsFor(_fakeDataSet).OfType<ConflictingErrorTypesParseErrorDescription>().ShouldBeEmpty();
