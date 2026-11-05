@@ -882,7 +882,8 @@ namespace OSPSuite.Assets
          public static readonly string CovarianceMatrix = "Covariance Matrix";
          public static readonly string CalculateSensitivity = "Calculate Sensitivity";
          public static readonly string Duration = "Elapsed Time";
-         public static readonly string ConfidenceInterval = "95% Confidence Interval";
+         public static readonly string ConfidenceInterval = "95% CI (±)";
+         public static readonly string RelativeConfidenceInterval = "95% CI (±%)";
          public static readonly string ExportParametersHistory = "Parameters History";
          public static readonly string ParametersHistory = "Parameters History";
          public static readonly string CorrelationMatrixNotAvailable = $"Correlation matrix was not calculated. Ensure that the option '{CalculateSensitivity}' is selected";

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Utility.Collections;
 using OSPSuite.Core.Domain.ParameterIdentifications;
@@ -50,17 +51,24 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
       private ParameterConfidenceIntervalDTO confidenceIntervalDTOFrom(ICache<string, double> confidenceInterval, IdentificationParameter identificationParameter, OptimizedParameterValue optimizedParameter)
       {
          var value = optimizedParameter.Value;
+         var interval = confidenceInterval[identificationParameter.Name];
          var displayUnit = identificationParameter.DisplayUnit;
-         var valueInDisplayUnit = identificationParameter.Dimension.BaseUnitValueToUnitValue(displayUnit, value);
-         var confidenceIntervalInDisplayUnit = identificationParameter.Dimension.BaseUnitValueToUnitValue(displayUnit, confidenceInterval[identificationParameter.Name]);
+         var dimension = identificationParameter.Dimension;
+         var valueInDisplayUnit = dimension.BaseUnitValueToUnitValue(displayUnit, value);
+         //the confidence interval is a difference, so the unit offset must not be applied
+         var confidenceIntervalInDisplayUnit = dimension.BaseUnitValueToUnitValue(displayUnit, interval) - dimension.BaseUnitValueToUnitValue(displayUnit, 0d);
 
          return new ParameterConfidenceIntervalDTO
          {
             Name = identificationParameter.Name,
             Value = valueInDisplayUnit,
             ConfidenceInterval = confidenceIntervalInDisplayUnit,
+            RelativeConfidenceInterval = relativeConfidenceIntervalFrom(value, interval),
             Unit = displayUnit
          };
       }
+
+      //computed in base unit so that the percentage does not depend on the display unit (e.g. offset of °C)
+      private static double relativeConfidenceIntervalFrom(double value, double confidenceInterval) => value == 0 ? double.NaN : 100 * confidenceInterval / Math.Abs(value);
    }
 }
