@@ -18,8 +18,8 @@ namespace OSPSuite.Core.Domain.Services
    ///    <para>
    ///       The hash is computed from the XML serialization of the object, so that every property that is persisted takes
    ///       part automatically. The serialization is normalized first: the content does not depend on object ids,
-   ///       on the name of the hashed object itself, on creation meta data, snapshots, building block version counters or
-   ///       on the <see cref="ParameterOrigin" /> of parameter values.
+   ///       on the name of the hashed object itself, on creation meta data, snapshots, building block version counters,
+   ///       on the <see cref="ParameterOrigin" /> of parameter values or on the origin of explicit formulas.
    ///    </para>
    /// </summary>
    public interface IBuildingBlockContentHasher
@@ -60,10 +60,12 @@ namespace OSPSuite.Core.Domain.Services
          nameof(ParameterValue.Origin),
       };
 
-      //Attributes that are excluded from the content wherever they appear
+      //Attributes that are excluded from the content wherever they appear: the building block version counter and the
+      //origin of an explicit formula (the formula it was cloned from), which is provenance as well
       private static readonly IReadOnlyList<string> _excludedAttributeNames = new[]
       {
          Constants.Serialization.Attribute.BUILDING_BLOCK_VERSION,
+         Constants.Serialization.Attribute.ORIGIN,
       };
 
       //Attributes that are excluded from the content when they appear on the hashed object itself
@@ -118,6 +120,7 @@ namespace OSPSuite.Core.Domain.Services
          var element = serialize(objectToHash, referenceMarker);
          removeExcludedContent(element);
          replaceIdsWithOrdinals(element, referenceMarker);
+         sortFormulaCaches(element);
          return element;
       }
 
@@ -126,6 +129,8 @@ namespace OSPSuite.Core.Domain.Services
          using (var serializationContext = SerializationTransaction.Create(_container))
          {
             serializationContext.ReferenceMarker = referenceMarker;
+            //strings are written inline so that the output does not depend on the order in which the strings were encountered
+            serializationContext.InlineStrings = true;
             var serializer = _serializerRepository.SerializerFor(objectToSerialize);
             return serializer.Serialize(objectToSerialize, serializationContext);
          }
@@ -191,19 +196,31 @@ namespace OSPSuite.Core.Domain.Services
       }
 
       /// <summary>
-      ///    An element has an object id if its id attribute carries the id of an <see cref="IWithId" />. The string map of
-      ///    the formula cache uses the id attribute for the ordinal of a cached string and the <see cref="ValueOrigin" /> for
-      ///    its database id. Neither is an object id.
+      ///    An element has an object id if its id attribute carries the id of an <see cref="IWithId" />. The
+      ///    <see cref="ValueOrigin" /> uses the id attribute for its database id, which is not an object id.
       /// </summary>
       private static bool isElementWithObjectId(XElement element)
       {
-         if (string.Equals(element.Name.LocalName, Constants.Serialization.VALUE_ORIGIN))
-            return false;
+         return !string.Equals(element.Name.LocalName, Constants.Serialization.VALUE_ORIGIN);
+      }
 
-         var isStringMapEntry = string.Equals(element.Name.LocalName, Constants.Serialization.STRING_MAP) &&
-                                string.Equals(element.Parent?.Name.LocalName, Constants.Serialization.STRING_MAP_LIST);
+      /// <summary>
+      ///    The formulas of a formula cache are serialized in the order in which they were added to the cache, which is not
+      ///    part of the content. They are sorted by their normalized serialization instead. All references to the formulas
+      ///    come from the builders, which are serialized before the cache, so that the ordinals do not depend on the order.
+      /// </summary>
+      private static void sortFormulaCaches(XElement rootElement)
+      {
+         var formulasElements = rootElement.Descendants(Constants.Serialization.FORMULAS).ToList();
+         foreach (var formulasElement in formulasElements)
+         {
+            var sortedFormulas = formulasElement.Elements()
+               .OrderBy(x => x.ToString(SaveOptions.DisableFormatting), StringComparer.Ordinal)
+               .ToList();
 
-         return !isStringMapEntry;
+            formulasElement.RemoveNodes();
+            formulasElement.Add(sortedFormulas);
+         }
       }
 
       private static string hexStringFor(byte[] bytes)

@@ -134,6 +134,11 @@ namespace OSPSuite.Core.Services
          return _objectPathFactory.CreateFormulaUsablePathFrom(path).WithAlias(alias);
       }
 
+      protected IParameter NewParameterWithFormula(string name, IFormula formula)
+      {
+         return _objectBaseFactory.Create<IParameter>().WithName(name).WithDimension(formula.Dimension).WithFormula(formula);
+      }
+
       protected IParameter NewConstantParameter(string name, double value, IDimension dimension, ParameterBuildMode buildMode = ParameterBuildMode.Local)
       {
          var parameter = _objectBaseFactory.Create<IParameter>().WithName(name).WithDimension(dimension).WithFormula(new ConstantFormula(value).WithDimension(dimension));
@@ -700,6 +705,176 @@ namespace OSPSuite.Core.Services
       {
          The.Action(() => sut.ContentHashFor((Module) null)).ShouldThrowAn<ArgumentNullException>();
          The.Action(() => sut.ContentHashFor((IBuildingBlock) null)).ShouldThrowAn<ArgumentNullException>();
+      }
+   }
+
+   public abstract class concern_for_individuals_with_an_initial_formula : concern_for_BuildingBlockContentHasher
+   {
+      protected const string INITIAL_FORMULA_ID = "1";
+      protected const string OTHER_FORMULA_ID = "2";
+      protected IndividualBuildingBlock _individual1;
+      protected IndividualBuildingBlock _individual2;
+
+      protected override void Context()
+      {
+         base.Context();
+         _individual1 = createIndividualWithInitialFormula();
+         _individual2 = createIndividualWithInitialFormula();
+      }
+
+      /// <summary>
+      ///    The weight parameter keeps a cached formula as its initial state. The formula is only referenced by its id.
+      /// </summary>
+      private IndividualBuildingBlock createIndividualWithInitialFormula()
+      {
+         var individual = CreateIndividual();
+         var initialFormula = NewExplicitFormula(individual.FormulaCache, "InitialWeight", "Height * 20", Constants.Dimension.NO_DIMENSION);
+         var otherFormula = NewExplicitFormula(individual.FormulaCache, "OtherFormula", "Height * 30", Constants.Dimension.NO_DIMENSION);
+         initialFormula.Id = INITIAL_FORMULA_ID;
+         otherFormula.Id = OTHER_FORMULA_ID;
+         individual.FormulaCache.Refresh();
+         WeightOf(individual).InitialFormulaId = initialFormula.Id;
+         return individual;
+      }
+
+      protected IndividualParameter WeightOf(IndividualBuildingBlock individual) => individual.First(x => x.Name == "Weight");
+   }
+
+   public class When_hashing_two_individuals_where_the_ids_of_the_initial_formula_and_of_another_formula_are_swapped : concern_for_individuals_with_an_initial_formula
+   {
+      protected override void Context()
+      {
+         base.Context();
+         var initialFormula = _individual2.FormulaCache[INITIAL_FORMULA_ID];
+         var otherFormula = _individual2.FormulaCache[OTHER_FORMULA_ID];
+         initialFormula.Id = OTHER_FORMULA_ID;
+         otherFormula.Id = INITIAL_FORMULA_ID;
+         _individual2.FormulaCache.Refresh();
+      }
+
+      [Observation]
+      public void the_initial_formula_should_be_another_formula()
+      {
+         _individual2.FormulaCache[WeightOf(_individual2).InitialFormulaId].Name.ShouldBeEqualTo("OtherFormula");
+      }
+
+      [Observation]
+      public void should_return_different_hashes()
+      {
+         sut.ContentHashFor(_individual1).ShouldNotBeEqualTo(sut.ContentHashFor(_individual2));
+         sut.HaveSameContent(_individual1, _individual2).ShouldBeFalse();
+      }
+   }
+
+   public class When_hashing_two_individuals_where_the_initial_formula_has_another_id : concern_for_individuals_with_an_initial_formula
+   {
+      protected override void Context()
+      {
+         base.Context();
+         var initialFormula = _individual2.FormulaCache[INITIAL_FORMULA_ID];
+         initialFormula.Id = "another id";
+         _individual2.FormulaCache.Refresh();
+         WeightOf(_individual2).InitialFormulaId = initialFormula.Id;
+      }
+
+      [Observation]
+      public void should_return_the_same_hash()
+      {
+         sut.ContentHashFor(_individual1).ShouldBeEqualTo(sut.ContentHashFor(_individual2));
+         sut.HaveSameContent(_individual1, _individual2).ShouldBeTrue();
+      }
+   }
+
+   public class When_hashing_two_individuals_that_differ_in_the_origin_of_a_formula : concern_for_BuildingBlockContentHasher
+   {
+      private IndividualBuildingBlock _individual1;
+      private IndividualBuildingBlock _individual2;
+
+      protected override void Context()
+      {
+         base.Context();
+         _individual1 = CreateIndividual();
+         _individual2 = CreateIndividual();
+         _individual2.FormulaCache.First().DowncastTo<ExplicitFormula>().OriginId = "id of the formula this one was cloned from";
+      }
+
+      [Observation]
+      public void should_return_the_same_hash()
+      {
+         sut.ContentHashFor(_individual1).ShouldBeEqualTo(sut.ContentHashFor(_individual2));
+         sut.HaveSameContent(_individual1, _individual2).ShouldBeTrue();
+      }
+   }
+
+   public class When_hashing_two_individuals_whose_formulas_were_added_to_the_cache_in_opposite_order : concern_for_BuildingBlockContentHasher
+   {
+      private IndividualBuildingBlock _individual1;
+      private IndividualBuildingBlock _individual2;
+
+      protected override void Context()
+      {
+         base.Context();
+         _individual1 = CreateIndividual();
+         _individual2 = CreateIndividual();
+         addFormulasFor(_individual1, "Weight", "Height");
+         addFormulasFor(_individual2, "Height", "Weight");
+      }
+
+      private void addFormulasFor(IndividualBuildingBlock individual, params string[] parameterNames)
+      {
+         parameterNames.Each(parameterName =>
+         {
+            var formula = NewExplicitFormula(individual.FormulaCache, $"{parameterName}Twice", $"{parameterName} * 2", Constants.Dimension.NO_DIMENSION);
+            formula.AddObjectPath(PathWithAlias(parameterName, Constants.ORGANISM, parameterName));
+         });
+      }
+
+      [Observation]
+      public void should_return_the_same_hash()
+      {
+         sut.ContentHashFor(_individual1).ShouldBeEqualTo(sut.ContentHashFor(_individual2));
+         sut.HaveSameContent(_individual1, _individual2).ShouldBeTrue();
+      }
+   }
+
+   public class When_hashing_two_modules_whose_formulas_were_added_to_the_cache_in_opposite_order : concern_for_BuildingBlockContentHasher
+   {
+      private Module _module1;
+      private Module _module2;
+
+      protected override void Context()
+      {
+         base.Context();
+         _module1 = CreateModule();
+         _module2 = CreateModule();
+         addFormulasAndParametersFor(_module1, "A", "B");
+         addFormulasAndParametersFor(_module2, "B", "A");
+      }
+
+      /// <summary>
+      ///    The formulas are added to the cache in the given order. The parameters referencing them are added in the same
+      ///    order in both modules
+      /// </summary>
+      private void addFormulasAndParametersFor(Module module, params string[] moleculeNames)
+      {
+         var spatialStructure = module.SpatialStructure;
+         var liver = spatialStructure.TopContainers.First(x => x.Name == Constants.ORGANISM).Container("Liver");
+         var formulas = moleculeNames.ToDictionary(moleculeName => moleculeName, moleculeName =>
+         {
+            var formula = NewExplicitFormula(spatialStructure.FormulaCache, $"{moleculeName}Concentration", $"{moleculeName} / Volume", Constants.Dimension.NO_DIMENSION);
+            formula.AddObjectPath(PathWithAlias(moleculeName, ObjectPath.PARENT_CONTAINER, moleculeName));
+            formula.AddObjectPath(PathWithAlias("Volume", ObjectPath.PARENT_CONTAINER, "Volume"));
+            return formula;
+         });
+
+         moleculeNames.OrderBy(x => x).Each(moleculeName => liver.Add(NewParameterWithFormula($"{moleculeName}Concentration", formulas[moleculeName])));
+      }
+
+      [Observation]
+      public void should_return_the_same_hash()
+      {
+         sut.ContentHashFor(_module1).ShouldBeEqualTo(sut.ContentHashFor(_module2));
+         sut.HaveSameContent(_module1, _module2).ShouldBeTrue();
       }
    }
 }

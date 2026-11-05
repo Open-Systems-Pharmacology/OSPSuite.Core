@@ -46,6 +46,14 @@ namespace OSPSuite.Core.Serialization.Xml
       /// </summary>
       public string ReferenceMarker { get; set; } = string.Empty;
 
+      /// <summary>
+      ///    Specifies whether strings such as object paths, aliases and dimensions are written as they are instead of being
+      ///    replaced by their ordinal in the string map of the formula cache (see <see cref="IdForString" />). Default is
+      ///    <c>false</c>, so that the generated xml stays small. A consumer that post-processes the serialization sets it so
+      ///    that the output does not depend on the order in which the strings were encountered.
+      /// </summary>
+      public bool InlineStrings { get; set; }
+
       //cache containing as key the origin formula id of a formula and as value the corresponding formula id
       private readonly ICache<string, string> _formulaIdMap = new Cache<string, string>();
 
@@ -107,6 +115,9 @@ namespace OSPSuite.Core.Serialization.Xml
       /// </summary>
       public string IdForString(string stringToCache)
       {
+         if (InlineStrings)
+            return stringToCache;
+
          if (!StringMap.Contains(stringToCache))
          {
             int id = StringMap.Count();
