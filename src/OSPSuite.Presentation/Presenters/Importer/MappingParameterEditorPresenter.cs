@@ -34,6 +34,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
       private readonly IOptionsEditorPresenter _errorEditorPresenter;
       private readonly IErrorTypeColumnEditorPresenter _errorTypeColumnEditorPresenter;
       private Func<string, string> _unitValueOnTypeChanged;
+      private bool _settingErrorTypeColumnOptions;
 
 
       public MappingParameterEditorPresenter(
@@ -122,7 +123,17 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       public void SetErrorTypeColumnOptions(IEnumerable<string> columns, string selected, bool errorTypeFromColumn)
       {
-         _errorTypeColumnEditorPresenter.SetOptions(columns, errorTypeFromColumn, selected);
+         //setting the toggle raises its changed event, which must not change the units loaded for the mapping
+         _settingErrorTypeColumnOptions = true;
+         try
+         {
+            _errorTypeColumnEditorPresenter.SetOptions(columns, errorTypeFromColumn, selected);
+         }
+         finally
+         {
+            _settingErrorTypeColumnOptions = false;
+         }
+
          updateViewForErrorType(_errorEditorPresenter.SelectedText);
       }
 
@@ -140,6 +151,9 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       private void errorTypeFromColumnChanged()
       {
+         if (_settingErrorTypeColumnOptions)
+            return;
+
          var errorType = _errorEditorPresenter.SelectedText;
          updateViewForErrorType(errorType);
 

@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using FakeItEasy;
 using OSPSuite.BDDHelper;
 using OSPSuite.Core.Domain;
@@ -29,7 +30,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
             type => type == Constants.STD_DEV_ARITHMETIC ? MEASUREMENT_UNIT : null);
       }
 
-      protected override void Because()
+      protected void turnOnErrorTypeFromColumn()
       {
          A.CallTo(() => _errorTypeColumnEditorPresenter.ErrorTypeFromColumn()).Returns(true);
          _errorTypeColumnEditorPresenter.OnErrorTypeFromColumnChanged += Raise.WithEmpty();
@@ -42,6 +43,11 @@ namespace OSPSuite.Presentation.Importer.Presenters
       {
          base.Context();
          setErrorType(Constants.STD_DEV_GEOMETRIC);
+      }
+
+      protected override void Because()
+      {
+         turnOnErrorTypeFromColumn();
       }
 
       [Observation]
@@ -59,8 +65,36 @@ namespace OSPSuite.Presentation.Importer.Presenters
          setErrorType(Constants.STD_DEV_ARITHMETIC);
       }
 
+      protected override void Because()
+      {
+         turnOnErrorTypeFromColumn();
+      }
+
       [Observation]
       public void should_keep_the_selected_unit()
+      {
+         A.CallTo(() => _unitsEditorPresenter.SelectUnit(A<string>._)).MustNotHaveHappened();
+      }
+   }
+
+   public class When_setting_the_error_type_column_options_after_editing_a_geometric_error : concern_for_MappingParameterEditorPresenter
+   {
+      protected override void Context()
+      {
+         base.Context();
+         setErrorType(Constants.STD_DEV_GEOMETRIC);
+         //like the view, setting the toggle raises its changed event
+         A.CallTo(() => _errorTypeColumnEditorPresenter.SetOptions(A<IEnumerable<string>>._, true, A<string>._))
+            .Invokes(turnOnErrorTypeFromColumn);
+      }
+
+      protected override void Because()
+      {
+         sut.SetErrorTypeColumnOptions(new[] { "Error type" }, "Error type", true);
+      }
+
+      [Observation]
+      public void should_keep_the_unit_loaded_for_the_mapping()
       {
          A.CallTo(() => _unitsEditorPresenter.SelectUnit(A<string>._)).MustNotHaveHappened();
       }
