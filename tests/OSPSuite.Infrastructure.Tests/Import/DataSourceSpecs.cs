@@ -1119,9 +1119,12 @@ namespace OSPSuite.Infrastructure.Import
    {
       protected ParseErrors _errors;
 
+      protected ExtendedColumn errorColumn => _fakeDataSet.Data.First().Data.Keys.First(x => x.ColumnInfo.Name == "Error");
+
+      //one value per row. The last row has no concentration and is removed with the NaN rows
       protected void setErrorStdDevValues(params string[] errorStdDevValues)
       {
-         var errorColumn = _fakeDataSet.Data.First().Data.Keys.First(x => x.ColumnInfo.Name == "Error");
+         errorColumn.Column.ErrorStdDevColumn = "Error type";
          errorColumn.ErrorStdDevValues = errorStdDevValues.ToList();
       }
 
@@ -1138,7 +1141,7 @@ namespace OSPSuite.Infrastructure.Import
       protected override void Context()
       {
          base.Context();
-         setErrorStdDevValues("SD");
+         setErrorStdDevValues("SD", "SD", "SD");
       }
 
       [Observation]
@@ -1162,7 +1165,7 @@ namespace OSPSuite.Infrastructure.Import
       protected override void Context()
       {
          base.Context();
-         setErrorStdDevValues("ASD", "GSD");
+         setErrorStdDevValues("ASD", "GSD", "ASD");
       }
 
       [Observation]
@@ -1179,7 +1182,7 @@ namespace OSPSuite.Infrastructure.Import
       protected override void Context()
       {
          base.Context();
-         setErrorStdDevValues("gsd", Constants.STD_DEV_GEOMETRIC);
+         setErrorStdDevValues("gsd", Constants.STD_DEV_GEOMETRIC, "GSD");
       }
 
       [Observation]
@@ -1189,13 +1192,85 @@ namespace OSPSuite.Infrastructure.Import
       }
    }
 
+   public class When_adding_sheets_with_a_removed_row_carrying_another_error_type : concern_for_DataSource_with_error_type_from_column
+   {
+      protected override void Context()
+      {
+         base.Context();
+         setErrorStdDevValues("GSD", "GSD", "ASD");
+      }
+
+      [Observation]
+      public void should_not_report_a_conflict()
+      {
+         _errors.Any().ShouldBeFalse();
+      }
+
+      [Observation]
+      public void should_resolve_the_error_type_from_the_remaining_rows()
+      {
+         errorColumn.ErrorDeviation.ShouldBeEqualTo(Constants.STD_DEV_GEOMETRIC);
+         errorColumn.Column.Dimension.ShouldBeEqualTo(Constants.Dimension.NO_DIMENSION);
+      }
+   }
+
+   public class When_adding_sheets_with_a_removed_row_carrying_the_only_error_type : concern_for_DataSource_with_error_type_from_column
+   {
+      protected override void Context()
+      {
+         base.Context();
+         errorColumn.Column.ErrorStdDev = Constants.STD_DEV_ARITHMETIC;
+         setErrorStdDevValues("", null, "GSD");
+      }
+
+      [Observation]
+      public void should_use_the_default_error_type()
+      {
+         errorColumn.ErrorDeviation.ShouldBeEqualTo(Constants.STD_DEV_ARITHMETIC);
+      }
+   }
+
+   public class When_adding_sheets_without_error_type_and_a_geometric_default : concern_for_DataSource_with_error_type_from_column
+   {
+      protected override void Context()
+      {
+         base.Context();
+         errorColumn.Column.ErrorStdDev = Constants.STD_DEV_GEOMETRIC;
+         setErrorStdDevValues("", "", "");
+      }
+
+      [Observation]
+      public void should_use_a_dimensionless_geometric_error()
+      {
+         errorColumn.ErrorDeviation.ShouldBeEqualTo(Constants.STD_DEV_GEOMETRIC);
+         errorColumn.Column.Dimension.ShouldBeEqualTo(Constants.Dimension.NO_DIMENSION);
+      }
+   }
+
+   public class When_adding_sheets_with_an_arithmetic_error_type_and_a_geometric_default : concern_for_DataSource_with_error_type_from_column
+   {
+      protected override void Context()
+      {
+         base.Context();
+         errorColumn.Column.ErrorStdDev = Constants.STD_DEV_GEOMETRIC;
+         errorColumn.Column.Dimension = Constants.Dimension.NO_DIMENSION;
+         setErrorStdDevValues("ASD", "ASD", "ASD");
+      }
+
+      [Observation]
+      public void should_take_the_dimension_of_the_error_units()
+      {
+         errorColumn.ErrorDeviation.ShouldBeEqualTo(Constants.STD_DEV_ARITHMETIC);
+         errorColumn.Column.Dimension.ShouldBeNull();
+      }
+   }
+
    public abstract class concern_for_DataSource_with_an_arithmetic_error_type_from_column : concern_for_DataSource_with_error_type_from_column
    {
       protected override void Context()
       {
          base.Context();
-         setErrorStdDevValues("ASD");
-         var errorColumn = _fakeDataSet.Data.First().Data.Keys.First(x => x.ColumnInfo.Name == "Error");
+         setErrorStdDevValues("ASD", "ASD", "ASD");
          errorColumn.ErrorDeviation = Constants.STD_DEV_ARITHMETIC;
          errorColumn.Column.ErrorStdDev = Constants.STD_DEV_ARITHMETIC;
          errorColumn.Column.ErrorStdDevColumn = "Error type";

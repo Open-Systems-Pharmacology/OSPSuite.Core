@@ -338,7 +338,7 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
             };
 
             if (columnInfo.IsAuxiliary && !currentParameter.MappedColumn.ErrorStdDevColumn.IsNullOrEmpty())
-               setErrorStdDevFromColumn(extendedColumn, dataSheet, dataSet);
+               readErrorStdDevValues(extendedColumn, dataSheet, dataSet);
 
             dictionary.Add
             (
@@ -353,36 +353,16 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
          return dictionary;
       }
 
-      private void setErrorStdDevFromColumn(ExtendedColumn extendedColumn, DataSheet dataSheet, IReadOnlyList<UnformattedRow> dataSet)
+      //the error type of the data set is resolved by the data source, once the rows to ignore are removed
+      private void readErrorStdDevValues(ExtendedColumn extendedColumn, DataSheet dataSheet, IReadOnlyList<UnformattedRow> dataSet)
       {
-         var column = extendedColumn.Column;
-         checkThatMappedColumnExists(column.ErrorStdDevColumn, dataSheet);
-         var errorStdDevIndex = dataSheet.GetColumnDescription(column.ErrorStdDevColumn).Index;
+         var errorStdDevColumn = extendedColumn.Column.ErrorStdDevColumn;
+         checkThatMappedColumnExists(errorStdDevColumn, dataSheet);
+         var errorStdDevIndex = dataSheet.GetColumnDescription(errorStdDevColumn).Index;
 
          extendedColumn.ErrorStdDevValues = dataSet
             .Select(row => row.Data.ElementAt(errorStdDevIndex)?.Trim())
-            .Where(value => !value.IsNullOrEmpty())
-            .Distinct()
             .ToList();
-
-         //unknown or conflicting values are reported by the data source. The default error type is kept in that case
-         var errorStdDevs = extendedColumn.ErrorStdDevValues.Select(ErrorStdDevValues.ErrorStdDevFor).Distinct().ToList();
-         if (errorStdDevs.Count > 1 || errorStdDevs.Contains(null))
-            return;
-
-         //without any value, the configured error type is used
-         var errorStdDev = errorStdDevs.SingleOrDefault() ?? column.ErrorStdDev;
-         extendedColumn.ErrorDeviation = errorStdDev;
-         column.ErrorStdDev = errorStdDev;
-
-         if (errorStdDev == Constants.STD_DEV_GEOMETRIC)
-         {
-            column.Dimension = Constants.Dimension.NO_DIMENSION;
-            column.Unit = new UnitDescription(column.Dimension.BaseUnit.Name);
-         }
-         //an arithmetic error needs the dimension of its units and not the one of a geometric default
-         else if (column.Dimension == Constants.Dimension.NO_DIMENSION)
-            column.Dimension = null;
       }
 
       private SimulationPoint parseMappingOnSameColumn(MappingDataFormatParameter currentParameter, DataSheet dataSheet, UnformattedRow row)

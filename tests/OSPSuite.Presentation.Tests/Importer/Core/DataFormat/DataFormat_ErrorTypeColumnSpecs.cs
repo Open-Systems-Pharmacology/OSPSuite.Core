@@ -83,30 +83,19 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
       }
 
       [Observation]
-      public void should_use_the_error_type_of_the_column_for_a_data_set_with_one_error_type()
+      public void should_read_the_error_type_of_every_row_of_the_data_set()
+      {
+         errorColumnOf("A").ErrorStdDevValues.ShouldOnlyContainInOrder("GSD", "gsd");
+         errorColumnOf("B").ErrorStdDevValues.ShouldOnlyContainInOrder("", "");
+         errorColumnOf("C").ErrorStdDevValues.ShouldOnlyContainInOrder("ASD", "GSD");
+      }
+
+      [Observation]
+      public void should_leave_the_configured_error_type_to_be_resolved_once_the_rows_to_ignore_are_removed()
       {
          var errorColumn = errorColumnOf("A");
-         errorColumn.ErrorDeviation.ShouldBeEqualTo(Constants.STD_DEV_GEOMETRIC);
-         errorColumn.Column.ErrorStdDev.ShouldBeEqualTo(Constants.STD_DEV_GEOMETRIC);
-         errorColumn.Column.Dimension.ShouldBeEqualTo(Constants.Dimension.NO_DIMENSION);
-         errorColumn.ErrorStdDevValues.ShouldOnlyContain("GSD", "gsd");
-      }
-
-      [Observation]
-      public void should_use_the_configured_error_type_for_a_data_set_without_error_type()
-      {
-         var errorColumn = errorColumnOf("B");
          errorColumn.ErrorDeviation.ShouldBeEqualTo(Constants.STD_DEV_ARITHMETIC);
          errorColumn.Column.Dimension.ShouldBeEqualTo(DomainHelperForSpecs.ConcentrationDimensionForSpecs());
-         errorColumn.ErrorStdDevValues.ShouldBeEmpty();
-      }
-
-      [Observation]
-      public void should_keep_the_configured_error_type_and_the_values_for_a_data_set_with_conflicting_error_types()
-      {
-         var errorColumn = errorColumnOf("C");
-         errorColumn.ErrorDeviation.ShouldBeEqualTo(Constants.STD_DEV_ARITHMETIC);
-         errorColumn.ErrorStdDevValues.ShouldOnlyContain("ASD", "GSD");
       }
 
       [Observation]
@@ -114,29 +103,6 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
       {
          _errorColumn.ErrorStdDev.ShouldBeEqualTo(Constants.STD_DEV_ARITHMETIC);
          _errorColumn.Dimension.ShouldBeEqualTo(DomainHelperForSpecs.ConcentrationDimensionForSpecs());
-      }
-   }
-
-   public class When_parsing_data_sets_with_a_geometric_default_error_type_coming_from_a_column : concern_for_DataFormat_with_error_type_column
-   {
-      protected override void Context()
-      {
-         base.Context();
-         _errorColumn.ErrorStdDev = Constants.STD_DEV_GEOMETRIC;
-         _errorColumn.Dimension = Constants.Dimension.NO_DIMENSION;
-      }
-
-      protected override void Because()
-      {
-         _result = sut.Parse(_dataSheet, _columnInfos).ToList();
-      }
-
-      [Observation]
-      public void should_use_a_dimensionless_error_for_a_data_set_without_error_type()
-      {
-         var errorColumn = errorColumnOf("B");
-         errorColumn.ErrorDeviation.ShouldBeEqualTo(Constants.STD_DEV_GEOMETRIC);
-         errorColumn.Column.Dimension.ShouldBeEqualTo(Constants.Dimension.NO_DIMENSION);
       }
    }
 

@@ -10,9 +10,9 @@ namespace OSPSuite.Infrastructure.Import.Core
       public string ErrorDeviation { get; set; }
 
       /// <summary>
-      ///    Distinct non-empty values read for this data set from the error type column (empty when the error type does not come
-      ///    from a column)
+      ///    Value of the error type column for each row of this data set, in the order of the rows (empty when the error type does
+      ///    not come from a column)
       /// </summary>
-      public IReadOnlyList<string> ErrorStdDevValues { get; set; } = new List<string>();
+      public IList<string> ErrorStdDevValues { get; set; } = new List<string>();
    }
 }

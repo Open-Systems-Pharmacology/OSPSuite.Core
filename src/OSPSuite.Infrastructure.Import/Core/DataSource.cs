@@ -89,7 +89,7 @@ namespace OSPSuite.Infrastructure.Import.Core
 
          if (NanSettings == null || !double.TryParse(NanSettings.Indicator, out var indicator))
             indicator = double.NaN;
-         var errors = validateErrorStdDevFromColumn();
+         var errors = new ParseErrors();
          foreach (var dataSet in DataSets.KeyValues)
          {
             if (NanSettings != null && NanSettings.Action == NanSettings.ActionType.Throw)
@@ -110,34 +110,58 @@ namespace OSPSuite.Infrastructure.Import.Core
             }
          }
 
+         errors.Add(resolveErrorStdDevFromColumn());
          return errors;
       }
 
-      //checks that the error type read from a column is known and unique within every data set
-      private ParseErrors validateErrorStdDevFromColumn()
+      //the error type read from a column is resolved once the rows to ignore are removed, so that they do not decide it
+      private ParseErrors resolveErrorStdDevFromColumn()
       {
          var errors = new ParseErrors();
          foreach (var dataSet in DataSets.KeyValues)
          {
             foreach (var parsedDataSet in dataSet.Value.Data)
             {
+               var errorColumns = parsedDataSet.Data.Keys.Where(x => x.ColumnInfo.IsAuxiliary && !x.Column.ErrorStdDevColumn.IsNullOrEmpty());
+               errorColumns.Each(x => resolveErrorStdDev(x, parsedDataSet, dataSet.Key, dataSet.Value, errors));
                validateArithmeticErrorFromColumnUnits(parsedDataSet, dataSet.Value, errors);
-               var errorStdDevValues = parsedDataSet.Data.Keys.SelectMany(x => x.ErrorStdDevValues).ToList();
-               if (!errorStdDevValues.Any())
-                  continue;
-
-               var dataSetName = string.Join(".", parsedDataSet.Description.Where(metaData => metaData.Value != null).Select(metaData => metaData.Value));
-               var unknownValues = errorStdDevValues.Where(x => ErrorStdDevValues.ErrorStdDevFor(x) == null).ToList();
-               unknownValues.Each(x => errors.Add(dataSet.Value, new UnknownErrorTypeParseErrorDescription(dataSet.Key, dataSetName, x)));
-
-               if (unknownValues.Any() || errorStdDevValues.Select(ErrorStdDevValues.ErrorStdDevFor).Distinct().Count() == 1)
-                  continue;
-
-               errors.Add(dataSet.Value, new ConflictingErrorTypesParseErrorDescription(dataSet.Key, dataSetName, errorStdDevValues));
             }
          }
 
          return errors;
+      }
+
+      //the error type must be known and unique within the data set. Otherwise, the error is reported and the default error type is kept
+      private void resolveErrorStdDev(ExtendedColumn errorColumn, ParsedDataSet parsedDataSet, string sheetName, IDataSet dataSet, ParseErrors errors)
+      {
+         var errorStdDevValues = errorColumn.ErrorStdDevValues.Where(x => !x.IsNullOrEmpty()).Distinct().ToList();
+         var dataSetName = string.Join(".", parsedDataSet.Description.Where(metaData => metaData.Value != null).Select(metaData => metaData.Value));
+         var unknownValues = errorStdDevValues.Where(x => ErrorStdDevValues.ErrorStdDevFor(x) == null).ToList();
+         unknownValues.Each(x => errors.Add(dataSet, new UnknownErrorTypeParseErrorDescription(sheetName, dataSetName, x)));
+         if (unknownValues.Any())
+            return;
+
+         var errorStdDevs = errorStdDevValues.Select(ErrorStdDevValues.ErrorStdDevFor).Distinct().ToList();
+         if (errorStdDevs.Count > 1)
+         {
+            errors.Add(dataSet, new ConflictingErrorTypesParseErrorDescription(sheetName, dataSetName, errorStdDevValues));
+            return;
+         }
+
+         //without any value, the configured error type is used
+         var column = errorColumn.Column;
+         var errorStdDev = errorStdDevs.SingleOrDefault() ?? column.ErrorStdDev;
+         errorColumn.ErrorDeviation = errorStdDev;
+         column.ErrorStdDev = errorStdDev;
+
+         if (errorStdDev == Constants.STD_DEV_GEOMETRIC)
+         {
+            column.Dimension = Constants.Dimension.NO_DIMENSION;
+            column.Unit = new UnitDescription(column.Dimension.BaseUnit.Name);
+         }
+         //an arithmetic error needs the dimension of its units and not the one of a geometric default
+         else if (column.Dimension == Constants.Dimension.NO_DIMENSION)
+            column.Dimension = null;
       }
 
       //an arithmetic error whose type comes from a column may keep the units of a geometric default (no unit)
