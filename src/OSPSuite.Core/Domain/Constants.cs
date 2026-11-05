@@ -637,6 +637,7 @@ namespace OSPSuite.Core.Domain
          public static class Attribute
          {
             public const string INITIAL_UNIT = "InitialUnit";
+            public const string INITIAL_FORMULA_ID = "initialFormulaId";
             public const string PATH = "path";
             public const string STRING = "s";
             public const string FACTOR = "factor";
