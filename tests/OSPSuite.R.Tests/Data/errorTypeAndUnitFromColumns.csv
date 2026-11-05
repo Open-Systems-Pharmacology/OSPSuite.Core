@@ -1,0 +1,7 @@
+Id;Time [h];Concentration;Error;Unit;Error type
+A;1;10;2;mg/l;GSD
+A;2;20;3;mg/l;GSD
+B;1;10000;2;ng/ml;GSD
+B;2;20000;3;ng/ml;GSD
+C;1;10000;1000;ng/ml;ASD
+C;2;20000;2000;ng/ml;ASD

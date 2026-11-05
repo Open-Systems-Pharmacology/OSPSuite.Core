@@ -407,6 +407,48 @@ namespace OSPSuite.R.Services
       }
    }
 
+   public class When_importing_data_whose_error_type_and_units_come_from_columns : concern_for_DataImporter
+   {
+      private IReadOnlyList<DataRepository> _dataRepositories;
+
+      protected override void Because()
+      {
+         sut.IgnoreSheetNamesAtImport = true;
+         _dataRepositories = sut.ImportCsvFromConfiguration(getFileFullName("errorTypeAndUnitFromColumnsConfiguration.xml"), getFileFullName("errorTypeAndUnitFromColumns.csv"), ';');
+      }
+
+      private DataRepository dataRepositoryOf(string id) => _dataRepositories.Single(x => x.ExtendedProperties["Id"].ValueAsObject.ToString() == id);
+
+      private DataColumn errorColumnOf(string id) => dataRepositoryOf(id).AllButBaseGrid().Single(x => x.DataInfo.AuxiliaryType != AuxiliaryType.Undefined);
+
+      private DataColumn measurementColumnOf(string id) => dataRepositoryOf(id).AllButBaseGrid().Single(x => x.DataInfo.AuxiliaryType == AuxiliaryType.Undefined);
+
+      [Observation]
+      public void should_import_a_geometric_error_as_written_whatever_the_unit_of_its_rows()
+      {
+         foreach (var id in new[] { "A", "B" })
+         {
+            var errorColumn = errorColumnOf(id);
+            errorColumn.DataInfo.AuxiliaryType.ShouldBeEqualTo(AuxiliaryType.GeometricStdDev);
+            errorColumn.Dimension.Name.ShouldBeEqualTo(Constants.Dimension.DIMENSIONLESS);
+            errorColumn.Values.ToArray().ShouldBeEqualTo(new[] { 2f, 3f });
+         }
+      }
+
+      [Observation]
+      public void should_convert_an_arithmetic_error_with_the_unit_of_its_rows_like_the_measurement()
+      {
+         var errorColumn = errorColumnOf("C");
+         var measurementColumn = measurementColumnOf("C");
+         errorColumn.DataInfo.AuxiliaryType.ShouldBeEqualTo(AuxiliaryType.ArithmeticStdDev);
+         errorColumn.Dimension.ShouldBeEqualTo(measurementColumn.Dimension);
+         for (var i = 0; i < measurementColumn.Values.Count; i++)
+         {
+            ((double)errorColumn.Values[i] / measurementColumn.Values[i]).ShouldBeEqualTo(0.1, 1e-5);
+         }
+      }
+   }
+
    public class When_importing_data_with_conflicting_error_types_in_one_data_set : concern_for_DataImporter
    {
       [Observation]
