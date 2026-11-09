@@ -38,7 +38,23 @@ namespace OSPSuite.Core.Serialization.Xml
       /// </summary>
       public bool SkipResolveStep { get; set; }
 
-      //cache containing as key the origin formula id of a formula and as value the corresponding formula id 
+      /// <summary>
+      ///    Text written in front of the id of an object whenever the object is serialized as a reference (see
+      ///    <see cref="ObjectReferenceMapper" />). Empty by default, so that references are written as plain ids. A consumer
+      ///    that post-processes the serialization sets a marker to tell reference attributes apart from other attributes
+      ///    whose value happens to be equal to an id.
+      /// </summary>
+      public string ReferenceMarker { get; set; } = string.Empty;
+
+      /// <summary>
+      ///    Specifies whether strings such as object paths, aliases and dimensions are written as they are instead of being
+      ///    replaced by their ordinal in the string map of the formula cache (see <see cref="IdForString" />). Default is
+      ///    <c>false</c>, so that the generated xml stays small. A consumer that post-processes the serialization sets it so
+      ///    that the output does not depend on the order in which the strings were encountered.
+      /// </summary>
+      public bool InlineStrings { get; set; }
+
+      //cache containing as key the origin formula id of a formula and as value the corresponding formula id
       private readonly ICache<string, string> _formulaIdMap = new Cache<string, string>();
 
       /// <summary>
@@ -99,6 +115,9 @@ namespace OSPSuite.Core.Serialization.Xml
       /// </summary>
       public string IdForString(string stringToCache)
       {
+         if (InlineStrings)
+            return stringToCache;
+
          if (!StringMap.Contains(stringToCache))
          {
             int id = StringMap.Count();
