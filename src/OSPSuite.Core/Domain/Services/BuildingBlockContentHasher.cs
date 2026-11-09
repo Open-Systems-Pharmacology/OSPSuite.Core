@@ -19,7 +19,9 @@ namespace OSPSuite.Core.Domain.Services
    ///       The hash is computed from the XML serialization of the object, so that every property that is persisted takes
    ///       part automatically. The serialization is normalized first: the content does not depend on object ids,
    ///       on the name of the hashed object itself, on creation meta data, snapshots, building block version counters,
-   ///       on the <see cref="ParameterOrigin" /> of parameter values or on the origin of explicit formulas.
+   ///       on the <see cref="ParameterOrigin" /> of parameter values or on the origin of explicit formulas. Formulas are
+   ///       identified by their content, so that it does not matter whether a formula is shared by several objects or
+   ///       copied for each of them.
    ///    </para>
    /// </summary>
    public interface IBuildingBlockContentHasher
@@ -104,12 +106,7 @@ namespace OSPSuite.Core.Domain.Services
          if (objectToHash == null)
             throw new ArgumentNullException(nameof(objectToHash));
 
-         var element = normalizedElementFor(objectToHash);
-         var content = Encoding.UTF8.GetBytes(element.ToString(SaveOptions.DisableFormatting));
-         using (var sha256 = SHA256.Create())
-         {
-            return hexStringFor(sha256.ComputeHash(content));
-         }
+         return hashFor(contentOf(normalizedElementFor(objectToHash)));
       }
 
       private XElement normalizedElementFor(object objectToHash)
@@ -119,8 +116,8 @@ namespace OSPSuite.Core.Domain.Services
          var referenceMarker = $"{Guid.NewGuid():N}:";
          var element = serialize(objectToHash, referenceMarker);
          removeExcludedContent(element);
-         replaceIdsWithOrdinals(element, referenceMarker);
-         sortFormulaCaches(element);
+         var formulaKeysById = normalizeFormulaCaches(element);
+         replaceIds(element, referenceMarker, formulaKeysById);
          return element;
       }
 
@@ -153,14 +150,53 @@ namespace OSPSuite.Core.Domain.Services
       }
 
       /// <summary>
-      ///    Object ids are generated and do not belong to the content. An id that is referenced somewhere in the
-      ///    serialization (for instance the reference from a parameter to its formula in the formula cache) is replaced,
-      ///    both on the reference and on the referenced object, by an ordinal that reflects the order in which the ids are
-      ///    referenced. The structure of the references is thereby preserved while the ids themselves are discarded. Ids that
-      ///    are not referenced are simply removed, so that it does not matter whether an object has an id or not.
+      ///    A formula is identified by its content and not by its id. A building block loaded from file references a clone
+      ///    of a cached formula for every object using it, while the original references the cached formula itself, so that
+      ///    neither the identity of a formula nor the number of its copies belong to the content. The id of every formula
+      ///    of a formula cache is removed and the formula is identified by its serialization instead. The cache is rewritten
+      ///    to hold its distinct formulas sorted by content, so that the order in which the formulas were cached does not
+      ///    matter either. Formulas do not reference other objects, so that their serialization is self-contained.
+      /// </summary>
+      /// <returns>The key identifying a formula by its content, for every formula id</returns>
+      private static IReadOnlyDictionary<string, string> normalizeFormulaCaches(XElement rootElement)
+      {
+         var formulaKeysById = new Dictionary<string, string>();
+         var formulasElements = rootElement.Descendants(Constants.Serialization.FORMULAS).ToList();
+         foreach (var formulasElement in formulasElements)
+         {
+            var formulaElements = formulasElement.Elements().ToList();
+            foreach (var formulaElement in formulaElements)
+            {
+               var idAttribute = formulaElement.Attribute(Constants.Serialization.Attribute.ID);
+               if (idAttribute == null)
+                  continue;
+
+               idAttribute.Remove();
+               formulaKeysById[idAttribute.Value] = hashFor(contentOf(formulaElement));
+            }
+
+            var distinctFormulas = formulaElements
+               .GroupBy(contentOf)
+               .OrderBy(x => x.Key, StringComparer.Ordinal)
+               .Select(x => x.First())
+               .ToList();
+
+            formulasElement.RemoveNodes();
+            formulasElement.Add(distinctFormulas);
+         }
+
+         return formulaKeysById;
+      }
+
+      /// <summary>
+      ///    Object ids are generated and do not belong to the content. A reference to a formula is replaced by the key
+      ///    identifying the formula by its content. A reference to any other object is replaced, both on the reference and
+      ///    on the referenced object, by an ordinal that reflects the order in which the ids are referenced. The structure of
+      ///    the references is thereby preserved while the ids themselves are discarded. Ids that are not referenced are
+      ///    simply removed, so that it does not matter whether an object has an id or not.
       ///    A reference is recognized by the <paramref name="referenceMarker" /> written in front of the referenced id.
       /// </summary>
-      private static void replaceIdsWithOrdinals(XElement rootElement, string referenceMarker)
+      private static void replaceIds(XElement rootElement, string referenceMarker, IReadOnlyDictionary<string, string> formulaKeysById)
       {
          var ordinalsById = new Dictionary<string, string>();
 
@@ -171,6 +207,12 @@ namespace OSPSuite.Core.Domain.Services
          foreach (var referenceAttribute in referenceAttributes)
          {
             var referencedId = referenceAttribute.Value.Substring(referenceMarker.Length);
+            if (formulaKeysById.TryGetValue(referencedId, out var formulaKey))
+            {
+               referenceAttribute.Value = formulaKey;
+               continue;
+            }
+
             if (!ordinalsById.TryGetValue(referencedId, out var ordinal))
             {
                ordinal = $"#{ordinalsById.Count}";
@@ -204,22 +246,13 @@ namespace OSPSuite.Core.Domain.Services
          return !string.Equals(element.Name.LocalName, Constants.Serialization.VALUE_ORIGIN);
       }
 
-      /// <summary>
-      ///    The formulas of a formula cache are serialized in the order in which they were added to the cache, which is not
-      ///    part of the content. They are sorted by their normalized serialization instead. All references to the formulas
-      ///    come from the builders, which are serialized before the cache, so that the ordinals do not depend on the order.
-      /// </summary>
-      private static void sortFormulaCaches(XElement rootElement)
-      {
-         var formulasElements = rootElement.Descendants(Constants.Serialization.FORMULAS).ToList();
-         foreach (var formulasElement in formulasElements)
-         {
-            var sortedFormulas = formulasElement.Elements()
-               .OrderBy(x => x.ToString(SaveOptions.DisableFormatting), StringComparer.Ordinal)
-               .ToList();
+      private static string contentOf(XElement element) => element.ToString(SaveOptions.DisableFormatting);
 
-            formulasElement.RemoveNodes();
-            formulasElement.Add(sortedFormulas);
+      private static string hashFor(string content)
+      {
+         using (var sha256 = SHA256.Create())
+         {
+            return hexStringFor(sha256.ComputeHash(Encoding.UTF8.GetBytes(content)));
          }
       }
 

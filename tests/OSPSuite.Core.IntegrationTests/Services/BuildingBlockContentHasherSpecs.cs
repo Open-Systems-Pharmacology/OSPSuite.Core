@@ -877,4 +877,138 @@ namespace OSPSuite.Core.Services
          sut.HaveSameContent(_module1, _module2).ShouldBeTrue();
       }
    }
+
+   public class When_hashing_an_individual_with_a_cloned_formula_that_was_saved_to_pkml_and_loaded_again : concern_for_BuildingBlockContentHasher
+   {
+      private IPKMLPersistor _pkmlPersistor;
+      private string _fileName;
+      private IndividualBuildingBlock _individual;
+      private IndividualBuildingBlock _loadedIndividual;
+
+      protected override void Context()
+      {
+         base.Context();
+         _pkmlPersistor = IoC.Resolve<IPKMLPersistor>();
+         _fileName = FileHelper.GenerateTemporaryFileName();
+         _individual = CreateIndividual();
+         //a formula with an origin is cloned for every parameter referencing it when the building block is loaded
+         _individual.FormulaCache.First().DowncastTo<ExplicitFormula>().OriginId = "id of the source formula";
+         _pkmlPersistor.SaveToPKML(_individual, _fileName);
+      }
+
+      protected override void Because()
+      {
+         _loadedIndividual = _pkmlPersistor.Load<IndividualBuildingBlock>(_fileName);
+      }
+
+      public override void Cleanup()
+      {
+         base.Cleanup();
+         FileHelper.DeleteFile(_fileName);
+      }
+
+      [Observation]
+      public void the_loaded_parameter_should_reference_a_clone_of_the_cached_formula()
+      {
+         var bmi = _loadedIndividual.First(x => x.Name == "BMI");
+         ReferenceEquals(bmi.Formula, _loadedIndividual.FormulaCache.First()).ShouldBeFalse();
+      }
+
+      [Observation]
+      public void should_return_the_same_hash_for_the_original_and_the_loaded_individual()
+      {
+         sut.ContentHashFor(_loadedIndividual).ShouldBeEqualTo(sut.ContentHashFor(_individual));
+         sut.HaveSameContent(_individual, _loadedIndividual).ShouldBeTrue();
+      }
+   }
+
+   public class When_hashing_a_module_with_a_cloned_formula_shared_by_two_parameters_that_was_saved_to_pkml_and_loaded_again : concern_for_BuildingBlockContentHasher
+   {
+      private IPKMLPersistor _pkmlPersistor;
+      private string _fileName;
+      private Module _module;
+      private Module _loadedModule;
+
+      protected override void Context()
+      {
+         base.Context();
+         _pkmlPersistor = IoC.Resolve<IPKMLPersistor>();
+         _fileName = FileHelper.GenerateTemporaryFileName();
+         _module = CreateModule();
+         var spatialStructure = _module.SpatialStructure;
+         var volumeTwice = spatialStructure.FormulaCache.First(x => x.Name == "VolumeTwice").DowncastTo<ExplicitFormula>();
+         volumeTwice.OriginId = "id of the source formula";
+         var liver = spatialStructure.TopContainers.First(x => x.Name == Constants.ORGANISM).Container("Liver");
+         liver.Add(NewParameterWithFormula("VolumeTwiceAgain", volumeTwice));
+         _pkmlPersistor.SaveToPKML(_module, _fileName);
+      }
+
+      protected override void Because()
+      {
+         _loadedModule = _pkmlPersistor.Load<Module>(_fileName);
+      }
+
+      public override void Cleanup()
+      {
+         base.Cleanup();
+         FileHelper.DeleteFile(_fileName);
+      }
+
+      [Observation]
+      public void the_loaded_parameters_should_reference_one_clone_each()
+      {
+         var liver = _loadedModule.SpatialStructure.TopContainers.First(x => x.Name == Constants.ORGANISM).Container("Liver");
+         ReferenceEquals(liver.Parameter("VolumeTwice").Formula, liver.Parameter("VolumeTwiceAgain").Formula).ShouldBeFalse();
+      }
+
+      [Observation]
+      public void should_return_the_same_hash_for_the_original_and_the_loaded_module()
+      {
+         sut.ContentHashFor(_loadedModule).ShouldBeEqualTo(sut.ContentHashFor(_module));
+         sut.HaveSameContent(_module, _loadedModule).ShouldBeTrue();
+      }
+   }
+
+   public class When_hashing_two_individuals_where_one_shares_a_formula_between_two_parameters_and_the_other_has_a_copy_for_each : concern_for_BuildingBlockContentHasher
+   {
+      private IndividualBuildingBlock _individualWithSharedFormula;
+      private IndividualBuildingBlock _individualWithFormulaCopies;
+
+      protected override void Context()
+      {
+         base.Context();
+         _individualWithSharedFormula = CreateIndividual();
+         var sharedFormula = newFormulaFor(_individualWithSharedFormula);
+         addParameter(_individualWithSharedFormula, "P1", sharedFormula);
+         addParameter(_individualWithSharedFormula, "P2", sharedFormula);
+
+         _individualWithFormulaCopies = CreateIndividual();
+         addParameter(_individualWithFormulaCopies, "P1", newFormulaFor(_individualWithFormulaCopies));
+         addParameter(_individualWithFormulaCopies, "P2", newFormulaFor(_individualWithFormulaCopies));
+      }
+
+      private ExplicitFormula newFormulaFor(IndividualBuildingBlock individual)
+      {
+         var formula = NewExplicitFormula(individual.FormulaCache, "HeightTriple", "Height * 3", Constants.Dimension.NO_DIMENSION);
+         formula.AddObjectPath(PathWithAlias("Height", Constants.ORGANISM, "Height"));
+         return formula;
+      }
+
+      private static void addParameter(IndividualBuildingBlock individual, string name, IFormula formula)
+      {
+         individual.Add(new IndividualParameter
+         {
+            ContainerPath = new ObjectPath(Constants.ORGANISM),
+            Name = name,
+            Formula = formula
+         });
+      }
+
+      [Observation]
+      public void should_return_the_same_hash()
+      {
+         sut.ContentHashFor(_individualWithSharedFormula).ShouldBeEqualTo(sut.ContentHashFor(_individualWithFormulaCopies));
+         sut.HaveSameContent(_individualWithSharedFormula, _individualWithFormulaCopies).ShouldBeTrue();
+      }
+   }
 }
