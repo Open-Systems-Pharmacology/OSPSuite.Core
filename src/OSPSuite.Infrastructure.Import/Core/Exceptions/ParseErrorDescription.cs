@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using OSPSuite.Assets;
+using OSPSuite.Core.Import;
 using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Infrastructure.Import.Core.Exceptions
@@ -54,6 +55,22 @@ namespace OSPSuite.Infrastructure.Import.Core.Exceptions
       public ErrorUnitParseErrorDescription()
       {
          Message = Error.InvalidErrorDimension;
+      }
+   }
+
+   public class UnknownErrorTypeParseErrorDescription : ParseErrorDescription
+   {
+      public UnknownErrorTypeParseErrorDescription(string sheetName, string dataSetName, string errorType)
+      {
+         Message = Error.UnknownErrorType(sheetName, dataSetName, errorType, ErrorStdDevValues.AcceptedValues);
+      }
+   }
+
+   public class ConflictingErrorTypesParseErrorDescription : ParseErrorDescription
+   {
+      public ConflictingErrorTypesParseErrorDescription(string sheetName, string dataSetName, IEnumerable<string> errorTypes)
+      {
+         Message = Error.ConflictingErrorTypes(sheetName, dataSetName, errorTypes);
       }
    }
 
