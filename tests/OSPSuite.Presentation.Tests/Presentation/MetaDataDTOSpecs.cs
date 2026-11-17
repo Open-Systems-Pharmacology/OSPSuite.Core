@@ -59,4 +59,45 @@ namespace OSPSuite.Presentation.Presentation
          sut.Validate(x => x.Name, "TOTO").IsEmpty.ShouldBeFalse();
       }
    }
+
+   public class When_editing_the_value_of_a_subject_count_meta_data : concern_for_MetaDataDTO
+   {
+      protected override void Context()
+      {
+         base.Context();
+         sut.Name = Constants.ObservedData.SUBJECT_COUNT;
+      }
+
+      [Observation]
+      public void should_be_valid_for_a_whole_number_greater_than_or_equal_to_one()
+      {
+         sut.Value = "12";
+         sut.IsValid().ShouldBeTrue();
+      }
+
+      [Observation]
+      public void should_not_be_valid_for_a_number_smaller_than_one()
+      {
+         sut.Value = "0";
+         sut.IsValid().ShouldBeFalse();
+      }
+
+      [Observation]
+      public void should_not_be_valid_for_a_value_that_is_not_a_whole_number()
+      {
+         sut.Value = "2.5";
+         sut.IsValid().ShouldBeFalse();
+      }
+   }
+
+   public class When_editing_the_value_of_another_meta_data : concern_for_MetaDataDTO
+   {
+      [Observation]
+      public void should_not_check_the_value_as_a_subject_count()
+      {
+         sut.Name = Constants.ObservedData.STUDY_ID;
+         sut.Value = "abc";
+         sut.IsValid().ShouldBeTrue();
+      }
+   }
 }

@@ -1465,6 +1465,7 @@ namespace OSPSuite.Assets
       public static readonly string InconsistentMoleculeAndMolWeightException = "Molecule and Molecular Weight do not match. Please either edit your Molecule or your Molecular Weight in your project or remove the Molecular Weight from your mappings";
       public static readonly string InvalidMixOfSimulationAndSimulationBatch = "You already have Simulation and SimulationBatch objects and should not mix, please invoke Clear to start adding objects from a fresh start";
       public static readonly string MismatchingArrayLengths = "Arrays should have the same length";
+      public static string InvalidSubjectCount(string subjectCount, int minSubjectCount) => $"Subject count '{subjectCount}' is invalid. Subject count must be a whole number greater than or equal to {minSubjectCount}.";
       public static string ColumnNotFound(string columnName) => $"Column {columnName} unexpectedly not found.";
       public static string BaseGridColumnNotFoundException(string columnName) => $"BaseGrid Column {columnName} unexpectedly not found.";
       public static string UnknownErrorType(string sheetName, string dataSetName, string errorType, IEnumerable<string> acceptedErrorTypes) =>

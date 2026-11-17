@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using OSPSuite.Assets;
+using OSPSuite.Core.Domain;
 using OSPSuite.Core.Import;
 using OSPSuite.Utility.Extensions;
 
@@ -55,6 +56,14 @@ namespace OSPSuite.Infrastructure.Import.Core.Exceptions
       public ErrorUnitParseErrorDescription()
       {
          Message = Error.InvalidErrorDimension;
+      }
+   }
+
+   public class InvalidSubjectCountParseErrorDescription : ParseErrorDescription
+   {
+      public InvalidSubjectCountParseErrorDescription(string subjectCount)
+      {
+         Message = Error.InvalidSubjectCount(subjectCount, Constants.ObservedData.MIN_SUBJECT_COUNT);
       }
    }
 
