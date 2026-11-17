@@ -108,7 +108,7 @@ namespace OSPSuite.Core.Domain.Data
       public static void SetSubjectCount(this DataRepository dataRepository, int subjectCount)
       {
          var subjectCountAsString = subjectCount.ToString(CultureInfo.InvariantCulture);
-         if (!IsValidSubjectCount(subjectCountAsString))
+         if (subjectCount < Constants.ObservedData.MIN_SUBJECT_COUNT)
             throw new OSPSuiteException(Error.InvalidSubjectCount(subjectCountAsString, Constants.ObservedData.MIN_SUBJECT_COUNT));
 
          dataRepository.ExtendedProperties[Constants.ObservedData.SUBJECT_COUNT] = new ExtendedProperty<string> {Name = Constants.ObservedData.SUBJECT_COUNT, Value = subjectCountAsString};
