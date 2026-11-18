@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using FakeItEasy;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
@@ -14,6 +15,7 @@ using OSPSuite.Presentation.DTO;
 using OSPSuite.Presentation.Presenters.ObservedData;
 using OSPSuite.Presentation.Views.ObservedData;
 using OSPSuite.Utility.Collections;
+using OSPSuite.Utility.Validation;
 
 namespace OSPSuite.Presentation.Presentation
 {
@@ -367,6 +369,114 @@ namespace OSPSuite.Presentation.Presentation
       public void should_not_bind_to_molweight_parameter()
       {
          A.CallTo(() => _view.BindToMolWeight(_molWeightParameter)).MustNotHaveHappened();
+      }
+   }
+   public abstract class When_binding_observed_data_with_a_subject_count : concern_for_DataRepositoryMetaDataPresenter
+   {
+      protected MetaDataDTO _subjectCountDTO;
+      protected IEnumerable<MetaDataDTO> _metaDataDTOs;
+
+      protected override void Context()
+      {
+         base.Context();
+         A.CallTo(() => _view.BindToSubjectCount(A<MetaDataDTO>._)).Invokes(x => _subjectCountDTO = x.GetArgument<MetaDataDTO>(0));
+         A.CallTo(() => _view.BindToMetaData(A<IEnumerable<MetaDataDTO>>._)).Invokes(x => _metaDataDTOs = x.GetArgument<IEnumerable<MetaDataDTO>>(0));
+         SetExtendedProperty(Constants.ObservedData.STUDY_ID, "Study");
+         _dataRepository.SetSubjectCount(12);
+      }
+   }
+
+   public class When_binding_a_single_observed_data_with_a_subject_count : When_binding_observed_data_with_a_subject_count
+   {
+      protected override void Because()
+      {
+         sut.EditObservedData(_dataRepository);
+      }
+
+      [Observation]
+      public void should_bind_the_subject_count_to_the_view()
+      {
+         _subjectCountDTO.Name.ShouldBeEqualTo(Constants.ObservedData.SUBJECT_COUNT);
+         _subjectCountDTO.Value.ShouldBeEqualTo("12");
+      }
+
+      [Observation]
+      public void should_not_show_the_subject_count_in_the_meta_data_list()
+      {
+         _metaDataDTOs.Select(x => x.Name).ShouldOnlyContain(Constants.ObservedData.STUDY_ID);
+      }
+
+      [Observation]
+      public void should_accept_an_empty_subject_count_to_clear_it()
+      {
+         _subjectCountDTO.Validate(x => x.Value, string.Empty).IsEmpty.ShouldBeTrue();
+      }
+
+      [Observation]
+      public void should_reject_an_invalid_subject_count()
+      {
+         _subjectCountDTO.Validate(x => x.Value, "0").IsEmpty.ShouldBeFalse();
+         _subjectCountDTO.Validate(x => x.Value, "2.5").IsEmpty.ShouldBeFalse();
+      }
+   }
+
+   public class When_binding_multiple_observed_data_with_different_subject_counts : When_binding_observed_data_with_a_subject_count
+   {
+      private DataRepository _otherDataRepository;
+
+      protected override void Context()
+      {
+         base.Context();
+         _otherDataRepository = new DataRepository();
+         _otherDataRepository.SetSubjectCount(5);
+      }
+
+      protected override void Because()
+      {
+         sut.EditObservedDataMetaData(new[] {_dataRepository, _otherDataRepository});
+      }
+
+      [Observation]
+      public void should_bind_an_empty_subject_count_to_the_view()
+      {
+         _subjectCountDTO.Value.ShouldBeEqualTo(string.Empty);
+      }
+   }
+
+   public class When_binding_multiple_observed_data_with_the_same_subject_count : When_binding_observed_data_with_a_subject_count
+   {
+      private DataRepository _otherDataRepository;
+
+      protected override void Context()
+      {
+         base.Context();
+         _otherDataRepository = new DataRepository();
+         _otherDataRepository.SetSubjectCount(12);
+      }
+
+      protected override void Because()
+      {
+         sut.EditObservedDataMetaData(new[] {_dataRepository, _otherDataRepository});
+      }
+
+      [Observation]
+      public void should_bind_the_shared_subject_count_to_the_view()
+      {
+         _subjectCountDTO.Value.ShouldBeEqualTo("12");
+      }
+   }
+
+   public class When_setting_the_subject_count : concern_for_DataRepositoryMetaDataPresenter
+   {
+      protected override void Because()
+      {
+         sut.SetSubjectCount("12");
+      }
+
+      [Observation]
+      public void should_update_the_subject_count_of_the_edited_observed_data()
+      {
+         A.CallTo(() => _observedDataMetaDataTask.UpdateSubjectCount(A<IEnumerable<DataRepository>>.That.Contains(_dataRepository), "12")).MustHaveHappened();
       }
    }
 }
