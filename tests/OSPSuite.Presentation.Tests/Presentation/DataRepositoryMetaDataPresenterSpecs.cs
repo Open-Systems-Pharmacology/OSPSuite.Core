@@ -383,6 +383,96 @@ namespace OSPSuite.Presentation.Presentation
       }
    }
 
+   public class When_binding_saved_metadata_with_predefined_and_custom_names : concern_for_DataRepositoryMetaDataPresenter
+   {
+      private List<MetaDataDTO> _boundMetaData;
+
+      protected override void Context()
+      {
+         base.Context();
+         SetExtendedProperty("Species", "Human");
+         SetExtendedProperty("Custom", "Value");
+         A.CallTo(() => _observedDataConfiguration.DefaultMetaDataCategories).Returns(new[] { "Species" });
+         A.CallTo(() => _view.BindToMetaData(A<IEnumerable<MetaDataDTO>>._))
+            .Invokes(x => _boundMetaData = x.GetArgument<IEnumerable<MetaDataDTO>>(0).ToList());
+      }
+
+      protected override void Because()
+      {
+         sut.EditObservedData(_dataRepository);
+      }
+
+      [Observation]
+      public void the_predefined_metadata_cannot_be_removed()
+      {
+         _boundMetaData.Single(x => x.Name == "Species").Removable.ShouldBeFalse();
+      }
+
+      [Observation]
+      public void the_custom_metadata_can_be_removed()
+      {
+         _boundMetaData.Single(x => x.Name == "Custom").Removable.ShouldBeTrue();
+      }
+   }
+
+   public abstract class When_the_output_path_metadata_row_was_added_and_never_saved : concern_for_DataRepositoryMetaDataPresenter
+   {
+      protected NotifyList<MetaDataDTO> _boundMetaData;
+      protected MetaDataDTO _outputPathDTO;
+
+      protected override void Context()
+      {
+         base.Context();
+         A.CallTo(() => _view.BindToMetaData(A<IEnumerable<MetaDataDTO>>._))
+            .Invokes(x => _boundMetaData = x.GetArgument<NotifyList<MetaDataDTO>>(0));
+         sut.EditObservedData(_dataRepository);
+         sut.AddOutputPathMetadata();
+         _outputPathDTO = _boundMetaData.Single(x => x.Name == Constants.OUTPUT_PATH);
+      }
+   }
+
+   public class When_adding_the_output_path_metadata_row : When_the_output_path_metadata_row_was_added_and_never_saved
+   {
+      [Observation]
+      public void the_row_name_cannot_be_edited()
+      {
+         _outputPathDTO.NameEditable.ShouldBeFalse();
+      }
+
+      [Observation]
+      public void the_row_can_be_removed_before_a_value_is_entered()
+      {
+         _outputPathDTO.Removable.ShouldBeTrue();
+      }
+   }
+
+   public class When_removing_the_output_path_metadata_row_before_a_value_is_entered : When_the_output_path_metadata_row_was_added_and_never_saved
+   {
+      protected override void Because()
+      {
+         sut.RemoveMetaData(_outputPathDTO);
+      }
+
+      [Observation]
+      public void command_to_remove_is_not_issued()
+      {
+         A.CallTo(() => _observedDataMetaDataTask.RemoveMetaData(A<IEnumerable<DataRepository>>._, A<MetaDataKeyValue>._)).MustNotHaveHappened();
+      }
+
+      [Observation]
+      public void the_row_is_removed_from_the_view()
+      {
+         _boundMetaData.ShouldNotContain(_outputPathDTO);
+      }
+
+      [Observation]
+      public void the_output_path_row_can_be_added_again()
+      {
+         sut.AddOutputPathMetadata();
+         _boundMetaData.Count(x => x.Name == Constants.OUTPUT_PATH).ShouldBeEqualTo(1);
+      }
+   }
+
    public class When_binding_to_a_set_of_observed_data_containing_different_molweights : concern_for_DataRepositoryMetaDataPresenter
    {
       protected override void Context()

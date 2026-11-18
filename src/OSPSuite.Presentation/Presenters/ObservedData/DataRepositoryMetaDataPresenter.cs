@@ -113,10 +113,11 @@ namespace OSPSuite.Presentation.Presenters.ObservedData
       {
          var name = extendedProperty.Name;
          var values = _observedDataConfiguration.PredefinedValuesFor(name);
-         return createDTO(name, extendedProperty.ValueAsObject as string, nameEditable: !isPredefinedProperty(extendedProperty), valueReadOnly: isReadOnly(extendedProperty), listOfValues: values);
+         var isPredefined = isPredefinedProperty(extendedProperty);
+         return createDTO(name, extendedProperty.ValueAsObject as string, nameEditable: !isPredefined, valueReadOnly: isReadOnly(extendedProperty), listOfValues: values, removable: !isPredefined);
       }
 
-      private MetaDataDTO createDTO(string name, string value, bool nameEditable = true, bool valueReadOnly = false, IEnumerable<string> listOfValues = null)
+      private MetaDataDTO createDTO(string name, string value, bool nameEditable = true, bool valueReadOnly = false, IEnumerable<string> listOfValues = null, bool removable = true)
       {
          return new MetaDataDTO(_defaultRules)
          {
@@ -125,7 +126,8 @@ namespace OSPSuite.Presentation.Presenters.ObservedData
             DataRepositories = _allDataRepositories,
             NameEditable = nameEditable,
             ValueReadOnly = valueReadOnly,
-            ListOfValues = listOfValues
+            ListOfValues = listOfValues,
+            Removable = removable
          };
       }
 
