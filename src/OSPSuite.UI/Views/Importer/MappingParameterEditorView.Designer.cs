@@ -82,20 +82,20 @@ namespace OSPSuite.UI.Views.Importer
          // errorTypePanelControl
          // 
          this.errorTypePanelControl.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-         this.errorTypePanelControl.Location = new System.Drawing.Point(199, 19);
+         this.errorTypePanelControl.Location = new System.Drawing.Point(199, 99);
          this.errorTypePanelControl.Margin = new System.Windows.Forms.Padding(0);
          this.errorTypePanelControl.Name = "errorTypePanelControl";
          this.errorTypePanelControl.Size = new System.Drawing.Size(562, 69);
-         this.errorTypePanelControl.TabIndex = 7;
-         // 
+         this.errorTypePanelControl.TabIndex = 8;
+         //
          // errorTypeColumnPanelControl
          //
          this.errorTypeColumnPanelControl.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-         this.errorTypeColumnPanelControl.Location = new System.Drawing.Point(199, 92);
+         this.errorTypeColumnPanelControl.Location = new System.Drawing.Point(199, 19);
          this.errorTypeColumnPanelControl.Margin = new System.Windows.Forms.Padding(0);
          this.errorTypeColumnPanelControl.Name = "errorTypeColumnPanelControl";
          this.errorTypeColumnPanelControl.Size = new System.Drawing.Size(562, 76);
-         this.errorTypeColumnPanelControl.TabIndex = 8;
+         this.errorTypeColumnPanelControl.TabIndex = 7;
          //
          // lloqPanelControl
          //
@@ -182,8 +182,8 @@ namespace OSPSuite.UI.Views.Importer
          // ErrorLayoutControlGroup
          // 
          this.ErrorLayoutControlGroup.Items.AddRange(new DevExpress.XtraLayout.BaseLayoutItem[] {
-            this.errorTypeLayoutControlItem,
-            this.errorTypeColumnLayoutControlItem});
+            this.errorTypeColumnLayoutControlItem,
+            this.errorTypeLayoutControlItem});
          this.ErrorLayoutControlGroup.Location = new System.Drawing.Point(0, 0);
          this.ErrorLayoutControlGroup.Name = "ErrorLayoutControlGroup";
          this.ErrorLayoutControlGroup.Padding = new DevExpress.XtraLayout.Utils.Padding(20, 20, 4, 4);
@@ -193,7 +193,7 @@ namespace OSPSuite.UI.Views.Importer
          // errorTypeLayoutControlItem
          //
          this.errorTypeLayoutControlItem.Control = this.errorTypePanelControl;
-         this.errorTypeLayoutControlItem.Location = new System.Drawing.Point(0, 0);
+         this.errorTypeLayoutControlItem.Location = new System.Drawing.Point(0, 80);
          this.errorTypeLayoutControlItem.Name = "errorTypeLayoutControlItem";
          this.errorTypeLayoutControlItem.Size = new System.Drawing.Size(730, 73);
          this.errorTypeLayoutControlItem.TextSize = new System.Drawing.Size(161, 16);
@@ -201,7 +201,7 @@ namespace OSPSuite.UI.Views.Importer
          // errorTypeColumnLayoutControlItem
          //
          this.errorTypeColumnLayoutControlItem.Control = this.errorTypeColumnPanelControl;
-         this.errorTypeColumnLayoutControlItem.Location = new System.Drawing.Point(0, 73);
+         this.errorTypeColumnLayoutControlItem.Location = new System.Drawing.Point(0, 0);
          this.errorTypeColumnLayoutControlItem.Name = "errorTypeColumnLayoutControlItem";
          this.errorTypeColumnLayoutControlItem.Size = new System.Drawing.Size(730, 80);
          this.errorTypeColumnLayoutControlItem.TextSize = new System.Drawing.Size(0, 0);
