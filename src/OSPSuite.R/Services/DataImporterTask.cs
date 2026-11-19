@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using OSPSuite.Assets;
 using OSPSuite.CLI.Core.Services;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
@@ -8,6 +9,7 @@ using OSPSuite.Core.Import;
 using OSPSuite.Core.Serialization.Xml;
 using OSPSuite.Infrastructure.Import.Core;
 using OSPSuite.Infrastructure.Import.Services;
+using OSPSuite.Utility.Exceptions;
 using OSPSuite.Utility.Extensions;
 using ImporterConfiguration = OSPSuite.Core.Import.ImporterConfiguration;
 
@@ -37,6 +39,29 @@ namespace OSPSuite.R.Services
       string[] GetAllGroupingColumns(ImporterConfiguration configuration);
       void AddGroupingColumn(ImporterConfiguration configuration, string columnName);
       void RemoveGroupingColumn(ImporterConfiguration configuration, string columnName);
+
+      /// <summary>
+      ///    Returns the meta data mappings of <paramref name="configuration" /> whose value comes from a column.
+      ///    Each mapping holds the column name (<c>ColumnName</c>) and the meta data category (<c>MetaDataId</c>).
+      /// </summary>
+      MetaDataFormatParameter[] GetAllMetaDataColumns(ImporterConfiguration configuration);
+
+      /// <summary>
+      ///    Maps the column <paramref name="columnName" /> to the meta data category <paramref name="metaDataId" />,
+      ///    e.g. <see cref="Constants.ObservedData.SUBJECT_COUNT" />. An existing mapping of the same column or of the same
+      ///    meta data category is replaced.
+      /// </summary>
+      /// <exception cref="OSPSuiteException">
+      ///    Thrown if <paramref name="metaDataId" /> is not a meta data category of observed data
+      /// </exception>
+      void AddMetaDataColumn(ImporterConfiguration configuration, string columnName, string metaDataId);
+
+      /// <summary>
+      ///    Removes the mapping of the meta data category <paramref name="metaDataId" />. Does nothing if the category is not
+      ///    mapped.
+      /// </summary>
+      void RemoveMetaDataColumn(ImporterConfiguration configuration, string metaDataId);
+
       string[] GetAllLoadedSheets(ImporterConfiguration configuration);
       void SetAllLoadedSheet(ImporterConfiguration configuration, string[] sheets);
       void SetAllLoadedSheet(ImporterConfiguration configuration, string sheet);
@@ -269,6 +294,53 @@ namespace OSPSuite.R.Services
             return;
 
          configuration.RemoveParameter(column);
+      }
+
+      public MetaDataFormatParameter[] GetAllMetaDataColumns(ImporterConfiguration configuration)
+      {
+         return configuration.Parameters
+            .OfType<MetaDataFormatParameter>()
+            .Where(p => p.ComesFromColumn())
+            .ToArray();
+      }
+
+      public void AddMetaDataColumn(ImporterConfiguration configuration, string columnName, string metaDataId)
+      {
+         var metaDataCategoryNames = _metaDataCategories.AllNames();
+         if (!metaDataCategoryNames.Contains(metaDataId))
+            throw new OSPSuiteException(Error.UnknownMetaDataCategory(metaDataId, metaDataCategoryNames));
+
+         var replacedParameters = configuration.Parameters
+            .Where(p => isMetaDataFor(p, metaDataId) || isGroupingColumn(p, columnName))
+            .ToList();
+
+         replacedParameters.Each(configuration.RemoveParameter);
+         configuration.AddParameter(new MetaDataFormatParameter(columnName, metaDataId));
+      }
+
+      public void RemoveMetaDataColumn(ImporterConfiguration configuration, string metaDataId)
+      {
+         var parameter = configuration.Parameters.FirstOrDefault(p => isMetaDataFor(p, metaDataId));
+         if (parameter == null)
+            return;
+
+         configuration.RemoveParameter(parameter);
+      }
+
+      private static bool isMetaDataFor(DataFormatParameter parameter, string metaDataId) =>
+         parameter is MetaDataFormatParameter metaDataParameter && metaDataParameter.MetaDataId == metaDataId;
+
+      private static bool isGroupingColumn(DataFormatParameter parameter, string columnName)
+      {
+         switch (parameter)
+         {
+            case GroupByDataFormatParameter _:
+               return parameter.ColumnName == columnName;
+            case MetaDataFormatParameter metaDataParameter:
+               return metaDataParameter.ComesFromColumn() && metaDataParameter.ColumnName == columnName;
+            default:
+               return false;
+         }
       }
 
       public void SetIsUnitFromColumn(MappingDataFormatParameter parameter, bool isUnitFromColumn)
