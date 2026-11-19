@@ -71,6 +71,8 @@ namespace OSPSuite.Presentation.Presenters.ObservedData
    {
       protected IEnumerable<DataRepository> _allDataRepositories;
       private NotifyList<MetaDataDTO> _metaDataDTOList;
+      //Meta data of the repositories as it was when bound, for each row created from it. Rows added in the view are not in here
+      private readonly Dictionary<MetaDataDTO, MetaDataKeyValue> _savedMetaData = new Dictionary<MetaDataDTO, MetaDataKeyValue>();
       private readonly IObservedDataMetaDataTask _observedDataMetaDataTask;
       private readonly IObservedDataConfiguration _observedDataConfiguration;
       private readonly IParameterFactory _parameterFactory;
@@ -111,10 +113,11 @@ namespace OSPSuite.Presentation.Presenters.ObservedData
       {
          var name = extendedProperty.Name;
          var values = _observedDataConfiguration.PredefinedValuesFor(name);
-         return createDTO(name, extendedProperty.ValueAsObject as string, nameEditable: !isPredefinedProperty(extendedProperty), valueReadOnly: isReadOnly(extendedProperty), listOfValues: values);
+         var isPredefined = isPredefinedProperty(extendedProperty);
+         return createDTO(name, extendedProperty.ValueAsObject as string, nameEditable: !isPredefined, valueReadOnly: isReadOnly(extendedProperty), listOfValues: values, removable: !isPredefined);
       }
 
-      private MetaDataDTO createDTO(string name, string value, bool nameEditable = true, bool valueReadOnly = false, IEnumerable<string> listOfValues = null)
+      private MetaDataDTO createDTO(string name, string value, bool nameEditable = true, bool valueReadOnly = false, IEnumerable<string> listOfValues = null, bool removable = true)
       {
          return new MetaDataDTO(_defaultRules)
          {
@@ -123,7 +126,8 @@ namespace OSPSuite.Presentation.Presenters.ObservedData
             DataRepositories = _allDataRepositories,
             NameEditable = nameEditable,
             ValueReadOnly = valueReadOnly,
-            ListOfValues = listOfValues
+            ListOfValues = listOfValues,
+            Removable = removable
          };
       }
 
@@ -133,8 +137,19 @@ namespace OSPSuite.Presentation.Presenters.ObservedData
       public void MetaDataNameChanged(MetaDataDTO metaDataDTO, string oldName) => 
          handleThisChange(metaDataNameChanged, metaDataDTO, oldName, oldName);
 
-      public void RemoveMetaData(MetaDataDTO metaDataDTO) => 
-         AddCommand(_observedDataMetaDataTask.RemoveMetaData(_allDataRepositories, mapFrom(metaDataDTO)));
+      public void RemoveMetaData(MetaDataDTO metaDataDTO)
+      {
+         //A row that was never saved to the repositories only exists in the view. Removing it with a command would
+         //register an inverse command that adds the row as-is (possibly without name) to the repositories
+         if (!_savedMetaData.TryGetValue(metaDataDTO, out var savedMetaData))
+         {
+            _metaDataDTOList.Remove(metaDataDTO);
+            return;
+         }
+
+         //Use the saved meta data and not the row, as the row may contain edits that were not saved
+         AddCommand(_observedDataMetaDataTask.RemoveMetaData(_allDataRepositories, savedMetaData));
+      }
 
       private bool isPredefinedProperty(IExtendedProperty extendedProperty) => 
          _observedDataConfiguration.DefaultMetaDataCategories.Contains(extendedProperty.Name);
@@ -227,7 +242,8 @@ namespace OSPSuite.Presentation.Presenters.ObservedData
       {
          if (IsLatched) return;
          _metaDataDTOList = new NotifyList<MetaDataDTO>();
-         _allDataRepositories.ToList().IntersectingMetaData().Each(x => _metaDataDTOList.Add(createDTO(x)));
+         _savedMetaData.Clear();
+         _allDataRepositories.ToList().IntersectingMetaData().Each(addSavedMetaData);
          _view.BindToMetaData(_metaDataDTOList);
          _view.AddOutputPathEnabled = !hasOutputPath();
 
@@ -243,6 +259,13 @@ namespace OSPSuite.Presentation.Presenters.ObservedData
          var lowerLimitsOfQuantification = retrieveLLOQs().ToList();
          if (lowerLimitsOfQuantification.Count == 1)
             _view.BindToLLOQ(lowerLimitsOfQuantification.First());
+      }
+
+      private void addSavedMetaData(IExtendedProperty extendedProperty)
+      {
+         var metaDataDTO = createDTO(extendedProperty);
+         _savedMetaData.Add(metaDataDTO, new MetaDataKeyValue { Key = metaDataDTO.Name, Value = metaDataDTO.Value });
+         _metaDataDTOList.Add(metaDataDTO);
       }
 
       private IEnumerable<IParameter> retrieveLLOQs()
