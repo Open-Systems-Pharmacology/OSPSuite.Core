@@ -207,6 +207,27 @@ namespace OSPSuite.Core.Domain
       }
    }
 
+   public class When_normalizing_a_subject_count : StaticContextSpecification
+   {
+      [Observation]
+      public void should_return_a_valid_subject_count_without_leading_zeros_sign_or_white_spaces()
+      {
+         DataRepositoryExtensions.NormalizedSubjectCount("12").ShouldBeEqualTo("12");
+         DataRepositoryExtensions.NormalizedSubjectCount(" 012 ").ShouldBeEqualTo("12");
+         DataRepositoryExtensions.NormalizedSubjectCount("+12").ShouldBeEqualTo("12");
+      }
+
+      [Observation]
+      public void should_return_null_for_an_invalid_subject_count()
+      {
+         DataRepositoryExtensions.NormalizedSubjectCount("0").ShouldBeNull();
+         DataRepositoryExtensions.NormalizedSubjectCount("2.5").ShouldBeNull();
+         DataRepositoryExtensions.NormalizedSubjectCount(" ").ShouldBeNull();
+         DataRepositoryExtensions.NormalizedSubjectCount(string.Empty).ShouldBeNull();
+         DataRepositoryExtensions.NormalizedSubjectCount(null).ShouldBeNull();
+      }
+   }
+
    public class When_setting_and_retrieving_the_subject_count_of_a_data_repository : StaticContextSpecification
    {
       private DataRepository _dataRepository;

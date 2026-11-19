@@ -61,6 +61,11 @@ namespace OSPSuite.Presentation.Presenters.ObservedData
       void SetMolWeight(double oldMolWeightValueInDisplayUnit, double molWeightValueInDisplayUnit);
 
       /// <summary>
+      ///    Updates the subject count. An empty <paramref name="subjectCount" /> removes the subject count
+      /// </summary>
+      void SetSubjectCount(string subjectCount);
+
+      /// <summary>
       ///    Adds a metadata named "OutputPath". This is a specially named metadata.
       /// </summary>
       void AddOutputPathMetadata();
@@ -176,6 +181,9 @@ namespace OSPSuite.Presentation.Presenters.ObservedData
       public void SetMolWeight(double oldMolWeightValueInDisplayUnit, double molWeightValueInDisplayUnit) => 
          this.DoWithinLatch(() => { AddCommand(_observedDataMetaDataTask.UpdateMolWeight(_allDataRepositories, molWeightValueInCoreUnit(oldMolWeightValueInDisplayUnit), molWeightValueInCoreUnit(molWeightValueInDisplayUnit))); });
 
+      public void SetSubjectCount(string subjectCount) =>
+         this.DoWithinLatch(() => { AddCommand(_observedDataMetaDataTask.UpdateSubjectCount(_allDataRepositories, subjectCount)); });
+
       public void AddOutputPathMetadata()
       {
          if (hasOutputPath())
@@ -227,9 +235,12 @@ namespace OSPSuite.Presentation.Presenters.ObservedData
       {
          if (IsLatched) return;
          _metaDataDTOList = new NotifyList<MetaDataDTO>();
-         _allDataRepositories.ToList().IntersectingMetaData().Each(x => _metaDataDTOList.Add(createDTO(x)));
+         _allDataRepositories.ToList().IntersectingMetaData()
+            .Where(x => !x.IsNamed(Constants.ObservedData.SUBJECT_COUNT))
+            .Each(x => _metaDataDTOList.Add(createDTO(x)));
          _view.BindToMetaData(_metaDataDTOList);
          _view.AddOutputPathEnabled = !hasOutputPath();
+         _view.BindToSubjectCount(createSubjectCountDTO());
 
          _view.MolWeightEditable = _observedDataConfiguration.MolWeightAlwaysEditable || !_allDataRepositories.Any(x => x.ExtendedProperties.Contains(Captions.Molecule));
 
@@ -243,6 +254,26 @@ namespace OSPSuite.Presentation.Presenters.ObservedData
          var lowerLimitsOfQuantification = retrieveLLOQs().ToList();
          if (lowerLimitsOfQuantification.Count == 1)
             _view.BindToLLOQ(lowerLimitsOfQuantification.First());
+      }
+
+      /// <summary>
+      ///    The subject count shared by all edited repositories. Empty if not defined or if the repositories have different values.
+      ///    Valid subject counts are compared by value, so that "012" and "12" are the same subject count
+      /// </summary>
+      private MetaDataDTO createSubjectCountDTO()
+      {
+         var subjectCounts = _allDataRepositories
+            .Select(x => x.ExtendedPropertyValueFor(Constants.ObservedData.SUBJECT_COUNT) ?? string.Empty)
+            .Select(x => DataRepositoryExtensions.NormalizedSubjectCount(x) ?? x)
+            .Distinct().ToList();
+
+         return new MetaDataDTO(MetaDataDTO.MetaDataDTORules.ForSubjectCount())
+         {
+            Name = Constants.ObservedData.SUBJECT_COUNT,
+            Value = subjectCounts.Count == 1 ? subjectCounts[0] : string.Empty,
+            DataRepositories = _allDataRepositories,
+            NameEditable = false
+         };
       }
 
       private IEnumerable<IParameter> retrieveLLOQs()

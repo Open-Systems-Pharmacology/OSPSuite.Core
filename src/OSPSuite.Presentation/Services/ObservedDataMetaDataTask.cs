@@ -10,6 +10,7 @@ using OSPSuite.Core.Domain.Services.ParameterIdentifications;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Presentation.Core;
 using OSPSuite.Presentation.Presenters.ObservedData;
+using OSPSuite.Utility.Exceptions;
 using OSPSuite.Utility.Extensions;
 using Command = OSPSuite.Assets.Command;
 
@@ -96,6 +97,60 @@ namespace OSPSuite.Presentation.Services
 
          allDataRepositories.Each(x => macroCommand.Add(new UpdateObservedDataMolWeightCommand(x, _molWeightDimension, oldMolWeightValue, newMolWeightValue).Run(_executionContext)));
          return macroCommand;
+      }
+
+      public ICommand UpdateSubjectCount(IEnumerable<DataRepository> allDataRepositories, string subjectCount)
+      {
+         var newSubjectCount = normalizedSubjectCount(subjectCount);
+
+         var macroCommand = new OSPSuiteMacroCommand<IOSPSuiteExecutionContext>
+         {
+            CommandType = Command.CommandTypeEdit,
+            ObjectType = ObjectTypes.ObservedData,
+            Description = Command.SubjectCountModifiedInDataRepositories
+         };
+
+         foreach (var dataRepository in allDataRepositories)
+         {
+            var command = updateSubjectCountCommand(dataRepository, newSubjectCount);
+            if (command != null)
+               macroCommand.Add(command.Run(_executionContext));
+         }
+
+         return macroCommand;
+      }
+
+      /// <summary>
+      ///    Returns the command updating the subject count of <paramref name="dataRepository" /> to
+      ///    <paramref name="newSubjectCount" /> or <c>null</c> if the subject count is already as expected
+      /// </summary>
+      private ObservedDataCommandBase updateSubjectCountCommand(DataRepository dataRepository, string newSubjectCount)
+      {
+         var key = Constants.ObservedData.SUBJECT_COUNT;
+         if (!dataRepository.ExtendedProperties.Contains(key))
+            return newSubjectCount == null ? null : new AddObservedDataMetaDataCommand(dataRepository, new MetaDataKeyValue {Key = key, Value = newSubjectCount});
+
+         var oldSubjectCount = dataRepository.ExtendedPropertyValueFor(key);
+         if (newSubjectCount == null)
+            return new RemoveObservedDataMetaDataCommand(dataRepository, new MetaDataKeyValue {Key = key, Value = oldSubjectCount});
+
+         if (string.Equals(oldSubjectCount, newSubjectCount))
+            return null;
+
+         return new ChangeObservedDataMetaDataCommand(dataRepository, new MetaDataChanged {OldName = key, NewName = key, OldValue = oldSubjectCount, NewValue = newSubjectCount});
+      }
+
+      /// <summary>
+      ///    Returns <c>null</c> for an empty <paramref name="subjectCount" />, otherwise the subject count without leading zeros, sign
+      ///    or white spaces
+      /// </summary>
+      private static string normalizedSubjectCount(string subjectCount)
+      {
+         if (string.IsNullOrEmpty(subjectCount))
+            return null;
+
+         return DataRepositoryExtensions.NormalizedSubjectCount(subjectCount) ??
+                throw new OSPSuiteException(Error.InvalidSubjectCount(subjectCount, Constants.ObservedData.MIN_SUBJECT_COUNT));
       }
    }
 

@@ -84,6 +84,13 @@ namespace OSPSuite.Core.Domain.Data
       public static bool IsValidSubjectCount(string subjectCount) => tryParseSubjectCount(subjectCount, out _);
 
       /// <summary>
+      ///    Returns the valid <paramref name="subjectCount" /> without leading zeros, sign or white spaces (e.g. " 012" returns
+      ///    "12"), or <c>null</c> if <paramref name="subjectCount" /> is not a valid subject count
+      /// </summary>
+      public static string NormalizedSubjectCount(string subjectCount) =>
+         tryParseSubjectCount(subjectCount, out var value) ? value.ToString(CultureInfo.InvariantCulture) : null;
+
+      /// <summary>
       ///    Returns the subject count stored in the meta data of the <paramref name="dataRepository" /> or <c>null</c> if the
       ///    meta data is not defined or empty
       ///    <exception cref="OSPSuiteException">is thrown if the stored subject count is invalid</exception>
