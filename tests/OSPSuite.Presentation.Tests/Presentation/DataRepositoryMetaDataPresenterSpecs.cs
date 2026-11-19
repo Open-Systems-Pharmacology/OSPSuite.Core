@@ -466,6 +466,43 @@ namespace OSPSuite.Presentation.Presentation
       }
    }
 
+   public class When_binding_multiple_observed_data_with_the_same_subject_count_written_differently : When_binding_observed_data_with_a_subject_count
+   {
+      private DataRepository _otherDataRepository;
+
+      protected override void Context()
+      {
+         base.Context();
+         _otherDataRepository = new DataRepository();
+         _otherDataRepository.ExtendedProperties.Add(new ExtendedProperty<string> {Name = Constants.ObservedData.SUBJECT_COUNT, Value = "012"});
+      }
+
+      protected override void Because()
+      {
+         sut.EditObservedDataMetaData(new[] {_dataRepository, _otherDataRepository});
+      }
+
+      [Observation]
+      public void should_bind_the_normalized_shared_subject_count_to_the_view()
+      {
+         _subjectCountDTO.Value.ShouldBeEqualTo("12");
+      }
+   }
+
+   public class When_binding_multiple_observed_data_where_only_some_have_a_subject_count : When_binding_observed_data_with_a_subject_count
+   {
+      protected override void Because()
+      {
+         sut.EditObservedDataMetaData(new[] {_dataRepository, new DataRepository()});
+      }
+
+      [Observation]
+      public void should_bind_an_empty_subject_count_to_the_view()
+      {
+         _subjectCountDTO.Value.ShouldBeEqualTo(string.Empty);
+      }
+   }
+
    public class When_setting_the_subject_count : concern_for_DataRepositoryMetaDataPresenter
    {
       protected override void Because()

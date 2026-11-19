@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using OSPSuite.Assets;
 using OSPSuite.Core.Commands;
@@ -147,13 +146,11 @@ namespace OSPSuite.Presentation.Services
       /// </summary>
       private static string normalizedSubjectCount(string subjectCount)
       {
-         if (string.IsNullOrWhiteSpace(subjectCount))
+         if (string.IsNullOrEmpty(subjectCount))
             return null;
 
-         if (!DataRepositoryExtensions.IsValidSubjectCount(subjectCount))
-            throw new OSPSuiteException(Error.InvalidSubjectCount(subjectCount, Constants.ObservedData.MIN_SUBJECT_COUNT));
-
-         return int.Parse(subjectCount, NumberStyles.Integer, CultureInfo.InvariantCulture).ToString(CultureInfo.InvariantCulture);
+         return DataRepositoryExtensions.NormalizedSubjectCount(subjectCount) ??
+                throw new OSPSuiteException(Error.InvalidSubjectCount(subjectCount, Constants.ObservedData.MIN_SUBJECT_COUNT));
       }
    }
 

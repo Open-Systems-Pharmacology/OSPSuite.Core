@@ -257,12 +257,14 @@ namespace OSPSuite.Presentation.Presenters.ObservedData
       }
 
       /// <summary>
-      ///    The subject count shared by all edited repositories. Empty if not defined or if the repositories have different values
+      ///    The subject count shared by all edited repositories. Empty if not defined or if the repositories have different values.
+      ///    Valid subject counts are compared by value, so that "012" and "12" are the same subject count
       /// </summary>
       private MetaDataDTO createSubjectCountDTO()
       {
          var subjectCounts = _allDataRepositories
             .Select(x => x.ExtendedPropertyValueFor(Constants.ObservedData.SUBJECT_COUNT) ?? string.Empty)
+            .Select(x => DataRepositoryExtensions.NormalizedSubjectCount(x) ?? x)
             .Distinct().ToList();
 
          return new MetaDataDTO(MetaDataDTO.MetaDataDTORules.ForSubjectCount())

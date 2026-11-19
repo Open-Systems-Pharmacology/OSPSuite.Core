@@ -240,6 +240,7 @@ namespace OSPSuite.Presentation.Presentation
       public void should_throw_an_exception_and_leave_the_repositories_unchanged()
       {
          The.Action(() => sut.UpdateSubjectCount(_list, "0")).ShouldThrowAn<OSPSuiteException>();
+         The.Action(() => sut.UpdateSubjectCount(_list, " ")).ShouldThrowAn<OSPSuiteException>();
          _withoutSubjectCount.SubjectCount().ShouldBeNull();
          _withSameSubjectCount.SubjectCount().ShouldBeEqualTo(12);
          _withOtherSubjectCount.SubjectCount().ShouldBeEqualTo(5);
