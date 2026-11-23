@@ -54,9 +54,8 @@ namespace OSPSuite.Core.Domain.Mappers
             return containers;
          }
 
-         //A root container defined with a parent path (e.g. a container that will be inserted into another structure) has a path starting
-         //with the parent path. Those entries cannot be resolved from the root container and are represented with placeholder containers
-         var parentPath = parentPathOf(rootContainer, pathElements);
+         //Parent path entries are not part of this container hierarchy. Placeholders are used so that they are displayed as they would be in a simulation
+         var parentPath = parentPathIn(rootContainer, pathElements);
          containers.AddRange(parentPath.Select(x => new Container().WithName(x)));
 
          int firstPathElementToProcess = parentPath.Count; //start index in for loop = first index of child of topContainer in pathElements
@@ -66,7 +65,7 @@ namespace OSPSuite.Core.Domain.Mappers
          if (string.Equals(rootContainer.Name, pathElements[firstPathElementToProcess]))
          {
             containers.Add(rootContainer);
-            firstPathElementToProcess++; // root container already processed
+            firstPathElementToProcess++;
          }
 
          IContainer container = rootContainer;
@@ -89,19 +88,11 @@ namespace OSPSuite.Core.Domain.Mappers
          return containers;
       }
 
-      /// <summary>
-      ///    Returns the entries of the parent path of the <paramref name="rootContainer" /> if the
-      ///    <paramref name="pathElements" /> start with it, or an empty list otherwise
-      /// </summary>
-      private IReadOnlyList<string> parentPathOf(IContainer rootContainer, IReadOnlyList<string> pathElements)
+      private IReadOnlyList<string> parentPathIn(IContainer rootContainer, IReadOnlyList<string> pathElements)
       {
          var parentPath = rootContainer.ParentPath?.ToList() ?? new List<string>();
-
-         //at least one entry is expected after the parent path
-         if (parentPath.Count == 0 || pathElements.Count <= parentPath.Count)
-            return new List<string>();
-
-         return pathElements.Take(parentPath.Count).SequenceEqual(parentPath) ? parentPath : new List<string>();
+         var startsWithParentPath = pathElements.Count > parentPath.Count && pathElements.Take(parentPath.Count).SequenceEqual(parentPath);
+         return startsWithParentPath ? parentPath : new List<string>();
       }
 
       /// <summary>
