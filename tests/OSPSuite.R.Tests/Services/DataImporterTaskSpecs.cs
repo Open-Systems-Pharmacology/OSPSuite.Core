@@ -511,6 +511,33 @@ namespace OSPSuite.R.Services
       }
 
       [Observation]
+      public void should_replace_the_naming_convention_key_of_a_replaced_grouping_column()
+      {
+         _configuration.NamingConventions = "{Source}.{Id}.{N}";
+         sut.AddGroupingColumn(_configuration, "Id");
+         sut.AddGroupingColumn(_configuration, "N");
+         sut.AddMetaDataColumn(_configuration, "N", Constants.ObservedData.SUBJECT_COUNT);
+         _configuration.NamingConventions.ShouldBeEqualTo("{Source}.{Id}.{Subject count}");
+      }
+
+      [Observation]
+      public void should_replace_the_naming_convention_key_of_the_same_column_mapped_to_another_category()
+      {
+         _configuration.NamingConventions = "{Source}.{Study Id}";
+         sut.AddMetaDataColumn(_configuration, "N", Constants.ObservedData.STUDY_ID);
+         sut.AddMetaDataColumn(_configuration, "N", Constants.ObservedData.SUBJECT_COUNT);
+         _configuration.NamingConventions.ShouldBeEqualTo("{Source}.{Subject count}");
+      }
+
+      [Observation]
+      public void should_not_set_a_naming_convention_if_none_is_defined()
+      {
+         sut.AddGroupingColumn(_configuration, "N");
+         sut.AddMetaDataColumn(_configuration, "N", Constants.ObservedData.SUBJECT_COUNT);
+         _configuration.NamingConventions.ShouldBeNull();
+      }
+
+      [Observation]
       public void should_remove_the_mapping_of_the_category()
       {
          sut.AddMetaDataColumn(_configuration, "N", Constants.ObservedData.SUBJECT_COUNT);
@@ -561,6 +588,32 @@ namespace OSPSuite.R.Services
       public void should_not_store_the_column_name_as_meta_data()
       {
          _dataRepositories.Each(x => x.ExtendedProperties.Contains("N").ShouldBeFalse());
+      }
+   }
+
+   public class When_importing_data_named_by_a_grouping_column_that_was_mapped_to_subject_count : concern_for_DataImporter
+   {
+      private IReadOnlyList<DataRepository> _dataRepositories;
+
+      protected override void Context()
+      {
+         base.Context();
+         sut.IgnoreSheetNamesAtImport = true;
+         _configuration.NamingConventions = "{Source}.{Id}.{N}";
+         sut.AddGroupingColumn(_configuration, "Id");
+         sut.AddGroupingColumn(_configuration, "N");
+         sut.AddMetaDataColumn(_configuration, "N", Constants.ObservedData.SUBJECT_COUNT);
+      }
+
+      protected override void Because()
+      {
+         _dataRepositories = sut.ImportCsvFromConfiguration(_configuration, getFileFullName("subjectCountFromColumn.csv"), ';');
+      }
+
+      [Observation]
+      public void should_name_the_data_sets_with_the_value_of_the_column()
+      {
+         _dataRepositories.Select(x => x.Name).ShouldOnlyContain("subjectCountFromColumn.A.5", "subjectCountFromColumn.B.12");
       }
    }
 

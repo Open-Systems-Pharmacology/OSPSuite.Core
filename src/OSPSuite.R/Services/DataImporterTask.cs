@@ -49,7 +49,8 @@ namespace OSPSuite.R.Services
       /// <summary>
       ///    Maps the column <paramref name="columnName" /> to the meta data category <paramref name="metaDataId" />,
       ///    e.g. <see cref="Constants.ObservedData.SUBJECT_COUNT" />. An existing mapping of the same column or of the same
-      ///    meta data category is replaced.
+      ///    meta data category is replaced. Naming convention keys of a replaced mapping of the column are replaced by
+      ///    <paramref name="metaDataId" />.
       /// </summary>
       /// <exception cref="OSPSuiteException">
       ///    Thrown if <paramref name="metaDataId" /> is not a meta data category of observed data
@@ -160,7 +161,7 @@ namespace OSPSuite.R.Services
          };
          keys.AddRange(configuration.Parameters.OfType<MetaDataFormatParameter>().Select(p => p.MetaDataId));
          keys.AddRange(configuration.Parameters.OfType<GroupByDataFormatParameter>().Select(p => p.ColumnName));
-         configuration.NamingConventions = string.Join(separator, keys.Select(k => $"{{{k}}}"));
+         configuration.NamingConventions = string.Join(separator, keys.Select(namingConventionToken));
 
          return configuration;
       }
@@ -316,7 +317,23 @@ namespace OSPSuite.R.Services
 
          replacedParameters.Each(configuration.RemoveParameter);
          configuration.AddParameter(new MetaDataFormatParameter(columnName, metaDataId));
+
+         //The replaced mappings of the column are now resolved through the meta data category
+         replacedParameters.Each(p => replaceNamingConventionKey(configuration, namingConventionKeyFor(p), metaDataId));
       }
+
+      private static void replaceNamingConventionKey(ImporterConfiguration configuration, string oldKey, string newKey)
+      {
+         if (string.IsNullOrEmpty(configuration.NamingConventions))
+            return;
+
+         configuration.NamingConventions = configuration.NamingConventions.Replace(namingConventionToken(oldKey), namingConventionToken(newKey));
+      }
+
+      private static string namingConventionKeyFor(DataFormatParameter parameter) =>
+         parameter is MetaDataFormatParameter metaDataParameter ? metaDataParameter.MetaDataId : parameter.ColumnName;
+
+      private static string namingConventionToken(string key) => $"{{{key}}}";
 
       public void RemoveMetaDataColumn(ImporterConfiguration configuration, string metaDataId)
       {
