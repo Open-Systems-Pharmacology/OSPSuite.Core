@@ -296,7 +296,6 @@ namespace OSPSuite.Presentation.Presentation
       protected override void Context()
       {
          base.Context();
-         //name is set but the row is not valid since the value is empty. The row is not saved
          _newMetaDataDTO.Name = "Route";
          sut.MetaDataNameChanged(_newMetaDataDTO, string.Empty);
       }
@@ -360,7 +359,7 @@ namespace OSPSuite.Presentation.Presentation
             .Invokes(x => _metaDataDTO = x.GetArgument<IEnumerable<MetaDataDTO>>(0).Single());
          sut.EditObservedData(_dataRepository);
 
-         //the rename is not saved since the row is not valid with an empty value
+         //not saved since the value is empty
          _metaDataDTO.Name = "Tab";
          sut.MetaDataNameChanged(_metaDataDTO, "Sheet");
       }
