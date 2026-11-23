@@ -410,4 +410,25 @@ namespace OSPSuite.Core.Domain
          ShouldReturnPathElementValues(string.Empty, "Tumor", string.Empty, "Intracellular", string.Empty, "Volume");
       }
    }
+
+   public class When_mapping_a_relative_path_starting_with_a_child_container_named_like_the_parent_path_of_the_root_container : concern_for_PathToPathElementsMapper
+   {
+      protected override void Context()
+      {
+         base.Context();
+
+         _rootContainer = CreateContainer(null, "Tumor");
+         _rootContainer.ParentPath = new ObjectPath("Organism");
+         var organism = CreateContainer(_rootContainer, "Organism");
+         var intracellular = CreateContainer(organism, "Intracellular", ContainerType.Compartment);
+         var parameter = new Parameter().WithName("Volume").WithParentContainer(intracellular);
+         _path = new List<string> {"Organism", "Intracellular", "Volume"};
+      }
+
+      [Observation]
+      public void should_resolve_the_path_from_the_root_container()
+      {
+         ShouldReturnPathElementValues(string.Empty, "Organism", string.Empty, "Intracellular", string.Empty, "Volume");
+      }
+   }
 }

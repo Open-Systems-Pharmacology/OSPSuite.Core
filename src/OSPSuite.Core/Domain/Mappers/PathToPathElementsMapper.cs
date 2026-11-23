@@ -91,7 +91,9 @@ namespace OSPSuite.Core.Domain.Mappers
       private IReadOnlyList<string> parentPathIn(IContainer rootContainer, IReadOnlyList<string> pathElements)
       {
          var parentPath = rootContainer.ParentPath?.ToList() ?? new List<string>();
-         var startsWithParentPath = pathElements.Count > parentPath.Count && pathElements.Take(parentPath.Count).SequenceEqual(parentPath);
+         var startsWithParentPath = pathElements.Count > parentPath.Count
+                                    && pathElements.Take(parentPath.Count).SequenceEqual(parentPath)
+                                    && string.Equals(rootContainer.Name, pathElements[parentPath.Count]);
          return startsWithParentPath ? parentPath : new List<string>();
       }
 
