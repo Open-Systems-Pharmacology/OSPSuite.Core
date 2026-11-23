@@ -339,4 +339,75 @@ namespace OSPSuite.Core.Domain
          ShouldReturnPathElementValues("ROOT", string.Empty, string.Empty, string.Empty, string.Empty, string.Empty);
       }
    }
+
+   public class When_mapping_the_path_of_a_parameter_defined_in_a_top_container_with_a_parent_path : concern_for_PathToPathElementsMapper
+   {
+      private IParameter _parameter;
+
+      protected override void Context()
+      {
+         base.Context();
+
+         var tumor = CreateContainer(null, "Tumor");
+         tumor.ParentPath = new ObjectPath("Organism", "Liver");
+         var intracellular = CreateContainer(tumor, "Intracellular", ContainerType.Compartment);
+         _parameter = new Parameter().WithName("Volume").WithParentContainer(intracellular);
+      }
+
+      protected override void Because()
+      {
+         _result = sut.MapFrom(_parameter);
+      }
+
+      [Observation]
+      public void should_return_the_path_elements_including_the_parent_path()
+      {
+         ShouldReturnPathElementValues(string.Empty, "Organism", new[] {"Liver", "Tumor"}.ToString(Constants.DISPLAY_PATH_SEPARATOR), "Intracellular", string.Empty, "Volume");
+      }
+   }
+
+   public class When_mapping_the_path_of_a_parameter_defined_directly_in_a_top_container_with_a_parent_path : concern_for_PathToPathElementsMapper
+   {
+      private IParameter _parameter;
+
+      protected override void Context()
+      {
+         base.Context();
+
+         var tumor = CreateContainer(null, "Tumor");
+         tumor.ParentPath = new ObjectPath("Organism");
+         _parameter = new Parameter().WithName("Volume").WithParentContainer(tumor);
+      }
+
+      protected override void Because()
+      {
+         _result = sut.MapFrom(_parameter);
+      }
+
+      [Observation]
+      public void should_return_the_path_elements_including_the_parent_path()
+      {
+         ShouldReturnPathElementValues(string.Empty, "Organism", "Tumor", string.Empty, string.Empty, "Volume");
+      }
+   }
+
+   public class When_mapping_a_path_that_does_not_start_with_the_parent_path_of_the_root_container : concern_for_PathToPathElementsMapper
+   {
+      protected override void Context()
+      {
+         base.Context();
+
+         _rootContainer = CreateContainer(null, "Tumor");
+         _rootContainer.ParentPath = new ObjectPath("Organism", "Liver");
+         var intracellular = CreateContainer(_rootContainer, "Intracellular", ContainerType.Compartment);
+         var parameter = new Parameter().WithName("Volume").WithParentContainer(intracellular);
+         _path = new List<string> {"Tumor", "Intracellular", "Volume"};
+      }
+
+      [Observation]
+      public void should_return_the_path_elements_without_the_parent_path()
+      {
+         ShouldReturnPathElementValues(string.Empty, "Tumor", string.Empty, "Intracellular", string.Empty, "Volume");
+      }
+   }
 }
