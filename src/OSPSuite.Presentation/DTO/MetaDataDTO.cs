@@ -72,9 +72,6 @@ namespace OSPSuite.Presentation.DTO
             yield return valuePropertyNotEmpty;
          }
 
-         /// <summary>
-         ///    Rules for the subject count edited outside of the meta data list. An empty value is allowed and clears the subject count
-         /// </summary>
          internal static IEnumerable<IBusinessRule> ForSubjectCount()
          {
             yield return validSubjectCount;

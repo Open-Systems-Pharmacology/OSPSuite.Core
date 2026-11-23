@@ -83,10 +83,6 @@ namespace OSPSuite.Core.Domain.Data
       /// </summary>
       public static bool IsValidSubjectCount(string subjectCount) => tryParseSubjectCount(subjectCount, out _);
 
-      /// <summary>
-      ///    Returns the valid <paramref name="subjectCount" /> without leading zeros, sign or white spaces (e.g. " 012" returns
-      ///    "12"), or <c>null</c> if <paramref name="subjectCount" /> is not a valid subject count
-      /// </summary>
       public static string NormalizedSubjectCount(string subjectCount) =>
          tryParseSubjectCount(subjectCount, out var value) ? value.ToString(CultureInfo.InvariantCulture) : null;
 

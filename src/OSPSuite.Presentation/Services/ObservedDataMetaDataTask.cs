@@ -120,10 +120,6 @@ namespace OSPSuite.Presentation.Services
          return macroCommand;
       }
 
-      /// <summary>
-      ///    Returns the command updating the subject count of <paramref name="dataRepository" /> to
-      ///    <paramref name="newSubjectCount" /> or <c>null</c> if the subject count is already as expected
-      /// </summary>
       private ObservedDataCommandBase updateSubjectCountCommand(DataRepository dataRepository, string newSubjectCount)
       {
          var key = Constants.ObservedData.SUBJECT_COUNT;
@@ -140,10 +136,6 @@ namespace OSPSuite.Presentation.Services
          return new ChangeObservedDataMetaDataCommand(dataRepository, new MetaDataChanged {OldName = key, NewName = key, OldValue = oldSubjectCount, NewValue = newSubjectCount});
       }
 
-      /// <summary>
-      ///    Returns <c>null</c> for an empty <paramref name="subjectCount" />, otherwise the subject count without leading zeros, sign
-      ///    or white spaces
-      /// </summary>
       private static string normalizedSubjectCount(string subjectCount)
       {
          if (string.IsNullOrEmpty(subjectCount))

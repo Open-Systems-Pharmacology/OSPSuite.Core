@@ -45,13 +45,6 @@ namespace OSPSuite.Core.Domain.Services
       /// <param name="newMolWeightValue">Value to set in core unit</param>
       ICommand UpdateMolWeight(IEnumerable<DataRepository> allDataRepositories, double oldMolWeightValue, double newMolWeightValue);
 
-      /// <summary>
-      /// Sets the subject count meta data of all <paramref name="allDataRepositories"/> to <paramref name="subjectCount"/>.
-      /// The subject count is added where missing and changed where different. An empty <paramref name="subjectCount"/> removes it.
-      /// <exception cref="OSPSuite.Utility.Exceptions.OSPSuiteException">is thrown if <paramref name="subjectCount"/> is not empty and invalid</exception>
-      /// </summary>
-      /// <param name="allDataRepositories">Repositories being edited</param>
-      /// <param name="subjectCount">The new subject count</param>
       ICommand UpdateSubjectCount(IEnumerable<DataRepository> allDataRepositories, string subjectCount);
 
       /// <summary>

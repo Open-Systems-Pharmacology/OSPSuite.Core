@@ -60,9 +60,6 @@ namespace OSPSuite.Presentation.Presenters.ObservedData
       /// </summary>
       void SetMolWeight(double oldMolWeightValueInDisplayUnit, double molWeightValueInDisplayUnit);
 
-      /// <summary>
-      ///    Updates the subject count. An empty <paramref name="subjectCount" /> removes the subject count
-      /// </summary>
       void SetSubjectCount(string subjectCount);
 
       /// <summary>
@@ -256,10 +253,6 @@ namespace OSPSuite.Presentation.Presenters.ObservedData
             _view.BindToLLOQ(lowerLimitsOfQuantification.First());
       }
 
-      /// <summary>
-      ///    The subject count shared by all edited repositories. Empty if not defined or if the repositories have different values.
-      ///    Valid subject counts are compared by value, so that "012" and "12" are the same subject count
-      /// </summary>
       private MetaDataDTO createSubjectCountDTO()
       {
          var subjectCounts = _allDataRepositories
