@@ -197,6 +197,51 @@ namespace OSPSuite.R.Services
       }
    }
 
+   public class When_saving_a_simulation_with_a_circular_reference_loaded_in_R : concern_for_saving_a_simulation_changed_in_R
+   {
+      private string _circularSimulationFile;
+      private IParameter _overwrittenParameter;
+
+      protected override void Context()
+      {
+         base.Context();
+         var corePersistor = Api.Container.Resolve<ISimulationPersistor>();
+         var objectPathFactory = Api.Container.Resolve<IObjectPathFactory>();
+         var simulationTransfer = corePersistor.Load(HelperForSpecs.DataFile("S1.pkml"));
+         var formulaParameters = simulationTransfer.Simulation.Model.Root.GetAllChildren<IParameter>(x => !x.IsFixedValue && x.Formula.IsExplicit());
+         var parameterA = formulaParameters[0];
+         var parameterB = formulaParameters[1];
+         parameterA.Formula = formulaReferencing(parameterA, parameterB, objectPathFactory).WithId("CircularA");
+         parameterB.Formula = formulaReferencing(parameterB, parameterA, objectPathFactory).WithId("CircularB");
+         _circularSimulationFile = FileHelper.GenerateTemporaryFileName();
+         corePersistor.Save(simulationTransfer, _circularSimulationFile);
+
+         _simulation = sut.LoadSimulation(_circularSimulationFile);
+         _overwrittenParameter = _simulation.Model.Root.EntityAt<IParameter>(_entityPathResolver.PathFor(parameterA).ToPathArray());
+         _overwrittenParameter.Value = 5;
+      }
+
+      private static ExplicitFormula formulaReferencing(IParameter parameter, IParameter referencedParameter, IObjectPathFactory objectPathFactory)
+      {
+         var formula = new ExplicitFormula("Other");
+         formula.AddObjectPath(objectPathFactory.CreateRelativeFormulaUsablePath(parameter, referencedParameter).WithAlias("Other"));
+         return formula;
+      }
+
+      [Observation]
+      public void should_write_the_overwritten_parameter_without_an_original_value()
+      {
+         SavedOriginalValueFor(_overwrittenParameter).Value.ShouldBeEqualTo(double.NaN);
+         _savedSimulationTransfer.OriginalQuantityValues.Count.ShouldBeEqualTo(1);
+      }
+
+      public override void Cleanup()
+      {
+         base.Cleanup();
+         FileHelper.DeleteFile(_circularSimulationFile);
+      }
+   }
+
    public class When_saving_a_simulation_with_changes_tracked_before_it_was_loaded_in_R : concern_for_saving_a_simulation_changed_in_R
    {
       private string _trackedSimulationFile;

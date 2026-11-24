@@ -3,6 +3,7 @@ using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Formulas;
+using OSPSuite.Helpers;
 
 namespace OSPSuite.R.Domain
 {
@@ -117,6 +118,112 @@ namespace OSPSuite.R.Domain
       public void should_report_the_parameter_with_the_value_it_had_initially()
       {
          sut.ChangedQuantities().ShouldOnlyContain<(IQuantity quantity, double initialValue)>((_formulaParameter, 20));
+      }
+   }
+
+   public class When_the_value_of_a_distributed_parameter_is_changed : concern_for_SimulationChanges
+   {
+      private IDistributedParameter _distributedParameter;
+
+      protected override void Context()
+      {
+         base.Context();
+         _distributedParameter = DomainHelperForSpecs.NormalDistributedParameter(defaultMean: 10, defaultDeviation: 2).WithName("Distributed");
+         _root.Add(_distributedParameter);
+         sut = new SimulationChanges(_root, Enumerable.Empty<OriginalQuantityValue>(), hasUntraceableChanges: false);
+      }
+
+      protected override void Because()
+      {
+         _distributedParameter.Value = 12;
+      }
+
+      [Observation]
+      public void should_report_the_distributed_parameter_with_the_value_of_its_initial_percentile_but_not_its_percentile()
+      {
+         sut.ChangedQuantities().ShouldOnlyContain<(IQuantity quantity, double initialValue)>((_distributedParameter, 10));
+      }
+   }
+
+   public abstract class concern_for_SimulationChanges_with_a_circular_reference : ContextSpecification<SimulationChanges>
+   {
+      protected IContainer _root;
+      protected IParameter _parameterA;
+      protected IParameter _parameterB;
+
+      protected override void Context()
+      {
+         _root = new Container().WithName("Root");
+         _parameterA = new Parameter { Name = "A", Formula = formulaReferencing("B") };
+         _parameterB = new Parameter { Name = "B", Formula = formulaReferencing("A") };
+         _root.AddChildren(_parameterA, _parameterB);
+      }
+
+      private static ExplicitFormula formulaReferencing(string parameterName)
+      {
+         var formula = new ExplicitFormula(parameterName);
+         formula.AddObjectPath(new FormulaUsablePath(ObjectPath.PARENT_CONTAINER, parameterName).WithAlias(parameterName));
+         return formula;
+      }
+   }
+
+   public class When_creating_the_changes_of_a_simulation_with_a_circular_reference : concern_for_SimulationChanges_with_a_circular_reference
+   {
+      protected override void Because()
+      {
+         sut = new SimulationChanges(_root, Enumerable.Empty<OriginalQuantityValue>(), hasUntraceableChanges: false);
+      }
+
+      [Observation]
+      public void should_not_report_any_change()
+      {
+         sut.ChangedQuantities().ShouldBeEmpty();
+      }
+   }
+
+   public class When_a_parameter_with_a_circular_reference_is_overwritten : concern_for_SimulationChanges_with_a_circular_reference
+   {
+      protected override void Context()
+      {
+         base.Context();
+         sut = new SimulationChanges(_root, Enumerable.Empty<OriginalQuantityValue>(), hasUntraceableChanges: false);
+      }
+
+      protected override void Because()
+      {
+         _parameterA.Value = 5;
+      }
+
+      [Observation]
+      public void should_report_the_parameter_without_an_initial_value()
+      {
+         sut.ChangedQuantities().ShouldOnlyContain<(IQuantity quantity, double initialValue)>((_parameterA, double.NaN));
+      }
+   }
+
+   public class When_a_parameter_depending_on_a_circular_reference_is_overwritten : concern_for_SimulationChanges_with_a_circular_reference
+   {
+      private IParameter _dependentParameter;
+
+      protected override void Context()
+      {
+         base.Context();
+         var formula = new ExplicitFormula("A");
+         formula.AddObjectPath(new FormulaUsablePath(ObjectPath.PARENT_CONTAINER, "A").WithAlias("A"));
+         _dependentParameter = new Parameter { Name = "Dependent", Formula = formula };
+         _root.Add(_dependentParameter);
+         sut = new SimulationChanges(_root, Enumerable.Empty<OriginalQuantityValue>(), hasUntraceableChanges: false);
+      }
+
+      protected override void Because()
+      {
+         _dependentParameter.Value = 5;
+      }
+
+      [Observation]
+      public void should_report_the_parameter_without_an_initial_value()
+      {
+         sut.ChangedQuantities().ShouldOnlyContain<(IQuantity quantity, double initialValue)>((_dependentParameter, double.NaN));
       }
    }
 }
