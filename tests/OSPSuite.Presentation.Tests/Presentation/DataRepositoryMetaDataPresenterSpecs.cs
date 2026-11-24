@@ -242,6 +242,237 @@ namespace OSPSuite.Presentation.Presentation
       }
    }
 
+   public abstract class When_removing_a_metadata_row_that_was_never_saved : concern_for_DataRepositoryMetaDataPresenter
+   {
+      protected NotifyList<MetaDataDTO> _boundMetaData;
+      protected MetaDataDTO _newMetaDataDTO;
+
+      protected override void Context()
+      {
+         base.Context();
+         SetExtendedProperty("Species", "Human");
+         A.CallTo(() => _view.BindToMetaData(A<IEnumerable<MetaDataDTO>>._))
+            .Invokes(x => _boundMetaData = x.GetArgument<NotifyList<MetaDataDTO>>(0));
+         sut.EditObservedData(_dataRepository);
+         sut.NewMetaDataAdded();
+         _newMetaDataDTO = _boundMetaData.Last();
+      }
+
+      protected override void Because()
+      {
+         sut.RemoveMetaData(_newMetaDataDTO);
+      }
+
+      [Observation]
+      public void command_to_remove_is_not_issued()
+      {
+         A.CallTo(() => _observedDataMetaDataTask.RemoveMetaData(A<IEnumerable<DataRepository>>._, A<MetaDataKeyValue>._)).MustNotHaveHappened();
+      }
+
+      [Observation]
+      public void the_row_is_removed_from_the_view()
+      {
+         _boundMetaData.ShouldNotContain(_newMetaDataDTO);
+      }
+
+      [Observation]
+      public void the_saved_rows_are_kept()
+      {
+         _boundMetaData.Select(x => x.Name).ShouldOnlyContain("Species");
+      }
+
+      [Observation]
+      public void the_repository_metadata_is_unchanged()
+      {
+         _dataRepository.ExtendedProperties.Keys.ShouldOnlyContain("Species");
+      }
+   }
+
+   public class When_removing_a_new_metadata_row_without_name : When_removing_a_metadata_row_that_was_never_saved
+   {
+   }
+
+   public class When_removing_a_new_metadata_row_with_a_name_but_without_value : When_removing_a_metadata_row_that_was_never_saved
+   {
+      protected override void Context()
+      {
+         base.Context();
+         _newMetaDataDTO.Name = "Route";
+         sut.MetaDataNameChanged(_newMetaDataDTO, string.Empty);
+      }
+
+      [Observation]
+      public void command_to_add_is_not_issued()
+      {
+         A.CallTo(() => _observedDataMetaDataTask.AddMetaData(A<IEnumerable<DataRepository>>._, A<MetaDataKeyValue>._)).MustNotHaveHappened();
+      }
+   }
+
+   public class When_removing_a_new_metadata_row_with_the_name_of_an_existing_metadata : When_removing_a_metadata_row_that_was_never_saved
+   {
+      protected override void Context()
+      {
+         base.Context();
+         _newMetaDataDTO.Name = "Species";
+      }
+
+      [Observation]
+      public void the_existing_metadata_keeps_its_value()
+      {
+         _dataRepository.ExtendedPropertyValueFor("Species").ShouldBeEqualTo("Human");
+      }
+   }
+
+   public class When_removing_a_metadata_row_that_exists_in_the_repository : concern_for_DataRepositoryMetaDataPresenter
+   {
+      private MetaDataDTO _metaDataDTO;
+
+      protected override void Context()
+      {
+         base.Context();
+         SetExtendedProperty("Species", "Human");
+         A.CallTo(() => _view.BindToMetaData(A<IEnumerable<MetaDataDTO>>._))
+            .Invokes(x => _metaDataDTO = x.GetArgument<IEnumerable<MetaDataDTO>>(0).Single());
+         sut.EditObservedData(_dataRepository);
+      }
+
+      protected override void Because()
+      {
+         sut.RemoveMetaData(_metaDataDTO);
+      }
+
+      [Observation]
+      public void command_to_remove_is_issued()
+      {
+         A.CallTo(() => _observedDataMetaDataTask.RemoveMetaData(A<IEnumerable<DataRepository>>.That.Contains(_dataRepository), A<MetaDataKeyValue>.That.Matches(x => x.Key.Equals("Species") && x.Value.Equals("Human")))).MustHaveHappened();
+      }
+   }
+
+   public class When_removing_a_metadata_row_that_exists_in_the_repository_after_editing_its_name_without_saving : concern_for_DataRepositoryMetaDataPresenter
+   {
+      private MetaDataDTO _metaDataDTO;
+
+      protected override void Context()
+      {
+         base.Context();
+         SetExtendedProperty("Sheet", string.Empty);
+         A.CallTo(() => _view.BindToMetaData(A<IEnumerable<MetaDataDTO>>._))
+            .Invokes(x => _metaDataDTO = x.GetArgument<IEnumerable<MetaDataDTO>>(0).Single());
+         sut.EditObservedData(_dataRepository);
+
+         //not saved since the value is empty
+         _metaDataDTO.Name = "Tab";
+         sut.MetaDataNameChanged(_metaDataDTO, "Sheet");
+      }
+
+      protected override void Because()
+      {
+         sut.RemoveMetaData(_metaDataDTO);
+      }
+
+      [Observation]
+      public void command_to_change_is_not_issued()
+      {
+         A.CallTo(() => _observedDataMetaDataTask.ChangeMetaData(A<IEnumerable<DataRepository>>._, A<MetaDataChanged>._)).MustNotHaveHappened();
+      }
+
+      [Observation]
+      public void command_to_remove_the_saved_metadata_is_issued()
+      {
+         A.CallTo(() => _observedDataMetaDataTask.RemoveMetaData(A<IEnumerable<DataRepository>>.That.Contains(_dataRepository), A<MetaDataKeyValue>.That.Matches(x => x.Key.Equals("Sheet") && x.Value.Equals(string.Empty)))).MustHaveHappened();
+      }
+   }
+
+   public class When_binding_saved_metadata_with_predefined_and_custom_names : concern_for_DataRepositoryMetaDataPresenter
+   {
+      private List<MetaDataDTO> _boundMetaData;
+
+      protected override void Context()
+      {
+         base.Context();
+         SetExtendedProperty("Species", "Human");
+         SetExtendedProperty("Custom", "Value");
+         A.CallTo(() => _observedDataConfiguration.DefaultMetaDataCategories).Returns(new[] { "Species" });
+         A.CallTo(() => _view.BindToMetaData(A<IEnumerable<MetaDataDTO>>._))
+            .Invokes(x => _boundMetaData = x.GetArgument<IEnumerable<MetaDataDTO>>(0).ToList());
+      }
+
+      protected override void Because()
+      {
+         sut.EditObservedData(_dataRepository);
+      }
+
+      [Observation]
+      public void the_predefined_metadata_cannot_be_removed()
+      {
+         _boundMetaData.Single(x => x.Name == "Species").Removable.ShouldBeFalse();
+      }
+
+      [Observation]
+      public void the_custom_metadata_can_be_removed()
+      {
+         _boundMetaData.Single(x => x.Name == "Custom").Removable.ShouldBeTrue();
+      }
+   }
+
+   public abstract class When_the_output_path_metadata_row_was_added_and_never_saved : concern_for_DataRepositoryMetaDataPresenter
+   {
+      protected NotifyList<MetaDataDTO> _boundMetaData;
+      protected MetaDataDTO _outputPathDTO;
+
+      protected override void Context()
+      {
+         base.Context();
+         A.CallTo(() => _view.BindToMetaData(A<IEnumerable<MetaDataDTO>>._))
+            .Invokes(x => _boundMetaData = x.GetArgument<NotifyList<MetaDataDTO>>(0));
+         sut.EditObservedData(_dataRepository);
+         sut.AddOutputPathMetadata();
+         _outputPathDTO = _boundMetaData.Single(x => x.Name == Constants.OUTPUT_PATH);
+      }
+   }
+
+   public class When_adding_the_output_path_metadata_row : When_the_output_path_metadata_row_was_added_and_never_saved
+   {
+      [Observation]
+      public void the_row_name_cannot_be_edited()
+      {
+         _outputPathDTO.NameEditable.ShouldBeFalse();
+      }
+
+      [Observation]
+      public void the_row_can_be_removed_before_a_value_is_entered()
+      {
+         _outputPathDTO.Removable.ShouldBeTrue();
+      }
+   }
+
+   public class When_removing_the_output_path_metadata_row_before_a_value_is_entered : When_the_output_path_metadata_row_was_added_and_never_saved
+   {
+      protected override void Because()
+      {
+         sut.RemoveMetaData(_outputPathDTO);
+      }
+
+      [Observation]
+      public void command_to_remove_is_not_issued()
+      {
+         A.CallTo(() => _observedDataMetaDataTask.RemoveMetaData(A<IEnumerable<DataRepository>>._, A<MetaDataKeyValue>._)).MustNotHaveHappened();
+      }
+
+      [Observation]
+      public void the_row_is_removed_from_the_view()
+      {
+         _boundMetaData.ShouldNotContain(_outputPathDTO);
+      }
+
+      [Observation]
+      public void the_output_path_row_can_be_added_again()
+      {
+         sut.AddOutputPathMetadata();
+         _boundMetaData.Count(x => x.Name == Constants.OUTPUT_PATH).ShouldBeEqualTo(1);
+      }
+   }
+
    public class When_binding_to_a_set_of_observed_data_containing_different_molweights : concern_for_DataRepositoryMetaDataPresenter
    {
       protected override void Context()
