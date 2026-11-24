@@ -1,6 +1,6 @@
 ﻿using OSPSuite.Core.Domain.Services;
-using OSPSuite.Core.Serialization.Exchange;
 using OSPSuite.R.Domain;
+using OSPSuite.R.Mapper;
 using CorePersistor = OSPSuite.Core.Serialization.Exchange.ISimulationPersistor;
 
 namespace OSPSuite.R.Services
@@ -15,11 +15,13 @@ namespace OSPSuite.R.Services
    {
       private readonly CorePersistor _simulationPersistor;
       private readonly IObjectIdResetter _objectIdResetter;
+      private readonly ISimulationToSimulationTransferMapper _simulationTransferMapper;
 
-      public SimulationPersister(CorePersistor simulationPersistor, IObjectIdResetter objectIdResetter)
+      public SimulationPersister(CorePersistor simulationPersistor, IObjectIdResetter objectIdResetter, ISimulationToSimulationTransferMapper simulationTransferMapper)
       {
          _simulationPersistor = simulationPersistor;
          _objectIdResetter = objectIdResetter;
+         _simulationTransferMapper = simulationTransferMapper;
       }
 
       public Simulation LoadSimulation(string fileName, bool resetIds = true)
@@ -29,13 +31,15 @@ namespace OSPSuite.R.Services
          if (resetIds)
             _objectIdResetter.ResetIdFor(simulation);
 
-         return new Simulation(simulation);
+         return new Simulation(simulation)
+         {
+            Changes = new SimulationChanges(simulation.Model.Root, simulationTransfer.OriginalQuantityValues, simulationTransfer.HasUntraceableChanges)
+         };
       }
 
       public void SaveSimulation(Simulation simulation, string fileName)
       {
-         var simulationTransfer = new SimulationTransfer {Simulation = simulation.CoreSimulation};
-         _simulationPersistor.Save(simulationTransfer, fileName);
+         _simulationPersistor.Save(_simulationTransferMapper.MapFrom(simulation), fileName);
       }
    }
 }
