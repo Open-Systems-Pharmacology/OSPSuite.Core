@@ -14,14 +14,14 @@ namespace OSPSuite.Core.Domain.Services
 
       public void UpdateQuantityInfo(DataRepository observedData)
       {
-         var organ = metaDataValueFor(observedData, Constants.ObservedData.ORGAN);
-         var compartment = metaDataValueFor(observedData, Constants.ObservedData.COMPARTMENT);
-         var molecule = metaDataValueFor(observedData, Constants.ObservedData.MOLECULE);
+         var organ = pathElementFor(observedData, Constants.ObservedData.ORGAN);
+         var compartment = pathElementFor(observedData, Constants.ObservedData.COMPARTMENT);
+         var molecule = pathElementFor(observedData, Constants.ObservedData.MOLECULE);
 
          observedData.AllButBaseGrid().Each(column =>
          {
             //same depth as a simulation output path so that charts group and label observed data like simulation outputs
-            var path = new[] {observedData.Name, Constants.ObservedData.CONTAINER_NAME, organ, compartment, molecule, pathSafeNameFor(column)};
+            var path = new[] {pathSafe(observedData.Name), Constants.ObservedData.CONTAINER_NAME, organ, compartment, molecule, pathSafe(column.Name)};
             column.QuantityInfo = new QuantityInfo(path, QuantityType.Undefined);
          });
 
@@ -29,12 +29,12 @@ namespace OSPSuite.Core.Domain.Services
          if (baseGrid == null)
             return;
 
-         baseGrid.QuantityInfo = new QuantityInfo(new[] {observedData.Name, pathSafeNameFor(baseGrid)}, QuantityType.Time);
+         baseGrid.QuantityInfo = new QuantityInfo(new[] {pathSafe(observedData.Name), pathSafe(baseGrid.Name)}, QuantityType.Time);
       }
 
-      private static string metaDataValueFor(DataRepository observedData, string propertyName) =>
-         observedData.ExtendedPropertyValueFor(propertyName) ?? string.Empty;
+      private static string pathElementFor(DataRepository observedData, string propertyName) =>
+         pathSafe(observedData.ExtendedPropertyValueFor(propertyName)) ?? string.Empty;
 
-      private static string pathSafeNameFor(DataColumn column) => column.Name.Replace(ObjectPath.PATH_DELIMITER, PATH_DELIMITER_REPLACEMENT);
+      private static string pathSafe(string pathElement) => pathElement?.Replace(ObjectPath.PATH_DELIMITER, PATH_DELIMITER_REPLACEMENT);
    }
 }

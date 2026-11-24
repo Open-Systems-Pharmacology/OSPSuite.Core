@@ -3,6 +3,7 @@ using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.Services;
+using OSPSuite.Core.Extensions;
 using OSPSuite.Helpers;
 
 namespace OSPSuite.Core.Domain
@@ -103,6 +104,42 @@ namespace OSPSuite.Core.Domain
       {
          _observedData.BaseGrid.QuantityInfo.Path.Count().ShouldBeEqualTo(2);
          _observedData.BaseGrid.QuantityInfo.Path.Last().ShouldBeEqualTo("Organism\\Time");
+      }
+   }
+
+   public class When_normalizing_observed_data_whose_name_and_metadata_contain_the_path_delimiter : concern_for_ObservedDataNormalizer
+   {
+      protected override void Context()
+      {
+         base.Context();
+         _observedData.Name = $"OBS{ObjectPath.PATH_DELIMITER}DATA";
+         AddMetaData(Constants.ObservedData.ORGAN, $"Venous{ObjectPath.PATH_DELIMITER}Blood");
+         AddMetaData(Constants.ObservedData.COMPARTMENT, $"Plasma{ObjectPath.PATH_DELIMITER}Unbound");
+         AddMetaData(Constants.ObservedData.MOLECULE, $"Drug{ObjectPath.PATH_DELIMITER}Metabolite");
+      }
+
+      [Observation]
+      public void should_escape_the_delimiter_so_that_the_path_keeps_its_six_elements()
+      {
+         _column.QuantityInfo.Path.ShouldOnlyContainInOrder("OBS\\DATA", Constants.ObservedData.CONTAINER_NAME, "Venous\\Blood", "Plasma\\Unbound", "Drug\\Metabolite", "Concentration");
+      }
+
+      [Observation]
+      public void should_escape_the_delimiter_in_the_repository_name_of_the_base_grid_path()
+      {
+         _observedData.BaseGrid.QuantityInfo.Path.ShouldOnlyContainInOrder("OBS\\DATA", _observedData.BaseGrid.Name);
+      }
+
+      [Observation]
+      public void should_keep_the_path_elements_separate_when_the_path_is_saved_and_loaded()
+      {
+         _column.QuantityInfo.PathAsString.ToPathArray().Length.ShouldBeEqualTo(6);
+      }
+
+      [Observation]
+      public void should_not_change_the_metadata_of_the_observed_data()
+      {
+         _observedData.ExtendedPropertyValueFor(Constants.ObservedData.MOLECULE).ShouldBeEqualTo($"Drug{ObjectPath.PATH_DELIMITER}Metabolite");
       }
    }
 }

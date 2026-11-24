@@ -173,6 +173,37 @@ namespace OSPSuite.Core
       }
    }
 
+   public class When_resolving_name_for_an_observation_column_whose_six_element_path_is_not_an_observed_data_path : concern_for_DataColumnToPathElementsMapper
+   {
+      private DataColumn _dataColumn;
+      private PathElements _result;
+
+      protected override void Context()
+      {
+         base.Context();
+         var path = new List<string> {"Study", "Organism", "Liver", "Plasma", "Drug", "Concentration"};
+         _dataColumn = new DataColumn {QuantityInfo = new QuantityInfo(path, QuantityType.Undefined), DataInfo = new DataInfo(ColumnOrigins.Observation), Name = "dataColumnDisplayName"};
+      }
+
+      protected override void Because()
+      {
+         _result = sut.MapFrom(_dataColumn, null);
+      }
+
+      [Observation]
+      public void should_fall_back_to_the_first_element_as_top_container_and_the_rest_as_container()
+      {
+         _result[PathElementId.TopContainer].DisplayName.ShouldBeEqualTo("Study");
+         _result[PathElementId.Container].DisplayName.ShouldBeEqualTo("Organism-Liver-Plasma-Drug-Concentration");
+      }
+
+      [Observation]
+      public void should_not_map_a_molecule()
+      {
+         _result[PathElementId.Molecule].DisplayName.ShouldBeEmpty();
+      }
+   }
+
    public class When_resolving_name_for_a_deviation_column : concern_for_DataColumnToPathElementsMapper
    {
       private DataColumn _dataColumn;

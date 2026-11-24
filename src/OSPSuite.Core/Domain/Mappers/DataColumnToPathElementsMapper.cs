@@ -21,6 +21,7 @@ namespace OSPSuite.Core.Domain.Mappers
    {
       private const int OBSERVED_DATA_PATH_LENGTH = 6;
       private const int OBSERVED_DATA_REPOSITORY_INDEX = 0;
+      private const int OBSERVED_DATA_CONTAINER_INDEX = 1;
       private const int OBSERVED_DATA_ORGAN_INDEX = 2;
       private const int OBSERVED_DATA_COMPARTMENT_INDEX = 3;
       private const int OBSERVED_DATA_MOLECULE_INDEX = 4;
@@ -59,7 +60,7 @@ namespace OSPSuite.Core.Domain.Mappers
 
       protected virtual PathElements ObservedDataPathElementsFor(DataColumn dataColumn, List<string> quantityPath)
       {
-         if (quantityPath.Count != OBSERVED_DATA_PATH_LENGTH)
+         if (!isNormalizedObservedDataPath(quantityPath))
             return pathElementsForUnknownColumns(dataColumn, quantityPath);
 
          return new PathElements
@@ -72,6 +73,9 @@ namespace OSPSuite.Core.Domain.Mappers
             [PathElementId.Name] = new PathElement {DisplayName = quantityPath[OBSERVED_DATA_COLUMN_INDEX]}
          };
       }
+
+      private static bool isNormalizedObservedDataPath(IReadOnlyList<string> quantityPath) =>
+         quantityPath.Count == OBSERVED_DATA_PATH_LENGTH && string.Equals(quantityPath[OBSERVED_DATA_CONTAINER_INDEX], Constants.ObservedData.CONTAINER_NAME);
 
       private PathElements pathElementsForUnknownColumns(DataColumn dataColumn, List<string> quantityPath)
       {
