@@ -113,7 +113,7 @@ namespace OSPSuite.UI.Views.ObservedData
 
       private RepositoryItem removeRepository(MetaDataDTO dto)
       {
-         return dto.NameEditable ? _removeButtonRepository : _disabledRemoveButtonRepository;
+         return dto.Removable ? _removeButtonRepository : _disabledRemoveButtonRepository;
       }
 
       private RepositoryItem nameRepository(MetaDataDTO dto)

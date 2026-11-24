@@ -71,6 +71,7 @@ namespace OSPSuite.Presentation.Presenters.ObservedData
    {
       protected IEnumerable<DataRepository> _allDataRepositories;
       private NotifyList<MetaDataDTO> _metaDataDTOList;
+      private readonly Dictionary<MetaDataDTO, MetaDataKeyValue> _originalMetaData = new Dictionary<MetaDataDTO, MetaDataKeyValue>();
       private readonly IObservedDataMetaDataTask _observedDataMetaDataTask;
       private readonly IObservedDataConfiguration _observedDataConfiguration;
       private readonly IParameterFactory _parameterFactory;
@@ -111,10 +112,11 @@ namespace OSPSuite.Presentation.Presenters.ObservedData
       {
          var name = extendedProperty.Name;
          var values = _observedDataConfiguration.PredefinedValuesFor(name);
-         return createDTO(name, extendedProperty.ValueAsObject as string, nameEditable: !isPredefinedProperty(extendedProperty), valueReadOnly: isReadOnly(extendedProperty), listOfValues: values);
+         var isPredefined = isPredefinedProperty(extendedProperty);
+         return createDTO(name, extendedProperty.ValueAsObject as string, nameEditable: !isPredefined, valueReadOnly: isReadOnly(extendedProperty), listOfValues: values, removable: !isPredefined);
       }
 
-      private MetaDataDTO createDTO(string name, string value, bool nameEditable = true, bool valueReadOnly = false, IEnumerable<string> listOfValues = null)
+      private MetaDataDTO createDTO(string name, string value, bool nameEditable = true, bool valueReadOnly = false, IEnumerable<string> listOfValues = null, bool removable = true)
       {
          return new MetaDataDTO(_defaultRules)
          {
@@ -123,7 +125,8 @@ namespace OSPSuite.Presentation.Presenters.ObservedData
             DataRepositories = _allDataRepositories,
             NameEditable = nameEditable,
             ValueReadOnly = valueReadOnly,
-            ListOfValues = listOfValues
+            ListOfValues = listOfValues,
+            Removable = removable
          };
       }
 
@@ -133,8 +136,17 @@ namespace OSPSuite.Presentation.Presenters.ObservedData
       public void MetaDataNameChanged(MetaDataDTO metaDataDTO, string oldName) => 
          handleThisChange(metaDataNameChanged, metaDataDTO, oldName, oldName);
 
-      public void RemoveMetaData(MetaDataDTO metaDataDTO) => 
-         AddCommand(_observedDataMetaDataTask.RemoveMetaData(_allDataRepositories, mapFrom(metaDataDTO)));
+      public void RemoveMetaData(MetaDataDTO metaDataDTO)
+      {
+         //A new row only exists in the view. A remove command would add it to the repositories on undo
+         if (!_originalMetaData.TryGetValue(metaDataDTO, out var originalMetaData))
+         {
+            _metaDataDTOList.Remove(metaDataDTO);
+            return;
+         }
+
+         AddCommand(_observedDataMetaDataTask.RemoveMetaData(_allDataRepositories, originalMetaData));
+      }
 
       private bool isPredefinedProperty(IExtendedProperty extendedProperty) => 
          _observedDataConfiguration.DefaultMetaDataCategories.Contains(extendedProperty.Name);
@@ -227,7 +239,8 @@ namespace OSPSuite.Presentation.Presenters.ObservedData
       {
          if (IsLatched) return;
          _metaDataDTOList = new NotifyList<MetaDataDTO>();
-         _allDataRepositories.ToList().IntersectingMetaData().Each(x => _metaDataDTOList.Add(createDTO(x)));
+         _originalMetaData.Clear();
+         _allDataRepositories.ToList().IntersectingMetaData().Each(addOriginalMetaData);
          _view.BindToMetaData(_metaDataDTOList);
          _view.AddOutputPathEnabled = !hasOutputPath();
 
@@ -243,6 +256,13 @@ namespace OSPSuite.Presentation.Presenters.ObservedData
          var lowerLimitsOfQuantification = retrieveLLOQs().ToList();
          if (lowerLimitsOfQuantification.Count == 1)
             _view.BindToLLOQ(lowerLimitsOfQuantification.First());
+      }
+
+      private void addOriginalMetaData(IExtendedProperty extendedProperty)
+      {
+         var metaDataDTO = createDTO(extendedProperty);
+         _originalMetaData.Add(metaDataDTO, new MetaDataKeyValue { Key = metaDataDTO.Name, Value = metaDataDTO.Value });
+         _metaDataDTOList.Add(metaDataDTO);
       }
 
       private IEnumerable<IParameter> retrieveLLOQs()

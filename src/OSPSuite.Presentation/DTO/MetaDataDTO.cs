@@ -13,6 +13,7 @@ namespace OSPSuite.Presentation.DTO
       public string Value { set; get; }
       public bool NameEditable { get; set; }
       public bool ValueReadOnly { get; set; }
+      public bool Removable { get; set; }
       public IEnumerable<DataRepository> DataRepositories { get; set; }
       public IEnumerable<string> ListOfValues { get; set; }
 
@@ -24,6 +25,7 @@ namespace OSPSuite.Presentation.DTO
          Rules.AddRange(validationRules);
          NameEditable = true;
          ValueReadOnly = false;
+         Removable = true;
       }
 
       public virtual void GetPropertyError(string propertyName, ErrorInfo info)
