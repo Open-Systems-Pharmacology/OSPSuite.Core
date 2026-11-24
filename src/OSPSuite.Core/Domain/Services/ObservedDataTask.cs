@@ -154,11 +154,6 @@ namespace OSPSuite.Core.Domain.Services
          return Delete(_executionContext.Project.AllObservedData);
       }
 
-      /// <summary>
-      ///    Common rule for both applications: when the Molecule metadata of <paramref name="observedData" /> names a molecule
-      ///    of the project (see <see cref="MolWeightFor" />), the molecular weight of all observation columns is taken from
-      ///    that molecule. Otherwise the molecular weight stored with the observed data is kept.
-      /// </summary>
       public virtual void UpdateMolWeight(DataRepository observedData)
       {
          var moleculeName = observedData.ExtendedPropertyValueFor(Constants.ObservedData.MOLECULE);
@@ -173,10 +168,8 @@ namespace OSPSuite.Core.Domain.Services
       }
 
       /// <summary>
-      ///    Returns the molecular weight in base unit of the project molecule named <paramref name="moleculeName" />, or
-      ///    <c>null</c> when the project does not define such a molecule or its molecular weight is unknown.
-      ///    The default knows no molecule. Applications override it with their own lookup (compounds in PK-Sim, molecule
-      ///    building blocks in MoBi).
+      ///    Mol weight in base unit, or <c>null</c> if the project has no such molecule. Core does not know the molecules of a
+      ///    project: PK-Sim resolves compounds, MoBi molecule building blocks.
       /// </summary>
       protected virtual double? MolWeightFor(string moleculeName) => null;
 

@@ -14,7 +14,6 @@ namespace OSPSuite.Core.Domain
 
       protected override void Context()
       {
-         //base unit kg/µmol, default unit g/mol as in the suite dimension definition
          _molWeightDimension = new Dimension(new BaseDimensionRepresentation(), Constants.Dimension.MOLECULAR_WEIGHT, "kg/µmol");
          _molWeightDimension.AddUnit("g/mol", 1e-9, 0, isDefault: true);
       }

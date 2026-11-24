@@ -341,9 +341,6 @@ namespace OSPSuite.Core.Services
 
    public class ObservedDataTaskForSpecs : ObservedDataTask
    {
-      /// <summary>
-      ///    Molecules of the fake project with their mol weight, keyed by name
-      /// </summary>
       public Dictionary<string, double> ProjectMolecules { get; } = new Dictionary<string, double>();
 
       public List<string> RequestedMoleculeNames { get; } = new List<string>();

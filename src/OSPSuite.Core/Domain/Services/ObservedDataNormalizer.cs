@@ -5,16 +5,6 @@ namespace OSPSuite.Core.Domain.Services
 {
    public interface IObservedDataNormalizer
    {
-      /// <summary>
-      ///    Sets the <see cref="QuantityInfo" /> of all columns of <paramref name="observedData" /> from its metadata so that
-      ///    an observed data set is described the same way regardless of the application that created it.
-      ///    The base grid gets the path [repository name, base grid name] and <see cref="QuantityType.Time" />.
-      ///    Every other column gets the path [repository name, <see cref="Constants.ObservedData.CONTAINER_NAME" />, organ,
-      ///    compartment, molecule, column name] and <see cref="QuantityType.Undefined" />, so that charts can group and label
-      ///    observed data like simulation outputs (ROOT|ORGANISM|ORGAN|COMPARTMENT|MOLECULE|Name).
-      ///    Missing metadata becomes an empty path element. Column names containing <see cref="ObjectPath.PATH_DELIMITER" />
-      ///    are escaped so that they do not add path levels.
-      /// </summary>
       void UpdateQuantityInfo(DataRepository observedData);
    }
 
@@ -30,6 +20,7 @@ namespace OSPSuite.Core.Domain.Services
 
          observedData.AllButBaseGrid().Each(column =>
          {
+            //same depth as a simulation output path so that charts group and label observed data like simulation outputs
             var path = new[] {observedData.Name, Constants.ObservedData.CONTAINER_NAME, organ, compartment, molecule, pathSafeNameFor(column)};
             column.QuantityInfo = new QuantityInfo(path, QuantityType.Undefined);
          });
