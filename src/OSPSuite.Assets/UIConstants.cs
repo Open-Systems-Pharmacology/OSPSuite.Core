@@ -2272,6 +2272,7 @@ namespace OSPSuite.Assets
       public static readonly string MetaDataRemovedFromDataRepositories = "Meta Data removed from multiple repositories";
       public static readonly string MetaDataModifiedInDataRepositories = "Meta Data modified in multiple repositories";
       public static readonly string MolecularWeightModifiedInDataRepositories = "Molecular weight modified in multiple repositories";
+      public static readonly string SubjectCountModifiedInDataRepositories = "Subject count modified in multiple repositories";
       public static readonly string ObservedDataDeletedFromProject = "Observed data deleted from project";
 
       public static string CreateProjectDescription(string version) => $"Project started with version {version}";

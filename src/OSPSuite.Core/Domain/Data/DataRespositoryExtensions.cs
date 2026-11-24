@@ -83,6 +83,9 @@ namespace OSPSuite.Core.Domain.Data
       /// </summary>
       public static bool IsValidSubjectCount(string subjectCount) => tryParseSubjectCount(subjectCount, out _);
 
+      public static string NormalizedSubjectCount(string subjectCount) =>
+         tryParseSubjectCount(subjectCount, out var value) ? value.ToString(CultureInfo.InvariantCulture) : null;
+
       /// <summary>
       ///    Returns the subject count stored in the meta data of the <paramref name="dataRepository" /> or <c>null</c> if the
       ///    meta data is not defined or empty

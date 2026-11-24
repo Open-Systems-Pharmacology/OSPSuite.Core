@@ -13,5 +13,6 @@ namespace OSPSuite.Presentation.Views.ObservedData
       bool MolWeightEditable { get; set; }
       bool AddOutputPathEnabled { set; }
       void BindToLLOQ(IParameter lowerLimitsOfQuantification);
+      void BindToSubjectCount(MetaDataDTO subjectCountDTO);
    }
 }

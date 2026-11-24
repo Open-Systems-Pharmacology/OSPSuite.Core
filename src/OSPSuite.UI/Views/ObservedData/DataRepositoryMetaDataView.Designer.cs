@@ -21,6 +21,7 @@ namespace OSPSuite.UI.Views.ObservedData
          }
          _gridViewBinder.Dispose();
          _molWeightBinder.Dispose();
+         _subjectCountBinder.Dispose();
          base.Dispose(disposing);
       }
 
@@ -42,9 +43,11 @@ namespace OSPSuite.UI.Views.ObservedData
          this.btnAddOutputPath = new OSPSuite.UI.Controls.UxSimpleButton();
          this.tbLowerLimitOfQuantification = new DevExpress.XtraEditors.TextEdit();
          this.tbMolWeight = new DevExpress.XtraEditors.TextEdit();
+         this.tbSubjectCount = new DevExpress.XtraEditors.TextEdit();
          this.emptySpaceItem1 = new DevExpress.XtraLayout.EmptySpaceItem();
          this.layoutItemMolWeight = new DevExpress.XtraLayout.LayoutControlItem();
          this.layoutItemLowerLimitOfQuantification = new DevExpress.XtraLayout.LayoutControlItem();
+         this.layoutItemSubjectCount = new DevExpress.XtraLayout.LayoutControlItem();
          this.layoutItemAddOutputPath = new DevExpress.XtraLayout.LayoutControlItem();
          ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.gridControl)).BeginInit();
@@ -56,18 +59,20 @@ namespace OSPSuite.UI.Views.ObservedData
          this.layoutControl1.SuspendLayout();
          ((System.ComponentModel.ISupportInitialize)(this.tbLowerLimitOfQuantification.Properties)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.tbMolWeight.Properties)).BeginInit();
+         ((System.ComponentModel.ISupportInitialize)(this.tbSubjectCount.Properties)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem1)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutItemMolWeight)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutItemLowerLimitOfQuantification)).BeginInit();
+         ((System.ComponentModel.ISupportInitialize)(this.layoutItemSubjectCount)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutItemAddOutputPath)).BeginInit();
          this.SuspendLayout();
          // 
          // gridControl
          // 
-         this.gridControl.Location = new System.Drawing.Point(2, 102);
+         this.gridControl.Location = new System.Drawing.Point(2, 126);
          this.gridControl.MainView = this.gridView;
          this.gridControl.Name = "gridControl";
-         this.gridControl.Size = new System.Drawing.Size(725, 504);
+         this.gridControl.Size = new System.Drawing.Size(725, 480);
          this.gridControl.TabIndex = 0;
          this.gridControl.ViewCollection.AddRange(new DevExpress.XtraGrid.Views.Base.BaseView[] {
             this.gridView});
@@ -92,6 +97,7 @@ namespace OSPSuite.UI.Views.ObservedData
             this.emptySpaceItem1,
             this.layoutItemMolWeight,
             this.layoutItemLowerLimitOfQuantification,
+            this.layoutItemSubjectCount,
             this.layoutItemAddOutputPath});
          this.layoutControlGroup1.Name = "layoutControlGroup1";
          this.layoutControlGroup1.Padding = new DevExpress.XtraLayout.Utils.Padding(0, 0, 0, 0);
@@ -102,9 +108,9 @@ namespace OSPSuite.UI.Views.ObservedData
          // 
          this.layoutControlItem1.Control = this.gridControl;
          this.layoutControlItem1.CustomizationFormText = "layoutControlItem1";
-         this.layoutControlItem1.Location = new System.Drawing.Point(0, 100);
+         this.layoutControlItem1.Location = new System.Drawing.Point(0, 124);
          this.layoutControlItem1.Name = "layoutControlItem1";
-         this.layoutControlItem1.Size = new System.Drawing.Size(729, 508);
+         this.layoutControlItem1.Size = new System.Drawing.Size(729, 484);
          this.layoutControlItem1.TextSize = new System.Drawing.Size(0, 0);
          this.layoutControlItem1.TextVisible = false;
          // 
@@ -112,7 +118,7 @@ namespace OSPSuite.UI.Views.ObservedData
          // 
          this.layoutItemAddRow.Control = this.btnAddRow;
          this.layoutItemAddRow.CustomizationFormText = "layoutControlItem2";
-         this.layoutItemAddRow.Location = new System.Drawing.Point(401, 48);
+         this.layoutItemAddRow.Location = new System.Drawing.Point(401, 72);
          this.layoutItemAddRow.Name = "layoutItemAddRow";
          this.layoutItemAddRow.Size = new System.Drawing.Size(328, 26);
          this.layoutItemAddRow.Text = "layoutControlItem2";
@@ -121,7 +127,7 @@ namespace OSPSuite.UI.Views.ObservedData
          // 
          // btnAddRow
          // 
-         this.btnAddRow.Location = new System.Drawing.Point(403, 50);
+         this.btnAddRow.Location = new System.Drawing.Point(403, 74);
          this.btnAddRow.Name = "btnAddRow";
          this.btnAddRow.Size = new System.Drawing.Size(324, 22);
          this.btnAddRow.StyleController = this.layoutControl1;
@@ -134,6 +140,7 @@ namespace OSPSuite.UI.Views.ObservedData
          this.layoutControl1.Controls.Add(this.btnAddOutputPath);
          this.layoutControl1.Controls.Add(this.tbLowerLimitOfQuantification);
          this.layoutControl1.Controls.Add(this.tbMolWeight);
+         this.layoutControl1.Controls.Add(this.tbSubjectCount);
          this.layoutControl1.Controls.Add(this.btnAddRow);
          this.layoutControl1.Controls.Add(this.gridControl);
          this.layoutControl1.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -147,7 +154,7 @@ namespace OSPSuite.UI.Views.ObservedData
          // 
          // btnAddOutputPath
          // 
-         this.btnAddOutputPath.Location = new System.Drawing.Point(403, 76);
+         this.btnAddOutputPath.Location = new System.Drawing.Point(403, 100);
          this.btnAddOutputPath.Manager = null;
          this.btnAddOutputPath.Name = "btnAddOutputPath";
          this.btnAddOutputPath.Shortcut = System.Windows.Forms.Keys.None;
@@ -173,11 +180,19 @@ namespace OSPSuite.UI.Views.ObservedData
          this.tbMolWeight.StyleController = this.layoutControl1;
          this.tbMolWeight.TabIndex = 5;
          // 
+         // tbSubjectCount
+         // 
+         this.tbSubjectCount.Location = new System.Drawing.Point(195, 50);
+         this.tbSubjectCount.Name = "tbSubjectCount";
+         this.tbSubjectCount.Size = new System.Drawing.Size(532, 20);
+         this.tbSubjectCount.StyleController = this.layoutControl1;
+         this.tbSubjectCount.TabIndex = 7;
+         // 
          // emptySpaceItem1
          // 
          this.emptySpaceItem1.AllowHotTrack = false;
          this.emptySpaceItem1.CustomizationFormText = "emptySpaceItem1";
-         this.emptySpaceItem1.Location = new System.Drawing.Point(0, 48);
+         this.emptySpaceItem1.Location = new System.Drawing.Point(0, 72);
          this.emptySpaceItem1.Name = "emptySpaceItem1";
          this.emptySpaceItem1.Size = new System.Drawing.Size(401, 52);
          this.emptySpaceItem1.TextSize = new System.Drawing.Size(0, 0);
@@ -199,10 +214,18 @@ namespace OSPSuite.UI.Views.ObservedData
          this.layoutItemLowerLimitOfQuantification.TextSize = new System.Drawing.Size(181, 13);
          this.layoutItemLowerLimitOfQuantification.Visibility = DevExpress.XtraLayout.Utils.LayoutVisibility.Never;
          // 
+         // layoutItemSubjectCount
+         // 
+         this.layoutItemSubjectCount.Control = this.tbSubjectCount;
+         this.layoutItemSubjectCount.Location = new System.Drawing.Point(0, 48);
+         this.layoutItemSubjectCount.Name = "layoutItemSubjectCount";
+         this.layoutItemSubjectCount.Size = new System.Drawing.Size(729, 24);
+         this.layoutItemSubjectCount.TextSize = new System.Drawing.Size(181, 13);
+         // 
          // layoutItemAddOutputPath
          // 
          this.layoutItemAddOutputPath.Control = this.btnAddOutputPath;
-         this.layoutItemAddOutputPath.Location = new System.Drawing.Point(401, 74);
+         this.layoutItemAddOutputPath.Location = new System.Drawing.Point(401, 98);
          this.layoutItemAddOutputPath.Name = "layoutItemAddOutputPath";
          this.layoutItemAddOutputPath.Size = new System.Drawing.Size(328, 26);
          this.layoutItemAddOutputPath.TextSize = new System.Drawing.Size(0, 0);
@@ -225,9 +248,11 @@ namespace OSPSuite.UI.Views.ObservedData
          this.layoutControl1.ResumeLayout(false);
          ((System.ComponentModel.ISupportInitialize)(this.tbLowerLimitOfQuantification.Properties)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.tbMolWeight.Properties)).EndInit();
+         ((System.ComponentModel.ISupportInitialize)(this.tbSubjectCount.Properties)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem1)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutItemMolWeight)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutItemLowerLimitOfQuantification)).EndInit();
+         ((System.ComponentModel.ISupportInitialize)(this.layoutItemSubjectCount)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutItemAddOutputPath)).EndInit();
          this.ResumeLayout(false);
 
@@ -247,6 +272,8 @@ namespace OSPSuite.UI.Views.ObservedData
       private DevExpress.XtraLayout.LayoutControlItem layoutItemMolWeight;
       private DevExpress.XtraEditors.TextEdit tbLowerLimitOfQuantification;
       private DevExpress.XtraLayout.LayoutControlItem layoutItemLowerLimitOfQuantification;
+      private DevExpress.XtraEditors.TextEdit tbSubjectCount;
+      private DevExpress.XtraLayout.LayoutControlItem layoutItemSubjectCount;
       private UxSimpleButton btnAddOutputPath;
       private DevExpress.XtraLayout.LayoutControlItem layoutItemAddOutputPath;
    }

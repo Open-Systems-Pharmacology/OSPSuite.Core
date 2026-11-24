@@ -74,6 +74,11 @@ namespace OSPSuite.Presentation.DTO
             yield return valuePropertyNotEmpty;
          }
 
+         internal static IEnumerable<IBusinessRule> ForSubjectCount()
+         {
+            yield return validSubjectCount;
+         }
+
          private static IBusinessRule valuePropertyNotEmpty
          {
             get { return GenericRules.NonEmptyRule<MetaDataDTO>(x => x.Value); }
