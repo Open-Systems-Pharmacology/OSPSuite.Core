@@ -54,7 +54,7 @@ namespace OSPSuite.Core.Domain.Mappers
             return containers;
          }
 
-         //Parent path entries are not part of this container hierarchy. Placeholders are used so that they are displayed as they would be in a simulation
+         //Parent path entries are not part of this container hierarchy and only known by name. Placeholders are used to display them, without the container type they have in a simulation
          var parentPath = parentPathIn(rootContainer, pathElements);
          containers.AddRange(parentPath.Select(x => new Container().WithName(x)));
 
