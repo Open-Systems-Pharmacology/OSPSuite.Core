@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Assets;
 using OSPSuite.CLI.Core.Services;
@@ -50,7 +51,7 @@ namespace OSPSuite.R.Services
       ///    Maps the column <paramref name="columnName" /> to the meta data category <paramref name="metaDataId" />,
       ///    e.g. <see cref="Constants.ObservedData.SUBJECT_COUNT" />. An existing mapping of the same column or of the same
       ///    meta data category is replaced. Naming convention keys of a replaced mapping of the column are replaced by
-      ///    <paramref name="metaDataId" />.
+      ///    <paramref name="metaDataId" />, or removed if the naming convention already contains it.
       /// </summary>
       /// <exception cref="OSPSuiteException">
       ///    Thrown if <paramref name="metaDataId" /> is not a meta data category of observed data
@@ -58,8 +59,8 @@ namespace OSPSuite.R.Services
       void AddMetaDataColumn(ImporterConfiguration configuration, string columnName, string metaDataId);
 
       /// <summary>
-      ///    Removes the mapping of the meta data category <paramref name="metaDataId" />. Does nothing if the category is not
-      ///    mapped.
+      ///    Removes the column mapped to the meta data category <paramref name="metaDataId" />. A fixed value of the category
+      ///    is kept.
       /// </summary>
       void RemoveMetaDataColumn(ImporterConfiguration configuration, string metaDataId);
 
@@ -324,11 +325,43 @@ namespace OSPSuite.R.Services
 
       private static void replaceNamingConventionKey(ImporterConfiguration configuration, string oldKey, string newKey)
       {
-         if (string.IsNullOrEmpty(configuration.NamingConventions))
+         var namingConventions = configuration.NamingConventions;
+         if (string.IsNullOrEmpty(namingConventions) || oldKey == newKey)
             return;
 
-         configuration.NamingConventions = configuration.NamingConventions.Replace(namingConventionToken(oldKey), namingConventionToken(newKey));
+         var oldToken = namingConventionToken(oldKey);
+         var newToken = namingConventionToken(newKey);
+
+         //The value of the column must appear only once in the name
+         configuration.NamingConventions = namingConventions.Contains(newToken)
+            ? removeNamingConventionToken(namingConventions, oldToken)
+            : namingConventions.Replace(oldToken, newToken);
       }
+
+      private static string removeNamingConventionToken(string namingConventions, string token)
+      {
+         var index = namingConventions.IndexOf(token, StringComparison.Ordinal);
+         while (index >= 0)
+         {
+            var start = index;
+            var length = token.Length;
+            if (start > 0 && isNamingPatternSeparator(namingConventions[start - 1]))
+            {
+               start--;
+               length++;
+            }
+            else if (index + length < namingConventions.Length && isNamingPatternSeparator(namingConventions[index + length]))
+               length++;
+
+            namingConventions = namingConventions.Remove(start, length);
+            index = namingConventions.IndexOf(token, StringComparison.Ordinal);
+         }
+
+         return namingConventions;
+      }
+
+      private static bool isNamingPatternSeparator(char character) =>
+         Constants.ImporterConstants.NAMING_PATTERN_SEPARATORS.Contains(character.ToString());
 
       private static string namingConventionKeyFor(DataFormatParameter parameter) =>
          parameter is MetaDataFormatParameter metaDataParameter ? metaDataParameter.MetaDataId : parameter.ColumnName;
@@ -337,7 +370,7 @@ namespace OSPSuite.R.Services
 
       public void RemoveMetaDataColumn(ImporterConfiguration configuration, string metaDataId)
       {
-         var parameter = configuration.Parameters.FirstOrDefault(p => isMetaDataFor(p, metaDataId));
+         var parameter = GetAllMetaDataColumns(configuration).FirstOrDefault(p => p.MetaDataId == metaDataId);
          if (parameter == null)
             return;
 

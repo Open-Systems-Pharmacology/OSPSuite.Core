@@ -530,6 +530,25 @@ namespace OSPSuite.R.Services
       }
 
       [Observation]
+      public void should_remove_the_naming_convention_key_of_a_replaced_grouping_column_if_the_category_is_already_in_the_naming_convention()
+      {
+         _configuration.NamingConventions = "{Source}.{N}.{Subject count}";
+         sut.AddMetaDataColumn(_configuration, "M", Constants.ObservedData.SUBJECT_COUNT);
+         sut.AddGroupingColumn(_configuration, "N");
+         sut.AddMetaDataColumn(_configuration, "N", Constants.ObservedData.SUBJECT_COUNT);
+         _configuration.NamingConventions.ShouldBeEqualTo("{Source}.{Subject count}");
+      }
+
+      [Observation]
+      public void should_remove_the_separator_after_the_key_if_the_key_starts_the_naming_convention()
+      {
+         _configuration.NamingConventions = "{N}-{Subject count}";
+         sut.AddGroupingColumn(_configuration, "N");
+         sut.AddMetaDataColumn(_configuration, "N", Constants.ObservedData.SUBJECT_COUNT);
+         _configuration.NamingConventions.ShouldBeEqualTo("{Subject count}");
+      }
+
+      [Observation]
       public void should_not_set_a_naming_convention_if_none_is_defined()
       {
          sut.AddGroupingColumn(_configuration, "N");
@@ -543,6 +562,15 @@ namespace OSPSuite.R.Services
          sut.AddMetaDataColumn(_configuration, "N", Constants.ObservedData.SUBJECT_COUNT);
          sut.RemoveMetaDataColumn(_configuration, Constants.ObservedData.SUBJECT_COUNT);
          sut.GetAllMetaDataColumns(_configuration).ShouldBeEmpty();
+      }
+
+      [Observation]
+      public void should_keep_a_fixed_value_of_the_category_when_removing()
+      {
+         var fixedValue = new MetaDataFormatParameter("Human", Constants.ObservedData.SPECIES, isColumn: false);
+         _configuration.AddParameter(fixedValue);
+         sut.RemoveMetaDataColumn(_configuration, Constants.ObservedData.SPECIES);
+         _configuration.Parameters.ShouldContain(fixedValue);
       }
 
       [Observation]
