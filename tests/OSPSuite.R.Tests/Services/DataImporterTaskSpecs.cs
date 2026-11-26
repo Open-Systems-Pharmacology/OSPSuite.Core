@@ -449,6 +449,212 @@ namespace OSPSuite.R.Services
       }
    }
 
+   public class When_mapping_a_column_to_a_meta_data_category : concern_for_DataImporter
+   {
+      private MetaDataFormatParameter metaDataColumnFor(string metaDataId) => sut.GetAllMetaDataColumns(_configuration).SingleOrDefault(p => p.MetaDataId == metaDataId);
+
+      [Observation]
+      public void should_add_the_column_as_meta_data_of_the_category()
+      {
+         sut.AddMetaDataColumn(_configuration, "N", Constants.ObservedData.SUBJECT_COUNT);
+         metaDataColumnFor(Constants.ObservedData.SUBJECT_COUNT).ColumnName.ShouldBeEqualTo("N");
+         sut.GetAllGroupingColumns(_configuration).ShouldOnlyContain("N");
+      }
+
+      [Observation]
+      public void should_throw_if_the_category_is_not_a_meta_data_category_of_observed_data()
+      {
+         The.Action(() => sut.AddMetaDataColumn(_configuration, "N", "Subject cnt")).ShouldThrowAn<OSPSuiteException>();
+         sut.GetAllMetaDataColumns(_configuration).ShouldBeEmpty();
+      }
+
+      [Observation]
+      public void should_replace_a_grouping_column_of_the_same_column()
+      {
+         sut.AddGroupingColumn(_configuration, "N");
+         sut.AddMetaDataColumn(_configuration, "N", Constants.ObservedData.SUBJECT_COUNT);
+         _configuration.Parameters.OfType<GroupByDataFormatParameter>().ShouldBeEmpty();
+         sut.GetAllGroupingColumns(_configuration).ShouldOnlyContain("N");
+      }
+
+      [Observation]
+      public void should_replace_the_mapping_of_the_same_column_to_another_category()
+      {
+         sut.AddMetaDataColumn(_configuration, "N", Constants.ObservedData.STUDY_ID);
+         sut.AddMetaDataColumn(_configuration, "N", Constants.ObservedData.SUBJECT_COUNT);
+         metaDataColumnFor(Constants.ObservedData.STUDY_ID).ShouldBeNull();
+         metaDataColumnFor(Constants.ObservedData.SUBJECT_COUNT).ColumnName.ShouldBeEqualTo("N");
+      }
+
+      [Observation]
+      public void should_replace_the_mapping_of_the_same_category_to_another_column()
+      {
+         sut.AddMetaDataColumn(_configuration, "N", Constants.ObservedData.SUBJECT_COUNT);
+         sut.AddMetaDataColumn(_configuration, "n subjects", Constants.ObservedData.SUBJECT_COUNT);
+         sut.GetAllMetaDataColumns(_configuration).Length.ShouldBeEqualTo(1);
+         metaDataColumnFor(Constants.ObservedData.SUBJECT_COUNT).ColumnName.ShouldBeEqualTo("n subjects");
+      }
+
+      [Observation]
+      public void should_replace_a_fixed_value_of_the_same_category()
+      {
+         _configuration.AddParameter(new MetaDataFormatParameter("5", Constants.ObservedData.SUBJECT_COUNT, isColumn: false));
+         sut.AddMetaDataColumn(_configuration, "N", Constants.ObservedData.SUBJECT_COUNT);
+         _configuration.Parameters.OfType<MetaDataFormatParameter>().ShouldOnlyContain(metaDataColumnFor(Constants.ObservedData.SUBJECT_COUNT));
+      }
+
+      [Observation]
+      public void should_not_return_a_fixed_value_as_meta_data_column()
+      {
+         _configuration.AddParameter(new MetaDataFormatParameter("Human", Constants.ObservedData.SPECIES, isColumn: false));
+         sut.GetAllMetaDataColumns(_configuration).ShouldBeEmpty();
+      }
+
+      [Observation]
+      public void should_replace_the_naming_convention_key_of_a_replaced_grouping_column()
+      {
+         _configuration.NamingConventions = "{Source}.{Id}.{N}";
+         sut.AddGroupingColumn(_configuration, "Id");
+         sut.AddGroupingColumn(_configuration, "N");
+         sut.AddMetaDataColumn(_configuration, "N", Constants.ObservedData.SUBJECT_COUNT);
+         _configuration.NamingConventions.ShouldBeEqualTo("{Source}.{Id}.{Subject count}");
+      }
+
+      [Observation]
+      public void should_replace_the_naming_convention_key_of_the_same_column_mapped_to_another_category()
+      {
+         _configuration.NamingConventions = "{Source}.{Study Id}";
+         sut.AddMetaDataColumn(_configuration, "N", Constants.ObservedData.STUDY_ID);
+         sut.AddMetaDataColumn(_configuration, "N", Constants.ObservedData.SUBJECT_COUNT);
+         _configuration.NamingConventions.ShouldBeEqualTo("{Source}.{Subject count}");
+      }
+
+      [Observation]
+      public void should_remove_the_naming_convention_key_of_a_replaced_grouping_column_if_the_category_is_already_in_the_naming_convention()
+      {
+         _configuration.NamingConventions = "{Source}.{N}.{Subject count}";
+         sut.AddMetaDataColumn(_configuration, "M", Constants.ObservedData.SUBJECT_COUNT);
+         sut.AddGroupingColumn(_configuration, "N");
+         sut.AddMetaDataColumn(_configuration, "N", Constants.ObservedData.SUBJECT_COUNT);
+         _configuration.NamingConventions.ShouldBeEqualTo("{Source}.{Subject count}");
+      }
+
+      [Observation]
+      public void should_remove_the_separator_after_the_key_if_the_key_starts_the_naming_convention()
+      {
+         _configuration.NamingConventions = "{N}-{Subject count}";
+         sut.AddGroupingColumn(_configuration, "N");
+         sut.AddMetaDataColumn(_configuration, "N", Constants.ObservedData.SUBJECT_COUNT);
+         _configuration.NamingConventions.ShouldBeEqualTo("{Subject count}");
+      }
+
+      [Observation]
+      public void should_not_set_a_naming_convention_if_none_is_defined()
+      {
+         sut.AddGroupingColumn(_configuration, "N");
+         sut.AddMetaDataColumn(_configuration, "N", Constants.ObservedData.SUBJECT_COUNT);
+         _configuration.NamingConventions.ShouldBeNull();
+      }
+
+      [Observation]
+      public void should_remove_the_mapping_of_the_category()
+      {
+         sut.AddMetaDataColumn(_configuration, "N", Constants.ObservedData.SUBJECT_COUNT);
+         sut.RemoveMetaDataColumn(_configuration, Constants.ObservedData.SUBJECT_COUNT);
+         sut.GetAllMetaDataColumns(_configuration).ShouldBeEmpty();
+      }
+
+      [Observation]
+      public void should_keep_a_fixed_value_of_the_category_when_removing()
+      {
+         var fixedValue = new MetaDataFormatParameter("Human", Constants.ObservedData.SPECIES, isColumn: false);
+         _configuration.AddParameter(fixedValue);
+         sut.RemoveMetaDataColumn(_configuration, Constants.ObservedData.SPECIES);
+         _configuration.Parameters.ShouldContain(fixedValue);
+      }
+
+      [Observation]
+      public void should_not_throw_when_removing_a_category_that_is_not_mapped()
+      {
+         sut.AddGroupingColumn(_configuration, Constants.ObservedData.SUBJECT_COUNT);
+         sut.RemoveMetaDataColumn(_configuration, Constants.ObservedData.SUBJECT_COUNT);
+         sut.GetAllGroupingColumns(_configuration).ShouldOnlyContain(Constants.ObservedData.SUBJECT_COUNT);
+      }
+   }
+
+   public abstract class concern_for_importing_data_with_a_column_mapped_to_subject_count : concern_for_DataImporter
+   {
+      protected override void Context()
+      {
+         base.Context();
+         sut.IgnoreSheetNamesAtImport = true;
+         _configuration.NamingConventions = "{Source}.{Id}";
+         sut.AddGroupingColumn(_configuration, "Id");
+         sut.AddMetaDataColumn(_configuration, "N", Constants.ObservedData.SUBJECT_COUNT);
+      }
+   }
+
+   public class When_importing_data_with_a_column_mapped_to_subject_count : concern_for_importing_data_with_a_column_mapped_to_subject_count
+   {
+      private IReadOnlyList<DataRepository> _dataRepositories;
+
+      protected override void Because()
+      {
+         _dataRepositories = sut.ImportCsvFromConfiguration(_configuration, getFileFullName("subjectCountFromColumn.csv"), ';');
+      }
+
+      private DataRepository dataRepositoryOf(string id) => _dataRepositories.Single(x => x.ExtendedPropertyValueFor("Id") == id);
+
+      [Observation]
+      public void should_store_the_value_of_the_column_as_subject_count_of_each_data_set()
+      {
+         dataRepositoryOf("A").SubjectCount().ShouldBeEqualTo(5);
+         dataRepositoryOf("B").SubjectCount().ShouldBeEqualTo(12);
+      }
+
+      [Observation]
+      public void should_not_store_the_column_name_as_meta_data()
+      {
+         _dataRepositories.Each(x => x.ExtendedProperties.Contains("N").ShouldBeFalse());
+      }
+   }
+
+   public class When_importing_data_named_by_a_grouping_column_that_was_mapped_to_subject_count : concern_for_DataImporter
+   {
+      private IReadOnlyList<DataRepository> _dataRepositories;
+
+      protected override void Context()
+      {
+         base.Context();
+         sut.IgnoreSheetNamesAtImport = true;
+         _configuration.NamingConventions = "{Source}.{Id}.{N}";
+         sut.AddGroupingColumn(_configuration, "Id");
+         sut.AddGroupingColumn(_configuration, "N");
+         sut.AddMetaDataColumn(_configuration, "N", Constants.ObservedData.SUBJECT_COUNT);
+      }
+
+      protected override void Because()
+      {
+         _dataRepositories = sut.ImportCsvFromConfiguration(_configuration, getFileFullName("subjectCountFromColumn.csv"), ';');
+      }
+
+      [Observation]
+      public void should_name_the_data_sets_with_the_value_of_the_column()
+      {
+         _dataRepositories.Select(x => x.Name).ShouldOnlyContain("subjectCountFromColumn.A.5", "subjectCountFromColumn.B.12");
+      }
+   }
+
+   public class When_importing_data_with_an_invalid_value_in_a_column_mapped_to_subject_count : concern_for_importing_data_with_a_column_mapped_to_subject_count
+   {
+      [Observation]
+      public void should_throw_a_parsing_exception()
+      {
+         The.Action(() => sut.ImportCsvFromConfiguration(_configuration, getFileFullName("subjectCountFromColumn_invalid.csv"), ';'))
+            .ShouldThrowAn<ImporterParsingException>();
+      }
+   }
+
    public class When_importing_data_with_conflicting_error_types_in_one_data_set : concern_for_DataImporter
    {
       [Observation]
