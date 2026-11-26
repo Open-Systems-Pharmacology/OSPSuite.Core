@@ -15,13 +15,13 @@ namespace OSPSuite.Core.Serialization
          if (withId == null)
             return string.Empty;
 
-   
          //add to cache if the reference is also a formula
          var formula = withId as IFormula;
-         if (formula == null)
-            return withId.Id;
+         var id = formula == null ? withId.Id : serializationContext.AddFormulaToCache(formula);
+         if (string.IsNullOrEmpty(id))
+            return string.Empty;
 
-         return serializationContext.AddFormulaToCache(formula);
+         return serializationContext.ReferenceMarker + id;
       }
 
       public void ResolveReference(object objectToDeserialize, IPropertyMap propertyMap, string referenceValue, SerializationContext serializationContext)
