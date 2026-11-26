@@ -34,6 +34,11 @@ namespace OSPSuite.R.Domain
 
       public bool IsPopulation => IndividualValuesCache != null;
 
+      /// <summary>
+      ///    Changes written to the pkml when the simulation is saved. Null if the simulation does not track changes.
+      /// </summary>
+      public SimulationChanges Changes { get; set; }
+
       public void AddUsedObservedData(DataRepository dataRepository)
       {
          // nothing to do in R

@@ -1,7 +1,14 @@
-﻿using OSPSuite.BDDHelper;
+﻿using System.Linq;
+using System.Xml.Linq;
+using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.CLI.Core.MinimalImplementations;
 using OSPSuite.Core.Domain;
+using OSPSuite.Core.Domain.Formulas;
+using OSPSuite.Core.Domain.Mappers;
+using OSPSuite.Core.Domain.Services;
+using OSPSuite.Core.Extensions;
+using OSPSuite.Core.Serialization.Exchange;
 using OSPSuite.R.Domain;
 using OSPSuite.Utility;
 
@@ -75,10 +82,207 @@ namespace OSPSuite.R.Services
          FileHelper.FileExists(_simulationFile).ShouldBeTrue();
       }
 
+      [Observation]
+      public void should_not_write_any_change_to_the_file()
+      {
+         XElement.Load(_simulationFile).Element(nameof(SimulationTransfer.OriginalQuantityValues)).ShouldBeNull();
+      }
+
       public override void Cleanup()
       {
          base.Cleanup();
          FileHelper.DeleteFile(_simulationFile);
+      }
+   }
+
+   public abstract class concern_for_saving_a_simulation_changed_in_R : concern_for_SimulationPersister
+   {
+      protected string _simulationFile;
+      protected Simulation _simulation;
+      protected SimulationTransfer _savedSimulationTransfer;
+      protected IEntityPathResolver _entityPathResolver;
+
+      protected override void Context()
+      {
+         base.Context();
+         _entityPathResolver = Api.Container.Resolve<IEntityPathResolver>();
+         _simulationFile = FileHelper.GenerateTemporaryFileName();
+      }
+
+      protected override void Because()
+      {
+         sut.SaveSimulation(_simulation, _simulationFile);
+         _savedSimulationTransfer = Api.Container.Resolve<ISimulationPersistor>().Load(_simulationFile);
+      }
+
+      protected OriginalQuantityValue SavedOriginalValueFor(IEntity entity, OriginalQuantityValue.Types type = OriginalQuantityValue.Types.Quantity)
+      {
+         string path = _entityPathResolver.ObjectPathFor(entity);
+         return _savedSimulationTransfer.OriginalQuantityValues.SingleOrDefault(x => x.Path == path && x.Type == type);
+      }
+
+      public override void Cleanup()
+      {
+         base.Cleanup();
+         FileHelper.DeleteFile(_simulationFile);
+      }
+   }
+
+   public class When_saving_a_simulation_whose_values_were_changed_in_R : concern_for_saving_a_simulation_changed_in_R
+   {
+      private IParameter _constantParameter;
+      private IParameter _formulaParameter;
+      private IParameter _restoredParameter;
+      private MoleculeAmount _moleculeAmount;
+      private double _constantParameterValue;
+      private double _formulaParameterValue;
+      private double _moleculeAmountValue;
+      private double _scaleDivisor;
+
+      protected override void Context()
+      {
+         base.Context();
+         _simulation = sut.LoadSimulation(HelperForSpecs.DataFile("S1.pkml"));
+         var root = _simulation.Model.Root;
+         var constantParameters = root.GetAllChildren<IParameter>(x => !x.IsFixedValue && x.Formula.IsConstant());
+         _constantParameter = constantParameters[0];
+         _restoredParameter = constantParameters[1];
+         _formulaParameter = root.GetAllChildren<IParameter>(x => !x.IsFixedValue && x.Formula.IsExplicit() && x.Value > 0).First();
+         _moleculeAmount = root.GetAllChildren<MoleculeAmount>().First();
+
+         _constantParameterValue = _constantParameter.Value;
+         _formulaParameterValue = _formulaParameter.Value;
+         _moleculeAmountValue = _moleculeAmount.Value;
+         _scaleDivisor = _moleculeAmount.ScaleDivisor;
+
+         Api.GetContainerTask().SetValueByPath(_simulation, _entityPathResolver.PathFor(_constantParameter), _constantParameterValue + 1, throwIfNotFound: true);
+         _formulaParameter.Value = _formulaParameterValue * 2;
+         _moleculeAmount.Value = _moleculeAmountValue + 1;
+         _moleculeAmount.ScaleDivisor = _scaleDivisor / 10;
+
+         var restoredValue = _restoredParameter.Value;
+         _restoredParameter.Value = restoredValue + 1;
+         _restoredParameter.Value = restoredValue;
+      }
+
+      [Observation]
+      public void should_write_the_original_value_of_the_changed_parameter()
+      {
+         SavedOriginalValueFor(_constantParameter).Value.ShouldBeEqualTo(_constantParameterValue);
+      }
+
+      [Observation]
+      public void should_write_the_original_value_of_the_formula_parameter_overwritten_with_a_value()
+      {
+         SavedOriginalValueFor(_formulaParameter).Value.ShouldBeEqualTo(_formulaParameterValue);
+      }
+
+      [Observation]
+      public void should_write_the_original_initial_value_and_scale_divisor_of_the_molecule()
+      {
+         SavedOriginalValueFor(_moleculeAmount).Value.ShouldBeEqualTo(_moleculeAmountValue);
+         SavedOriginalValueFor(_moleculeAmount, OriginalQuantityValue.Types.ScaleDivisor).Value.ShouldBeEqualTo(_scaleDivisor);
+      }
+
+      [Observation]
+      public void should_not_write_a_parameter_set_back_to_its_original_value()
+      {
+         SavedOriginalValueFor(_restoredParameter).ShouldBeNull();
+      }
+
+      [Observation]
+      public void should_only_write_the_changed_quantities()
+      {
+         _savedSimulationTransfer.OriginalQuantityValues.Count.ShouldBeEqualTo(4);
+      }
+   }
+
+   public class When_saving_a_simulation_with_a_circular_reference_loaded_in_R : concern_for_saving_a_simulation_changed_in_R
+   {
+      private string _circularSimulationFile;
+      private IParameter _overwrittenParameter;
+
+      protected override void Context()
+      {
+         base.Context();
+         var corePersistor = Api.Container.Resolve<ISimulationPersistor>();
+         var objectPathFactory = Api.Container.Resolve<IObjectPathFactory>();
+         var simulationTransfer = corePersistor.Load(HelperForSpecs.DataFile("S1.pkml"));
+         var formulaParameters = simulationTransfer.Simulation.Model.Root.GetAllChildren<IParameter>(x => !x.IsFixedValue && x.Formula.IsExplicit());
+         var parameterA = formulaParameters[0];
+         var parameterB = formulaParameters[1];
+         parameterA.Formula = formulaReferencing(parameterA, parameterB, objectPathFactory).WithId("CircularA");
+         parameterB.Formula = formulaReferencing(parameterB, parameterA, objectPathFactory).WithId("CircularB");
+         _circularSimulationFile = FileHelper.GenerateTemporaryFileName();
+         corePersistor.Save(simulationTransfer, _circularSimulationFile);
+
+         _simulation = sut.LoadSimulation(_circularSimulationFile);
+         _overwrittenParameter = _simulation.Model.Root.EntityAt<IParameter>(_entityPathResolver.PathFor(parameterA).ToPathArray());
+         _overwrittenParameter.Value = 5;
+      }
+
+      private static ExplicitFormula formulaReferencing(IParameter parameter, IParameter referencedParameter, IObjectPathFactory objectPathFactory)
+      {
+         var formula = new ExplicitFormula("Other");
+         formula.AddObjectPath(objectPathFactory.CreateRelativeFormulaUsablePath(parameter, referencedParameter).WithAlias("Other"));
+         return formula;
+      }
+
+      [Observation]
+      public void should_write_the_overwritten_parameter_without_an_original_value()
+      {
+         SavedOriginalValueFor(_overwrittenParameter).Value.ShouldBeEqualTo(double.NaN);
+         _savedSimulationTransfer.OriginalQuantityValues.Count.ShouldBeEqualTo(1);
+      }
+
+      public override void Cleanup()
+      {
+         base.Cleanup();
+         FileHelper.DeleteFile(_circularSimulationFile);
+      }
+   }
+
+   public class When_saving_a_simulation_with_changes_tracked_before_it_was_loaded_in_R : concern_for_saving_a_simulation_changed_in_R
+   {
+      private string _trackedSimulationFile;
+      private IParameter _trackedParameter;
+      private const double TRACKED_ORIGINAL_VALUE = 123;
+
+      protected override void Context()
+      {
+         base.Context();
+         var corePersistor = Api.Container.Resolve<ISimulationPersistor>();
+         var simulationTransfer = corePersistor.Load(HelperForSpecs.DataFile("S1.pkml"));
+         var parameter = simulationTransfer.Simulation.Model.Root.GetAllChildren<IParameter>(x => x.Formula.IsConstant()).First();
+         var originalQuantityValue = Api.Container.Resolve<IQuantityToOriginalQuantityValueMapper>().MapFrom(parameter);
+         originalQuantityValue.Value = TRACKED_ORIGINAL_VALUE;
+         simulationTransfer.OriginalQuantityValues.Add(originalQuantityValue);
+         simulationTransfer.HasUntraceableChanges = true;
+         _trackedSimulationFile = FileHelper.GenerateTemporaryFileName();
+         corePersistor.Save(simulationTransfer, _trackedSimulationFile);
+
+         _simulation = sut.LoadSimulation(_trackedSimulationFile);
+         _trackedParameter = _simulation.Model.Root.EntityAt<IParameter>(_entityPathResolver.PathFor(parameter).ToPathArray());
+         _trackedParameter.Value = _trackedParameter.Value + 1;
+      }
+
+      [Observation]
+      public void should_keep_the_original_value_of_the_tracked_change()
+      {
+         SavedOriginalValueFor(_trackedParameter).Value.ShouldBeEqualTo(TRACKED_ORIGINAL_VALUE);
+         _savedSimulationTransfer.OriginalQuantityValues.Count.ShouldBeEqualTo(1);
+      }
+
+      [Observation]
+      public void should_keep_the_untraceable_changes_flag()
+      {
+         _savedSimulationTransfer.HasUntraceableChanges.ShouldBeTrue();
+      }
+
+      public override void Cleanup()
+      {
+         base.Cleanup();
+         FileHelper.DeleteFile(_trackedSimulationFile);
       }
    }
 }
