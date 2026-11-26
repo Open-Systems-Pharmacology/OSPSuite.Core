@@ -19,6 +19,14 @@ namespace OSPSuite.Core.Domain.Mappers
 
    public class DataColumnToPathElementsMapper : IDataColumnToPathElementsMapper
    {
+      private const int OBSERVED_DATA_PATH_LENGTH = 6;
+      private const int OBSERVED_DATA_REPOSITORY_INDEX = 0;
+      private const int OBSERVED_DATA_CONTAINER_INDEX = 1;
+      private const int OBSERVED_DATA_ORGAN_INDEX = 2;
+      private const int OBSERVED_DATA_COMPARTMENT_INDEX = 3;
+      private const int OBSERVED_DATA_MOLECULE_INDEX = 4;
+      private const int OBSERVED_DATA_COLUMN_INDEX = 5;
+
       private readonly IPathToPathElementsMapper _pathToPathElementsMapper;
 
       public DataColumnToPathElementsMapper(IPathToPathElementsMapper pathToPathElementsMapper)
@@ -52,8 +60,22 @@ namespace OSPSuite.Core.Domain.Mappers
 
       protected virtual PathElements ObservedDataPathElementsFor(DataColumn dataColumn, List<string> quantityPath)
       {
-         return pathElementsForUnknownColumns(dataColumn, quantityPath);
+         if (!isNormalizedObservedDataPath(quantityPath))
+            return pathElementsForUnknownColumns(dataColumn, quantityPath);
+
+         return new PathElements
+         {
+            [PathElementId.Simulation] = new PathElement {DisplayName = quantityPath[OBSERVED_DATA_REPOSITORY_INDEX]},
+            [PathElementId.TopContainer] = new PathElement {DisplayName = quantityPath[OBSERVED_DATA_REPOSITORY_INDEX]},
+            [PathElementId.Container] = new PathElement {DisplayName = quantityPath[OBSERVED_DATA_ORGAN_INDEX]},
+            [PathElementId.BottomCompartment] = new PathElement {DisplayName = quantityPath[OBSERVED_DATA_COMPARTMENT_INDEX]},
+            [PathElementId.Molecule] = new PathElement {DisplayName = quantityPath[OBSERVED_DATA_MOLECULE_INDEX]},
+            [PathElementId.Name] = new PathElement {DisplayName = quantityPath[OBSERVED_DATA_COLUMN_INDEX]}
+         };
       }
+
+      private static bool isNormalizedObservedDataPath(IReadOnlyList<string> quantityPath) =>
+         quantityPath.Count == OBSERVED_DATA_PATH_LENGTH && string.Equals(quantityPath[OBSERVED_DATA_CONTAINER_INDEX], Constants.ObservedData.CONTAINER_NAME);
 
       private PathElements pathElementsForUnknownColumns(DataColumn dataColumn, List<string> quantityPath)
       {

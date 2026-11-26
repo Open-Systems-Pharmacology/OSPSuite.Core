@@ -154,7 +154,24 @@ namespace OSPSuite.Core.Domain.Services
          return Delete(_executionContext.Project.AllObservedData);
       }
 
-      public abstract void UpdateMolWeight(DataRepository observedData);
+      public virtual void UpdateMolWeight(DataRepository observedData)
+      {
+         var moleculeName = observedData.ExtendedPropertyValueFor(Constants.ObservedData.MOLECULE);
+         if (string.IsNullOrEmpty(moleculeName))
+            return;
+
+         var molWeight = MolWeightFor(moleculeName);
+         if (molWeight == null)
+            return;
+
+         observedData.AllButBaseGrid().Each(x => x.DataInfo.MolWeight = molWeight);
+      }
+
+      /// <summary>
+      ///    Mol weight in base unit, or <c>null</c> if the project has no such molecule. Core does not know the molecules of a
+      ///    project: PK-Sim resolves compounds, MoBi molecule building blocks.
+      /// </summary>
+      protected virtual double? MolWeightFor(string moleculeName) => null;
 
       private string typeNamed(IUsesObservedData usesObservedData)
       {

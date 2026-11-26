@@ -198,6 +198,10 @@ namespace OSPSuite.Infrastructure.Import.Services
          subjectCountCategory.MinValue = Constants.ObservedData.MIN_SUBJECT_COUNT;
          categories.Add(subjectCountCategory);
 
+         var outputPathCategory = CreateMetaDataCategory<string>(Constants.OUTPUT_PATH);
+         outputPathCategory.Description = ObservedData.OutputPathDescription;
+         categories.Add(outputPathCategory);
+
          return categories;
       }
 
