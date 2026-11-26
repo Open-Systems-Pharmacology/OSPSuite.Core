@@ -7,6 +7,7 @@ namespace OSPSuite.Core.Serialization.Xml
       public override void PerformMapping()
       {
          Map(x => x.ErrorStdDev);
+         Map(x => x.ErrorStdDevColumn);
          Map(x => x.LloqColumn);
          Map(x => x.Name);
          Map(x => x.Unit);

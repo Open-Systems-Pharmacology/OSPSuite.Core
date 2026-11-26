@@ -5,6 +5,7 @@ using NUnit.Framework;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain;
+using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Import;
 using OSPSuite.Helpers;
@@ -410,4 +411,235 @@ namespace OSPSuite.Infrastructure.Import
       }
    }
 
+   public class When_mapping_a_data_set_with_a_missing_arithmetic_error_value : concern_for_DataSetToDataRepositoryMapperSpecs
+   {
+      private ImportedDataSet _importedDataSetWithMissingError;
+      private DataColumn _errorColumn;
+
+      protected override void Context()
+      {
+         base.Context();
+         var timeDimension = DomainHelperForSpecs.TimeDimensionForSpecs();
+
+         var parsedData = new Dictionary<ExtendedColumn, IList<SimulationPoint>>()
+         {
+            {
+               new ExtendedColumn()
+               {
+                  Column = new Column()
+                  {
+                     Name = "Time",
+                     Unit = new UnitDescription("min"),
+                     Dimension = timeDimension
+                  },
+                  ColumnInfo = new ColumnInfo()
+                  {
+                     BaseGridName = null,
+                     Name = "Time"
+                  }
+               },
+               new List<SimulationPoint>()
+               {
+                  new SimulationPoint() { Unit = "min", Measurement = 0, Lloq = double.NaN },
+                  new SimulationPoint() { Unit = "min", Measurement = 1, Lloq = double.NaN },
+                  new SimulationPoint() { Unit = "min", Measurement = 2, Lloq = double.NaN }
+               }
+            },
+            {
+               new ExtendedColumn()
+               {
+                  Column = new Column()
+                  {
+                     Name = "Concentration",
+                     Unit = new UnitDescription("µmol/l"),
+                     Dimension = _concentrationDimensionLLOQ
+                  },
+                  ColumnInfo = new ColumnInfo()
+                  {
+                     BaseGridName = "Time",
+                     Name = "Concentration"
+                  }
+               },
+               new List<SimulationPoint>()
+               {
+                  new SimulationPoint() { Unit = "µmol/l", Measurement = 10, Lloq = double.NaN },
+                  new SimulationPoint() { Unit = "µmol/l", Measurement = 20, Lloq = double.NaN },
+                  new SimulationPoint() { Unit = "µmol/l", Measurement = 30, Lloq = double.NaN }
+               }
+            },
+            {
+               new ExtendedColumn()
+               {
+                  Column = new Column()
+                  {
+                     Name = "Error",
+                     Unit = new UnitDescription("µmol/l"),
+                     Dimension = _concentrationDimensionLLOQ
+                  },
+                  ColumnInfo = new ColumnInfo()
+                  {
+                     BaseGridName = "Time",
+                     Name = "Error",
+                     IsMandatory = false,
+                     RelatedColumnOf = "Concentration"
+                  },
+                  ErrorDeviation = Constants.STD_DEV_ARITHMETIC
+               },
+               new List<SimulationPoint>()
+               {
+                  new SimulationPoint() { Unit = "µmol/l", Measurement = 1.5, Lloq = double.NaN },
+                  //an empty or non-numeric Error cell is parsed as a missing value without LLOQ
+                  new SimulationPoint() { Unit = "µmol/l", Measurement = double.NaN, Lloq = double.NaN },
+                  new SimulationPoint() { Unit = "µmol/l", Measurement = 0.5, Lloq = double.NaN }
+               }
+            }
+         };
+         _importedDataSetWithMissingError = new ImportedDataSet(
+            "file.xlsx",
+            "Sheet1",
+            new ParsedDataSet(new List<string>(), A.Fake<DataSheet>(), new List<UnformattedRow>(), parsedData),
+            "name",
+            new List<MetaDataInstance>()
+         );
+      }
+
+      protected override void Because()
+      {
+         _result = sut.ConvertImportDataSet(_importedDataSetWithMissingError);
+         _errorColumn = _result.DataRepository.Columns.Single(x => x.Name == "Error");
+      }
+
+      [Observation]
+      public void should_import_the_error_column_as_an_arithmetic_standard_deviation()
+      {
+         _errorColumn.DataInfo.AuxiliaryType.ShouldBeEqualTo(AuxiliaryType.ArithmeticStdDev);
+      }
+
+      [Observation]
+      public void should_keep_the_missing_error_value_missing()
+      {
+         float.IsNaN(_errorColumn.Values[0]).ShouldBeFalse();
+         float.IsNaN(_errorColumn.Values[1]).ShouldBeTrue();
+         float.IsNaN(_errorColumn.Values[2]).ShouldBeFalse();
+      }
+
+      [Observation]
+      public void should_not_set_an_lloq_on_the_error_column()
+      {
+         _errorColumn.DataInfo.LLOQ.ShouldBeNull();
+      }
+   }
+
+   public abstract class concern_for_DataSetToDataRepositoryMapper_with_error_in_units_of_a_row : concern_for_DataSetToDataRepositoryMapperSpecs
+   {
+      protected ImportedDataSet _importedDataSet;
+
+      protected ImportedDataSet importedDataSetWithError(string errorDeviation)
+      {
+         var timeDimension = DomainHelperForSpecs.TimeDimensionForSpecs();
+         var concentrationDimension = DomainHelperForSpecs.ConcentrationDimensionForSpecs();
+         var errorColumnInfo = new ColumnInfo
+         {
+            BaseGridName = "Time",
+            Name = "Error",
+            IsMandatory = false,
+            RelatedColumnOf = "Concentration"
+         };
+         errorColumnInfo.SupportedDimensions.Add(concentrationDimension);
+
+         var parsedData = new Dictionary<ExtendedColumn, IList<SimulationPoint>>
+         {
+            {
+               new ExtendedColumn
+               {
+                  Column = new Column { Name = "Time", Unit = new UnitDescription("min"), Dimension = timeDimension },
+                  ColumnInfo = new ColumnInfo { BaseGridName = null, Name = "Time" }
+               },
+               new List<SimulationPoint>
+               {
+                  new SimulationPoint { Unit = "min", Measurement = 0, Lloq = double.NaN },
+                  new SimulationPoint { Unit = "min", Measurement = 1, Lloq = double.NaN }
+               }
+            },
+            {
+               new ExtendedColumn
+               {
+                  Column = new Column { Name = "Concentration", Unit = new UnitDescription("mol/l"), Dimension = concentrationDimension },
+                  ColumnInfo = new ColumnInfo { BaseGridName = "Time", Name = "Concentration" }
+               },
+               new List<SimulationPoint>
+               {
+                  new SimulationPoint { Unit = "mol/l", Measurement = 10, Lloq = double.NaN },
+                  new SimulationPoint { Unit = "mol/l", Measurement = 20, Lloq = double.NaN }
+               }
+            },
+            {
+               new ExtendedColumn
+               {
+                  Column = new Column { Name = "Error", Unit = new UnitDescription("mol/l"), Dimension = concentrationDimension, ErrorStdDev = errorDeviation },
+                  ColumnInfo = errorColumnInfo,
+                  ErrorDeviation = errorDeviation
+               },
+               new List<SimulationPoint>
+               {
+                  new SimulationPoint { Unit = "mol/l", Measurement = 2, Lloq = double.NaN },
+                  new SimulationPoint { Unit = "mol/l", Measurement = 3, Lloq = double.NaN }
+               }
+            }
+         };
+         return new ImportedDataSet("file", "sheet1",
+            new ParsedDataSet(new List<string>(), A.Fake<DataSheet>(), new List<UnformattedRow>(), parsedData), "name", new List<MetaDataInstance>());
+      }
+
+      protected DataColumn errorColumn => _result.DataRepository.AllButBaseGrid().Single(x => x.Name == "Error");
+
+      protected override void Because()
+      {
+         _result = sut.ConvertImportDataSet(_importedDataSet);
+      }
+   }
+
+   public class When_mapping_a_geometric_error_whose_rows_have_a_unit : concern_for_DataSetToDataRepositoryMapper_with_error_in_units_of_a_row
+   {
+      protected override void Context()
+      {
+         base.Context();
+         _importedDataSet = importedDataSetWithError(Constants.STD_DEV_GEOMETRIC);
+      }
+
+      [Observation]
+      public void should_create_a_dimensionless_geometric_error_column()
+      {
+         errorColumn.Dimension.ShouldBeEqualTo(Constants.Dimension.NO_DIMENSION);
+         errorColumn.DataInfo.AuxiliaryType.ShouldBeEqualTo(AuxiliaryType.GeometricStdDev);
+      }
+
+      [Observation]
+      public void should_keep_the_values_as_written()
+      {
+         errorColumn.Values.ToArray().ShouldBeEqualTo(new[] { 2f, 3f });
+      }
+   }
+
+   public class When_mapping_an_arithmetic_error_whose_rows_have_a_unit : concern_for_DataSetToDataRepositoryMapper_with_error_in_units_of_a_row
+   {
+      protected override void Context()
+      {
+         base.Context();
+         _importedDataSet = importedDataSetWithError(Constants.STD_DEV_ARITHMETIC);
+      }
+
+      [Observation]
+      public void should_create_an_arithmetic_error_column_in_the_dimension_of_the_measurement()
+      {
+         errorColumn.Dimension.ShouldBeEqualTo(DomainHelperForSpecs.ConcentrationDimensionForSpecs());
+         errorColumn.DataInfo.AuxiliaryType.ShouldBeEqualTo(AuxiliaryType.ArithmeticStdDev);
+      }
+
+      [Observation]
+      public void should_convert_the_values_to_the_base_unit()
+      {
+         errorColumn.Values.ToArray().ShouldBeEqualTo(new[] { 2e6f, 3e6f });
+      }
+   }
 }

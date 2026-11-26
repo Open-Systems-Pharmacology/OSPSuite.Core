@@ -391,6 +391,35 @@ namespace OSPSuite.Core.Mappers
       }
    }
 
+   public class When_updating_a_v12_snapshot_with_a_renamed_parameter : concern_for_IdentificationParameterMapper_with_application_parameters
+   {
+      private IParameter _renamedParameter;
+
+      protected override void AddApplicationLinkedParameters()
+      {
+         _renamedParameter = DomainHelperForSpecs.ConstantParameterWithValue(1).WithName(ParameterMapper.TimeToCompleteGallbladderRefilling);
+         _simulation.Model.Root.Add(new Container { _renamedParameter }.WithName("Organism"));
+
+         _identificationParameter.AddLinkedParameter(new ParameterSelection(_simulation, new ObjectPath("Organism", ParameterMapper.TimeToCompleteGallbladderRefilling)));
+      }
+
+      protected override void UpdateSimulationStructure()
+      {
+         _renamedParameter.Name = ParameterMapper.TimeToCompleteGallbladderEmptying;
+      }
+
+      protected override SnapshotVersion GetSnapshotContextVersion()
+      {
+         return SnapshotVersions.V12;
+      }
+
+      [Observation]
+      public void should_rename_the_parameter_in_the_parameter_selection_path()
+      {
+         _newParameterIdentification.AllLinkedParameters[5].Path.ShouldBeEqualTo($"Organism|{ParameterMapper.TimeToCompleteGallbladderEmptying}");
+      }
+   }
+
    public class When_updating_a_current_snapshot_with_an_application_parameter : concern_for_IdentificationParameterMapper_with_application_parameters
    {
       protected override void AddApplicationLinkedParameters()

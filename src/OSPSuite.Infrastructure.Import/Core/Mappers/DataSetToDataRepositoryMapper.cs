@@ -73,11 +73,16 @@ namespace OSPSuite.Infrastructure.Import.Core.Mappers
          KeyValuePair<ExtendedColumn, IList<SimulationPoint>> columnAndData, string sheetName)
       {
          DataColumn dataColumn;
-         var unitName = columnAndData.Value.FirstOrDefault(x => unitIsValid(x.Unit))?.Unit ??
-                        Constants.Dimension.NO_DIMENSION.DefaultUnitName;
+         //a geometric standard deviation is a dimensionless factor: values are taken as written, whatever unit their row has
+         var isGeometricError = columnAndData.Key.ColumnInfo.IsAuxiliary && columnAndData.Key.ErrorDeviation == Constants.STD_DEV_GEOMETRIC;
+         var unitName = isGeometricError
+            ? Constants.Dimension.NO_DIMENSION.DefaultUnitName
+            : columnAndData.Value.FirstOrDefault(x => unitIsValid(x.Unit))?.Unit ?? Constants.Dimension.NO_DIMENSION.DefaultUnitName;
          var warningFlag = false;
 
-         var dimension = columnAndData.Key.Column.Dimension ?? columnAndData.Key.ColumnInfo.DimensionForUnit(unitName);
+         var dimension = isGeometricError
+            ? Constants.Dimension.NO_DIMENSION
+            : columnAndData.Key.Column.Dimension ?? columnAndData.Key.ColumnInfo.DimensionForUnit(unitName);
 
          if (dimension == null)
             throw new OSPSuiteException(Error.DimensionCannotBeDeterminedFor(sheetName, columnAndData.Key.ColumnInfo.Name));
@@ -129,8 +134,9 @@ namespace OSPSuite.Infrastructure.Import.Core.Mappers
          }
 
          if (lloqValue != null)
-            dataInfo.LLOQ =
-               Convert.ToSingle(dimension?.UnitValueToBaseUnitValue(dimension.FindUnit(lloqValue.Unit, ignoreCase: true), lloqValue.Lloq));
+            dataInfo.LLOQ = isGeometricError
+               ? Convert.ToSingle(lloqValue.Lloq)
+               : Convert.ToSingle(dimension?.UnitValueToBaseUnitValue(dimension.FindUnit(lloqValue.Unit, ignoreCase: true), lloqValue.Lloq));
 
          dataColumn.Values = values;
 

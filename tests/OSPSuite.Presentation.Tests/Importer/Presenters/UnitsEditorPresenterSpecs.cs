@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using FakeItEasy;
 using OSPSuite.BDDHelper;
+using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Import;
 using OSPSuite.Helpers;
@@ -93,6 +94,26 @@ namespace OSPSuite.Presentation.Importer.Presenters
       public void column_show_dimensions_flag_is_calculated()
       {
          A.CallTo(() => _view.SetParams(A<bool>.Ignored, true)).MustHaveHappened();
+      }
+   }
+
+   public class When_selecting_a_unit_column : concern_for_UnitsEditorPresenter
+   {
+      protected override void Because()
+      {
+         sut.SelectColumn("Unit");
+      }
+
+      [Observation]
+      public void should_show_the_selected_column()
+      {
+         A.CallToSet(() => _view.SelectedColumn).To("Unit").MustHaveHappened();
+      }
+
+      [Observation]
+      public void should_read_the_unit_from_the_column()
+      {
+         sut.Unit.ColumnName.ShouldBeEqualTo("Unit");
       }
    }
 }

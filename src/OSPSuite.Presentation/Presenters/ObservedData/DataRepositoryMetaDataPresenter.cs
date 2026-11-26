@@ -60,6 +60,8 @@ namespace OSPSuite.Presentation.Presenters.ObservedData
       /// </summary>
       void SetMolWeight(double oldMolWeightValueInDisplayUnit, double molWeightValueInDisplayUnit);
 
+      void SetSubjectCount(string subjectCount);
+
       /// <summary>
       ///    Adds a metadata named "OutputPath". This is a specially named metadata.
       /// </summary>
@@ -71,8 +73,7 @@ namespace OSPSuite.Presentation.Presenters.ObservedData
    {
       protected IEnumerable<DataRepository> _allDataRepositories;
       private NotifyList<MetaDataDTO> _metaDataDTOList;
-      //Meta data of the repositories as it was when bound, for each row created from it. Rows added in the view are not in here
-      private readonly Dictionary<MetaDataDTO, MetaDataKeyValue> _savedMetaData = new Dictionary<MetaDataDTO, MetaDataKeyValue>();
+      private readonly Dictionary<MetaDataDTO, MetaDataKeyValue> _originalMetaData = new Dictionary<MetaDataDTO, MetaDataKeyValue>();
       private readonly IObservedDataMetaDataTask _observedDataMetaDataTask;
       private readonly IObservedDataConfiguration _observedDataConfiguration;
       private readonly IParameterFactory _parameterFactory;
@@ -113,10 +114,11 @@ namespace OSPSuite.Presentation.Presenters.ObservedData
       {
          var name = extendedProperty.Name;
          var values = _observedDataConfiguration.PredefinedValuesFor(name);
-         return createDTO(name, extendedProperty.ValueAsObject as string, nameEditable: !isPredefinedProperty(extendedProperty), valueReadOnly: isReadOnly(extendedProperty), listOfValues: values);
+         var isPredefined = isPredefinedProperty(extendedProperty);
+         return createDTO(name, extendedProperty.ValueAsObject as string, nameEditable: !isPredefined, valueReadOnly: isReadOnly(extendedProperty), listOfValues: values, removable: !isPredefined);
       }
 
-      private MetaDataDTO createDTO(string name, string value, bool nameEditable = true, bool valueReadOnly = false, IEnumerable<string> listOfValues = null)
+      private MetaDataDTO createDTO(string name, string value, bool nameEditable = true, bool valueReadOnly = false, IEnumerable<string> listOfValues = null, bool removable = true)
       {
          return new MetaDataDTO(_defaultRules)
          {
@@ -125,7 +127,8 @@ namespace OSPSuite.Presentation.Presenters.ObservedData
             DataRepositories = _allDataRepositories,
             NameEditable = nameEditable,
             ValueReadOnly = valueReadOnly,
-            ListOfValues = listOfValues
+            ListOfValues = listOfValues,
+            Removable = removable
          };
       }
 
@@ -137,16 +140,14 @@ namespace OSPSuite.Presentation.Presenters.ObservedData
 
       public void RemoveMetaData(MetaDataDTO metaDataDTO)
       {
-         //A row that was never saved to the repositories only exists in the view. Removing it with a command would
-         //register an inverse command that adds the row as-is (possibly without name) to the repositories
-         if (!_savedMetaData.TryGetValue(metaDataDTO, out var savedMetaData))
+         //A new row only exists in the view. A remove command would add it to the repositories on undo
+         if (!_originalMetaData.TryGetValue(metaDataDTO, out var originalMetaData))
          {
             _metaDataDTOList.Remove(metaDataDTO);
             return;
          }
 
-         //Use the saved meta data and not the row, as the row may contain edits that were not saved
-         AddCommand(_observedDataMetaDataTask.RemoveMetaData(_allDataRepositories, savedMetaData));
+         AddCommand(_observedDataMetaDataTask.RemoveMetaData(_allDataRepositories, originalMetaData));
       }
 
       private bool isPredefinedProperty(IExtendedProperty extendedProperty) => 
@@ -188,6 +189,9 @@ namespace OSPSuite.Presentation.Presenters.ObservedData
 
       public void SetMolWeight(double oldMolWeightValueInDisplayUnit, double molWeightValueInDisplayUnit) => 
          this.DoWithinLatch(() => { AddCommand(_observedDataMetaDataTask.UpdateMolWeight(_allDataRepositories, molWeightValueInCoreUnit(oldMolWeightValueInDisplayUnit), molWeightValueInCoreUnit(molWeightValueInDisplayUnit))); });
+
+      public void SetSubjectCount(string subjectCount) =>
+         this.DoWithinLatch(() => { AddCommand(_observedDataMetaDataTask.UpdateSubjectCount(_allDataRepositories, subjectCount)); });
 
       public void AddOutputPathMetadata()
       {
@@ -240,10 +244,13 @@ namespace OSPSuite.Presentation.Presenters.ObservedData
       {
          if (IsLatched) return;
          _metaDataDTOList = new NotifyList<MetaDataDTO>();
-         _savedMetaData.Clear();
-         _allDataRepositories.ToList().IntersectingMetaData().Each(addSavedMetaData);
+         _originalMetaData.Clear();
+         _allDataRepositories.ToList().IntersectingMetaData()
+            .Where(x => !x.IsNamed(Constants.ObservedData.SUBJECT_COUNT))
+            .Each(addOriginalMetaData);
          _view.BindToMetaData(_metaDataDTOList);
          _view.AddOutputPathEnabled = !hasOutputPath();
+         _view.BindToSubjectCount(createSubjectCountDTO());
 
          _view.MolWeightEditable = _observedDataConfiguration.MolWeightAlwaysEditable || !_allDataRepositories.Any(x => x.ExtendedProperties.Contains(Captions.Molecule));
 
@@ -259,10 +266,26 @@ namespace OSPSuite.Presentation.Presenters.ObservedData
             _view.BindToLLOQ(lowerLimitsOfQuantification.First());
       }
 
-      private void addSavedMetaData(IExtendedProperty extendedProperty)
+      private MetaDataDTO createSubjectCountDTO()
+      {
+         var subjectCounts = _allDataRepositories
+            .Select(x => x.ExtendedPropertyValueFor(Constants.ObservedData.SUBJECT_COUNT) ?? string.Empty)
+            .Select(x => DataRepositoryExtensions.NormalizedSubjectCount(x) ?? x)
+            .Distinct().ToList();
+
+         return new MetaDataDTO(MetaDataDTO.MetaDataDTORules.ForSubjectCount())
+         {
+            Name = Constants.ObservedData.SUBJECT_COUNT,
+            Value = subjectCounts.Count == 1 ? subjectCounts[0] : string.Empty,
+            DataRepositories = _allDataRepositories,
+            NameEditable = false
+         };
+      }
+
+      private void addOriginalMetaData(IExtendedProperty extendedProperty)
       {
          var metaDataDTO = createDTO(extendedProperty);
-         _savedMetaData.Add(metaDataDTO, new MetaDataKeyValue { Key = metaDataDTO.Name, Value = metaDataDTO.Value });
+         _originalMetaData.Add(metaDataDTO, new MetaDataKeyValue { Key = metaDataDTO.Name, Value = metaDataDTO.Value });
          _metaDataDTOList.Add(metaDataDTO);
       }
 

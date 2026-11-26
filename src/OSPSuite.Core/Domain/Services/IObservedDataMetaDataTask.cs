@@ -45,6 +45,8 @@ namespace OSPSuite.Core.Domain.Services
       /// <param name="newMolWeightValue">Value to set in core unit</param>
       ICommand UpdateMolWeight(IEnumerable<DataRepository> allDataRepositories, double oldMolWeightValue, double newMolWeightValue);
 
+      ICommand UpdateSubjectCount(IEnumerable<DataRepository> allDataRepositories, string subjectCount);
+
       /// <summary>
       /// Checks if the <paramref name="observedData"/>is used by any parameter identification in the project
       /// </summary>
