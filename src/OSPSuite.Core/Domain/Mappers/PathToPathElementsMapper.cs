@@ -54,14 +54,18 @@ namespace OSPSuite.Core.Domain.Mappers
             return containers;
          }
 
-         int firstPathElementToProcess = 0; //start index in for loop = first index of child of topContainer in pathElements
+         //Parent path entries are not part of this container hierarchy and only known by name. Placeholders are used to display them, without the container type they have in a simulation
+         var parentPath = parentPathIn(rootContainer, pathElements);
+         containers.AddRange(parentPath.Select(x => new Container().WithName(x)));
+
+         int firstPathElementToProcess = parentPath.Count; //start index in for loop = first index of child of topContainer in pathElements
          int lastPathElementToProcess = pathElements.Count - 1;
 
          // include root container, if in Path
-         if (string.Equals(rootContainer.Name, pathElements[0]))
+         if (string.Equals(rootContainer.Name, pathElements[firstPathElementToProcess]))
          {
             containers.Add(rootContainer);
-            firstPathElementToProcess = 1; // first pathElementId already processed
+            firstPathElementToProcess++;
          }
 
          IContainer container = rootContainer;
@@ -82,6 +86,15 @@ namespace OSPSuite.Core.Domain.Mappers
          }
 
          return containers;
+      }
+
+      private IReadOnlyList<string> parentPathIn(IContainer rootContainer, IReadOnlyList<string> pathElements)
+      {
+         var parentPath = rootContainer.ParentPath?.ToList() ?? new List<string>();
+         var startsWithParentPath = pathElements.Count > parentPath.Count
+                                    && pathElements.Take(parentPath.Count).SequenceEqual(parentPath)
+                                    && string.Equals(rootContainer.Name, pathElements[parentPath.Count]);
+         return startsWithParentPath ? parentPath : new List<string>();
       }
 
       /// <summary>
