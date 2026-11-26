@@ -33,6 +33,7 @@ namespace OSPSuite.UI.Views.Charts
          DevExpress.XtraGrid.GridLevelNode gridLevelNode1 = new DevExpress.XtraGrid.GridLevelNode();
          this.layoutControl = new UxLayoutControl();
          this.loadTemplateButton = new DevExpress.XtraEditors.SimpleButton();
+         this.copyTemplatesButton = new DevExpress.XtraEditors.SimpleButton();
          this.gridTemplates = new UxGridControl();
          this.gridViewTemplates = new UxGridView();
          this.panelTemplateView = new DevExpress.XtraEditors.PanelControl();
@@ -42,6 +43,7 @@ namespace OSPSuite.UI.Views.Charts
          this.splitterItem1 = new DevExpress.XtraLayout.SplitterItem();
          this.loadTemplateControlItem = new DevExpress.XtraLayout.LayoutControlItem();
          this.emptySpaceItem1 = new DevExpress.XtraLayout.EmptySpaceItem();
+         this.copyTemplatesControlItem = new DevExpress.XtraLayout.LayoutControlItem();
          ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControl)).BeginInit();
          this.layoutControl.SuspendLayout();
@@ -54,12 +56,14 @@ namespace OSPSuite.UI.Views.Charts
          ((System.ComponentModel.ISupportInitialize)(this.splitterItem1)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.loadTemplateControlItem)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem1)).BeginInit();
+         ((System.ComponentModel.ISupportInitialize)(this.copyTemplatesControlItem)).BeginInit();
          this.SuspendLayout();
          // 
          // layoutControl
          // 
          this.layoutControl.AllowCustomization = false;
          this.layoutControl.Controls.Add(this.loadTemplateButton);
+         this.layoutControl.Controls.Add(this.copyTemplatesButton);
          this.layoutControl.Controls.Add(this.gridTemplates);
          this.layoutControl.Controls.Add(this.panelTemplateView);
          this.layoutControl.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -80,6 +84,15 @@ namespace OSPSuite.UI.Views.Charts
          this.loadTemplateButton.StyleController = this.layoutControl;
          this.loadTemplateButton.TabIndex = 7;
          this.loadTemplateButton.Text = "loadTemplateButton";
+         //
+         // copyTemplatesButton
+         //
+         this.copyTemplatesButton.Location = new System.Drawing.Point(448, 12);
+         this.copyTemplatesButton.Name = "copyTemplatesButton";
+         this.copyTemplatesButton.Size = new System.Drawing.Size(254, 22);
+         this.copyTemplatesButton.StyleController = this.layoutControl;
+         this.copyTemplatesButton.TabIndex = 8;
+         this.copyTemplatesButton.Text = "copyTemplatesButton";
          // 
          // gridTemplates
          // 
@@ -118,6 +131,7 @@ namespace OSPSuite.UI.Views.Charts
             this.layoutControlItem2,
             this.splitterItem1,
             this.emptySpaceItem1,
+            this.copyTemplatesControlItem,
             this.loadTemplateControlItem});
          this.layoutControlGroup1.Location = new System.Drawing.Point(0, 0);
          this.layoutControlGroup1.Name = "Root";
@@ -176,9 +190,18 @@ namespace OSPSuite.UI.Views.Charts
          this.emptySpaceItem1.CustomizationFormText = "emptySpaceItem1";
          this.emptySpaceItem1.Location = new System.Drawing.Point(268, 0);
          this.emptySpaceItem1.Name = "emptySpaceItem1";
-         this.emptySpaceItem1.Size = new System.Drawing.Size(426, 26);
+         this.emptySpaceItem1.Size = new System.Drawing.Size(168, 26);
          this.emptySpaceItem1.Text = "emptySpaceItem1";
          this.emptySpaceItem1.TextSize = new System.Drawing.Size(0, 0);
+         //
+         // copyTemplatesControlItem
+         //
+         this.copyTemplatesControlItem.Control = this.copyTemplatesButton;
+         this.copyTemplatesControlItem.Location = new System.Drawing.Point(436, 0);
+         this.copyTemplatesControlItem.Name = "copyTemplatesControlItem";
+         this.copyTemplatesControlItem.Size = new System.Drawing.Size(258, 26);
+         this.copyTemplatesControlItem.TextSize = new System.Drawing.Size(0, 0);
+         this.copyTemplatesControlItem.TextVisible = false;
          // 
          // ChartTemplateManagerView
          // 
@@ -200,6 +223,7 @@ namespace OSPSuite.UI.Views.Charts
          ((System.ComponentModel.ISupportInitialize)(this.splitterItem1)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.loadTemplateControlItem)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem1)).EndInit();
+         ((System.ComponentModel.ISupportInitialize)(this.copyTemplatesControlItem)).EndInit();
          this.ResumeLayout(false);
 
       }
@@ -215,6 +239,8 @@ namespace OSPSuite.UI.Views.Charts
       private DevExpress.XtraLayout.LayoutControlItem layoutControlItem2;
       private DevExpress.XtraLayout.SplitterItem splitterItem1;
       private DevExpress.XtraEditors.SimpleButton loadTemplateButton;
+      private DevExpress.XtraEditors.SimpleButton copyTemplatesButton;
+      private DevExpress.XtraLayout.LayoutControlItem copyTemplatesControlItem;
       private DevExpress.XtraLayout.LayoutControlItem loadTemplateControlItem;
       private DevExpress.XtraLayout.EmptySpaceItem emptySpaceItem1;
    }

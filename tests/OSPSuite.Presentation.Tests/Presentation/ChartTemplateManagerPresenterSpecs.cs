@@ -260,4 +260,78 @@ namespace OSPSuite.Presentation.Presentation
          A.CallTo(() => _chartTemplatingTask.SaveTemplateToFile(_template, _filePath)).MustHaveHappened();
       }
    }
+
+   public class When_the_user_copies_templates_from_the_project : concern_for_ChartTemplateManagerPresenter
+   {
+      private IWithChartTemplates _templateOwner;
+      private CurveChartTemplate _copiedTemplate1;
+      private CurveChartTemplate _copiedTemplate2;
+      private List<string> _namesUsedForValidation;
+
+      protected override void Context()
+      {
+         base.Context();
+         _templateOwner = A.Fake<IWithChartTemplates>();
+         _copiedTemplate1 = new CurveChartTemplate {Name = "Copy1", ChartType = CurveChartTypes.PredictedVsObserved};
+         _copiedTemplate2 = new CurveChartTemplate {Name = "Copy2", ChartType = CurveChartTypes.PredictedVsObserved};
+         A.CallTo(() => _chartTemplatingTask.CopyTemplatesFromProject(_templateOwner, CurveChartTypes.PredictedVsObserved, A<IReadOnlyList<string>>._))
+            .Invokes(x => _namesUsedForValidation = x.GetArgument<IReadOnlyList<string>>(2).ToList())
+            .Returns(new[] {_copiedTemplate1, _copiedTemplate2});
+
+         sut.EditTemplates(_templatesToManage, new[] {"ForbiddenName"}, CurveChartTypes.PredictedVsObserved, _templateOwner);
+      }
+
+      protected override void Because()
+      {
+         sut.CopyTemplatesFromProject();
+      }
+
+      [Observation]
+      public void should_validate_the_names_of_the_copies_against_the_edited_templates_and_the_forbidden_names()
+      {
+         _namesUsedForValidation.ShouldOnlyContain(_template1.Name, _template2.Name, "ForbiddenName");
+      }
+
+      [Observation]
+      public void should_add_the_copies_to_the_edited_templates()
+      {
+         sut.EditedTemplates.ShouldOnlyContain(_template1, _template2, _copiedTemplate1, _copiedTemplate2);
+      }
+
+      [Observation]
+      public void should_mark_the_templates_as_changed()
+      {
+         sut.HasChanged.ShouldBeTrue();
+      }
+
+      [Observation]
+      public void should_show_the_details_of_the_last_copied_template()
+      {
+         A.CallTo(() => _chartTemplateDetailsPresenter.Edit(_copiedTemplate2)).MustHaveHappened();
+      }
+   }
+
+   public class When_the_user_cancels_copying_templates_from_the_project : concern_for_ChartTemplateManagerPresenter
+   {
+      protected override void Context()
+      {
+         base.Context();
+         A.CallTo(() => _chartTemplatingTask.CopyTemplatesFromProject(A<IWithChartTemplates>._, A<CurveChartTypes?>._, A<IReadOnlyList<string>>._))
+            .Returns(new List<CurveChartTemplate>());
+
+         sut.EditTemplates(_templatesToManage);
+      }
+
+      protected override void Because()
+      {
+         sut.CopyTemplatesFromProject();
+      }
+
+      [Observation]
+      public void should_not_change_the_edited_templates()
+      {
+         sut.EditedTemplates.ShouldOnlyContain(_template1, _template2);
+         sut.HasChanged.ShouldBeFalse();
+      }
+   }
 }

@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using OSPSuite.Core.Chart;
+using OSPSuite.Core.Domain;
 using OSPSuite.Presentation.Views;
 
 namespace OSPSuite.Presentation.Presenters
@@ -13,11 +14,35 @@ namespace OSPSuite.Presentation.Presenters
       void EditTemplates(IEnumerable<CurveChartTemplate> chartTemplates);
 
       /// <summary>
+      ///    Edits the chart templates <paramref name="chartTemplates" /> owned by <paramref name="templateOwner" />
+      /// </summary>
+      /// <param name="chartTemplates">The templates to edit</param>
+      /// <param name="templateOwner">
+      ///    The object owning the edited templates (e.g. the project or a simulation). Its templates are not offered when
+      ///    copying templates from the project
+      /// </param>
+      void EditTemplates(IEnumerable<CurveChartTemplate> chartTemplates, IWithChartTemplates templateOwner);
+
+      /// <summary>
       ///    Edits the chart templates <paramref name="chartTemplates" /> created for charts of type
       ///    <paramref name="managedChartType" />. The <paramref name="forbiddenNames" /> are taken into account when
-      ///    validating template names. Loading a template created for another chart type from file is rejected
+      ///    validating template names. Loading or copying a template created for another chart type is rejected
       /// </summary>
-      void EditTemplates(IEnumerable<CurveChartTemplate> chartTemplates, IReadOnlyList<string> forbiddenNames, CurveChartTypes managedChartType);
+      /// <param name="chartTemplates">The templates to edit</param>
+      /// <param name="forbiddenNames">Names that cannot be used for the edited templates</param>
+      /// <param name="managedChartType">The chart type of the edited templates</param>
+      /// <param name="templateOwner">
+      ///    The object owning the edited templates (e.g. the project or a simulation), if any. Its templates are not
+      ///    offered when copying templates from the project
+      /// </param>
+      void EditTemplates(IEnumerable<CurveChartTemplate> chartTemplates, IReadOnlyList<string> forbiddenNames, CurveChartTypes managedChartType, IWithChartTemplates templateOwner = null);
+
+      /// <summary>
+      ///    Copies the templates selected by the user from the other template owners of the project (e.g. the project
+      ///    itself or other simulations) into the edited templates. Owners keep their own templates, the copies are
+      ///    independent
+      /// </summary>
+      void CopyTemplatesFromProject();
 
       /// <summary>
       ///    This method should be called to show the details of a <paramref name="chartTemplate" />
