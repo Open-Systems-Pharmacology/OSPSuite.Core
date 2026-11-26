@@ -3,6 +3,7 @@ using System.Data;
 using System.Linq;
 using FakeItEasy;
 using OSPSuite.BDDHelper;
+using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.Services;
@@ -52,6 +53,38 @@ namespace OSPSuite.Presentation.Presentation
       public void should_convert_the_observed_data_to_a_data_table()
       {
          A.CallTo(() => _dataRepositoryTask.ToDataTable(A<IEnumerable<DataColumn>>._, A<DataColumnExportOptions>._)).MustHaveHappened();
+      }
+   }
+
+   public class When_mapping_a_weighted_data_repository_with_an_error_column : concern_for_WeightedDataRepositoryToDataTableMapper
+   {
+      private DataColumnExportOptions _exportOptions;
+      private DataColumn _errorColumn;
+
+      protected override void Context()
+      {
+         base.Context();
+         _errorColumn = new DataColumn("Error", Constants.Dimension.NO_DIMENSION, _dataRepository.BaseGrid)
+         {
+            Values = new[] { 0.0f },
+            DataInfo = new DataInfo(ColumnOrigins.ObservationAuxiliary) { AuxiliaryType = AuxiliaryType.ArithmeticStdDev }
+         };
+         _dataRepository.Add(_errorColumn);
+
+         A.CallTo(() => _dataRepositoryTask.ToDataTable(A<IEnumerable<DataColumn>>._, A<DataColumnExportOptions>._))
+            .Invokes(x => _exportOptions = x.GetArgument<DataColumnExportOptions>(1))
+            .Returns(new[] { new DataTable() });
+      }
+
+      protected override void Because()
+      {
+         sut.MapFrom(_weightedObservedData);
+      }
+
+      [Observation]
+      public void should_display_the_error_type_in_the_name_of_the_error_column()
+      {
+         _exportOptions.ColumnNameRetriever(_errorColumn).ShouldBeEqualTo("Error (Arithmetic Standard Deviation)");
       }
    }
 }

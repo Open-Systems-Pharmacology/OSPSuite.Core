@@ -107,7 +107,12 @@ namespace OSPSuite.Core.Snapshots.Mappers
       }
 
       //applications defined without a formulation are now located under a dedicated 'No formulation' container
-      private static void updatePathsForV13(ObjectPath parameterPath) => ParameterMapper.InsertNoFormulationContainer(parameterPath);
+      //some parameters were renamed in V13
+      private static void updatePathsForV13(ObjectPath parameterPath)
+      {
+         ParameterMapper.InsertNoFormulationContainer(parameterPath);
+         ParameterMapper.RenameParametersForV13(parameterPath);
+      }
 
       // renal clearances container names have been modified to append the name of the compound
       private static void replaceRenalClearanceName(ObjectPath parameterPath, string processName)

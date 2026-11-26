@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ImporterConfiguration namingConventions="{Source}.{Id}" version="15">
+  <Parameters>
+    <MappingDataFormatParameter columnName="Time [h]">
+      <MappedColumn name="Time" dimension="Time">
+        <Unit selectedUnit="h" />
+      </MappedColumn>
+    </MappingDataFormatParameter>
+    <MappingDataFormatParameter columnName="Concentration [mg/l]">
+      <MappedColumn name="Measurement" dimension="Concentration (mass)">
+        <Unit selectedUnit="mg/l" />
+      </MappedColumn>
+    </MappingDataFormatParameter>
+    <MappingDataFormatParameter columnName="Error">
+      <MappedColumn errorStdDev="Arithmetic Standard Deviation" errorStdDevColumn="Error type" name="Error" dimension="Concentration (mass)">
+        <Unit selectedUnit="mg/l" />
+      </MappedColumn>
+    </MappingDataFormatParameter>
+    <GroupByDataFormatParameter columnName="Id" />
+  </Parameters>
+  <LoadedSheets>
+    <LoadedSheetsChild></LoadedSheetsChild>
+  </LoadedSheets>
+</ImporterConfiguration>

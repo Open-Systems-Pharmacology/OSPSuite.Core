@@ -328,11 +328,14 @@ namespace OSPSuite.UI.Views.Importer
 
          if (!mapping.MappedColumn.Unit.ColumnName.IsNullOrEmpty())
             listOfMappings.Add($"Units Col: {mapping.MappedColumn.Unit.ColumnName}");
-         else if (!mapping.MappedColumn.Unit.SelectedUnit.IsNullOrEmpty() && mapping.MappedColumn.ErrorStdDev != Constants.STD_DEV_GEOMETRIC)
+         else if (!mapping.MappedColumn.Unit.SelectedUnit.IsNullOrEmpty() && !mapping.MappedColumn.ErrorStdDevIsAlwaysGeometric)
             listOfMappings.Add($"Units: {mapping.MappedColumn.Unit.SelectedUnit}");
 
          if (!string.IsNullOrEmpty(mapping.MappedColumn.LloqColumn))
             listOfMappings.Add($"LLOQ: {mapping.MappedColumn.LloqColumn}");
+
+         if (!string.IsNullOrEmpty(mapping.MappedColumn.ErrorStdDevColumn))
+            listOfMappings.Add($"Error Type Col: {mapping.MappedColumn.ErrorStdDevColumn}");
 
          if (!string.IsNullOrEmpty(mapping.MappedColumn.ErrorStdDev))
             listOfMappings.Add($"Error: {mapping.MappedColumn.ErrorStdDev}");

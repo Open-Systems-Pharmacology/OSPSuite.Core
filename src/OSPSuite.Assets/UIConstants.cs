@@ -145,8 +145,8 @@ namespace OSPSuite.Assets
       public static readonly string None = "<None>";
       public static readonly string Favorites = "Favorites";
       public static readonly string Favorite = "Favorite";
-      public static readonly string CopyTable = "Copy Table";
-      public static readonly string CopySelectedRows = "Copy Selected Rows";
+      public static readonly string CopyTableAsText = "Copy Table as Text";
+      public static readonly string CopySelectedRowsAsText = "Copy Selected Rows as Text";
       public static readonly string TaggedWith = "Tagged With";
       public static readonly string ChartExportSettings = "Chart Export Settings";
       public static readonly string Word = "Word®";
@@ -162,6 +162,7 @@ namespace OSPSuite.Assets
       public static readonly string QualificationPlanFolder = "Qualification Plans";
       public static readonly string LLOQ = "LLOQ";
       public static readonly string ErrorType = "Error type";
+      public static string NameWithErrorType(string name, string errorType) => $"{name} ({errorType})";
       public static readonly string Delete = "Delete";
       public static readonly string Clear = "Clear";
       public static readonly string SelectSimulations = "Select Simulations";
@@ -176,7 +177,7 @@ namespace OSPSuite.Assets
       public static readonly string GroupingModeSimple = "Simple";
       public static readonly string GroupingModeAdvanced = "Advanced";
       public static readonly string Cancel = "Cancel";
-      public static readonly string CopySelection = "Copy Selection";
+      public static readonly string CopySelectionAsText = "Copy Selection as Text";
       public static readonly string NumberOfProcessors = "Max. number of processors to use";
       public static readonly string Boundary = "Boundary";
       public static readonly string OptimalValue = "Optimal Value";
@@ -419,6 +420,9 @@ namespace OSPSuite.Assets
          public static readonly string Unit = "Unit";
          public static readonly string ImportLLOQFromColumn = "Import LLOQ from a column";
          public static readonly string ImportUnitFromColumn = "Import unit from a column";
+         public static readonly string ImportErrorTypeFromColumn = "Import error type from a column";
+         public static readonly string ErrorTypeColumnDescription = "The selected error type will be used for all data sets";
+         public static readonly string DefaultErrorType = "Error type (default for empty cells)";
          public static readonly string Column = "Column";
          public static readonly string LoadCurrentSheet = "Add Current Sheet";
          public static readonly string AllSheetsAlreadyImported = "All imported";
@@ -503,6 +507,11 @@ namespace OSPSuite.Assets
          }
 
          public static string MappingHintGeometricError = "Geometric standard deviation";
+
+         public static string MappingHintErrorTypeColumn(string errorTypeColumn, string defaultErrorType)
+         {
+            return $"The error type of each data set will be read from column {errorTypeColumn} ({defaultErrorType} when empty)";
+         }
 
          public static string AddGroupByHint = "Configure the parameters and click the add button to add a new grouping by field";
 
@@ -1458,8 +1467,20 @@ namespace OSPSuite.Assets
       public static readonly string InconsistentMoleculeAndMolWeightException = "Molecule and Molecular Weight do not match. Please either edit your Molecule or your Molecular Weight in your project or remove the Molecular Weight from your mappings";
       public static readonly string InvalidMixOfSimulationAndSimulationBatch = "You already have Simulation and SimulationBatch objects and should not mix, please invoke Clear to start adding objects from a fresh start";
       public static readonly string MismatchingArrayLengths = "Arrays should have the same length";
+      public static string InvalidSubjectCount(string subjectCount, int minSubjectCount) => $"Subject count '{subjectCount}' is invalid. Subject count must be a whole number greater than or equal to {minSubjectCount}.";
+      public static string UnknownMetaDataCategory(string metaDataId, IEnumerable<string> metaDataCategories) => $"'{metaDataId}' is not a meta data category of observed data. Accepted values are: {metaDataCategories.ToString(", ")}.";
       public static string ColumnNotFound(string columnName) => $"Column {columnName} unexpectedly not found.";
       public static string BaseGridColumnNotFoundException(string columnName) => $"BaseGrid Column {columnName} unexpectedly not found.";
+      public static string UnknownErrorType(string sheetName, string dataSetName, string errorType, IEnumerable<string> acceptedErrorTypes) =>
+         $"The error type '{errorType}' of the {dataSetInSheet(sheetName, dataSetName)} is not supported. Accepted values are: {acceptedErrorTypes.ToString(", ")}. Leave the cell empty to use the default error type.";
+
+      public static string ConflictingErrorTypes(string sheetName, string dataSetName, IEnumerable<string> errorTypes) =>
+         $"The {dataSetInSheet(sheetName, dataSetName)} has more than one error type: {errorTypes.ToString(", ")}. All rows of a data set must have the same error type. Group the data by the error type column to split it into several data sets.";
+
+      //without grouping, the data set has no name and is the whole sheet
+      private static string dataSetInSheet(string sheetName, string dataSetName) =>
+         string.IsNullOrEmpty(dataSetName) ? $"sheet '{sheetName}'" : $"data set '{dataSetName}' in the sheet '{sheetName}'";
+
       public static string EmptyDataSet(string dataSetName) => $"Your settings ended up with following empty datasets: '{dataSetName}'. Please remove the data set from your data, filter it out or add at least one observation for it.";
 
       public static string MissingColumnException(string sheetName, IReadOnlyList<string> missingColumns) => $"The mapped column(s) \n \n '{missingColumns.ToString("\n")}' \n \n is missing at least from the sheet \n \n '{sheetName}' \n \n that you are trying to load.";
@@ -2260,6 +2281,7 @@ namespace OSPSuite.Assets
       public static readonly string MetaDataRemovedFromDataRepositories = "Meta Data removed from multiple repositories";
       public static readonly string MetaDataModifiedInDataRepositories = "Meta Data modified in multiple repositories";
       public static readonly string MolecularWeightModifiedInDataRepositories = "Molecular weight modified in multiple repositories";
+      public static readonly string SubjectCountModifiedInDataRepositories = "Subject count modified in multiple repositories";
       public static readonly string ObservedDataDeletedFromProject = "Observed data deleted from project";
 
       public static string CreateProjectDescription(string version) => $"Project started with version {version}";

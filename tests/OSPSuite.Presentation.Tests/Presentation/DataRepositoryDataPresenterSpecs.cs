@@ -20,7 +20,7 @@ namespace OSPSuite.Presentation.Presentation
    public abstract class concern_for_DataRepositoryDataPresenter : ContextSpecification<DataRepositoryDataPresenter>
    {
       protected IDataRepositoryDataView _view;
-      private IDataRepositoryExportTask _dataRepositoryTask;
+      protected IDataRepositoryExportTask _dataRepositoryTask;
       protected DataRepository _dataRepository;
       protected DataTable _dataTable;
       protected ICommandCollector _commandCollector;
@@ -146,6 +146,45 @@ namespace OSPSuite.Presentation.Presentation
       {
          //once for the edit and one for the value changed
          A.CallTo(() => _view.BindTo(A<DataTable>._)).MustHaveHappenedTwiceExactly();
+      }
+   }
+
+   public class When_editing_a_data_repository_with_an_error_column : concern_for_DataRepositoryDataPresenter
+   {
+      private DataColumnExportOptions _exportOptions;
+      private DataColumn _errorColumn;
+
+      protected override void Context()
+      {
+         base.Context();
+         _errorColumn = new DataColumn("error", "Error", Constants.Dimension.NO_DIMENSION, _baseGrid)
+         {
+            Values = new ArraySegment<float>(),
+            DataInfo = new DataInfo(ColumnOrigins.ObservationAuxiliary) { AuxiliaryType = AuxiliaryType.GeometricStdDev }
+         };
+         _col.AddRelatedColumn(_errorColumn);
+         _dataRepository.Add(_errorColumn);
+
+         A.CallTo(() => _dataRepositoryTask.ToDataTable(_dataRepository, A<DataColumnExportOptions>._))
+            .Invokes(x => _exportOptions = x.GetArgument<DataColumnExportOptions>(1))
+            .Returns(new[] { _dataTable });
+      }
+
+      protected override void Because()
+      {
+         sut.EditObservedData(_dataRepository);
+      }
+
+      [Observation]
+      public void should_display_the_error_type_in_the_name_of_the_error_column()
+      {
+         _exportOptions.ColumnNameRetriever(_errorColumn).ShouldBeEqualTo("Error (Geometric Standard Deviation)");
+      }
+
+      [Observation]
+      public void should_display_the_name_of_other_columns_unchanged()
+      {
+         _exportOptions.ColumnNameRetriever(_col).ShouldBeEqualTo("col");
       }
    }
 }

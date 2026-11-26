@@ -13,6 +13,7 @@ namespace OSPSuite.Presentation.DTO
       public string Value { set; get; }
       public bool NameEditable { get; set; }
       public bool ValueReadOnly { get; set; }
+      public bool Removable { get; set; }
       public IEnumerable<DataRepository> DataRepositories { get; set; }
       public IEnumerable<string> ListOfValues { get; set; }
 
@@ -24,6 +25,7 @@ namespace OSPSuite.Presentation.DTO
          Rules.AddRange(validationRules);
          NameEditable = true;
          ValueReadOnly = false;
+         Removable = true;
       }
 
       public virtual void GetPropertyError(string propertyName, ErrorInfo info)
@@ -59,6 +61,7 @@ namespace OSPSuite.Presentation.DTO
          internal static IEnumerable<IBusinessRule> AllForMultipleEdits()
          {
             yield return uniqueName;
+            yield return validSubjectCount;
          }
 
          internal static IEnumerable<IBusinessRule> All()
@@ -69,6 +72,11 @@ namespace OSPSuite.Presentation.DTO
             }
 
             yield return valuePropertyNotEmpty;
+         }
+
+         internal static IEnumerable<IBusinessRule> ForSubjectCount()
+         {
+            yield return validSubjectCount;
          }
 
          private static IBusinessRule valuePropertyNotEmpty
@@ -84,6 +92,17 @@ namespace OSPSuite.Presentation.DTO
                   .Property(item => item.Name)
                   .WithRule((dto, newName) => dto.isNameUnique(newName))
                   .WithError((dto, newName) => dto.nameAlreadyExistsError(newName));
+            }
+         }
+
+         private static IBusinessRule validSubjectCount
+         {
+            get
+            {
+               return CreateRule.For<MetaDataDTO>()
+                  .Property(item => item.Value)
+                  .WithRule((dto, value) => !string.Equals(dto.Name, Constants.ObservedData.SUBJECT_COUNT) || string.IsNullOrEmpty(value) || DataRepositoryExtensions.IsValidSubjectCount(value))
+                  .WithError((dto, value) => Error.InvalidSubjectCount(value, Constants.ObservedData.MIN_SUBJECT_COUNT));
             }
          }
       }

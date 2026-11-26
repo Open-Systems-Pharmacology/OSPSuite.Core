@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using OSPSuite.Assets;
 using OSPSuite.CLI.Core.Services;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
@@ -8,6 +10,7 @@ using OSPSuite.Core.Import;
 using OSPSuite.Core.Serialization.Xml;
 using OSPSuite.Infrastructure.Import.Core;
 using OSPSuite.Infrastructure.Import.Services;
+using OSPSuite.Utility.Exceptions;
 using OSPSuite.Utility.Extensions;
 using ImporterConfiguration = OSPSuite.Core.Import.ImporterConfiguration;
 
@@ -37,6 +40,30 @@ namespace OSPSuite.R.Services
       string[] GetAllGroupingColumns(ImporterConfiguration configuration);
       void AddGroupingColumn(ImporterConfiguration configuration, string columnName);
       void RemoveGroupingColumn(ImporterConfiguration configuration, string columnName);
+
+      /// <summary>
+      ///    Returns the meta data mappings of <paramref name="configuration" /> whose value comes from a column.
+      ///    Each mapping holds the column name (<c>ColumnName</c>) and the meta data category (<c>MetaDataId</c>).
+      /// </summary>
+      MetaDataFormatParameter[] GetAllMetaDataColumns(ImporterConfiguration configuration);
+
+      /// <summary>
+      ///    Maps the column <paramref name="columnName" /> to the meta data category <paramref name="metaDataId" />,
+      ///    e.g. <see cref="Constants.ObservedData.SUBJECT_COUNT" />. An existing mapping of the same column or of the same
+      ///    meta data category is replaced. Naming convention keys of a replaced mapping of the column are replaced by
+      ///    <paramref name="metaDataId" />, or removed if the naming convention already contains it.
+      /// </summary>
+      /// <exception cref="OSPSuiteException">
+      ///    Thrown if <paramref name="metaDataId" /> is not a meta data category of observed data
+      /// </exception>
+      void AddMetaDataColumn(ImporterConfiguration configuration, string columnName, string metaDataId);
+
+      /// <summary>
+      ///    Removes the column mapped to the meta data category <paramref name="metaDataId" />. A fixed value of the category
+      ///    is kept.
+      /// </summary>
+      void RemoveMetaDataColumn(ImporterConfiguration configuration, string metaDataId);
+
       string[] GetAllLoadedSheets(ImporterConfiguration configuration);
       void SetAllLoadedSheet(ImporterConfiguration configuration, string[] sheets);
       void SetAllLoadedSheet(ImporterConfiguration configuration, string sheet);
@@ -135,7 +162,7 @@ namespace OSPSuite.R.Services
          };
          keys.AddRange(configuration.Parameters.OfType<MetaDataFormatParameter>().Select(p => p.MetaDataId));
          keys.AddRange(configuration.Parameters.OfType<GroupByDataFormatParameter>().Select(p => p.ColumnName));
-         configuration.NamingConventions = string.Join(separator, keys.Select(k => $"{{{k}}}"));
+         configuration.NamingConventions = string.Join(separator, keys.Select(namingConventionToken));
 
          return configuration;
       }
@@ -269,6 +296,101 @@ namespace OSPSuite.R.Services
             return;
 
          configuration.RemoveParameter(column);
+      }
+
+      public MetaDataFormatParameter[] GetAllMetaDataColumns(ImporterConfiguration configuration)
+      {
+         return configuration.Parameters
+            .OfType<MetaDataFormatParameter>()
+            .Where(p => p.ComesFromColumn())
+            .ToArray();
+      }
+
+      public void AddMetaDataColumn(ImporterConfiguration configuration, string columnName, string metaDataId)
+      {
+         var metaDataCategoryNames = _metaDataCategories.AllNames();
+         if (!metaDataCategoryNames.Contains(metaDataId))
+            throw new OSPSuiteException(Error.UnknownMetaDataCategory(metaDataId, metaDataCategoryNames));
+
+         var replacedParameters = configuration.Parameters
+            .Where(p => isMetaDataFor(p, metaDataId) || isGroupingColumn(p, columnName))
+            .ToList();
+
+         replacedParameters.Each(configuration.RemoveParameter);
+         configuration.AddParameter(new MetaDataFormatParameter(columnName, metaDataId));
+
+         //The replaced mappings of the column are now resolved through the meta data category
+         replacedParameters.Each(p => replaceNamingConventionKey(configuration, namingConventionKeyFor(p), metaDataId));
+      }
+
+      private static void replaceNamingConventionKey(ImporterConfiguration configuration, string oldKey, string newKey)
+      {
+         var namingConventions = configuration.NamingConventions;
+         if (string.IsNullOrEmpty(namingConventions) || oldKey == newKey)
+            return;
+
+         var oldToken = namingConventionToken(oldKey);
+         var newToken = namingConventionToken(newKey);
+
+         //The value of the column must appear only once in the name
+         configuration.NamingConventions = namingConventions.Contains(newToken)
+            ? removeNamingConventionToken(namingConventions, oldToken)
+            : namingConventions.Replace(oldToken, newToken);
+      }
+
+      private static string removeNamingConventionToken(string namingConventions, string token)
+      {
+         var index = namingConventions.IndexOf(token, StringComparison.Ordinal);
+         while (index >= 0)
+         {
+            var start = index;
+            var length = token.Length;
+            if (start > 0 && isNamingPatternSeparator(namingConventions[start - 1]))
+            {
+               start--;
+               length++;
+            }
+            else if (index + length < namingConventions.Length && isNamingPatternSeparator(namingConventions[index + length]))
+               length++;
+
+            namingConventions = namingConventions.Remove(start, length);
+            index = namingConventions.IndexOf(token, StringComparison.Ordinal);
+         }
+
+         return namingConventions;
+      }
+
+      private static bool isNamingPatternSeparator(char character) =>
+         Constants.ImporterConstants.NAMING_PATTERN_SEPARATORS.Contains(character.ToString());
+
+      private static string namingConventionKeyFor(DataFormatParameter parameter) =>
+         parameter is MetaDataFormatParameter metaDataParameter ? metaDataParameter.MetaDataId : parameter.ColumnName;
+
+      private static string namingConventionToken(string key) => $"{{{key}}}";
+
+      public void RemoveMetaDataColumn(ImporterConfiguration configuration, string metaDataId)
+      {
+         var parameter = GetAllMetaDataColumns(configuration).FirstOrDefault(p => p.MetaDataId == metaDataId);
+         if (parameter == null)
+            return;
+
+         configuration.RemoveParameter(parameter);
+      }
+
+      private static bool isMetaDataFor(DataFormatParameter parameter, string metaDataId) =>
+         parameter is MetaDataFormatParameter metaDataParameter && metaDataParameter.MetaDataId == metaDataId;
+
+      private static bool isGroupingColumn(DataFormatParameter parameter, string columnName)
+      {
+         switch (parameter)
+         {
+            case GroupByDataFormatParameter _:
+               return parameter.ColumnName == columnName;
+            case MetaDataFormatParameter metaDataParameter:
+               return metaDataParameter.ComesFromColumn() && metaDataParameter.ColumnName == columnName;
+            default:
+               return false;
+         }
       }
 
       public void SetIsUnitFromColumn(MappingDataFormatParameter parameter, bool isUnitFromColumn)

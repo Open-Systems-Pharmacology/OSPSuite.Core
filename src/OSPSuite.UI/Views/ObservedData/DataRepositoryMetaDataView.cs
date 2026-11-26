@@ -33,6 +33,7 @@ namespace OSPSuite.UI.Views.ObservedData
       private readonly RepositoryItem _disabledRemoveButtonRepository = new UxRemoveButtonRepository();
       private readonly ScreenBinder<IParameter> _molWeightBinder;
       private readonly ScreenBinder<IParameter> _lowerLimitOfQuantificationBinder;
+      private readonly ScreenBinder<MetaDataDTO> _subjectCountBinder;
 
       public DataRepositoryMetaDataView()
       {
@@ -40,6 +41,7 @@ namespace OSPSuite.UI.Views.ObservedData
          _gridViewBinder = new GridViewBinder<MetaDataDTO>(gridView);
          _molWeightBinder = new ScreenBinder<IParameter>();
          _lowerLimitOfQuantificationBinder = new ScreenBinder<IParameter>();
+         _subjectCountBinder = new ScreenBinder<MetaDataDTO>();
          gridView.AllowsFiltering = false;
          _repositoryForPredefinedValues = new UxRepositoryItemComboBox(gridView);
          _readOnlyRepository = new RepositoryItemTextEdit {ReadOnly = true};
@@ -97,6 +99,10 @@ namespace OSPSuite.UI.Views.ObservedData
             .To(tbLowerLimitOfQuantification)
             .WithFormat(dto => new UnitFormatter(dto.DisplayUnit));
 
+         _subjectCountBinder.Bind(x => x.Value)
+            .To(tbSubjectCount)
+            .OnValueUpdating += (o, e) => OnEvent(() => _presenter.SetSubjectCount(e.NewValue));
+
          btnAddRow.Click += (o, e) => OnEvent(_presenter.NewMetaDataAdded);
          btnAddOutputPath.Click += (o, e) => OnEvent(_presenter.AddOutputPathMetadata);
 
@@ -113,7 +119,7 @@ namespace OSPSuite.UI.Views.ObservedData
 
       private RepositoryItem removeRepository(MetaDataDTO dto)
       {
-         return dto.NameEditable ? _removeButtonRepository : _disabledRemoveButtonRepository;
+         return dto.Removable ? _removeButtonRepository : _disabledRemoveButtonRepository;
       }
 
       private RepositoryItem nameRepository(MetaDataDTO dto)
@@ -154,6 +160,11 @@ namespace OSPSuite.UI.Views.ObservedData
          _lowerLimitOfQuantificationBinder.BindToSource(lowerLimitsOfQuantification);
       }
 
+      public void BindToSubjectCount(MetaDataDTO subjectCountDTO)
+      {
+         _subjectCountBinder.BindToSource(subjectCountDTO);
+      }
+
       public void BindToMolWeight(IParameter molWeightParameter)
       {
          _molWeightBinder.BindToSource(molWeightParameter);
@@ -185,6 +196,7 @@ namespace OSPSuite.UI.Views.ObservedData
          layoutItemAddRow.AdjustLargeButtonSize(layoutControl1);
          layoutItemMolWeight.Text = Constants.Parameters.MOL_WEIGHT.FormatForLabel();
          layoutItemLowerLimitOfQuantification.Text = Captions.LLOQ.FormatForLabel(checkCase:false);
+         layoutItemSubjectCount.Text = Constants.ObservedData.SUBJECT_COUNT.FormatForLabel();
       }
 
       private void updateRowCellStyle(RowCellStyleEventArgs e)
@@ -201,6 +213,6 @@ namespace OSPSuite.UI.Views.ObservedData
 
       public override ApplicationIcon ApplicationIcon => ApplicationIcons.Parameters;
 
-      public override bool HasError => _gridViewBinder.HasError;
+      public override bool HasError => _gridViewBinder.HasError || _subjectCountBinder.HasError;
    }
 }

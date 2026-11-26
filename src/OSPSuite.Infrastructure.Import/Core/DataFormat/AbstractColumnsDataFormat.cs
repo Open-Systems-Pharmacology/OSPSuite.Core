@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Extensions;
@@ -329,14 +330,19 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
                   ? (Func<MappingDataFormatParameter, DataSheet, UnformattedRow, SimulationPoint>)parseMappingOnSameColumn
                   : parseMappingOnSameGivenColumn;
 
+            var extendedColumn = new ExtendedColumn
+            {
+               Column = new Column(currentParameter.MappedColumn),
+               ColumnInfo = columnInfo,
+               ErrorDeviation = currentParameter.MappedColumn.ErrorStdDev
+            };
+
+            if (columnInfo.IsAuxiliary && !currentParameter.MappedColumn.ErrorStdDevColumn.IsNullOrEmpty())
+               readErrorStdDevValues(extendedColumn, dataSheet, dataSet);
+
             dictionary.Add
             (
-               new ExtendedColumn
-               {
-                  Column = new Column(currentParameter.MappedColumn),
-                  ColumnInfo = columnInfo,
-                  ErrorDeviation = currentParameter.MappedColumn.ErrorStdDev
-               },
+               extendedColumn,
                dataSet.Select
                (
                   row => mappingsParser(currentParameter, dataSheet, row)
@@ -345,6 +351,18 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
          }
 
          return dictionary;
+      }
+
+      //the error type of the data set is resolved by the data source, once the rows to ignore are removed
+      private void readErrorStdDevValues(ExtendedColumn extendedColumn, DataSheet dataSheet, IReadOnlyList<UnformattedRow> dataSet)
+      {
+         var errorStdDevColumn = extendedColumn.Column.ErrorStdDevColumn;
+         checkThatMappedColumnExists(errorStdDevColumn, dataSheet);
+         var errorStdDevIndex = dataSheet.GetColumnDescription(errorStdDevColumn).Index;
+
+         extendedColumn.ErrorStdDevValues = dataSet
+            .Select(row => row.Data.ElementAt(errorStdDevIndex)?.Trim())
+            .ToList();
       }
 
       private SimulationPoint parseMappingOnSameColumn(MappingDataFormatParameter currentParameter, DataSheet dataSheet, UnformattedRow row)
@@ -367,20 +385,19 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
                Unit = unit,
                Lloq = double.NaN
             };
-         if (element.StartsWith("<"))
-         {
-            result = element.Substring(1).ConvertedTo<double>();
+         //same parsing as ConvertedTo<double> (comma as decimal separator, invariant culture) without throwing for a non-numeric suffix
+         if (element.StartsWith("<") && double.TryParse(element.Substring(1).Replace(",", "."), NumberStyles.Float | NumberStyles.AllowThousands, NumberFormatInfo.InvariantInfo, out result))
             return new SimulationPoint
             {
                Lloq = result,
                Unit = unit
             };
-         }
 
          return new SimulationPoint
          {
             Measurement = double.NaN,
-            Unit = unit
+            Unit = unit,
+            Lloq = double.NaN
          };
       }
 

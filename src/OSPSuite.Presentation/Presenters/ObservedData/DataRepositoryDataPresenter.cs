@@ -2,6 +2,7 @@
 using System.Linq;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Events;
+using OSPSuite.Presentation.Extensions;
 using OSPSuite.Presentation.Views.ObservedData;
 using OSPSuite.Utility.Events;
 
@@ -26,7 +27,11 @@ namespace OSPSuite.Presentation.Presenters.ObservedData
 
       protected override DataTable MapDataTableFromColumns()
       {
-         return _dataRepositoryTask.ToDataTable(_observedData, new DataColumnExportOptions {ForceColumnTypeAsObject = true}).First();
+         return _dataRepositoryTask.ToDataTable(_observedData, new DataColumnExportOptions
+         {
+            ForceColumnTypeAsObject = true,
+            ColumnNameRetriever = x => x.NameWithErrorType()
+         }).First();
       }
    }
 }

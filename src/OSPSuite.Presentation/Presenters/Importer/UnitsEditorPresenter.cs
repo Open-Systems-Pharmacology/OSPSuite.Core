@@ -59,6 +59,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          {
             _columnMapping = true;
             _selectedColumn = column;
+            _view.SelectedColumn = column;
          });
       }
 

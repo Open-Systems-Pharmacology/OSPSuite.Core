@@ -15,6 +15,7 @@ using OSPSuite.Presentation.DTO;
 using OSPSuite.Presentation.Presenters.ObservedData;
 using OSPSuite.Presentation.Views.ObservedData;
 using OSPSuite.Utility.Collections;
+using OSPSuite.Utility.Validation;
 
 namespace OSPSuite.Presentation.Presentation
 {
@@ -296,7 +297,6 @@ namespace OSPSuite.Presentation.Presentation
       protected override void Context()
       {
          base.Context();
-         //name is set but the row is not valid since the value is empty. The row is not saved
          _newMetaDataDTO.Name = "Route";
          sut.MetaDataNameChanged(_newMetaDataDTO, string.Empty);
       }
@@ -360,7 +360,7 @@ namespace OSPSuite.Presentation.Presentation
             .Invokes(x => _metaDataDTO = x.GetArgument<IEnumerable<MetaDataDTO>>(0).Single());
          sut.EditObservedData(_dataRepository);
 
-         //the rename is not saved since the row is not valid with an empty value
+         //not saved since the value is empty
          _metaDataDTO.Name = "Tab";
          sut.MetaDataNameChanged(_metaDataDTO, "Sheet");
       }
@@ -380,6 +380,96 @@ namespace OSPSuite.Presentation.Presentation
       public void command_to_remove_the_saved_metadata_is_issued()
       {
          A.CallTo(() => _observedDataMetaDataTask.RemoveMetaData(A<IEnumerable<DataRepository>>.That.Contains(_dataRepository), A<MetaDataKeyValue>.That.Matches(x => x.Key.Equals("Sheet") && x.Value.Equals(string.Empty)))).MustHaveHappened();
+      }
+   }
+
+   public class When_binding_saved_metadata_with_predefined_and_custom_names : concern_for_DataRepositoryMetaDataPresenter
+   {
+      private List<MetaDataDTO> _boundMetaData;
+
+      protected override void Context()
+      {
+         base.Context();
+         SetExtendedProperty("Species", "Human");
+         SetExtendedProperty("Custom", "Value");
+         A.CallTo(() => _observedDataConfiguration.DefaultMetaDataCategories).Returns(new[] { "Species" });
+         A.CallTo(() => _view.BindToMetaData(A<IEnumerable<MetaDataDTO>>._))
+            .Invokes(x => _boundMetaData = x.GetArgument<IEnumerable<MetaDataDTO>>(0).ToList());
+      }
+
+      protected override void Because()
+      {
+         sut.EditObservedData(_dataRepository);
+      }
+
+      [Observation]
+      public void the_predefined_metadata_cannot_be_removed()
+      {
+         _boundMetaData.Single(x => x.Name == "Species").Removable.ShouldBeFalse();
+      }
+
+      [Observation]
+      public void the_custom_metadata_can_be_removed()
+      {
+         _boundMetaData.Single(x => x.Name == "Custom").Removable.ShouldBeTrue();
+      }
+   }
+
+   public abstract class When_the_output_path_metadata_row_was_added_and_never_saved : concern_for_DataRepositoryMetaDataPresenter
+   {
+      protected NotifyList<MetaDataDTO> _boundMetaData;
+      protected MetaDataDTO _outputPathDTO;
+
+      protected override void Context()
+      {
+         base.Context();
+         A.CallTo(() => _view.BindToMetaData(A<IEnumerable<MetaDataDTO>>._))
+            .Invokes(x => _boundMetaData = x.GetArgument<NotifyList<MetaDataDTO>>(0));
+         sut.EditObservedData(_dataRepository);
+         sut.AddOutputPathMetadata();
+         _outputPathDTO = _boundMetaData.Single(x => x.Name == Constants.OUTPUT_PATH);
+      }
+   }
+
+   public class When_adding_the_output_path_metadata_row : When_the_output_path_metadata_row_was_added_and_never_saved
+   {
+      [Observation]
+      public void the_row_name_cannot_be_edited()
+      {
+         _outputPathDTO.NameEditable.ShouldBeFalse();
+      }
+
+      [Observation]
+      public void the_row_can_be_removed_before_a_value_is_entered()
+      {
+         _outputPathDTO.Removable.ShouldBeTrue();
+      }
+   }
+
+   public class When_removing_the_output_path_metadata_row_before_a_value_is_entered : When_the_output_path_metadata_row_was_added_and_never_saved
+   {
+      protected override void Because()
+      {
+         sut.RemoveMetaData(_outputPathDTO);
+      }
+
+      [Observation]
+      public void command_to_remove_is_not_issued()
+      {
+         A.CallTo(() => _observedDataMetaDataTask.RemoveMetaData(A<IEnumerable<DataRepository>>._, A<MetaDataKeyValue>._)).MustNotHaveHappened();
+      }
+
+      [Observation]
+      public void the_row_is_removed_from_the_view()
+      {
+         _boundMetaData.ShouldNotContain(_outputPathDTO);
+      }
+
+      [Observation]
+      public void the_output_path_row_can_be_added_again()
+      {
+         sut.AddOutputPathMetadata();
+         _boundMetaData.Count(x => x.Name == Constants.OUTPUT_PATH).ShouldBeEqualTo(1);
       }
    }
 
@@ -510,6 +600,151 @@ namespace OSPSuite.Presentation.Presentation
       public void should_not_bind_to_molweight_parameter()
       {
          A.CallTo(() => _view.BindToMolWeight(_molWeightParameter)).MustNotHaveHappened();
+      }
+   }
+   public abstract class When_binding_observed_data_with_a_subject_count : concern_for_DataRepositoryMetaDataPresenter
+   {
+      protected MetaDataDTO _subjectCountDTO;
+      protected IEnumerable<MetaDataDTO> _metaDataDTOs;
+
+      protected override void Context()
+      {
+         base.Context();
+         A.CallTo(() => _view.BindToSubjectCount(A<MetaDataDTO>._)).Invokes(x => _subjectCountDTO = x.GetArgument<MetaDataDTO>(0));
+         A.CallTo(() => _view.BindToMetaData(A<IEnumerable<MetaDataDTO>>._)).Invokes(x => _metaDataDTOs = x.GetArgument<IEnumerable<MetaDataDTO>>(0));
+         SetExtendedProperty(Constants.ObservedData.STUDY_ID, "Study");
+         _dataRepository.SetSubjectCount(12);
+      }
+   }
+
+   public class When_binding_a_single_observed_data_with_a_subject_count : When_binding_observed_data_with_a_subject_count
+   {
+      protected override void Because()
+      {
+         sut.EditObservedData(_dataRepository);
+      }
+
+      [Observation]
+      public void should_bind_the_subject_count_to_the_view()
+      {
+         _subjectCountDTO.Name.ShouldBeEqualTo(Constants.ObservedData.SUBJECT_COUNT);
+         _subjectCountDTO.Value.ShouldBeEqualTo("12");
+      }
+
+      [Observation]
+      public void should_not_show_the_subject_count_in_the_meta_data_list()
+      {
+         _metaDataDTOs.Select(x => x.Name).ShouldOnlyContain(Constants.ObservedData.STUDY_ID);
+      }
+
+      [Observation]
+      public void should_accept_an_empty_subject_count_to_clear_it()
+      {
+         _subjectCountDTO.Validate(x => x.Value, string.Empty).IsEmpty.ShouldBeTrue();
+      }
+
+      [Observation]
+      public void should_reject_an_invalid_subject_count()
+      {
+         _subjectCountDTO.Validate(x => x.Value, "0").IsEmpty.ShouldBeFalse();
+         _subjectCountDTO.Validate(x => x.Value, "2.5").IsEmpty.ShouldBeFalse();
+      }
+   }
+
+   public class When_binding_multiple_observed_data_with_different_subject_counts : When_binding_observed_data_with_a_subject_count
+   {
+      private DataRepository _otherDataRepository;
+
+      protected override void Context()
+      {
+         base.Context();
+         _otherDataRepository = new DataRepository();
+         _otherDataRepository.SetSubjectCount(5);
+      }
+
+      protected override void Because()
+      {
+         sut.EditObservedDataMetaData(new[] {_dataRepository, _otherDataRepository});
+      }
+
+      [Observation]
+      public void should_bind_an_empty_subject_count_to_the_view()
+      {
+         _subjectCountDTO.Value.ShouldBeEqualTo(string.Empty);
+      }
+   }
+
+   public class When_binding_multiple_observed_data_with_the_same_subject_count : When_binding_observed_data_with_a_subject_count
+   {
+      private DataRepository _otherDataRepository;
+
+      protected override void Context()
+      {
+         base.Context();
+         _otherDataRepository = new DataRepository();
+         _otherDataRepository.SetSubjectCount(12);
+      }
+
+      protected override void Because()
+      {
+         sut.EditObservedDataMetaData(new[] {_dataRepository, _otherDataRepository});
+      }
+
+      [Observation]
+      public void should_bind_the_shared_subject_count_to_the_view()
+      {
+         _subjectCountDTO.Value.ShouldBeEqualTo("12");
+      }
+   }
+
+   public class When_binding_multiple_observed_data_with_the_same_subject_count_written_differently : When_binding_observed_data_with_a_subject_count
+   {
+      private DataRepository _otherDataRepository;
+
+      protected override void Context()
+      {
+         base.Context();
+         _otherDataRepository = new DataRepository();
+         _otherDataRepository.ExtendedProperties.Add(new ExtendedProperty<string> {Name = Constants.ObservedData.SUBJECT_COUNT, Value = "012"});
+      }
+
+      protected override void Because()
+      {
+         sut.EditObservedDataMetaData(new[] {_dataRepository, _otherDataRepository});
+      }
+
+      [Observation]
+      public void should_bind_the_normalized_shared_subject_count_to_the_view()
+      {
+         _subjectCountDTO.Value.ShouldBeEqualTo("12");
+      }
+   }
+
+   public class When_binding_multiple_observed_data_where_only_some_have_a_subject_count : When_binding_observed_data_with_a_subject_count
+   {
+      protected override void Because()
+      {
+         sut.EditObservedDataMetaData(new[] {_dataRepository, new DataRepository()});
+      }
+
+      [Observation]
+      public void should_bind_an_empty_subject_count_to_the_view()
+      {
+         _subjectCountDTO.Value.ShouldBeEqualTo(string.Empty);
+      }
+   }
+
+   public class When_setting_the_subject_count : concern_for_DataRepositoryMetaDataPresenter
+   {
+      protected override void Because()
+      {
+         sut.SetSubjectCount("12");
+      }
+
+      [Observation]
+      public void should_update_the_subject_count_of_the_edited_observed_data()
+      {
+         A.CallTo(() => _observedDataMetaDataTask.UpdateSubjectCount(A<IEnumerable<DataRepository>>.That.Contains(_dataRepository), "12")).MustHaveHappened();
       }
    }
 }

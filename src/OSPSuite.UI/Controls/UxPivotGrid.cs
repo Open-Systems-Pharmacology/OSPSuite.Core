@@ -106,8 +106,8 @@ namespace OSPSuite.UI.Controls
          if (e.MenuType != PivotGridMenuType.HeaderArea)
             return;
 
-         var copySelectionMenu = new DXMenuItem(Captions.CopySelection, clickCopySelectionMenuItem) { Shortcut = Shortcut.CtrlC, SvgImage = ApplicationIcons.CopySelection.ToSvgImage() };
-         var copyAllMenu = new DXMenuItem(Captions.CopyTable, clickCopyTableMenuItem) { Shortcut = Shortcut.CtrlShiftC, SvgImage = ApplicationIcons.Copy.ToSvgImage() };
+         var copySelectionMenu = new DXMenuItem(Captions.CopySelectionAsText, clickCopySelectionMenuItem) { Shortcut = Shortcut.CtrlC, SvgImage = ApplicationIcons.CopySelection.ToSvgImage() };
+         var copyAllMenu = new DXMenuItem(Captions.CopyTableAsText, clickCopyTableMenuItem) { Shortcut = Shortcut.CtrlShiftC, SvgImage = ApplicationIcons.Copy.ToSvgImage() };
 
          e.Menu.Items.Clear();
          e.Menu.Items.Insert(0, copySelectionMenu);

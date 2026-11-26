@@ -5,6 +5,7 @@ using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Domain.UnitSystem;
+using OSPSuite.Presentation.Extensions;
 using OSPSuite.Utility;
 using DataColumn = OSPSuite.Core.Domain.Data.DataColumn;
 
@@ -31,7 +32,11 @@ namespace OSPSuite.Presentation.Mappers.ParameterIdentifications
          var dataColumn = createWeightColumn(weightedObservedData.ObservedData.BaseGrid, weightedObservedData);
 
          columns.Add(dataColumn);
-         return _dataRepositoryTask.ToDataTable(columns, new DataColumnExportOptions {ForceColumnTypeAsObject = true}).First();
+         return _dataRepositoryTask.ToDataTable(columns, new DataColumnExportOptions
+         {
+            ForceColumnTypeAsObject = true,
+            ColumnNameRetriever = x => x.NameWithErrorType()
+         }).First();
       }
 
       private DataColumn createWeightColumn(BaseGrid baseGrid, WeightedObservedData weightedObservedData)

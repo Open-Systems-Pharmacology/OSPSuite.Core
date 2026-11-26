@@ -35,10 +35,16 @@ namespace OSPSuite.UI.Views.Importer
          _columnComboBox.EditValueChanged += (s, a) => OnEvent(onColumnComboBoxTextChanged);
       }
 
-      public string SelectedUnit 
-      { 
+      public string SelectedUnit
+      {
          get => _unitComboBox.EditValue as string;
          set => _unitComboBox.EditValue = value;
+      }
+
+      public string SelectedColumn
+      {
+         get => _columnComboBox.EditValue as string;
+         set => _columnComboBox.EditValue = value;
       }
 
       public sealed override string Text
