@@ -71,7 +71,22 @@ namespace OSPSuite.Presentation.Services
          return observedData;
       }
 
-      private void overwriteColumn(DataRepository observedData, DataColumn reloadedColumn) =>
-         observedData.First(x => x.Name == reloadedColumn.Name).Values = reloadedColumn.Values;
+      private void overwriteColumn(DataRepository observedData, DataColumn reloadedColumn)
+      {
+         var existingColumn = observedData.First(x => x.Name == reloadedColumn.Name);
+
+         //related columns are cached by error type, so the column is removed and added again under its new error type
+         var columnsRelatedToExistingColumn = observedData.Where(x => x.RelatedColumns.Contains(existingColumn)).ToList();
+         columnsRelatedToExistingColumn.Each(x => x.RemoveRelatedColumn(existingColumn.DataInfo.AuxiliaryType));
+
+         //the existing column is updated rather than replaced because simulations, charts and parameter identifications refer to it.
+         //the error type can change on reload, and the dimension and display unit change with it (a geometric SD is dimensionless)
+         existingColumn.Dimension = reloadedColumn.Dimension;
+         existingColumn.DataInfo.AuxiliaryType = reloadedColumn.DataInfo.AuxiliaryType;
+         existingColumn.DataInfo.DisplayUnitName = reloadedColumn.DataInfo.DisplayUnitName;
+         existingColumn.Values = reloadedColumn.Values;
+
+         columnsRelatedToExistingColumn.Each(x => x.AddRelatedColumn(existingColumn));
+      }
    }
 }
