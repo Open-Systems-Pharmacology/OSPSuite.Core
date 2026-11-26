@@ -117,7 +117,114 @@ namespace OSPSuite.Presentation.Presentation
          confidenceIntervalDTO.Name.ShouldBeEqualTo(_identificationParameter.Name);
          confidenceIntervalDTO.ConfidenceInterval.ShouldBeEqualTo(50);
          confidenceIntervalDTO.Value.ShouldBeEqualTo(100);
+         confidenceIntervalDTO.RelativeConfidenceInterval.ShouldBeEqualTo(50);
          confidenceIntervalDTO.Unit.ShouldBeEqualTo(_identificationParameter.DisplayUnit);
+      }
+   }
+
+   public class When_calculating_the_confidence_interval_for_a_parameter_displayed_in_a_unit_with_an_offset : concern_for_ParameterIdentificationConfidenceIntervalPresenter
+   {
+      private ParameterSelection _parameterSelection;
+      private Dimension _temperatureDimension;
+      private Unit _celsius;
+      private IdentificationParameter _identificationParameter;
+
+      protected override void Context()
+      {
+         base.Context();
+         _temperatureDimension = new Dimension(new BaseDimensionRepresentation(), "Temperature", "K");
+         _celsius = _temperatureDimension.AddUnit("°C", 1, 273.15);
+
+         _parameterSelection = A.Fake<ParameterSelection>();
+         A.CallTo(() => _parameterSelection.FullQuantityPath).Returns("P1");
+         A.CallTo(() => _parameterSelection.Dimension).Returns(_temperatureDimension);
+         _runResult.JacobianMatrix = new JacobianMatrix(new[] {_parameterSelection.FullQuantityPath});
+
+         _identificationParameter = DomainHelperForSpecs.IdentificationParameter("IP1");
+         _identificationParameter.AddLinkedParameter(_parameterSelection);
+         _identificationParameter.StartValueParameter.Dimension = _temperatureDimension;
+         _identificationParameter.StartValueParameter.DisplayUnit = _celsius;
+
+         A.CallTo(_confidenceIntervalCalculator).WithReturnType<ICache<string, double>>().Returns(new Cache<string, double> {{_identificationParameter.Name, 2}});
+         A.CallTo(() => _runResult.BestResult.Values).Returns(new[] {new OptimizedParameterValue(_identificationParameter.Name, 300, 290, 0, 400, Scalings.Linear)});
+         A.CallTo(() => _parameterIdentification.IdentificationParameterByName(_identificationParameter.Name)).Returns(_identificationParameter);
+      }
+
+      protected override void Because()
+      {
+         sut.CalculateConfidenceIntervalFor(_parameterIdentification, _runResult);
+      }
+
+      [Observation]
+      public void should_apply_the_offset_to_the_point_estimate_only()
+      {
+         var confidenceIntervalDTO = _allParameterConfidenceIntervalDTOs[0];
+         confidenceIntervalDTO.Value.ShouldBeEqualTo(26.85, 1e-10);
+         confidenceIntervalDTO.ConfidenceInterval.ShouldBeEqualTo(2, 1e-10);
+      }
+
+      [Observation]
+      public void should_compute_the_relative_confidence_interval_from_the_values_in_base_unit()
+      {
+         _allParameterConfidenceIntervalDTOs[0].RelativeConfidenceInterval.ShouldBeEqualTo(100 * 2 / 300d, 1e-10);
+      }
+   }
+
+   public abstract class When_calculating_the_relative_confidence_interval_of_a_parameter : concern_for_ParameterIdentificationConfidenceIntervalPresenter
+   {
+      protected double _pointEstimate;
+      private ParameterSelection _parameterSelection;
+      private IdentificationParameter _identificationParameter;
+
+      protected override void Context()
+      {
+         base.Context();
+         _parameterSelection = A.Fake<ParameterSelection>();
+         A.CallTo(() => _parameterSelection.FullQuantityPath).Returns("P1");
+         A.CallTo(() => _parameterSelection.Dimension).Returns(A.Fake<IDimension>());
+         _runResult.JacobianMatrix = new JacobianMatrix(new[] {_parameterSelection.FullQuantityPath});
+
+         _identificationParameter = DomainHelperForSpecs.IdentificationParameter("IP1");
+         _identificationParameter.AddLinkedParameter(_parameterSelection);
+
+         A.CallTo(_confidenceIntervalCalculator).WithReturnType<ICache<string, double>>().Returns(new Cache<string, double> {{_identificationParameter.Name, 5}});
+         A.CallTo(() => _runResult.BestResult.Values).Returns(new[] {new OptimizedParameterValue(_identificationParameter.Name, _pointEstimate, 20, -100, 100, Scalings.Linear)});
+         A.CallTo(() => _parameterIdentification.IdentificationParameterByName(_identificationParameter.Name)).Returns(_identificationParameter);
+      }
+
+      protected override void Because()
+      {
+         sut.CalculateConfidenceIntervalFor(_parameterIdentification, _runResult);
+      }
+   }
+
+   public class When_calculating_the_relative_confidence_interval_of_a_parameter_with_a_negative_point_estimate : When_calculating_the_relative_confidence_interval_of_a_parameter
+   {
+      protected override void Context()
+      {
+         _pointEstimate = -10;
+         base.Context();
+      }
+
+      [Observation]
+      public void should_use_the_absolute_value_of_the_point_estimate()
+      {
+         _allParameterConfidenceIntervalDTOs[0].RelativeConfidenceInterval.ShouldBeEqualTo(50, 1e-10);
+      }
+   }
+
+   public class When_calculating_the_relative_confidence_interval_of_a_parameter_with_a_zero_point_estimate : When_calculating_the_relative_confidence_interval_of_a_parameter
+   {
+      protected override void Context()
+      {
+         _pointEstimate = 0;
+         base.Context();
+      }
+
+      [Observation]
+      public void should_return_nan()
+      {
+         double.IsNaN(_allParameterConfidenceIntervalDTOs[0].RelativeConfidenceInterval).ShouldBeTrue();
       }
    }
 
